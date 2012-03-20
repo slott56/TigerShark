@@ -1,0 +1,134 @@
+#########################################
+Design Note: Web Services Ports and URL's
+#########################################
+
+:ref:`architecture`
+
+Problem
+=======
+
+Tiger exposes two web-based (HTTP) interfaces:  a user-oriented, HTML-based UI, and an XML-RPC
+(Web Serices) interface.  What is the relationship between these two?  What
+port number and URL's should be used?
+
+Web Services generally have a unique URL.  Additionally, they can have unique port numbers.
+Should port numbers be used?  If so, how?
+
+Forces
+======
+
+The user interface uses simple URL's and port 80.  The "/" URL is treated as if it
+was a request for index.html; providing a typical user experience.
+
+Django, generally, ignores the port number, and only processes the URL.
+
+Without special middleware modules, Django can't easily handle XML-RPC requests.
+It thinks they're ordinary HTTP POST requests; it doesn't handle any XML-RPC protocol
+issues for us, forcing us to parse the XML, etc.
+A WSGI-style middleware can redirect these so they are not processed as Django's
+standard view requests, which assume HTML, and are processed as XML.
+
+Apache can, however, examine the port number as well as the URL's and redirect
+WS requests to a "different" server: Django doesn't see these.
+
+JCAPS, generally, puts web services into ports like 18000 to keep them separate
+from ports 80 (and 8000) that are end-user oriented.
+
+A separate WS server seems a bit much, since we're already separating Django
+from Apache.
+
+This is a multi-interface application.  The Django front-end relies on the web
+services.  Also, external applications rely on the web services.
+
+Solution
+========
+
+Use Apache to listen on port 80.
+
+-   Some requests have the media URL, which are handled immediately.
+
+-   Other requests have the RPC2 URL, which are forwarded to port 18000,
+    which is the XML-RPC server.
+
+-   All other requests are forwarded to mod_python (from there to Django) for processing.
+
+Behind Apache (on another box, behind a firewall) there are two ports.
+
+-   Port 8000 is served by Django.  This handles end-user requests using Django's standard
+    architecture.
+
+-   Port 18000 is served by XML-RPC.  This handles external requests (forwarded by
+    Apache) as well as Django requests.
+
+Within the WS portion of the system (port 18000) we must use the URL's to identify
+specific instances of applications.
+
+-   ``/RPC2`` is the top-level path element for all web services.  The top instance
+    of ``ParsePath`` picks this off the front of the URL, ignoring all other requests.
+    This top-level ``ParsePath`` delegates to other instances of ``ParsePath`` to navigate
+    the path.
+
+    -   ``/RPC2/``\ *app* Names an "application" -- a name managed by the application's
+        ``ParsePath`` object.  The app may (or may not) have a lower-level structure.
+        Usually, it is a single ``XMLRPC`` object that delegates methods and parameters to an
+        internal object.
+
+Consequences
+============
+
+This creates the appearance of a "tangled hierarchy" among the web services and the
+Django persistence engine.  Django applications rely on web services which rely on
+Django persistence.
+
+Python's WSGI standard provides a way to create flexible, uniform web services.
+WSGI allows us to disentangle a number of features from each distinct web service.
+Collectively, these features are called "middleware".
+
+See http://www.wsgi.org/wsgi/Middleware_and_Utilities
+
+Specifically,
+
+-   Authentication is handled by any of a large number of authentication
+    middleware projects.  For examples, see http://authkit.org/,
+    and http://lukearno.com/projects/barrel/.  Since SOAP and XML-RPC are limited to
+    BASIC authentication, these packages are more sophisticated than
+    what is required.
+
+-   Session could be handled by any of a large number of session manager projects.
+    However, SOAP and XML-RPC typically don't make explicit use of HTTP protocol
+    for session management.
+
+-   Authorization is easily added into some of the authorization projects.
+    Some kind of user-group affinity needs to be added, as well as a URL-group
+    affinity.
+
+-   URL redirection to allow flexible assembly of web services is also required.
+
+-   XML-RPC is handled with the CGI version, which is essentially, a WSGI-friendly
+    module.  There are WSGI-XML modules which can be used, also.
+
+Extensions To The Standards
+===========================
+
+Tiger can easily extend the XML-RPC processing standards.
+
+1.  An expanded XML-RPC client package can use DIGEST authentication instead of BASIC.
+
+    -   The standard approach is a 401-reply to initiate a challenge-response cycle.
+
+    -   However, this is does not have to be challenge-response.  The authentication
+        header would be a standard digest, and would include a client-generated
+        nonce instead of a challenge-supplied nonce.  The following steps show
+        how the digest is computed from things ordinarily supplied by the client
+        (username, password and method) and things ordinarily supplied as
+        part of the challenge (*realm*, *uri*, *nonce*).
+
+        HA1 = MD5( username : *realm* : password )
+
+        HA2 = MD5( method : *uri* )
+
+        Final = MD5( HA1 : *nonce* : HA2 )
+
+2.  The tigerWSGI module can leverage this expanded XML-RPC package to provide
+    the HTTP challenge-response protocol instead of the standard XML-RPC BASIC
+    authentication protocol.

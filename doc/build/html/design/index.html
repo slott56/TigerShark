@@ -1,0 +1,181 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design Notes &mdash; TigerShark 3.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
+    <link rel="next" title="Design Note: Message Structure Traversal" href="traversal.html" />
+    <link rel="prev" title="Architecture and Design" href="../architecture.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="traversal.html" title="Design Note: Message Structure Traversal"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../architecture.html" title="Architecture and Design"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="design-notes">
+<h1>Design Notes<a class="headerlink" href="#design-notes" title="Permalink to this headline">¶</a></h1>
+<p>The following design notes are follow-on details that support this architecture.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="traversal.html">Traversing the complex hierarchical message definitions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="traversal.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="traversal.html#forces">Forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="traversal.html#solution">Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="traversal.html#consequence">Consequence</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ORMPlanning.html">Ways to map generic messages to a specific ORM</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ORMPlanning.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ORMPlanning.html#forces">Forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ORMPlanning.html#solution">Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ORMPlanning.html#consequences">Consequences</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="recursiveStructures.html">Persistence of recursive structures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="recursiveStructures.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recursiveStructures.html#forces">Forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recursiveStructures.html#solution">Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recursiveStructures.html#consequence">Consequence</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Segment-type customization</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#forces">Forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#solution">Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html#consequence">Consequence</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="claimsmodel.html">The Facade-based design pattern for claims</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="claimsmodel.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="claimsmodel.html#forces">Forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="claimsmodel.html#solution">Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="claimsmodel.html#consequences">Consequences</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="batchScript.html">Considerations in writing batch programs and scripts</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="batchScript.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batchScript.html#forces">Forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batchScript.html#solution">Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batchScript.html#consequences">Consequences</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="webservice.html">Considerations for implementing web services</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="webservice.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webservice.html#forces">Forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webservice.html#solution">Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webservice.html#consequences">Consequences</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="keygen.html">The design for keys for X12Messages, X12Loops and X12Segments</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html#problem">Problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html#forces">Forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html#solution">Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html#consequences">Consequences</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../architecture.html"
+                        title="previous chapter">Architecture and Design</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="traversal.html"
+                        title="next chapter">Design Note: Message Structure Traversal</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/design/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="traversal.html" title="Design Note: Message Structure Traversal"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../architecture.html" title="Architecture and Design"
+             >previous</a> |</li>
+        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

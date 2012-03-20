@@ -1,0 +1,1052 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Implementation &mdash; Tiger v3.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Tiger v3.1 documentation" href="index.html" />
+    <link rel="prev" title="Design Note: Key Generation for X12Messages" href="design/keygen.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="design/keygen.html" title="Design Note: Key Generation for X12Messages"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="implementation">
+<h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-claims">
+<span id="claims-module"></span><h2><tt class="docutils literal"><span class="pre">claims</span></tt> Module<a class="headerlink" href="#module-claims" title="Permalink to this headline">¶</a></h2>
+<p>Defines Claims from a business perspective, mapping to underlying X12 structures.</p>
+<p>This is a <strong>Facade</strong> over the <tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt> structure.  It is also a <strong>Bridge</strong>
+between the various X12 implementations (<a class="reference internal" href="#module-X12" title="X12"><tt class="xref py py-mod docutils literal"><span class="pre">X12</span></tt></a>, and <tt class="xref py py-mod docutils literal"><span class="pre">claims_837</span></tt>)
+and the user&#8217;s view of a <tt class="samp docutils literal"><span class="pre">Claim</span></tt> (as documented in the use cases).</p>
+<div class="section" id="bridge-use-cases">
+<h3>Bridge Use Cases<a class="headerlink" href="#bridge-use-cases" title="Permalink to this headline">¶</a></h3>
+<p>There are use cases for the <tt class="xref py py-class docutils literal"><span class="pre">X12LoopBridge</span></tt> design. Overall, the
+approach is to associate a Python class with an X12 Loop definition. Each attribute
+of the class is a <em>Descriptor</em> that references an X12 Element a
+Segment instance within the overall Loop.</p>
+<p>Repeating copies of a Loop create multiple object instances.</p>
+<p>Repeating copies of a Segment within a Loop (unwrapped by a loop) lead to a
+somewhat more complex definition.</p>
+<p>A Python <em>Descriptor</em> gives us an implicit get/set/del protocol around the attribute.
+Syntactically, an application like Automod simply references the attribute name.  Python
+will use the get and set methods from the Descriptor to access the attribute.</p>
+<p>The attribute Descriptor has several use cases, depending
+on the attribute&#8217;s type and how that value is accessed from the X12 Segment.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Single simple value, identified by position within a Segment of the top-level Loop.
+This is a direct reference to an Element, and is only appropriate when the
+Segment doesn&#8217;t repeat.</li>
+<li>Single simple value, one of a number of alternative positions within a Segment.
+This is a
+direct reference to an Element, and is appropriate when the Segment
+doesn&#8217;t repeat.  The Element is one of a number of
+candidates, which are defined by a sequence of
+<tt class="samp docutils literal"><span class="pre">(qualifier,value)</span></tt> position tuples.  If the Element value in the qualifier
+position is equal to a given qualifier value, the Element in the value
+position is the desired Element. This is required to pick values out of
+the <tt class="samp docutils literal"><span class="pre">PER</span></tt> segment.</li>
+<li>Sequence of simple values, with the value identified a fixed position in multiple
+occurrences of a Segment.  This is used for <tt class="samp docutils literal"><span class="pre">NTE</span></tt> segments.</li>
+<li>Single simple value, identified by a position in a Composite.  This is a direct reference
+to a sub-element of a Composite.  This is used to pick apart the various
+composites that occur in <tt class="samp docutils literal"><span class="pre">HI</span></tt> segments when a single value is required.</li>
+<li>Single complex value, identified by a Composite.</li>
+<li>Sequence of simple values, with the value identified by a fixed position in
+multiple occurrences of a Composite.  This is used to pick apart the various
+composites that occur in <tt class="samp docutils literal"><span class="pre">HI</span></tt> segments when a sequence of values is required.</li>
+<li>Sequence of complex values, with the value identified by a recurring
+Segment.  This is used to define a nested object.  This is used to pick apart the <tt class="samp docutils literal"><span class="pre">PWK</span></tt>
+Segments, which occur multiple times within the 2300 and 2400 loops.</li>
+</ul>
+</div></blockquote>
+<p>XXX - Can Composite and Element be refactored to have a common superclass?
+Do all Composites have a type identifier in the initial position?</p>
+<p>There are several dimensions to the above cases:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Source Type:  Segment (which has an underlying Segment Token) and
+Composite (which is just a string).  This distinction applies to
+some of the following dimensions.</li>
+<li>Source Objects:<ul>
+<li>Segment or Segments that match simple qualifications.</li>
+<li>Composite or Composites that match simple Criteria, but are found in multiple Segements.</li>
+</ul>
+</li>
+<li>Element Selection:<ul>
+<li>Fixed position within each Segment, OneOf a Number of Positions
+within a Segment.  This creates a sequence of strings values.</li>
+<li>Fixed position(s) within a Composite, Sequence of Positions
+within a Composite (usually positions [1:]).  This creates a sequence
+of string values.</li>
+<li>The whole Segment.</li>
+</ul>
+</li>
+<li>Conversion: No conversion, single-element conversion, multi-element conversion.
+At this point, we don&#8217;t care whether the data was from a Composite or Segment
+since it&#8217;s now a sequence of strings.</li>
+<li>Result Stucture: single occurance vs. the complete sequence.</li>
+</ul>
+</div></blockquote>
+<p>There are several conversion protocols.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Single-element string value is the native X12 source data types.
+No conversion is done.</li>
+<li>Single-element non-string value is done through a simple conversion
+protocol.  A class with two static methods (x12_to_python and python_to_x12)
+is used by the Descriptor to make the value usable.</li>
+<li>Multiple-element all-string values are can be handled as simple Python lists of
+strings.</li>
+<li>Multiple-element, non-String values use the same basic conversion
+protocol, starting from a list of strings instead of a single string Element
+value.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h3>Implementation<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>The <tt class="xref py py-class docutils literal"><span class="pre">X12LoopBridge</span></tt> handles the high-level mapping between a Python class
+and an instance of an <tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Loop</span></tt>.  Each bridge has a few high-level
+methods, and a long sequence of attribute definitions.  Each attribute
+is defined using an instance of the <tt class="xref py py-class docutils literal"><span class="pre">ElementAccess</span></tt> class.</p>
+<p>The <tt class="xref py py-class docutils literal"><span class="pre">ElementAccess</span></tt> class is a <strong>Lightweight</strong> class that has parameters and
+a reference to the underlying <tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Loop</span></tt> structure.  It is a Python
+<em>Descriptor</em>, and implements the get/set protocol for the attribute value.</p>
+<p>See the Automod Details use case for more information on how these objects are ultimately
+used.</p>
+<div class="section" id="element-access">
+<h4>Element Access<a class="headerlink" href="#element-access" title="Permalink to this headline">¶</a></h4>
+<p>The essential feature of Element Access is to provide a two-way mapping between
+a named attribute and Elements within a Segment.  This is done through two
+parallel multi-step alogithms for locating the element and either getting
+or setting the value.</p>
+<p>The element access get algorithm has the following steps:</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><strong>Source Segments</strong>. Accumulate the source X12Segment instances from
+the Loop. Filtering is a feature of the <tt class="xref py py-class docutils literal"><span class="pre">X12LoopBridge</span></tt>.</li>
+<li>If doing whole Segments:<ul>
+<li>Repackage the Segment as a list of strings for step 5.</li>
+</ul>
+</li>
+<li>If doing Elements from Segments (via <tt class="xref py py-class docutils literal"><span class="pre">ElementAccess</span></tt>):<ul>
+<li><strong>Element Selection</strong>. Locate actual positions of Element values
+within each Segment. This uses a sequence of X12Segment instances.
+There are several
+segment Position algorithms: simple value position, qualified
+position.  Package as list of strings for step 5.</li>
+</ul>
+</li>
+<li>Elif doing Elements from Composites (via <tt class="xref py py-class docutils literal"><span class="pre">CompositeAccess</span></tt>):<ul>
+<li><strong>Source Composites</strong>. Accumulate the source Composite sequences.
+Composite filtering is a feature an {CompositeAccess} object, it
+leverages the source segment list.</li>
+<li><strong>Element Selection</strong>. Accumulate the sequence of Element values.
+This is done by a <tt class="xref py py-class docutils literal"><span class="pre">CompositePosition</span></tt> object.  There are two
+composite positions algorithms: single value position and range of positions.
+Package as a list of strings for step 5.</li>
+</ul>
+</li>
+<li><strong>Conversion</strong>. Apply x12_to_python type conversion to sequences of Element values.
+Ths various <tt class="xref py py-class docutils literal"><span class="pre">Conversion</span></tt> subclasses handle this.</li>
+<li><strong>Result Structure</strong>. Pick the first value or the whole list of values.
+The <tt class="xref py py-class docutils literal"><span class="pre">ElementAccess</span></tt> class handles this final selection.</li>
+</ol>
+</div></blockquote>
+<p>The set algorithm is the approximate inverse of this.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li><strong>Conversion</strong>.  Apply python_to_x12 type conversion to build sequences of Element values.</li>
+<li>Then the <strong>Source Objects</strong> and <strong>Element Selection</strong> steps are done to
+locate through the applicable source element(s).</li>
+</ol>
+</div></blockquote>
+</div>
+<div class="section" id="segement-position">
+<h4>Segement Position<a class="headerlink" href="#segement-position" title="Permalink to this headline">¶</a></h4>
+<p>Element values are located by &#8220;position&#8221;.  In the majority of cases, the
+position is a single, fixed position within a Segment.  The position can
+be defined numerically.</p>
+<p>When creating an <tt class="xref py py-class docutils literal"><span class="pre">ElementAccess</span></tt> attribute definition, a numeric position
+is implicitly translated to an instance of <tt class="xref py py-class docutils literal"><span class="pre">Position</span></tt>, the simplest kind
+of position definition.</p>
+<p>There are several kinds of Position definitions.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="xref py py-class docutils literal"><span class="pre">Position</span></tt> defines a single, fixed Element position as the value
+for an attribute.</li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">OneOf</span></tt> is used to implement attributes of the <tt class="samp docutils literal"><span class="pre">PER</span></tt> Segment, which
+are defined by a series of (qualifer,value) pairs.  The Element&#8217;s position
+isn&#8217;t fixed, but is determined by examining a number of alterantives.</li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">SequenceOf</span></tt> is used to implement attributes which are a simple sequence
+of values picked from the Elements of the Segment.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="composite-position">
+<h4>Composite Position<a class="headerlink" href="#composite-position" title="Permalink to this headline">¶</a></h4>
+<p>Element values are located by &#8220;position&#8221;.  Positions are either a single,
+fixed position within a Composite or a range of positions.</p>
+<p><em>TBD</em></p>
+</div>
+<div class="section" id="conversion">
+<h4>Conversion<a class="headerlink" href="#conversion" title="Permalink to this headline">¶</a></h4>
+<p>Each data conversion is a static class definition with two methods:</p>
+<blockquote>
+<div><ul class="simple">
+<li>x12_to_python.  This method converts an X12 string or sequence
+of strings into a Python object.  The sequence of strings is used
+to convert Composites as well as converting whole Segments into distinct
+Python objects.</li>
+<li>python_to_x12.  This method converts a Python object into an
+X12 string or a sequence of strings.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="overall-mapping">
+<h3>Overall Mapping<a class="headerlink" href="#overall-mapping" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Patient</strong> - Loop 2000C</li>
+<li><strong>Subscriber</strong> - Loop 2000B</li>
+<li><strong>Provider</strong> - Loop 2000A (a/k/a BillingProvider)</li>
+<li><strong>Submitter</strong> - Loop 1000A</li>
+<li><strong>ClaimDetails</strong> - Superclass for portions of Loop 2300, including embedded paperwork
+and various &#8220;HI&#8221; composite objects.</li>
+<li><strong>Institutional_ClaimDetails</strong></li>
+<li><strong>Professional_ClaimDetails</strong></li>
+</ul>
+</div></blockquote>
+<p>XXX - Need to do the following:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>InstServiceLine</strong> - 2400</li>
+<li><strong>ProServiceLine</strong> - 2400</li>
+<li><strong>ServiceLineAdj</strong></li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="module-extras.standardSegment">
+<span id="extras-standardsegment-module"></span><h2><tt class="docutils literal"><span class="pre">extras.standardSegment</span></tt> Module<a class="headerlink" href="#module-extras.standardSegment" title="Permalink to this headline">¶</a></h2>
+<p>Define <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> structures for some standard X12 Segments.</p>
+<p>These are definitions of some standard Segments without a lot
+of supporting detail.
+It&#8217;s not perfectly clear what value this has, but, it might
+come in handy.</p>
+<p>This module includes a conversion to emit &#8220;better-than-nothing&#8221;
+<tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt> definitions for a number of standard
+X12 Segments.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">var isa:</th><td class="field-body">ISA Segment</td>
+</tr>
+<tr class="field"><th class="field-name">var gs:</th><td class="field-body">GS Segment</td>
+</tr>
+<tr class="field"><th class="field-name">var st:</th><td class="field-body">ST Segment</td>
+</tr>
+<tr class="field"><th class="field-name">var se:</th><td class="field-body">SE Segment</td>
+</tr>
+<tr class="field"><th class="field-name">var ge:</th><td class="field-body">GE Segment</td>
+</tr>
+<tr class="field"><th class="field-name">var iea:</th><td class="field-body">IEA Segment</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-test">
+<span id="test-package"></span><h2><tt class="docutils literal"><span class="pre">test</span></tt> Package<a class="headerlink" href="#module-test" title="Permalink to this headline">¶</a></h2>
+<p>The test package contains test data files as well as unit tests.</p>
+<div class="section" id="module-test.testDriver">
+<span id="testdriver"></span><h3>testDriver<a class="headerlink" href="#module-test.testDriver" title="Permalink to this headline">¶</a></h3>
+<p>Test Driver runs all discoverable unit tests.</p>
+<div class="section" id="synopsis">
+<h4>Synopsis<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="samp docutils literal"><span class="pre">python</span> <span class="pre">testDriver.py</span></tt></div></blockquote>
+</div>
+<div class="section" id="description">
+<h4>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><p>Traverses the development directory structure looking for test modules.
+All Django tests are descendants of the <tt class="samp docutils literal"><span class="pre">tiger</span></tt> subdirectory.
+All POP and WS tests are descendants of the <tt class="samp docutils literal"><span class="pre">tests</span></tt> subdirectory.</p>
+<p><tt class="samp docutils literal"><span class="pre">rootDir</span> <span class="pre">=</span> <span class="pre">r&quot;C:Documents</span> <span class="pre">and</span> <span class="pre">SettingsSLottMy</span> <span class="pre">DocumentsCTGTiger&quot;</span></tt></p>
+</div></blockquote>
+</div>
+<div class="section" id="options">
+<h4>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div>None.</div></blockquote>
+</div>
+<div class="section" id="environment-variables">
+<h4>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><p><tt class="samp docutils literal"><span class="pre">PYTHONPATH</span></tt> must encompass the entire Tiger directory tree.</p>
+<p><tt class="samp docutils literal"><span class="pre">DJANGO_SETTINGS_MODULE</span></tt> should <strong>not</strong> be set, since this test uses
+customized settings to prevent indadvertent updating of datbaases.</p>
+<p>XXX - A few tests reuse a single database.</p>
+</div></blockquote>
+</div>
+<div class="section" id="notes">
+<h4>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h4>
+<p>There are three kinds of tests:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Django unit tests.  These must be run with <tt class="samp docutils literal"><span class="pre">manage.py</span> <span class="pre">test</span></tt>
+or equivalent.  This driver does not spawn subprocesses for testing
+(it probably should) but uses <tt class="samp docutils literal"><span class="pre">call_command</span></tt>.</li>
+<li>Plain Old Python (POP) unit tests.  These can be run with the
+standard test runner.  Some will require the Django DB environment,
+which will tend to be setup by the first test.</li>
+<li>Web Services tests.  These require that the WS be started and stopped.
+These tests must spawn the <tt class="xref py py-mod docutils literal"><span class="pre">ws.wsClaims</span></tt> server.   These should
+define a single <tt class="samp docutils literal"><span class="pre">runTest</span></tt> method; these tests should not use introspection
+to locate all <tt class="samp docutils literal"><span class="pre">test*</span></tt> methods.</li>
+</ul>
+</div></blockquote>
+<p>XXX - Consider spawning subprocesses for each test to keep the environments
+distinct.  This will also eliminate the Django settings already defined error
+that comes from resetting the environment within this process.</p>
+</div>
+</div>
+<div class="section" id="module-test.testNavigation">
+<span id="testnavigation"></span><h3>testNavigation<a class="headerlink" href="#module-test.testNavigation" title="Permalink to this headline">¶</a></h3>
+<p>Test <tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt> Xpath-like navigation.</p>
+<p>This does two complete sets of tests against the navigation API.</p>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt> Factory is used to build one set of objects.  This works
+in a stand-alone mode.</p>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">claims.models</span></tt> Factory is used to build a parallel set of
+objects.  This cannot work stand-alone, because it requires a Django database
+that has been correctly configured via:</p>
+<div class="highlight-python"><pre>:samp:`manage.py syncdb claims`</pre>
+</div>
+</div>
+<div class="section" id="module-test.testParse">
+<span id="testparse"></span><h3>testParse<a class="headerlink" href="#module-test.testParse" title="Permalink to this headline">¶</a></h3>
+<p>Test <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt>.</p>
+<p>Manually build a 278 parser, <tt class="xref py py-data docutils literal"><span class="pre">parse_278</span></tt>.  Exercise that manually-built parser.</p>
+<p>Test the Python output from the 278 parser.</p>
+<p>Test the SQL output from the 278 parser.</p>
+<p>Test the Django output from the 278 parser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">var parse_278:</th><td class="field-body">Manually built parser for <tt class="samp docutils literal"><span class="pre">278</span></tt> messages.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-test.test_wsClaims">
+<span id="test-wsclaims"></span><h3>test_wsClaims<a class="headerlink" href="#module-test.test_wsClaims" title="Permalink to this headline">¶</a></h3>
+<p>Unit test of wsClaims sever module.</p>
+<p>Uses wrap_wsClaims.py to start a version of the claims server using an
+in-memory database.</p>
+</div>
+<div class="section" id="module-test.test_WSGIsrvr">
+<span id="test-wsgisrvr"></span><h3>test_WSGIsrvr<a class="headerlink" href="#module-test.test_WSGIsrvr" title="Permalink to this headline">¶</a></h3>
+<p>Test generic WSGIsrvr requests.</p>
+</div>
+<div class="section" id="module-test.testConvert">
+<span id="testconvert"></span><h3>testConvert<a class="headerlink" href="#module-test.testConvert" title="Permalink to this headline">¶</a></h3>
+<p>Test <a class="reference internal" href="#module-tools.convertPyX12" title="tools.convertPyX12"><tt class="xref py py-mod docutils literal"><span class="pre">tools.convertPyX12</span></tt></a>.</p>
+<p>Each TestCase is reasonably similar to the following.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Use the ParserBuilder to read the source and build an <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> object.</li>
+<li>Emit SQL.  Use the SQL to build a SQLite database.</li>
+<li>Emit Python Source.  Evaluate the Python source to create a parser.
+Parse a sample message with that parser.</li>
+</ol>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="tiger-django-project">
+<h2><tt class="docutils literal"><span class="pre">tiger</span></tt> Django Project<a class="headerlink" href="#tiger-django-project" title="Permalink to this headline">¶</a></h2>
+<p>To Be Removed.</p>
+<span class="target" id="module-tiger"></span><p>tiger is the root project for Django web applications.
+Each application is a subpackage.</p>
+<div class="section" id="module-tiger.claims">
+<span id="claims"></span><h3>Claims<a class="headerlink" href="#module-tiger.claims" title="Permalink to this headline">¶</a></h3>
+<p>tiger.claims is the core web application for looking at Claim <tt class="samp docutils literal"><span class="pre">837</span></tt> messages.</p>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">claims.models</span></tt> module defines the X12 message instance classes.
+These rely on Django ORM to persist messages, fetch messages from the database,
+and define a Django admin interface over the messages.</p>
+<span class="target" id="module-tiger.claims.models"></span><p>Definitions of persistent parts of an X12 message.</p>
+<p>An X12 message instance is a recursive construction of Loops, sub-Loops and Segments.
+The leaf elements are always Segments.  Segments contain, in turn, Composites
+and Elements.</p>
+<p>There are a number of operations on a Message.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Unmarshalling (&#8220;parsing&#8221;).  This is done by an instance of classes
+defined in the <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> package.  The results of parsing is a
+Message Instance, built from classes in this module.</li>
+<li>Marshalling.  Each message can marshall itself into a block
+of text.</li>
+<li>Persisting.  Since the message instance is build from subclasses
+of <tt class="xref py py-mod docutils literal"><span class="pre">django.db.models.Model</span></tt>, a call to <tt class="samp docutils literal"><span class="pre">save()</span></tt> persists
+the message.</li>
+<li>Retrieving.  The  <tt class="samp docutils literal"><span class="pre">X12Message.objects</span></tt> manager can retreive any
+Message.  Ordinary navigation will fetch Loops and Segments for that
+Message.</li>
+</ul>
+</div></blockquote>
+<p>This must be changed in two ways to stop using DB-generated PK&#8217;s.</p>
+<blockquote>
+<div><ul class="simple">
+<li>XXX - introduce an application-defined PK,
+at the Message level as the 1st part of all keys in a message structure.</li>
+<li>XXX - introduce a 2nd part to the key generated by the <tt class="xref py py-class docutils literal"><span class="pre">Factory</span></tt> or
+the <tt class="xref py py-class docutils literal"><span class="pre">X12Message</span></tt> rather than the key created by the database.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="navigation">
+<h4>Navigation<a class="headerlink" href="#navigation" title="Permalink to this headline">¶</a></h4>
+<p>Look at <tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt> for the XPath-like navigation model.
+This leads to a number of navgiation-oriented methods being folded into the
+class definitions.</p>
+</div>
+<div class="section" id="module-contents">
+<h4>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h4>
+<p>Here are the class definitions within this module.</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">X12Message</span></tt>.  The overall message &#8211; a collection of Loops.</p>
+</li>
+<li><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">X12Loop</span></tt>. A Loop is a collection of Segments and sub-Loops.
+In a SQL implementation, a Loop has an FK to the owning Message, as well
+as an FK to its immediate parent Loop.  Top-level Loops, which belong
+directly to the Message have a NULL parent.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Some Loops are &#8220;wrappers&#8221;: a degenerate case that contain one Segment
+and no subLoops.  This allows a Loop to contain a proper collection of
+Loops.</li>
+<li>Some Loops are &#8220;explicit&#8221;: a properly named Loop which contains
+explicit subloops or wrapper loops around.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">X12Segment</span></tt>. A Segment is a collection of Elements and Composites.
+Segments names are essentially a type name; there can be multiple instances
+within a single Loop, each with different semantics.  In a SQL implementation,
+a Segment has an FK to the owning Message, as well as an FK to the
+immediate parent Loop.</p>
+</li>
+<li><p class="first">X12Composite.  A Composite is a collection of Elements.  This is
+not actually implemented.  It is merely attributes of a Segment.</p>
+</li>
+<li><p class="first">X12Element.  An atomic piece of data.  These are identified
+positionally within a segment&#8217;s source text.</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<span class="target" id="module-tiger.claims.views"></span><p>Claims views.</p>
+<span class="target" id="module-tiger.claims.urls"></span><p>claims.urls</p>
+</div>
+<div class="section" id="module-tiger.claims_837">
+<span id="claims-837"></span><h3>Claims_837<a class="headerlink" href="#module-tiger.claims_837" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-tiger.claims_837.models"></span><p>Generated by make837.py on 2008-02-12 14:41:11.161000</p>
+<span class="target" id="module-tiger.claims_837.views"></span><p>Claims_837 views.</p>
+<span class="target" id="module-tiger.claims_837.extract"></span><p>Extract Claims Messages from Tiger/Claims</p>
+<div class="section" id="id2">
+<h4>Synopsis<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<p><tt class="samp docutils literal"><span class="pre">load.py</span> <span class="pre">[*description.csv</span></tt>...]*</p>
+</div>
+<div class="section" id="id3">
+<h4>Description<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id4">
+<h4>Options<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="id5">
+<h4>Environment Variables<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="samp docutils literal"><span class="pre">DJANGO_SETTINGS_MODULE</span></tt> is the Djago Settings Module that defines the
+database and other runtime environment parameters.</div></blockquote>
+</div>
+<span class="target" id="module-tiger.claims_837.fetch"></span><p>Batch Fetch Claims Messages.</p>
+<div class="section" id="id6">
+<h4>Synopsis<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<p><tt class="samp docutils literal"><span class="pre">fetch.py</span> <span class="pre">[*description.csv</span></tt>...]*</p>
+</div>
+<div class="section" id="id7">
+<h4>Description<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p>Reads the CSV-format descriptions, either from stdin or files supplied as command-line
+arguments.  Each file contains rows which provide the claim identifiers.  Other
+attributes are silently ignored.</p>
+<p>This program calls the claim fetch service, and writes a log of success
+and failures.</p>
+</div>
+<div class="section" id="id8">
+<h4>Options<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="samp docutils literal"><span class="pre">*description.csv`*</span> <span class="pre">a</span> <span class="pre">CSV-format</span> <span class="pre">files</span> <span class="pre">which</span> <span class="pre">identifies</span> <span class="pre">claims</span> <span class="pre">to</span> <span class="pre">fetch.</span>
+<span class="pre">If</span> <span class="pre">omitted,</span> <span class="pre">:samp:`stdin</span></tt> is read.</div></blockquote>
+</div>
+<div class="section" id="id9">
+<h4>Environment Variables<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="samp docutils literal"><span class="pre">DJANGO_SETTINGS_MODULE</span></tt> is the Djago Settings Module that defines the
+database and other runtime environment parameters.</div></blockquote>
+</div>
+<div class="section" id="csv-file-format">
+<h4>CSV FILE FORMAT<a class="headerlink" href="#csv-file-format" title="Permalink to this headline">¶</a></h4>
+<p>The claim description file has the following format.  Either the columns MUST be in
+the following order, or the first row MUST have these column titles.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">CLAIM-ID</span></tt>.  This is the unique claim ID which will be assigned.</li>
+</ul>
+<p>Other columns are permitted in this file.  They are ignored. For example, the following
+additional column is often used.</p>
+<ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">GWID</span></tt>  This is the HIPAA Gateway Transaction ID for the claim, used to retrieve it
+from FACETS.</li>
+</ul>
+</div></blockquote>
+</div>
+<span class="target" id="module-tiger.claims_837.load"></span><p>Batch Load Claims Messages associated with Classification plus Automod Parameters.</p>
+<div class="section" id="id10">
+<h4>Synopsis<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<p><tt class="samp docutils literal"><span class="pre">load.py</span> <span class="pre">[*description.csv</span></tt>...]*</p>
+</div>
+<div class="section" id="id11">
+<h4>Description<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>Reads the CSV-format descriptions, either from stdin or files supplied as command-line
+arguments.  Each file contains rows which provide three separate things:</p>
+<blockquote>
+<div><ul class="simple">
+<li>name of a file with claim(s) to parse (or the claim itself),</li>
+<li>classification parameters for the claims,</li>
+<li>automod constraints for the claims <em>[XXX this may be derivable from the claim]</em>.</li>
+</ul>
+</div></blockquote>
+<p>This program calls the claim load service, and writes a log of success
+and failures.</p>
+<p>Before this program can be run, an extract must be used to get the X12N claims
+out of the source application&#8217;s HIPAA gateway.  The extract process uses a
+request <tt class="docutils literal"><span class="pre">.csv</span></tt> file, and writes the X12N files, plus the description <tt class="docutils literal"><span class="pre">.csv</span></tt> file.</p>
+<p>The typical use case for this loader is as follows:</p>
+<div class="highlight-python"><pre>claimExtract request.csv | load.py</pre>
+</div>
+</div>
+<div class="section" id="id12">
+<h4>Options<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="samp docutils literal"><span class="pre">*description.csv`*</span> <span class="pre">a</span> <span class="pre">CSV-format</span> <span class="pre">files</span> <span class="pre">which</span> <span class="pre">identifies</span> <span class="pre">claims</span> <span class="pre">to</span> <span class="pre">load.</span>
+<span class="pre">If</span> <span class="pre">omitted,</span> <span class="pre">:samp:`stdin</span></tt> is read.</div></blockquote>
+</div>
+<div class="section" id="id13">
+<h4>Environment Variables<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="samp docutils literal"><span class="pre">DJANGO_SETTINGS_MODULE</span></tt> is the Djago Settings Module that defines the
+database and other runtime environment parameters.</div></blockquote>
+</div>
+<div class="section" id="id14">
+<h4>CSV FILE FORMAT<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<p>The claim description file has the following format.  Either the columns MUST be in
+the following order, or the first row MUST have these column titles.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">CLAIM-ID</span></tt>.  This is the unique claim ID which will be assigned.</li>
+<li><tt class="samp docutils literal"><span class="pre">BENEFIT</span></tt> The Benefit ID to assign to this claim.  This is checked against the
+TOS/Benefit list.</li>
+<li><tt class="samp docutils literal"><span class="pre">TYPE-OF-SERVICE</span></tt> The Type of Service ID to assign to this claim.  This is checked against the
+TOS/Benefit list.</li>
+<li><tt class="samp docutils literal"><span class="pre">LOCATION</span></tt> The codes are ALB, BUF, CE and CW.
+Descriptions are Albany, Buffalo, Central NY West, and Central NY East.</li>
+<li><tt class="samp docutils literal"><span class="pre">TYPE</span></tt> The codes are I, P, O or D.
+Descriptions are In-Patient, Professional, Out-Patient and Dental.</li>
+<li><tt class="samp docutils literal"><span class="pre">SECONDARY</span></tt>  The codes are M and R.
+Descriptions are Medicare and Regular.</li>
+<li><tt class="samp docutils literal"><span class="pre">GENDER</span></tt> This is used to define an automod constraint.
+Codes are M, F and U.</li>
+<li><tt class="samp docutils literal"><span class="pre">AGE-FROM</span></tt> This is used to define an automod constraint.</li>
+<li><tt class="samp docutils literal"><span class="pre">AGE-TO</span></tt> This is used to define an automod constraint.</li>
+<li><tt class="samp docutils literal"><span class="pre">CLAIM-FILE</span></tt> If present, this is the file that contains the X12 message for this claim.
+If omitted, the <cite>CLAIM-TEXT</cite> column must be used to provide
+the actual X12N message.</li>
+<li><tt class="samp docutils literal"><span class="pre">CLAIM-TEXT</span></tt> If present, this is the text of the X12 message for this claim.
+If omitted, the <cite>CLAIM-FILE</cite> column must be used to provide the
+name of a file with the actual X12N message.</li>
+</ul>
+</div></blockquote>
+<p>Other columns are permitted in this file.  They are ignored. For example, the following
+additional column is often used.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">GWID</span></tt>  This is the HIPAA Gateway Transaction ID for the claim, used to retrieve it
+from FACETS.</li>
+</ul>
+</div></blockquote>
+</div>
+<span class="target" id="module-tiger.claims_837.parse"></span><p>Generated by make837.py on 2008-02-12 14:41:11.161000</p>
+<span class="target" id="module-tiger.claims_837.urls"></span><p>claims_837.urls</p>
+</div>
+</div>
+<div class="section" id="module-tools">
+<span id="tools-package"></span><h2><tt class="docutils literal"><span class="pre">tools</span></tt> Package<a class="headerlink" href="#module-tools" title="Permalink to this headline">¶</a></h2>
+<p>Top-level application programs.</p>
+<span class="target" id="module-tools.convertPyX12"></span><p>Convert pyx12 configuration files from XML to Python.</p>
+<p>The Python X12 module contains a number of XML files which
+define X12 message structures.  They need to be converted into the syntax for the
+<tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> parser.</p>
+<p>Note that the pyx12 module defines Loops, Segments, Composites and individual Elements.
+It also defines selected data element types and sizes.  Since it provides
+complete code values, it provides Segment parsing clues and compliance
+checking values.</p>
+<div class="section" id="definitions">
+<h3>Definitions<a class="headerlink" href="#definitions" title="Permalink to this headline">¶</a></h3>
+<p>There are two principle classes in this module.</p>
+<dl class="class">
+<dt id="tools.convertPyX12.XMLParser">
+<em class="property">class </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">XMLParser</tt><a class="headerlink" href="#tools.convertPyX12.XMLParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a related set of XML docs to get codes, data element definitions
+and the overall Message structure.</p>
+<p>The ParserBuilder will need some combination of these related XML documents
+to define the <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> parser.</p>
+<p>This reads XML files and creates
+<tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> structures for the codes, data elements and message
+structures.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="tools.convertPyX12.ParserBuilder">
+<em class="property">class </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">ParserBuilder</tt><a class="headerlink" href="#tools.convertPyX12.ParserBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> Parser from an XML message specification.</p>
+<p>This makes use of an <a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> instance which has been populated
+with three separate XML documents.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>The data element definitions were parsed with <tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.data()</span></tt>.</li>
+<li>The external code definitions were parsed with <tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.codes()</span></tt>.</li>
+<li>The message structure was parsed via <tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.read()</span></tt>.</li>
+</ol>
+</div></blockquote>
+<p>Once this is complete, then the <tt class="xref py py-meth docutils literal"><span class="pre">build()</span></tt> method can be given the
+<a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> to emit the desired <tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt> object.</p>
+<p>This creates the <tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt> object, inserts the various
+Loop and Segment components.  The resulting object can be used to
+parse X12 messages.</p>
+<p>The resulting object can also be used to emit Python source,
+as well as SQL DDL.</p>
+<p>The <tt class="samp docutils literal"><span class="pre">&lt;transaction&gt;</span></tt> contains <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s.
+The <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s contain <tt class="samp docutils literal"><span class="pre">&lt;segment&gt;</span></tt>&#8216;s and <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s.
+The <tt class="samp docutils literal"><span class="pre">&lt;segment&gt;</span></tt>&#8216;s contain <tt class="samp docutils literal"><span class="pre">&lt;element&gt;</span></tt>&#8216;s and <tt class="samp docutils literal"><span class="pre">&lt;composite&gt;</span></tt>&#8216;s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Variables:</th><td class="field-body"><strong>dataDictionary</strong> &#8211; a dictionary of <tt class="samp docutils literal"><span class="pre">&lt;data_ele&gt;</span></tt> definitions.</td>
+</tr>
+</tbody>
+</table>
+<p>This emits a Python <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> constructor
+that matches the given <tt class="samp docutils literal"><span class="pre">.CF</span></tt> file.</p>
+</dd></dl>
+
+<p>There are two convenience function.</p>
+<dl class="function">
+<dt id="tools.convertPyX12.convertFile">
+<tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">convertFile</tt><big>(</big><em>baseDir</em>, <em>aFile</em>, <em>dataeleFile='dataele.xml'</em>, <em>codesFile='codes.xml'</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.convertFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a single message file from XML to <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt>.</p>
+<p>This will convert one message XML file in a given directory.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.convertPyX12.convertAll">
+<tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">convertAll</tt><big>(</big><em>baseDir</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.convertAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert all <tt class="samp docutils literal"><span class="pre">nnn*.4010.X*.xml</span></tt> files in the given directory.
+:param baseDir: Directory with message definition, dataele and codes files.</p>
+<p>This will convert all message XML files in a given directory,
+spewing out a mixture of DDL and Python source.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="warnings">
+<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
+<p>The following default warnings configuration is used.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="xref py py-class docutils literal"><span class="pre">XMLWarning</span></tt> are elevated to Errors to cause this module to stop.
+In the case of suspicious XML, it is possible to downgrade these
+errors and keep processing.</li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">EmptyLoopWarning</span></tt> is always reported, but is merely a warning.</li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">UnknownElementWarning</span></tt> is always reported, but is merely a warning.</li>
+<li><tt class="xref py py-class docutils literal"><span class="pre">Extension</span></tt> is reported once so that it&#8217;s clear that the XML contains
+features which were not parsed.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="xml-source-structure">
+<h3>XML Source Structure<a class="headerlink" href="#xml-source-structure" title="Permalink to this headline">¶</a></h3>
+<p>The pyx12 package provides a <tt class="samp docutils literal"><span class="pre">maps.xsd</span></tt> that provides a bit
+of guidance on parsing the XML documents.
+The <tt class="samp docutils literal"><span class="pre">README</span></tt> provides some additional hints.</p>
+<p>The following elements are
+used in the message xml definitions.</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>usage</dt>
+<dd><p class="first last">Implementation Guide Usage field. S=Situational, N=Not Used, R=Required</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>pos</dt>
+<dd><p class="first last">Segment position number &#8211; obvious from the XML document, but provided anyway</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>id</dt>
+<dd><p class="first last">Implementation Guide id</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>name</dt>
+<dd><p class="first last">Implementation Guide name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>data_ele</dt>
+<dd><p class="first last">Data Element id</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>valid_codes</dt>
+<dd><p class="first last">List of valid codes for the element or the name.
+Could be a separate list document, via attribute external=&#8221;&#8221;.
+See codes.xml for the complete set of codes.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>refdes</dt>
+<dd><p class="first last">reference designator for a Composite item</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>syntax</dt>
+<dd><p class="first last">STD syntax dependency string for a segment, optional</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>The <tt class="samp docutils literal"><span class="pre">maps.xsd</span></tt> provides the schema for the various message definitions.</p>
+</div>
+<div class="section" id="data-element-definitions">
+<h3>Data Element Definitions<a class="headerlink" href="#data-element-definitions" title="Permalink to this headline">¶</a></h3>
+<p>The following are used in the data element definitions.</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>data_ele</dt>
+<dd><p class="first last">Data Element ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>name</dt>
+<dd><p class="first last">IG name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>data_type</dt>
+<dd><p class="first last">STD type</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>min_len/max_len</dt>
+<dd><p class="first last">STD</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Analysis reveals the following DTD for the message definitions:</p>
+<div class="highlight-python"><pre>&lt;!ELEMENT data_elements ( data_ele )*&gt;
+
+&lt;!ELEMENT data_ele #PCDATA&gt;
+&lt;!ATTLIST data_ele
+    ele_num   CDATA #REQUIRED
+    data_type (ID|R|AN|DT|TM|N0) #REQUIRED
+    min_len   CDATA #REQUIRED
+    max_len   CDATA #REQUIRED
+    name      CDATA #REQUIRED&gt;</pre>
+</div>
+<p>&#64;requires: X12.parse</p>
+<p>Converts Python <tt class="samp docutils literal"><span class="pre">.xml</span></tt> files to <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> structures.
+From these structures visitors in <tt class="xref py py-mod docutils literal"><span class="pre">X12.map</span></tt> can emit Python source
+as well as Django ORM structures.</p>
+</div>
+<span class="target" id="module-tools.surveyPyX12"></span><p>Survey PyX12 Segment Definitions.</p>
+<p>Read ALL pyx12 message definitions, accumulate all Segment definitions.</p>
+<p>Examines the Python <tt class="samp docutils literal"><span class="pre">.xml</span></tt> files to write some overview
+reports.</p>
+<span class="target" id="module-tools.make837"></span><p>Build 837 parsers and 837 Segment definitions from XML Configuration.</p>
+<div class="section" id="id15">
+<h3>Synopsis<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<p><tt class="samp docutils literal"><span class="pre">make837.py</span> <span class="pre">-p</span> <em><span class="pre">python</span></em> <span class="pre">-d</span> <em><span class="pre">django</span></em> <span class="pre">-b</span> <em><span class="pre">baseDir</span></em> <em><span class="pre">name=source</span></em><span class="pre">...</span></tt></p>
+</div>
+<div class="section" id="id16">
+<h3>Description<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<p>Reads the PyX12 source files (in .XML) and writes a Python parser module
+for unmarshalling messages as well as a Django model for persisting the
+message instances.</p>
+<p>Prior to this step you must initialize the application directory
+structure with <tt class="samp docutils literal"><span class="pre">manage.py</span> <span class="pre">startapp</span> <em><span class="pre">newApp</span></em></tt>.</p>
+<p>After this step, you must update <tt class="samp docutils literal"><span class="pre">settings.py</span></tt> to include the new application.</p>
+<p>Then you must sync the database with the following command before you can start
+using the parser, factory and Django persistent class definitions you&#8217;ve created.</p>
+<p><tt class="samp docutils literal"><span class="pre">manage.py</span> <span class="pre">syncdb</span> <span class="pre">--pythonpath=&quot;..&quot;</span></tt></p>
+</div>
+<div class="section" id="id17">
+<h3>Options<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p><tt class="samp docutils literal"><span class="pre">-p</span> <em><span class="pre">python</span></em></tt> writes the Python module for unmarshalling the given messages.</p>
+<p><tt class="samp docutils literal"><span class="pre">-d</span> <em><span class="pre">django</span></em></tt> writes the Django module for persisting the given message instances.</p>
+<p><tt class="samp docutils literal"><span class="pre">-b</span> <em><span class="pre">baseDir</span></em></tt> is the base directory for the various source files.</p>
+<p><tt class="samp docutils literal"><span class="pre">name=</span><em><span class="pre">source</span></em></tt> a list of parser names and message definitions.
+The name is the Python variable name; the source is the PyX12 XML source file.</p>
+</div></blockquote>
+</div>
+<div class="section" id="id18">
+<h3>Notes<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h3>
+<p>An X12 parser is defined to use a Factory object to emit message instance objects.
+This Factory object is a run-time binding between a parser and some message instance module.
+Generic message instance modules include <tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt> and <tt class="xref py py-mod docutils literal"><span class="pre">claims.models</span></tt>.</p>
+<p>This application builds a specific message instance module, with specific message types.
+In order for an <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> module to make use of the Django message instance module,
+a Factory is required to instantiate the Django objects as well as the generic
+X12Segment object defined in <tt class="xref py py-mod docutils literal"><span class="pre">claims.models</span></tt>.</p>
+<p>Converts the <tt class="samp docutils literal"><span class="pre">837</span></tt> claim message definitions into Python parsers
+and Django ORM structures to define the <tt class="samp docutils literal"><span class="pre">tiger.claims-837.models</span></tt>
+classes.</p>
+</div>
+</div>
+<div class="section" id="ws-package">
+<h2><tt class="docutils literal"><span class="pre">ws</span></tt> Package<a class="headerlink" href="#ws-package" title="Permalink to this headline">¶</a></h2>
+<p>May Be Unnecessary.</p>
+<span class="target" id="module-ws"></span><p>ws contains Web Services components.</p>
+</div>
+<div class="section" id="module-X12">
+<span id="x12-package"></span><h2><tt class="docutils literal"><span class="pre">X12</span></tt> Package<a class="headerlink" href="#module-X12" title="Permalink to this headline">¶</a></h2>
+<p>Defines several modules with classes for X12 message processing.</p>
+<p>We have to disentangle two separate concepts.</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Message Type</strong>.  This is the structure of the message.
+The structure is defined by an <tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt> object.  In addition
+to defining the structure, a parser can also unmarshall a block of text.
+It can also be used for meta-level processing like emitting DB designs.</li>
+<li><strong>Message Instance</strong>.  This a specific message&#8217;s data; a collection of
+Segments which can be interpreted as a Message with Loops.  (The Loops
+are not stated, only the Segments.)  A message instance can be built
+by unmarshalling a block of text, or it can be built &#8220;manually&#8221; using
+object constructors.  A message instance can unmarshall itself, returning
+a block of text.</li>
+</ul>
+</div></blockquote>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> package defines the classes which are used to build an X12 message
+parser (or &#8220;unmarshaller&#8221;).  The classes are generic, and don&#8217;t recognize any
+specific X12 message structure.</p>
+<p>A parser for a given message type can be built from the <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> classes manually or
+by a conversion tool.
+The manual construction involves writing a bunch of object constructors to build parsers
+for the Message, the Loops within the Message, the Segments within the Loops,
+and the Composites and Elements within the Segments.</p>
+<p>A conversion tool usually reads some other meta-data version of the message structure,
+and builds an <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> structure.  There is a conversion tool for Perl <tt class="samp docutils literal"><span class="pre">.cf</span></tt>
+files, and a conversion tool for <tt class="samp docutils literal"><span class="pre">.xml</span></tt> files.  Both of these conversion tools
+build the complete <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> object, which can either be used to parse messages,
+or can be used for other meta-level processing.</p>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">X12.map</span></tt> package supports meta-level processing.  This includes subclasses
+of <tt class="xref py py-class docutils literal"><span class="pre">X12.parse.StructureVisitor</span></tt> that can traverse an <tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt> object to
+report on its structure.
+This is used by the conversion tools to traverse the definitions
+and emit the source code, Django class definitions or raw SQL definitions
+for the message that the parser recognizes.</p>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt> package defines a message instance.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Implementation</a><ul>
+<li><a class="reference internal" href="#module-claims"><tt class="docutils literal"><span class="pre">claims</span></tt> Module</a><ul>
+<li><a class="reference internal" href="#bridge-use-cases">Bridge Use Cases</a></li>
+<li><a class="reference internal" href="#id1">Implementation</a><ul>
+<li><a class="reference internal" href="#element-access">Element Access</a></li>
+<li><a class="reference internal" href="#segement-position">Segement Position</a></li>
+<li><a class="reference internal" href="#composite-position">Composite Position</a></li>
+<li><a class="reference internal" href="#conversion">Conversion</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#overall-mapping">Overall Mapping</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-extras.standardSegment"><tt class="docutils literal"><span class="pre">extras.standardSegment</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-test"><tt class="docutils literal"><span class="pre">test</span></tt> Package</a><ul>
+<li><a class="reference internal" href="#module-test.testDriver">testDriver</a><ul>
+<li><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#options">Options</a></li>
+<li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-test.testNavigation">testNavigation</a></li>
+<li><a class="reference internal" href="#module-test.testParse">testParse</a></li>
+<li><a class="reference internal" href="#module-test.test_wsClaims">test_wsClaims</a></li>
+<li><a class="reference internal" href="#module-test.test_WSGIsrvr">test_WSGIsrvr</a></li>
+<li><a class="reference internal" href="#module-test.testConvert">testConvert</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#tiger-django-project"><tt class="docutils literal"><span class="pre">tiger</span></tt> Django Project</a><ul>
+<li><a class="reference internal" href="#module-tiger.claims">Claims</a><ul>
+<li><a class="reference internal" href="#navigation">Navigation</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-tiger.claims_837">Claims_837</a><ul>
+<li><a class="reference internal" href="#id2">Synopsis</a></li>
+<li><a class="reference internal" href="#id3">Description</a></li>
+<li><a class="reference internal" href="#id4">Options</a></li>
+<li><a class="reference internal" href="#id5">Environment Variables</a></li>
+<li><a class="reference internal" href="#id6">Synopsis</a></li>
+<li><a class="reference internal" href="#id7">Description</a></li>
+<li><a class="reference internal" href="#id8">Options</a></li>
+<li><a class="reference internal" href="#id9">Environment Variables</a></li>
+<li><a class="reference internal" href="#csv-file-format">CSV FILE FORMAT</a></li>
+<li><a class="reference internal" href="#id10">Synopsis</a></li>
+<li><a class="reference internal" href="#id11">Description</a></li>
+<li><a class="reference internal" href="#id12">Options</a></li>
+<li><a class="reference internal" href="#id13">Environment Variables</a></li>
+<li><a class="reference internal" href="#id14">CSV FILE FORMAT</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-tools"><tt class="docutils literal"><span class="pre">tools</span></tt> Package</a><ul>
+<li><a class="reference internal" href="#definitions">Definitions</a></li>
+<li><a class="reference internal" href="#warnings">Warnings</a></li>
+<li><a class="reference internal" href="#xml-source-structure">XML Source Structure</a></li>
+<li><a class="reference internal" href="#data-element-definitions">Data Element Definitions</a></li>
+<li><a class="reference internal" href="#id15">Synopsis</a></li>
+<li><a class="reference internal" href="#id16">Description</a></li>
+<li><a class="reference internal" href="#id17">Options</a></li>
+<li><a class="reference internal" href="#id18">Notes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ws-package"><tt class="docutils literal"><span class="pre">ws</span></tt> Package</a></li>
+<li><a class="reference internal" href="#module-X12"><tt class="docutils literal"><span class="pre">X12</span></tt> Package</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="design/keygen.html"
+                        title="previous chapter">Design Note: Key Generation for X12Messages</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/implementation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="design/keygen.html" title="Design Note: Key Generation for X12Messages"
+             >previous</a> |</li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

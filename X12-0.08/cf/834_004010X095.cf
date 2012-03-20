@@ -1,0 +1,155 @@
+[LOOPS]
+ISA
+GS
+ST
+1000A
+1000B
+1000C
+2000
+SE
+GE
+IEA
+
+#--- start of loop details ---#
+
+[ISA]
+segment=ISA:::ISA:R:1
+
+[GS]
+segment=GS:::GS:R:1
+
+#LOOP ID - HEADER
+[ST]
+segment=ST:::Transaction Set Header:R:1
+segment=BGN:::Beginning Segment:R:1
+segment=REF:::Transaction Set Policy Number:S:1
+segment=DTP:::File Effective Date:S:>1
+
+#LOOP ID - 1000A SPONSOR NAME 1
+[1000A]
+segment=N1:1:P5:Sponsor Name:R:1
+
+#LOOP ID - 1000B PAYER 1
+[1000B]
+segment=N1:1:1N:Payer:R:1
+
+#LOOP ID - 1000C TPA/BROKER NAME 2
+[1000C]
+segment=N1:1:TV:TPA/Broker Name:S:1
+loop=1100C
+
+#LOOP ID - 1100C TPA/BROKER ACCOUNT INFORMATION 1
+[1100C]
+segment=ACT:::TPA/Broker Account Information:S:1
+
+#LOOP ID - 2000 MEMBER LEVEL DETAIL >1
+[2000]
+segment=INS:::Member Level Detail:R:1
+segment=REF:::Subscriber Number:R:1
+segment=REF:::Member Policy Number:S:1
+segment=REF:::Member Identification Number:S:5
+segment=REF:::Prior Coverage Months:S:1
+segment=DTP:::Member Level Dates:S:20
+loop=2100A
+loop=2100B
+loop=2100C
+loop=2100D
+loop=2100E
+loop=2100F
+loop=2100G
+loop=2200
+loop=2300
+
+#LOOP ID - 2100A MEMBER NAME 1
+[2100A]
+segment=NM1:1:IL:Member Name:R:1
+segment=PER:::Member Communications Numbers:S:1
+segment=N3:::Member Residence Street Address:S:1
+segment=N4:::Member Residence City, State, ZIP Code:S:1
+segment=DMG:::Member Demographics:S:1
+segment=ICM:::Member Income:S:1
+segment=AMT:::Member Policy Amounts:S:4
+segment=HLH:::Member Health Information:S:1
+segment=LUI:::Member Language:S:5
+
+#LOOP ID - 2100B INCORRECT MEMBER NAME 1
+[2100B]
+segment=NM1:1:70:Incorrect Member Name:S:1
+segment=DMG:::Incorrect Member Demographics:S:1
+
+#LOOP ID - 2100C MEMBER MAILING ADDRESS 1
+[2100C]
+segment=NM1:1:31:Member Mailing Address:S:1
+segment=N3:::Member Mail Street Address:S:1
+segment=N4:::Member Mail City, State, Zip:S:1
+
+#LOOP ID - 2100D MEMBER EMPLOYER 3
+[2100D]
+segment=NM1:1:ES:Member Employer:S:1
+segment=PER:::Member Employer Communications Numbers:S:1
+segment=N3:::Member Employer Street Address:S:1
+segment=N4:::Member Employer City, State, Zip:S:1
+
+#LOOP ID - 2100E MEMBER SCHOOL 3
+[2100E]
+segment=NM1:1:M8:Member School:S:1
+segment=PER:::Member School Commmunications Numbers:S:1
+segment=N3:::Member School Street Address:S:1
+segment=N4:::Member School City, State, Zip:S:1
+
+#LOOP ID - 2100F CUSTODIAL PARENT 1
+[2100F]
+segment=NM1:1:S3:Custodial Parent:S:1
+segment=PER:::Custodial Parent Communications Numbers:S:1
+segment=N3:::Custodial Parent Street Address:S:1
+segment=N4:::Custodial Parent City, State, Zip:S:1
+
+#LOOP ID - 2100G RESPONSIBLE PERSON 1
+[2100G]
+segment=NM1:1:QD:Responsible Person:S:1
+segment=PER:::Responsible Person Communications Numbers:S:1
+segment=N3:::Responsible Person Street Address:S:1
+segment=N4:::Responsible Person City, State, Zip:S:1
+
+#LOOP ID - 2200 DISABILITY INFORMATION 1
+[2200]
+segment=DSB:::Disability Information:S:1
+segment=DTP:::Disability Eligibility Dates:S:2
+
+#LOOP ID - 2300 HEALTH COVERAGE 99
+[2300]
+segment=HD:::Health Coverage:S:1
+segment=DTP:::Health Coverage Dates:R:4
+segment=AMT:::Health Coverage Policy:S:4
+segment=REF:::Health Coverage Policy Number:S:2
+segment=IDC:::Identification Card:S:10
+loop=2310
+loop=2320
+
+#LOOP ID - 2310 PROVIDER INFORMATION 30
+[2310]
+segment=LX:::Provider Information:S:1
+segment=NM1:::Provider Name:R:1
+segment=N4:::Provider City, State, ZIP Code:S:1
+segment=PER:::Provider Communications Numbers:S:2
+segment=PLA:::PCP Change Reason:S:1
+
+#LOOP ID - 2320 COORDINATION OF BENEFITS 5
+[2320]
+segment=COB:::Coordination of Benefits:S:1
+segment=REF:::Additional Coordination of Benefits Identifiers:S:5
+segment=N1:::Other Insurance Company Name:S:1
+segment=DTP:::Coordination of Benefits Eligibility Dates:S:2
+
+#LOOP ID - TRAILER
+[SE]
+segment=SE:::Transaction Set Trailer:R:1
+
+[GE]
+segment=GE:::GE:R:1
+
+[IEA]
+segment=IEA:::IEA:R:1
+
+
+

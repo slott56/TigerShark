@@ -1,0 +1,110 @@
+App,Module,Type,Chars,Words,Lines,Notes,Comments,% Comments
+ECL00017\ECL00017.Business,ClaimGroupInfo.vb,.vb,4699,389,151,[],13,9%
+ECL00017\ECL00017.Business,clsBenifitTOS.vb,.vb,2057,170,45,[],12,27%
+ECL00017\ECL00017.Business,clsClaim.vb,.vb,56353,4496,1344,[],272,20%
+ECL00017\ECL00017.Business,clsInstClaimDetails.vb,.vb,132079,10118,3171,[],355,11%
+ECL00017\ECL00017.Business,clsInstServiceLine.vb,.vb,27969,2283,661,[],145,22%
+ECL00017\ECL00017.Business,clsPatient.vb,.vb,30703,2092,676,[],105,16%
+ECL00017\ECL00017.Business,clsProClaimDetails.vb,.vb,65324,4621,1496,[],189,13%
+ECL00017\ECL00017.Business,clsProServiceLine.vb,.vb,30753,2496,713,[],155,22%
+ECL00017\ECL00017.Business,clsProvider.vb,.vb,53882,4504,1397,[],343,25%
+ECL00017\ECL00017.Business,clsServiceLineAdj.vb,.vb,12276,945,318,[],40,13%
+ECL00017\ECL00017.Business,clsSubmitter.vb,.vb,14459,1206,364,[],119,33%
+ECL00017\ECL00017.Business,clsSubscriber.vb,.vb,30987,2167,695,[],112,16%
+ECL00017\ECL00017.Business,clsX12Segment.vb,.vb,2858,276,93,[],21,23%
+ECL00017\ECL00017.Business,enumEnums.vb,.vb,89,10,6,[],0,0%
+ECL00017\ECL00017.Business,modGlobal.vb,.vb,5958,598,157,[],39,25%
+ECL00017\ECL00017.Business\My Project,Application.Designer.vb,.vb,425,43,13,[],6,46%
+ECL00017\ECL00017.Business\My Project,AssemblyInfo.vb,.vb,1210,140,35,[],13,37%
+ECL00017\ECL00017.Business\My Project,Resources.Designer.vb,.vb,2720,206,63,[],20,32%
+ECL00017\ECL00017.Business\My Project,Settings.Designer.vb,.vb,3362,215,85,[],6,7%
+ECL00017\ECL00017.DataAccess,clsSQLAccess.vb,.vb,23805,2157,686,[],221,32%
+ECL00017\ECL00017.DataAccess,clsSybaseSystemsListHandler.vb,.vb,7600,734,251,[],72,29%
+ECL00017\ECL00017.DataAccess,clsTigerCipher.vb,.vb,5973,644,163,[],33,20%
+ECL00017\ECL00017.DataAccess,Form1.Designer.vb,.vb,2107,178,58,['DesignerGenerated'],8,14%
+ECL00017\ECL00017.DataAccess,Form1.vb,.vb,526,54,22,[],0,0%
+ECL00017\ECL00017.DataAccess\My Project,Application.Designer.vb,.vb,426,43,13,[],6,46%
+ECL00017\ECL00017.DataAccess\My Project,AssemblyInfo.vb,.vb,1215,141,35,[],13,37%
+ECL00017\ECL00017.DataAccess\My Project,Resources.Designer.vb,.vb,2723,206,63,[],20,32%
+ECL00017\ECL00017.DataAccess\My Project,Settings.Designer.vb,.vb,2923,191,73,[],6,8%
+ECL00017\ECL00017.GUI,AutomodController.vb,.vb,94530,6763,2048,[],343,17%
+ECL00017\ECL00017.GUI,Automod_Mockup.Designer.vb,.vb,25955,1880,589,['DesignerGenerated'],53,9%
+ECL00017\ECL00017.GUI,Automod_Mockup.vb,.vb,38,5,3,[],0,0%
+ECL00017\ECL00017.GUI,clsDataGridViewMaskTextboxClasses.vb,.vb,6364,498,210,[],10,5%
+ECL00017\ECL00017.GUI,clsDBAccess.vb,.vb,7676,678,212,[],43,20%
+ECL00017\ECL00017.GUI,clsListViewComparer.vb,.vb,2586,214,74,[],4,5%
+ECL00017\ECL00017.GUI,clsTigerTextBox.vb,.vb,8587,839,241,[],53,22%
+ECL00017\ECL00017.GUI,Copy of frmLogin.Designer.vb,.vb,6493,458,153,['DesignerGenerated'],14,9%
+ECL00017\ECL00017.GUI,DBAdminController.vb,.vb,2669,206,76,[],12,16%
+ECL00017\ECL00017.GUI,Form1.Designer.vb,.vb,1191,109,34,['DesignerGenerated'],6,18%
+ECL00017\ECL00017.GUI,Form1.vb,.vb,29,5,3,[],0,0%
+ECL00017\ECL00017.GUI,frmAutomod.Designer.vb,.vb,38337,2725,831,['DesignerGenerated'],74,9%
+ECL00017\ECL00017.GUI,frmAutomod.vb,.vb,113343,9660,2370,"['SELECT CMC_MEME_MEMBER.MEME_LAST_NAME, CMC_MEME_MEMBER.MEME_FIRST_NAME, CMC_MEME_MEMBER.MEME_MID_INIT, ']",1344,57%
+ECL00017\ECL00017.GUI,frmBenTos.Designer.vb,.vb,7169,565,184,['DesignerGenerated'],18,10%
+ECL00017\ECL00017.GUI,frmBenTos.vb,.vb,7685,698,212,[],33,16%
+ECL00017\ECL00017.GUI,frmDBAdmin.Designer.vb,.vb,5915,437,139,['DesignerGenerated'],14,10%
+ECL00017\ECL00017.GUI,frmDBAdmin.vb,.vb,17065,1562,465,[],130,28%
+ECL00017\ECL00017.GUI,frmDeleteClaimGroupList.Designer.vb,.vb,3468,277,86,['DesignerGenerated'],10,12%
+ECL00017\ECL00017.GUI,frmDeleteClaimGroupList.vb,.vb,8221,837,193,"['UPDATE "" & strDtlTblNm & "" ', 'UPDATE "" & strHdrTblNm & "" ']",37,19%
+ECL00017\ECL00017.GUI,frmEdit.Designer.vb,.vb,426208,35462,11609,['DesignerGenerated'],965,8%
+ECL00017\ECL00017.GUI,frmEdit.vb,.vb,204026,13701,3906,['UPDATE '],477,12%
+ECL00017\ECL00017.GUI,frmLoad.Designer.vb,.vb,16378,1052,359,['DesignerGenerated'],36,10%
+ECL00017\ECL00017.GUI,frmLoad.vb,.vb,1653,163,59,[],9,15%
+ECL00017\ECL00017.GUI,frmLogin.Designer.vb,.vb,6493,458,153,['DesignerGenerated'],14,9%
+ECL00017\ECL00017.GUI,frmLogin.vb,.vb,4282,348,140,[],22,16%
+ECL00017\ECL00017.GUI,frmMain.Designer.vb,.vb,70102,4362,1469,['DesignerGenerated'],150,10%
+ECL00017\ECL00017.GUI,frmMain.vb,.vb,113926,10254,2547,"['SELECT COUNT(*) ', 'SELECT COUNT(*) AS totalcount ', ""SELECT a.*, ISNULL(b.user_id, 'NA') AS yno "", ""SELECT a.*, ISNULL(b.user_id, 'NA') AS yno "", ""SELECT a.*, ISNULL(b.user_id, 'NA') AS yno ""]",936,37%
+ECL00017\ECL00017.GUI,frmMain2.Designer.vb,.vb,43345,2910,968,['DesignerGenerated'],90,9%
+ECL00017\ECL00017.GUI,frmMain2.vb,.vb,137,17,6,[],0,0%
+ECL00017\ECL00017.GUI,frmSave.Designer.vb,.vb,7589,572,181,['DesignerGenerated'],17,9%
+ECL00017\ECL00017.GUI,frmSave.vb,.vb,18753,1861,453,[],130,29%
+ECL00017\ECL00017.GUI,frmSearch.Designer.vb,.vb,7399,584,191,['DesignerGenerated'],19,10%
+ECL00017\ECL00017.GUI,frmSearch.vb,.vb,2234,194,73,[],0,0%
+ECL00017\ECL00017.GUI,frmTaskDesc.Designer.vb,.vb,2642,227,70,['DesignerGenerated'],9,13%
+ECL00017\ECL00017.GUI,frmTaskDesc.vb,.vb,35,5,3,[],0,0%
+ECL00017\ECL00017.GUI,frmUser.Designer.vb,.vb,6731,532,172,['DesignerGenerated'],17,10%
+ECL00017\ECL00017.GUI,frmUser.vb,.vb,3385,304,94,[],21,22%
+ECL00017\ECL00017.GUI,LoginController.vb,.vb,5462,460,149,[],31,21%
+ECL00017\ECL00017.GUI,MainController.vb,.vb,20678,1857,558,"['UPDATE ET013_TIGER_WIP_HDR ', 'SELECT * FROM ET011_TIGER_BM_HDR ', 'SELECT * FROM ET012_TIGER_BM_CLM ']",100,18%
+ECL00017\ECL00017.GUI,modGlobal.vb,.vb,11945,1214,313,[],69,22%
+ECL00017\ECL00017.GUI,MyTextbox.vb,.vb,34,5,3,[],0,0%
+ECL00017\ECL00017.GUI,SaveController.vb,.vb,15857,1387,349,"['SELECT MAX(CLM_SEC_ID) ', 'SELECT MAX(CLM_SEC_ID) ']",66,19%
+ECL00017\ECL00017.GUI,SaveCtrl.vb,.vb,433,32,31,[],1,3%
+ECL00017\ECL00017.GUI,Settings.vb,.vb,487,71,11,[],5,45%
+ECL00017\ECL00017.GUI,splAbout.Designer.vb,.vb,7368,444,138,['DesignerGenerated'],12,9%
+ECL00017\ECL00017.GUI,splAbout.vb,.vb,2078,219,40,[],19,48%
+ECL00017\ECL00017.GUI,UserControl1.Designer.vb,.vb,997,92,26,['DesignerGenerated'],5,19%
+ECL00017\ECL00017.GUI,UserControl1.vb,.vb,37,5,3,[],0,0%
+ECL00017\ECL00017.GUI,UserInformation.vb,.vb,4808,475,160,[],58,36%
+ECL00017\ECL00017.GUI\My Project,Application.Designer.vb,.vb,1477,135,38,[],10,26%
+ECL00017\ECL00017.GUI\My Project,AssemblyInfo.vb,.vb,1198,142,35,[],13,37%
+ECL00017\ECL00017.GUI\My Project,Resources.Designer.vb,.vb,3733,285,87,[],32,37%
+ECL00017\ECL00017.GUI\My Project,Settings.Designer.vb,.vb,9238,468,206,[],6,3%
+ECL00017\ECL00017.GUI\Web References\gwbu01_SendEmail,Reference.vb,.vb,36531,2415,563,[],66,12%
+ECL00017\TestProject1,clsSybaseSystemsListHandlerTest.vb,.vb,2347,252,84,[],31,37%
+ECL00017\TestProject1,VSCodeGenAccessors.vb,.vb,4314,275,98,[],5,5%
+ECL00017\TestProject1\My Project,AssemblyInfo.vb,.vb,1223,142,37,[],13,35%
+ECL00017\TigerEnumerations\org\healthnow\tiger\enumerations,ENUM.cs,.cs,494,41,28,[],0,0%
+ECL00017\TigerEnumerations\Properties,AssemblyInfo.cs,.cs,1418,173,35,[],1,3%
+,,,,,46415,,7997,17%
+
+
+ECL00018\ECL00018,clsDBAccess.vb,.vb,7672,678,212,[],39,18%
+ECL00018\ECL00018,modGlobal.vb,.vb,1540,132,39,[],2,5%
+ECL00018\ECL00018,modMain.vb,.vb,48332,4112,1153,"['SELECT * FROM ET001_TIGER_USER_INFO WHERE USER_ID = \'"" & strYNum & ""\'', 'Execute SPTG003_INS_BASE_HDR ', 'SELECT max(CLM_INSTNC_ID) ', 'Execute SPTG004_INS_BASE_CLM ', 'SELECT * FROM ET004_TIGER_TOS_BEN_REL ', 'SELECT * FROM ET008_TIGER_LOC WHERE HEALTHNOW_DIV_NM = \'"" & strLoc & ""\'', 'SELECT * FROM ET010_TIGER_CLM_TYP WHERE CLM_TYP_NM = \'"" & strType & ""\'', 'SELECT * FROM ET009_TIGER_SEC_COV WHERE SEC_COV_NM = \'"" & strSec & ""\'', 'SELECT * FROM ET007_TIGER_LOC_TYP_SEC_REL ', 'SELECT * FROM ET002_TIGER_BASE_HDR ']",166,14%
+ECL00018\ECL00018\My Project,Application.Designer.vb,.vb,425,43,13,[],6,46%
+ECL00018\ECL00018\My Project,AssemblyInfo.vb,.vb,1182,140,35,[],13,37%
+ECL00018\ECL00018\My Project,Resources.Designer.vb,.vb,2732,207,62,[],20,32%
+ECL00018\ECL00018\My Project,Settings.Designer.vb,.vb,15112,800,376,[],6,2%
+,,,,,1890,,252,13%
+
+
+ECL00019,clsDataAccess.vb,.vb,4127,339,149,[],16,11%
+ECL00019,clsOutputFileData.vb,.vb,10251,923,250,[],50,20%
+ECL00019,modAutoMerge.vb,.vb,27538,2604,570,['UPDATE dbo.et013_tiger_wip_hdr '],184,32%
+ECL00019,modMERGE.vb,.vb,2276,246,105,"['', '']",5,5%
+ECL00019\My Project,Application.Designer.vb,.vb,425,43,13,[],6,46%
+ECL00019\My Project,AssemblyInfo.vb,.vb,1208,144,35,[],13,37%
+ECL00019\My Project,Resources.Designer.vb,.vb,2717,206,63,[],20,32%
+ECL00019\My Project,Settings.Designer.vb,.vb,8925,477,208,[],6,3%
+,,,,,1393,,300,22%

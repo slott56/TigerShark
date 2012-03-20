@@ -1,0 +1,712 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>tools Package &mdash; TigerShark 3.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
+    <link rel="up" title="Implementation" href="index.html" />
+    <link rel="next" title="claims Module" href="claims.html" />
+    <link rel="prev" title="X12 Package" href="x12.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="claims.html" title="claims Module"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="x12.html" title="X12 Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Implementation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-tools">
+<span id="tools-package"></span><h1><tt class="docutils literal"><span class="pre">tools</span></tt> Package<a class="headerlink" href="#module-tools" title="Permalink to this headline">¶</a></h1>
+<p>Top-level application programs.</p>
+<ul class="simple">
+<li><a class="reference internal" href="#module-tools.convertPyX12" title="tools.convertPyX12"><tt class="xref py py-mod docutils literal"><span class="pre">tools.convertPyX12</span></tt></a>.
+Converts Python <tt class="file docutils literal"><span class="pre">.xml</span></tt> files to <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> structures.
+From these structures visitors in <a class="reference internal" href="x12.html#module-X12.map" title="X12.map"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map</span></tt></a> can emit Python source
+as well as Django ORM structures.</li>
+<li><a class="reference internal" href="#module-tools.surveyPyX12" title="tools.surveyPyX12"><tt class="xref py py-mod docutils literal"><span class="pre">tools.surveyPyX12</span></tt></a>.
+Examines the Python <tt class="file docutils literal"><span class="pre">.xml</span></tt> files to write some overview
+reports.</li>
+</ul>
+<div class="section" id="module-tools.convertPyX12">
+<span id="tools-convertpyx12"></span><h2>tools.convertPyX12<a class="headerlink" href="#module-tools.convertPyX12" title="Permalink to this headline">¶</a></h2>
+<p>Convert pyx12 configuration files from XML to Python.</p>
+<p>The Python X12 module contains a number of XML files which
+define X12 message structures.  They need to be converted into the syntax for the
+<a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> parser.</p>
+<p>Note that the pyx12 module defines Loops, Segments, Composites and individual Elements.
+It also defines selected data element types and sizes.  Since it provides
+complete code values, it provides Segment parsing clues and compliance
+checking values.</p>
+<div class="section" id="definitions">
+<h3>Definitions<a class="headerlink" href="#definitions" title="Permalink to this headline">¶</a></h3>
+<p>There are two principle classes in this module.</p>
+<dl class="class">
+<dt id="tools.convertPyX12.XMLParser">
+<em class="property">class </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">XMLParser</tt><a class="headerlink" href="#tools.convertPyX12.XMLParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a related set of XML docs to get codes, data element definitions
+and the overall Message structure.</p>
+<p>The ParserBuilder will need some combination of these related XML documents
+to define the <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> parser.</p>
+<p>This reads XML files and creates
+<tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> structures for the codes, data elements and message
+structures.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="tools.convertPyX12.ParserBuilder">
+<em class="property">class </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">ParserBuilder</tt><a class="headerlink" href="#tools.convertPyX12.ParserBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> Parser from an XML message specification.</p>
+<p>This makes use of an <a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> instance which has been populated
+with three separate XML documents.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>The data element definitions were parsed with <a class="reference internal" href="#tools.convertPyX12.XMLParser.data" title="tools.convertPyX12.XMLParser.data"><tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.data()</span></tt></a>.</li>
+<li>The external code definitions were parsed with <a class="reference internal" href="#tools.convertPyX12.XMLParser.codes" title="tools.convertPyX12.XMLParser.codes"><tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.codes()</span></tt></a>.</li>
+<li>The message structure was parsed via <a class="reference internal" href="#tools.convertPyX12.XMLParser.read" title="tools.convertPyX12.XMLParser.read"><tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.read()</span></tt></a>.</li>
+</ol>
+</div></blockquote>
+<p>Once this is complete, then the <a class="reference internal" href="#tools.convertPyX12.ParserBuilder.build" title="tools.convertPyX12.ParserBuilder.build"><tt class="xref py py-meth docutils literal"><span class="pre">build()</span></tt></a> method can be given the
+<a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> to emit the desired <a class="reference internal" href="x12.html#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt></a> object.</p>
+<p>This creates the <a class="reference internal" href="x12.html#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt></a> object, inserts the various
+Loop and Segment components.  The resulting object can be used to
+parse X12 messages.</p>
+<p>The resulting object can also be used to emit Python source,
+as well as SQL DDL.</p>
+<p>The <tt class="samp docutils literal"><span class="pre">&lt;transaction&gt;</span></tt> contains <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s.
+The <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s contain <tt class="samp docutils literal"><span class="pre">&lt;segment&gt;</span></tt>&#8216;s and <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s.
+The <tt class="samp docutils literal"><span class="pre">&lt;segment&gt;</span></tt>&#8216;s contain <tt class="samp docutils literal"><span class="pre">&lt;element&gt;</span></tt>&#8216;s and <tt class="samp docutils literal"><span class="pre">&lt;composite&gt;</span></tt>&#8216;s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><strong>dataDictionary</strong> &#8211; a dictionary of <tt class="samp docutils literal"><span class="pre">&lt;data_ele&gt;</span></tt> definitions.</td>
+</tr>
+</tbody>
+</table>
+<p>This emits a Python <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> constructor
+that matches the given <tt class="file docutils literal"><span class="pre">.CF</span></tt> file.</p>
+</dd></dl>
+
+<p>There are two convenience functions.</p>
+<dl class="function">
+<dt id="tools.convertPyX12.convertFile">
+<tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">convertFile</tt><big>(</big><em>baseDir</em>, <em>aFile</em>, <em>dataeleFile='dataele.xml'</em>, <em>codesFile='codes.xml'</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.convertFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts a single message file from XML to <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.convertPyX12.convertAll">
+<tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">convertAll</tt><big>(</big><em>baseDir</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.convertAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert all <tt class="file docutils literal"><span class="pre">nnn*.4010.X*.xml</span></tt> files in the given directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>baseDir</strong> &#8211; Directory with message definition, dataele and codes files.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="warnings">
+<h3>Warnings<a class="headerlink" href="#warnings" title="Permalink to this headline">¶</a></h3>
+<p>The following default warnings configuration is used.</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#tools.convertPyX12.XMLWarning" title="tools.convertPyX12.XMLWarning"><tt class="xref py py-class docutils literal"><span class="pre">XMLWarning</span></tt></a> are elevated to Errors to cause this module to stop.
+In the case of suspicious XML, it is possible to downgrade these
+errors and keep processing.</li>
+<li><a class="reference internal" href="#tools.convertPyX12.EmptyLoopWarning" title="tools.convertPyX12.EmptyLoopWarning"><tt class="xref py py-class docutils literal"><span class="pre">EmptyLoopWarning</span></tt></a> is always reported, but is merely a warning.</li>
+<li><a class="reference internal" href="#tools.convertPyX12.UnknownElementWarning" title="tools.convertPyX12.UnknownElementWarning"><tt class="xref py py-class docutils literal"><span class="pre">UnknownElementWarning</span></tt></a> is always reported, but is merely a warning.</li>
+<li><a class="reference internal" href="#tools.convertPyX12.Extension" title="tools.convertPyX12.Extension"><tt class="xref py py-class docutils literal"><span class="pre">Extension</span></tt></a> is reported once so that it&#8217;s clear that the XML contains
+features which were not parsed.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="xml-source-structure">
+<h3>XML Source Structure<a class="headerlink" href="#xml-source-structure" title="Permalink to this headline">¶</a></h3>
+<p>The pyx12 package provides a <tt class="xref py py-mod docutils literal"><span class="pre">pyx12.maps.xsd</span></tt> that provides a bit
+of guidance on parsing the XML documents.
+The <tt class="file docutils literal"><span class="pre">README</span></tt> provides some additional hints.</p>
+<p>The following elements are
+used in the message xml definitions.</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>usage</dt>
+<dd><p class="first last">Implementation Guide Usage field. S=Situational, N=Not Used, R=Required</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>pos</dt>
+<dd><p class="first last">Segment position number &#8211; obvious from the XML document, but provided anyway</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>id</dt>
+<dd><p class="first last">Implementation Guide id</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>name</dt>
+<dd><p class="first last">Implementation Guide name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>data_ele</dt>
+<dd><p class="first last">Data Element id</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>valid_codes</dt>
+<dd><p class="first last">List of valid codes for the element or the name.
+Could be a separate list document, via attribute external=&#8221;&#8221;.
+See codes.xml for the complete set of codes.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>refdes</dt>
+<dd><p class="first last">reference designator for a Composite item</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>syntax</dt>
+<dd><p class="first last">STD syntax dependency string for a segment, optional</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>The <tt class="xref py py-mod docutils literal"><span class="pre">pyx12.maps.xsd</span></tt> provides a schema for the various message definitions.</p>
+</div>
+<div class="section" id="data-element-definitions">
+<h3>Data Element Definitions<a class="headerlink" href="#data-element-definitions" title="Permalink to this headline">¶</a></h3>
+<p>The following are used in the data element definitions.</p>
+<blockquote>
+<div><ul>
+<li><dl class="first docutils">
+<dt>data_ele</dt>
+<dd><p class="first last">Data Element ID</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>name</dt>
+<dd><p class="first last">IG name</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>data_type</dt>
+<dd><p class="first last">STD type</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>min_len/max_len</dt>
+<dd><p class="first last">STD</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div></blockquote>
+<p>Analysis reveals the following DTD for the message definitions:</p>
+<div class="highlight-python"><pre>&lt;!ELEMENT data_elements ( data_ele )*&gt;
+
+&lt;!ELEMENT data_ele #PCDATA&gt;
+&lt;!ATTLIST data_ele
+    ele_num   CDATA #REQUIRED
+    data_type (ID|R|AN|DT|TM|N0) #REQUIRED
+    min_len   CDATA #REQUIRED
+    max_len   CDATA #REQUIRED
+    name      CDATA #REQUIRED&gt;</pre>
+</div>
+<dl class="exception">
+<dt id="tools.convertPyX12.EmptyLoopWarning">
+<em class="property">exception </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">EmptyLoopWarning</tt><a class="headerlink" href="#tools.convertPyX12.EmptyLoopWarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Loop definition had no subloops or Segments.</p>
+</dd></dl>
+
+<dl class="exception">
+<dt id="tools.convertPyX12.Extension">
+<em class="property">exception </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">Extension</tt><a class="headerlink" href="#tools.convertPyX12.Extension" title="Permalink to this definition">¶</a></dt>
+<dd><p>This feature of the XML is an extension to the current implementation.</p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">ParserBuilder</tt></dt>
+<dd><p>Build a <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> Parser from an XML message specification.</p>
+<p>This makes use of an <a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> instance which has been populated
+with three separate XML documents.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>The data element definitions were parsed with <a class="reference internal" href="#tools.convertPyX12.XMLParser.data" title="tools.convertPyX12.XMLParser.data"><tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.data()</span></tt></a>.</li>
+<li>The external code definitions were parsed with <a class="reference internal" href="#tools.convertPyX12.XMLParser.codes" title="tools.convertPyX12.XMLParser.codes"><tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.codes()</span></tt></a>.</li>
+<li>The message structure was parsed via <a class="reference internal" href="#tools.convertPyX12.XMLParser.read" title="tools.convertPyX12.XMLParser.read"><tt class="xref py py-meth docutils literal"><span class="pre">XMLParser.read()</span></tt></a>.</li>
+</ol>
+</div></blockquote>
+<p>Once this is complete, then the <a class="reference internal" href="#tools.convertPyX12.ParserBuilder.build" title="tools.convertPyX12.ParserBuilder.build"><tt class="xref py py-meth docutils literal"><span class="pre">build()</span></tt></a> method can be given the
+<a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> to emit the desired <a class="reference internal" href="x12.html#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt></a> object.</p>
+<p>This creates the <a class="reference internal" href="x12.html#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt></a> object, inserts the various
+Loop and Segment components.  The resulting object can be used to
+parse X12 messages.</p>
+<p>The resulting object can also be used to emit Python source,
+as well as SQL DDL.</p>
+<p>The <tt class="samp docutils literal"><span class="pre">&lt;transaction&gt;</span></tt> contains <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s.
+The <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s contain <tt class="samp docutils literal"><span class="pre">&lt;segment&gt;</span></tt>&#8216;s and <tt class="samp docutils literal"><span class="pre">&lt;loop&gt;</span></tt>&#8216;s.
+The <tt class="samp docutils literal"><span class="pre">&lt;segment&gt;</span></tt>&#8216;s contain <tt class="samp docutils literal"><span class="pre">&lt;element&gt;</span></tt>&#8216;s and <tt class="samp docutils literal"><span class="pre">&lt;composite&gt;</span></tt>&#8216;s.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><strong>dataDictionary</strong> &#8211; a dictionary of <tt class="samp docutils literal"><span class="pre">&lt;data_ele&gt;</span></tt> definitions.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.build">
+<tt class="descname">build</tt><big>(</big><em>xmlDoc</em>, <em>name=None</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build the overall <a class="reference internal" href="x12.html#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt></a> parser.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xmlDoc</strong> &#8211; a <a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> which has parsed the data, codes and message
+structure documents.</li>
+<li><strong>name</strong> &#8211; Optional name of the Message to build; this will use
+the xid attribute provided in the XML if no overriding name is provided here.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="x12.html#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt></a> parser.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.buildComposite">
+<tt class="descname">buildComposite</tt><big>(</big><em>compositeNode</em>, <em>context</em>, <em>nesting=0</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.buildComposite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a Composite from a list of sub-Elements.</p>
+<p>Note that the ISA segment provides the Component Element Separator in ISA16.</p>
+<p>Composites are tricky.  We have two choices.</p>
+<blockquote>
+<div><ol class="arabic simple">
+<li>Treat them as just a sequence of Elements &#8211; which they
+are for RDBMS purposes.  However, this makes compliance
+checking hard, since we have to look inside the composite.
+We have to turn off &#8220;match&#8221; for each Element of the Composite,
+otherwise, we won&#8217;t be able to look into the segment data
+properly.</li>
+<li>Treat them as a subclass of Elements &#8211; which is a lot of
+fooling around to support a few compliance checks.  We have to
+provide a composite match function and we have to make use
+of punctuation in the ISA segment for sub-parsing each Composite when we
+finally figure out what the Segment and Elements.</li>
+</ol>
+</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>compositeNode</strong> &#8211; a <tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> Element with a name of <tt class="samp docutils literal"><span class="pre">composite</span></tt></li>
+<li><strong>context</strong> &#8211; The Segment which contains this Composite</li>
+<li><strong>nesting</strong> &#8211; The current nesting level used to indent the log messages.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.buildDataElementDef">
+<tt class="descname">buildDataElementDef</tt><big>(</big><em>aNode</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.buildDataElementDef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the data dictionary with the definition from a <tt class="samp docutils literal"><span class="pre">&lt;data_ele&gt;</span></tt> node.
+The key is the data element name.
+The value in the dictionary is a tuple of ( data_type, min_len and max_len ).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aNode</strong> &#8211; a <tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> Element with a name of <tt class="samp docutils literal"><span class="pre">data_ele</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.buildElement">
+<tt class="descname">buildElement</tt><big>(</big><em>elementNode</em>, <em>context</em>, <em>nesting=0</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.buildElement" title="Permalink to this definition">¶</a></dt>
+<dd><p>Element is the fundamental piece of data in a Segment or Composite.
+Elements can have code definitions or can reference external code
+definitions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>elementNode</strong> &#8211; a <tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> Element with a name of <tt class="samp docutils literal"><span class="pre">element</span></tt></li>
+<li><strong>context</strong> &#8211; The Segment or Composite which contains this Element</li>
+<li><strong>nesting</strong> &#8211; The current nesting level used to indent the log messages.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.buildLoop">
+<tt class="descname">buildLoop</tt><big>(</big><em>loopNode</em>, <em>context</em>, <em>nesting=0</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.buildLoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loop contains Segments and Loops.
+Empty Loops create a warning, and are dropped.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>loopNode</strong> &#8211; a <tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> Element with a name of <tt class="samp docutils literal"><span class="pre">loop</span></tt></li>
+<li><strong>context</strong> &#8211; The Loop which contains this Loop or Segment.</li>
+<li><strong>nesting</strong> &#8211; The current nesting level used to indent the log messages.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.buildSegment">
+<tt class="descname">buildSegment</tt><big>(</big><em>segmentNode</em>, <em>context</em>, <em>nesting=0</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.buildSegment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Segment contains Elements and Composites.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>segmentNode</strong> &#8211; a <tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> Element with a name of <tt class="samp docutils literal"><span class="pre">segment</span></tt></li>
+<li><strong>context</strong> &#8211; The Loop which contains this Segment.</li>
+<li><strong>nesting</strong> &#8211; The current nesting level used to indent the log messages.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.codes">
+<tt class="descname">codes</tt><big>(</big><em>xmlDoc</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.codes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load external code file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xmlDoc</strong> &#8211; a <a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> which has parsed the codes document</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.dataElements">
+<tt class="descname">dataElements</tt><big>(</big><em>xmlDoc</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.dataElements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the data dictionary with the definitions from the <tt class="samp docutils literal"><span class="pre">&lt;data_elements&gt;</span></tt> node.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xmlDoc</strong> &#8211; a <a class="reference internal" href="#tools.convertPyX12.XMLParser" title="tools.convertPyX12.XMLParser"><tt class="xref py py-class docutils literal"><span class="pre">XMLParser</span></tt></a> which has parsed the data document</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.getChildTextValue">
+<tt class="descname">getChildTextValue</tt><big>(</big><em>aNode</em>, <em>name</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.getChildTextValue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Examines all children with the given name
+and extracts the text nodes for those children.
+It accumulates the nodeValues for those text nodes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>aNode</strong> &#8211; an <tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> Element.</li>
+<li><strong>name</strong> &#8211; a node name underneath the given node.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.ParserBuilder.getValidCodes">
+<tt class="descname">getValidCodes</tt><big>(</big><em>aNode</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.ParserBuilder.getValidCodes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse a <tt class="samp docutils literal"><span class="pre">&lt;valid_codes&gt;</span></tt> node, building a list of valid codes
+for an Element.  This will examine only <tt class="samp docutils literal"><span class="pre">&lt;code&gt;</span></tt> elements found
+under the <tt class="samp docutils literal"><span class="pre">&lt;valid_codes&gt;</span></tt> element.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aNode</strong> &#8211; a <tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> Element with a name of <tt class="samp docutils literal"><span class="pre">valid_codes</span></tt></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of code values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="tools.convertPyX12.UnknownElementWarning">
+<em class="property">exception </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">UnknownElementWarning</tt><a class="headerlink" href="#tools.convertPyX12.UnknownElementWarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>An Element had a dataele= reference to an unkown name.</p>
+</dd></dl>
+
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">XMLParser</tt></dt>
+<dd><p>Parse a related set of XML docs to get codes, data element definitions
+and the overall Message structure.</p>
+<p>The ParserBuilder will need some combination of these related XML documents
+to define the <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> parser.</p>
+<dl class="method">
+<dt id="tools.convertPyX12.XMLParser.codes">
+<tt class="descname">codes</tt><big>(</big><em>name_or_file</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.XMLParser.codes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the external codes definition XML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> &#8211; name of the external codes file, usually <tt class="file docutils literal"><span class="pre">codes.xml</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.XMLParser.data">
+<tt class="descname">data</tt><big>(</big><em>name_or_file</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.XMLParser.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the data element definition XML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> &#8211; name of the data element file, usually <tt class="file docutils literal"><span class="pre">dataele.xml</span></tt></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.XMLParser.dump">
+<tt class="descname">dump</tt><big>(</big><em>aDoc</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.XMLParser.dump" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints a dump of an XML document to stdout.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aDoc</strong> &#8211; an <tt class="xref py py-mod docutils literal"><span class="pre">xml.dom</span></tt> Node (usually the top-level Document).</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="tools.convertPyX12.XMLParser.read">
+<tt class="descname">read</tt><big>(</big><em>name_or_file</em><big>)</big><a class="headerlink" href="#tools.convertPyX12.XMLParser.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses the message structure XML file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>fileName</strong> &#8211; the name of a message structure file.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="exception">
+<dt id="tools.convertPyX12.XMLWarning">
+<em class="property">exception </em><tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">XMLWarning</tt><a class="headerlink" href="#tools.convertPyX12.XMLWarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>A superclass for a number of warnings regarding the XML definition.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">convertAll</tt><big>(</big><em>baseDir</em><big>)</big></dt>
+<dd><p>Convert all <tt class="file docutils literal"><span class="pre">nnn*.4010.X*.xml</span></tt> files in the given directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>baseDir</strong> &#8211; Directory with message definition, dataele and codes files.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<tt class="descclassname">tools.convertPyX12.</tt><tt class="descname">convertFile</tt><big>(</big><em>baseDir</em>, <em>aFile</em>, <em>dataeleFile='dataele.xml'</em>, <em>codesFile='codes.xml'</em><big>)</big></dt>
+<dd><p>Converts a single message file from XML to <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a>.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-tools.surveyPyX12">
+<span id="tools-surveypyx12"></span><h2>tools.surveyPyX12<a class="headerlink" href="#module-tools.surveyPyX12" title="Permalink to this headline">¶</a></h2>
+<p>Survey PyX12 Segment Definitions.</p>
+<p>Read ALL pyx12 message definitions, accumulate all Segment definitions.</p>
+<dl class="function">
+<dt id="tools.surveyPyX12.getDef">
+<tt class="descclassname">tools.surveyPyX12.</tt><tt class="descname">getDef</tt><big>(</big><em>aFile</em><big>)</big><a class="headerlink" href="#tools.surveyPyX12.getDef" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Segment Definitions from an XML file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="tools.surveyPyX12.survey">
+<tt class="descclassname">tools.surveyPyX12.</tt><tt class="descname">survey</tt><big>(</big><em>pattern</em><big>)</big><a class="headerlink" href="#tools.surveyPyX12.survey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Survey an entire directory, using a wild-card pattern.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">tools</span></tt> Package</a><ul>
+<li><a class="reference internal" href="#module-tools.convertPyX12">tools.convertPyX12</a><ul>
+<li><a class="reference internal" href="#definitions">Definitions</a></li>
+<li><a class="reference internal" href="#warnings">Warnings</a></li>
+<li><a class="reference internal" href="#xml-source-structure">XML Source Structure</a></li>
+<li><a class="reference internal" href="#data-element-definitions">Data Element Definitions</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-tools.surveyPyX12">tools.surveyPyX12</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="x12.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal"><span class="pre">X12</span></tt> Package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="claims.html"
+                        title="next chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">claims</span></tt> Module</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/implementation/tools.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="claims.html" title="claims Module"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="x12.html" title="X12 Package"
+             >previous</a> |</li>
+        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Implementation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

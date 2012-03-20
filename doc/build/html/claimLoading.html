@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design Note: Loading New Claims &mdash; Tiger v3.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Tiger v3.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="design-note-loading-new-claims">
+<h1>Design Note: Loading New Claims<a class="headerlink" href="#design-note-loading-new-claims" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="architecture.html#architecture"><em>Architecture and Design</em></a></p>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+<p>How to identify the Claim Classification attributes when loading X12N Claim Messages?</p>
+<p>Generally, the X12N claims come from some external system through an extract process.
+The attributes of those claims are created manually.  The extracted claims and the
+attributes must be matched up for loading.</p>
+</div>
+<div class="section" id="legacy-process-overview">
+<h2>Legacy Process Overview<a class="headerlink" href="#legacy-process-overview" title="Permalink to this headline">¶</a></h2>
+<p>The legacy claim loading process works as follows.</p>
+<ol class="arabic simple">
+<li>For eacb Claim Selection:<ol class="loweralpha">
+<li>Create a parameter file for a GW Extract BAT file,
+<tt class="docutils literal"><span class="pre">D:\Tiger\scripts\Getx12.bat</span></tt>.</li>
+<li>Run the GW Extract.  Attempt to read the output file to see
+if a claim was found.</li>
+<li>Also, resolve various FK&#8217;s for dimensions of the classification.  Save
+the file name, Automod constraints, and Classification info for pass 2.</li>
+</ol>
+</li>
+<li>For each Claim Extract File:<ol class="loweralpha">
+<li>Read the extracted file.  Get the automod constraints and the claim
+classification.</li>
+<li>Load the Database with the claim, automod constraints and classification.</li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="section" id="legacy-solution-faq-s">
+<h2>Legacy Solution FAQ&#8217;s<a class="headerlink" href="#legacy-solution-faq-s" title="Permalink to this headline">¶</a></h2>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Q:</th><td class="field-body"><p class="first">When messages are extracted from the HIPAA gateway, what form are they in?
+One message per file?  Multiple messages per file?</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">A:</th><td class="field-body"><p class="first">The business users query Sybase for claim ids (GWIDs) they want loaded.
+They manually create a comma delimited text file with these GWIDs and
+information about the GWIDs.  The file is one GWID per line (see
+attached).  That file is read by the load app (ECL00018).  At a high
+level, for each line, the claim is pulled from the Gateway database (in an
+X12 format), unwrapped (one segment per line), and written to a text file.
+Once all claims have been retrieved for the current user provided load
+file, the X12 text file created by the load app is read and each X12
+transaction is loaded into the Tiger database.  This process occurs for
+each load file the users provide. The load app will cycle through all
+files found in the load directory.</p>
+<p>Additionally, each load file provided by the users is validated.  We make
+sure they are providing allowed values for the descriptive information
+about the claim.</p>
+<p>We also keep track of which claims were found in the Gateway database
+(probably caused by an invalid GWID), and any duplicate load information,
+and provide a count report, and a detailed list of transactions that did
+not pass validation, when the load process is done (see attached).</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Q:</th><td class="field-body"><p class="first">Is it a mixed bag of 837I and 837P or do they tend to get a file (or group
+of files) of all 837I&#8217;s or all 837P&#8217;s?</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">A:</th><td class="field-body"><p class="first">Users are instructed to separate GWIDs based on transaction type into
+separate files.</p>
+<p>During claim modification using Tiger, users are not allowed to select
+multiple transaction types.  If they already selected some 837I claims,
+they can not select 837P claims.</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">Q:</th><td class="field-body"><p class="first">Does anyone &#8220;preprocess&#8221; the files before they&#8217;re parsed and loaded?</p>
+</td>
+</tr>
+<tr class="field"><th class="field-name">A:</th><td class="field-body"><p class="first last">No.  All load processing, including parsing and data validation, is done
+within the load app.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="claim-selection-file">
+<h2>Claim Selection File<a class="headerlink" href="#claim-selection-file" title="Permalink to this headline">¶</a></h2>
+<p>CSV file with the following columns.  In the legacy application, the CSV data has
+no headers, and must be in the following order.  Future releases will accept
+column titles.</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">GWID</span></tt></dt>
+<dd>This is the HIPAA Gateway Transaction ID for the claim, used to retrieve it
+from FACETS.</dd>
+<dt><tt class="docutils literal"><span class="pre">BENEFIT</span></tt></dt>
+<dd>The Benefit ID to assign to this claim.  This is checked against the
+TOS/Benefit list.</dd>
+<dt><tt class="docutils literal"><span class="pre">TYPE-OF-SERVICE</span></tt></dt>
+<dd>The Type of Service ID to assign to this claim.  This is checked against the
+TOS/Benefit list.</dd>
+<dt><tt class="docutils literal"><span class="pre">LOCATION</span></tt></dt>
+<dd>The codes are ALB, BUF, CE and CW.
+Descriptions are Albany, Buffalo, Central NY West, and Central NY East.</dd>
+<dt><tt class="docutils literal"><span class="pre">TYPE</span></tt></dt>
+<dd>The codes are I, P, O or D.
+Descriptions are In-Patient, Professional, Out-Patient and Dental.</dd>
+<dt><tt class="docutils literal"><span class="pre">SECONDARY</span></tt></dt>
+<dd>The codes are M and R.
+Descriptions are Medicare and Regular.</dd>
+<dt><tt class="docutils literal"><span class="pre">GENDER</span></tt></dt>
+<dd>This is used to define a constraint for automod.
+Codes are M, F and U.</dd>
+<dt><tt class="docutils literal"><span class="pre">AGE-FROM</span></tt></dt>
+<dd>This is used to define a constraint for automod.</dd>
+<dt><tt class="docutils literal"><span class="pre">AGE-TO</span></tt></dt>
+<dd>This is used to define a constraint for automod.</dd>
+</dl>
+</div>
+<div class="section" id="claim-identification">
+<h2>Claim Identification<a class="headerlink" href="#claim-identification" title="Permalink to this headline">¶</a></h2>
+<p>There are two internal candidate keys on a claim, as well as a the &#8220;external&#8221; GWID
+that can be used when extracting claims from an EDI gateway.</p>
+<dl class="docutils">
+<dt>ISA09 + ISA10 + ISA13</dt>
+<dd>Interchange Control Number may be a unique identifier for the claim as a whole,
+when qualified by Interchange Date and Interchange Time.</dd>
+<dt>BHT03</dt>
+<dd>Reference Identification.</dd>
+</dl>
+</div>
+<div class="section" id="claim-loading-design">
+<h2>Claim Loading Design<a class="headerlink" href="#claim-loading-design" title="Permalink to this headline">¶</a></h2>
+<p>Fundamentally, a set of claims are loaded by a web service.  This service accepts
+a three-part document:</p>
+<blockquote>
+<div><ul class="simple">
+<li>the claim characterstics (Benefit, Type-of-Service, Location, etc.),</li>
+<li>the automod constraints (gender, age range),</li>
+<li>a set of X12N text claim messages.</li>
+</ul>
+</div></blockquote>
+<p>The claim documents is created by an Extract.  The extract has the following summary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Input:</th><td class="field-body">A <a class="reference internal" href="#claim-selection-file">Claim Selection File</a>.</td>
+</tr>
+<tr class="field"><th class="field-name">Output:</th><td class="field-body">A <cite>Claim Description File</cite> that includes the claim selection parameters
+plus the actual X12N message text in an additional column.</td>
+</tr>
+<tr class="field"><th class="field-name">Processing:</th><td class="field-body">Read the claim selection record, get the claim from the claim processing
+application, write the claim description record.</td>
+</tr>
+</tbody>
+</table>
+<p>The loading is performed by a batch &#8220;wrapper&#8221; program.  This program has the
+following summary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Input:</th><td class="field-body">A <cite>Claim Description File</cite> that has the claim selection parameters.
+It has either the claim file name in an additional column (<tt class="docutils literal"><span class="pre">CLAIM-FILE</span></tt>)
+or it has the actual X12N message text in an additional column of the CSV file.
+(<tt class="docutils literal"><span class="pre">CLAIM-TEXT</span></tt>)</td>
+</tr>
+<tr class="field"><th class="field-name">Output:</th><td class="field-body">A log of processing.  Database updates that include the claim characteristics,
+the automod constraints and the claim itself.</td>
+</tr>
+<tr class="field"><th class="field-name">Processing:</th><td class="field-body">Read the claim description row, call the claim load web service.  Log the
+results.</td>
+</tr>
+</tbody>
+</table>
+<p>The load web service has the following summary.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field"><th class="field-name">Input:</th><td class="field-body">A <cite>Claim Load Document</cite> includes the claim characteristics,
+the automod constraints and the claim itself.</td>
+</tr>
+<tr class="field"><th class="field-name">Output:</th><td class="field-body">Database updates.  Log message or fault.</td>
+</tr>
+<tr class="field"><th class="field-name">Processing:</th><td class="field-body">Accept the Claim Document and the Automod constraints and the characteristics.
+Upsert the characteristics, upsert the automod constraints, load the claim if
+it is unique.  If the claim is a duplicate, reject the load and signal a fault.</td>
+</tr>
+</tbody>
+</table>
+<p>The Extract-Load processing is a pipeline from Extract to Batch Load.  The claim
+claim description file written by the extractor is then read by the loader and used
+to invoke the Claim Load web service.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Design Note: Loading New Claims</a><ul>
+<li><a class="reference internal" href="#problem">Problem</a></li>
+<li><a class="reference internal" href="#legacy-process-overview">Legacy Process Overview</a></li>
+<li><a class="reference internal" href="#legacy-solution-faq-s">Legacy Solution FAQ&#8217;s</a></li>
+<li><a class="reference internal" href="#claim-selection-file">Claim Selection File</a></li>
+<li><a class="reference internal" href="#claim-identification">Claim Identification</a></li>
+<li><a class="reference internal" href="#claim-loading-design">Claim Loading Design</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/claimLoading.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

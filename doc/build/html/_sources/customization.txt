@@ -1,0 +1,73 @@
+################################################
+Design Note: Customization of Message Structures
+################################################
+
+:ref:`architecture`
+
+Problem
+=======
+
+Since we have a number of customers, each with a unique Implementation Guide,
+we have to adjust the data model for each customer.  We want to permit each
+customer as a simple extension module to a core application design.
+
+Forces
+======
+
+On one hand, it's easiest to use "copy and paste" customization of the
+application, making it difficult to make across-the-board changes.
+
+On the other hand, there are 57 or so distinct Segment types, making customization
+challenging.
+
+Solution
+========
+
+A set of tools and design patterns are required.
+
+We use the following design patterns.
+
+-   Generic Parser ("unmarshalling") class hierarchy.  A core class hierchy
+    defines the essential parser technology.  A message-specific parser object is built
+    from these classes.  This parser includes customer-specific extensions.
+
+-   A **Factory**-based parser.  The parser object uses a **Factory** object
+    which generates a specific implementation's segment types.
+
+-   Meta-data driven customizations.  A ``tools`` package to include a number
+    of conversions from various kinds of metadata to our application programs.
+
+Consequences
+============
+
+Unmarshalling and Segment Customization
+---------------------------------------
+
+We have to bind a parser to a specific message implementation.
+We can bind the parser to the generic ``X12.message`` or we can bind it
+to ``tiger.claims.model`` or ``tiger.claims-837.model``.
+
+Each of these implementations has a common ``Factory`` object that emits
+the proper objects.
+
+However, the Factory is shared by all classes in the X12.parse structure.
+This is relatively "global" among the various classes.  We can't easily
+fiddle this in at Construction time.  It has to come in later.
+Each ``X12.parse`` object must acquire a Factory when it executes.
+
+Further, the X12.parse we're using isn't part of the X12.parse package, it's a
+separate package, with a name like ``tiger.claims-837.model``.
+
+This can be handled a number of ways:
+
+    -   a Configuration **Singleton** that each parser locates at run time.
+
+    -   a Configuration object given to the Message parser, and then provided
+        to each subsidiary object.
+
+Since all of the various Parser classes are proper subclasses of ``X12.parse.Parser``,
+we can provide a property in the top-level class which propagates the selected
+Factory down to each element.
+
+Further, since Parsing is a translation from one form to another, we can easily
+make the ``unmarshall`` method accept the Factory as a parameter.

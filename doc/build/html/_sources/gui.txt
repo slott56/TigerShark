@@ -1,0 +1,43 @@
+##############################
+Design Note: HTML Style Sheets
+##############################
+
+:ref:`architecture`
+  
+Problem
+=======
+
+Consistent, recognizable brand identity is essential to successful software use.
+
+Forces
+======
+
+There are, however, two competing approaches to brand identity.
+
+1.  Make Tiger blend in with a customer's existing web applications,
+    providing a largely eamless experience.
+
+2.  Provide Tiger with a unique identity.
+
+Consistent with the second approach, a general color scheme, page layout and
+icon style are essential.
+
+Solution
+========
+
+See the following URLs for candidate color schemes:
+
+    - http://www.wellstyled.com/tools/colorscheme2/index-en.html?triad;38;0;60;0.5;1;-1;-1;1;-0.7;0.25;1;-1;-1;1;-0.7;0.25;1;0.5;1;-1;-1;1;-0.7;0.25;1;0.5;1;-1;-1;1;-0.7;0.25;1;0.5;1;1
+
+    - http://www.wellstyled.com/tools/colorscheme2/index-en.html?triad;38;0;60;0.5;1;1;1;1;0.7;0.25;1;1;1;1;0.7;0.25;1;0.5;1;1;1;1;0.7;0.25;1;0.5;1;1;1;1;0.7;0.25;1;0.5;1;1
+    
+This is a "triad" color scheme using a very bright web-save orange
+(Tigers, get it?) as the highlight color.
+
+(See http://fohn.net/tiger-pictures-facts/ for some pictures of tigers.)
+
+Consequences
+============
+
+All pages must be built with flexible templates to permit customer-specific
+look and feel to replace Tiger native look and feel.

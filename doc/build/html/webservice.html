@@ -1,0 +1,213 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design Note: Web Services Ports and URL’s &mdash; Tiger v3.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Tiger v3.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="design-note-web-services-ports-and-url-s">
+<h1>Design Note: Web Services Ports and URL&#8217;s<a class="headerlink" href="#design-note-web-services-ports-and-url-s" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="architecture.html#architecture"><em>Architecture and Design</em></a></p>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+<p>Tiger exposes two web-based (HTTP) interfaces:  a user-oriented, HTML-based UI, and an XML-RPC
+(Web Serices) interface.  What is the relationship between these two?  What
+port number and URL&#8217;s should be used?</p>
+<p>Web Services generally have a unique URL.  Additionally, they can have unique port numbers.
+Should port numbers be used?  If so, how?</p>
+</div>
+<div class="section" id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
+<p>The user interface uses simple URL&#8217;s and port 80.  The &#8220;/&#8221; URL is treated as if it
+was a request for index.html; providing a typical user experience.</p>
+<p>Django, generally, ignores the port number, and only processes the URL.</p>
+<p>Without special middleware modules, Django can&#8217;t easily handle XML-RPC requests.
+It thinks they&#8217;re ordinary HTTP POST requests; it doesn&#8217;t handle any XML-RPC protocol
+issues for us, forcing us to parse the XML, etc.
+A WSGI-style middleware can redirect these so they are not processed as Django&#8217;s
+standard view requests, which assume HTML, and are processed as XML.</p>
+<p>Apache can, however, examine the port number as well as the URL&#8217;s and redirect
+WS requests to a &#8220;different&#8221; server: Django doesn&#8217;t see these.</p>
+<p>JCAPS, generally, puts web services into ports like 18000 to keep them separate
+from ports 80 (and 8000) that are end-user oriented.</p>
+<p>A separate WS server seems a bit much, since we&#8217;re already separating Django
+from Apache.</p>
+<p>This is a multi-interface application.  The Django front-end relies on the web
+services.  Also, external applications rely on the web services.</p>
+</div>
+<div class="section" id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+<p>Use Apache to listen on port 80.</p>
+<ul class="simple">
+<li>Some requests have the media URL, which are handled immediately.</li>
+<li>Other requests have the RPC2 URL, which are forwarded to port 18000,
+which is the XML-RPC server.</li>
+<li>All other requests are forwarded to mod_python (from there to Django) for processing.</li>
+</ul>
+<p>Behind Apache (on another box, behind a firewall) there are two ports.</p>
+<ul class="simple">
+<li>Port 8000 is served by Django.  This handles end-user requests using Django&#8217;s standard
+architecture.</li>
+<li>Port 18000 is served by XML-RPC.  This handles external requests (forwarded by
+Apache) as well as Django requests.</li>
+</ul>
+<p>Within the WS portion of the system (port 18000) we must use the URL&#8217;s to identify
+specific instances of applications.</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">/RPC2</span></tt> is the top-level path element for all web services.  The top instance
+of <tt class="docutils literal"><span class="pre">ParsePath</span></tt> picks this off the front of the URL, ignoring all other requests.
+This top-level <tt class="docutils literal"><span class="pre">ParsePath</span></tt> delegates to other instances of <tt class="docutils literal"><span class="pre">ParsePath</span></tt> to navigate
+the path.<ul>
+<li><tt class="docutils literal"><span class="pre">/RPC2/</span></tt><em>app</em> Names an &#8220;application&#8221; &#8211; a name managed by the application&#8217;s
+<tt class="docutils literal"><span class="pre">ParsePath</span></tt> object.  The app may (or may not) have a lower-level structure.
+Usually, it is a single <tt class="docutils literal"><span class="pre">XMLRPC</span></tt> object that delegates methods and parameters to an
+internal object.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="consequences">
+<h2>Consequences<a class="headerlink" href="#consequences" title="Permalink to this headline">¶</a></h2>
+<p>This creates the appearance of a &#8220;tangled hierarchy&#8221; among the web services and the
+Django persistence engine.  Django applications rely on web services which rely on
+Django persistence.</p>
+<p>Python&#8217;s WSGI standard provides a way to create flexible, uniform web services.
+WSGI allows us to disentangle a number of features from each distinct web service.
+Collectively, these features are called &#8220;middleware&#8221;.</p>
+<p>See <a class="reference external" href="http://www.wsgi.org/wsgi/Middleware_and_Utilities">http://www.wsgi.org/wsgi/Middleware_and_Utilities</a></p>
+<p>Specifically,</p>
+<ul class="simple">
+<li>Authentication is handled by any of a large number of authentication
+middleware projects.  For examples, see <a class="reference external" href="http://authkit.org/">http://authkit.org/</a>,
+and <a class="reference external" href="http://lukearno.com/projects/barrel/">http://lukearno.com/projects/barrel/</a>.  Since SOAP and XML-RPC are limited to
+BASIC authentication, these packages are more sophisticated than
+what is required.</li>
+<li>Session could be handled by any of a large number of session manager projects.
+However, SOAP and XML-RPC typically don&#8217;t make explicit use of HTTP protocol
+for session management.</li>
+<li>Authorization is easily added into some of the authorization projects.
+Some kind of user-group affinity needs to be added, as well as a URL-group
+affinity.</li>
+<li>URL redirection to allow flexible assembly of web services is also required.</li>
+<li>XML-RPC is handled with the CGI version, which is essentially, a WSGI-friendly
+module.  There are WSGI-XML modules which can be used, also.</li>
+</ul>
+</div>
+<div class="section" id="extensions-to-the-standards">
+<h2>Extensions To The Standards<a class="headerlink" href="#extensions-to-the-standards" title="Permalink to this headline">¶</a></h2>
+<p>Tiger can easily extend the XML-RPC processing standards.</p>
+<ol class="arabic">
+<li><p class="first">An expanded XML-RPC client package can use DIGEST authentication instead of BASIC.</p>
+<ul>
+<li><p class="first">The standard approach is a 401-reply to initiate a challenge-response cycle.</p>
+</li>
+<li><p class="first">However, this is does not have to be challenge-response.  The authentication
+header would be a standard digest, and would include a client-generated
+nonce instead of a challenge-supplied nonce.  The following steps show
+how the digest is computed from things ordinarily supplied by the client
+(username, password and method) and things ordinarily supplied as
+part of the challenge (<em>realm</em>, <em>uri</em>, <em>nonce</em>).</p>
+<p>HA1 = MD5( username : <em>realm</em> : password )</p>
+<p>HA2 = MD5( method : <em>uri</em> )</p>
+<p>Final = MD5( HA1 : <em>nonce</em> : HA2 )</p>
+</li>
+</ul>
+</li>
+<li><p class="first">The tigerWSGI module can leverage this expanded XML-RPC package to provide
+the HTTP challenge-response protocol instead of the standard XML-RPC BASIC
+authentication protocol.</p>
+</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Design Note: Web Services Ports and URL&#8217;s</a><ul>
+<li><a class="reference internal" href="#problem">Problem</a></li>
+<li><a class="reference internal" href="#forces">Forces</a></li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
+<li><a class="reference internal" href="#consequences">Consequences</a></li>
+<li><a class="reference internal" href="#extensions-to-the-standards">Extensions To The Standards</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/webservice.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

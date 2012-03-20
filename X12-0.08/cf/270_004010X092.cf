@@ -1,0 +1,111 @@
+[LOOPS]
+ISA
+GS
+ST
+2000A
+2000B
+2000C
+2000D
+SE
+GE
+IEA
+
+#--- start of loop details ---#
+
+[ISA]
+segment=ISA:::ISA:R:1
+
+[GS]
+segment=GS:::GS:R:1
+
+#LOOP ID - HEADER
+[ST]
+segment=ST:::Transaction Set Header:R:1
+segment=BHT:::Beginning of Hierarchical Transaction:R:1
+
+#LOOP ID - 2000A INFORMATION SOURCE LEVEL >1
+[2000A]
+segment=HL:3:20:Information Source Level:R:1
+loop=2100A
+
+#LOOP ID - 2100A INFORMATION SOURCE NAME 1
+[2100A]
+segment=NM1:1:2B,36,GP,P5,PR:Information Source Name:R:1
+
+#LOOP ID - 2000B INFORMATION RECEIVER LEVEL >1
+[2000B]
+segment=HL:3:21:Information Receiver Level:R:1
+loop=2100B
+
+#LOOP ID - 2100B INFORMATION RECEIVER NAME 1
+[2100B]
+segment=NM1:1:1P,2B,36,80,FA,GP,P5,PR:Information Receiver Name:R:1
+segment=REF:::Information Receiver Additional Identification:S:9
+segment=N3:::Information Receiver Address:S:1
+segment=N4:::Information Receiver City/State/ZIP Code:S:1
+segment=PER:::Information Receiver Contact Information:S:3
+segment=PRV:::Information Receiver Provider Information:S:1
+
+#LOOP ID - 2000C SUBSCRIBER LEVEL >1
+[2000C]
+segment=HL:3:22:Subscriber Level:R:1
+segment=TRN:::Subscriber Trace Number:S:2
+loop=2100C
+
+#LOOP ID - 2100C SUBSCRIBER NAME 1
+[2100C]
+segment=NM1:1:IL:Subscriber Name:R:1
+segment=REF:::Subscriber Additional Identification:S:9
+segment=N3:::Subscriber Address:S:1
+segment=N4:::Subscriber City/State/ZIP Code:S:1
+segment=PRV:::Provider Information:S:1
+segment=DMG:::Subscriber Demographic Information:S:1
+segment=INS:::Subscriber Relationship:S:1
+segment=DTP:::Subscriber Date:S:2
+loop=2110C
+
+#LOOP ID - 2110C SUBSCRIBER ELIGIBILITY OR BENEFIT INQUIRY INFORMATION 99
+[2110C]
+segment=EQ:::Subscriber Eligibility or Benefit Inquiry Information:S:1
+segment=AMT:::Subscriber Spend Down Amount:S:1
+segment=III:::Subscriber Eligibility or Benefit Additional Inquiry Information:S:10
+segment=REF:::Subscriber Additional Information:S:1
+segment=DTP:::Subscriber Eligibility/Benefit Date:S:1
+
+#LOOP ID - 2000D DEPENDENT LEVEL >1
+[2000D]
+segment=HL:3:23:Dependent Level:S:1
+segment=TRN:::Dependent Trace Number:S:2
+loop=2100D
+
+#LOOP ID - 2100D DEPENDENT NAME 1
+[2100D]
+segment=NM1:1:03:Dependent Name:R:1
+segment=REF:::Dependent Additional Identification:S:9
+segment=N3:::Dependent Address:S:1
+segment=N4:::Dependent City/State/ZIP Code:S:1
+segment=PRV:::Provider Information:S:1
+segment=DMG:::Dependent Demographic Information:S:1
+segment=INS:::Dependent Relationship:S:1
+segment=DTP:::Dependent Date:S:2
+loop=2110D
+
+#LOOP ID - 2110D DEPENDENT ELIGIBILITY OR BENEFIT INQUIRY INFORMATION 99
+[2110D]
+segment=EQ:::Dependent Eligibility or Benefit Inquiry Information:R:1
+segment=III:::Dependent Eligibility or Benefit Additional Inquiry Information:S:10
+segment=REF:::Dependent Additional Information:S:1
+segment=DTP:::Dependent Eligibility/Benefit Date:S:1
+
+#LOOP ID - TRAILER
+[SE]
+segment=SE:::Transaction Set Trailer:R:1
+
+[GE]
+segment=GE:::GE:R:1
+
+[IEA]
+segment=IEA:::IEA:R:1
+
+
+

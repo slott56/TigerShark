@@ -1,0 +1,137 @@
+[LOOPS]
+ISA
+GS
+ST
+2000A
+2000B
+2000C
+2000D
+2000E
+2000F
+SE
+GE
+IEA
+
+#--- start of loop details ---#
+
+[ISA]
+segment=ISA:::ISA:R:1
+
+[GS]
+segment=GS:::GS:R:1
+
+#LOOP ID - HEADER
+[ST]
+segment=ST:::Transaction Set Header:R:1
+segment=BHT:::Beginning of Hierarchical Transaction:R:1
+
+#LOOP ID - 2000A UTILIZATION MANAGEMENT ORGANIZATION (UMO) LEVEL 1
+[2000A]
+segment=HL:3:20:Utilization Management Organization (UMO) Level:R:1
+segment=AAA:::Request Validation:S:9
+loop=2010A
+
+#LOOP ID - 2010A UTILIZATION MANAGEMENT ORGANIZATION (UMO) NAME 1
+[2010A]
+segment=NM1:1:X3:Utilization Management Organization (UMO) Name:R:1
+segment=PER:::Utilization Management Organization (UMO) Contact Information:S:1
+segment=AAA:::Utilization Management Organization (UMO) Request Validation:S:9
+
+#LOOP ID - 2000B REQUESTER LEVEL 1
+[2000B]
+segment=HL:3:21:Requester Level:R:1
+loop=2010B
+
+#LOOP ID - 2010B REQUESTER NAME 1
+[2010B]
+segment=NM1:1:1P,FA:Requester Name:R:1
+segment=REF:::Requester Supplemental Identification:S:8
+segment=AAA:::Requester Request Validation:S:9
+segment=PRV:::Requester Provider Information:S:1
+
+#LOOP ID - 2000C SUBSCRIBER LEVEL 1
+[2000C]
+segment=HL:3:22:Subscriber Level:R:1
+segment=AAA:::Subscriber Request Validation:S:9
+segment=DTP:::Accident Date:S:1
+segment=DTP:::Last Menstrual Period Date:S:1
+segment=DTP:::Estimated Date of Birth:S:1
+segment=DTP:::Onset of Current Symptoms or Illness Date:S:1
+segment=HI:::Subscriber Diagnosis:S:1
+loop=2010C
+
+#LOOP ID - 2010C SUBSCRIBER NAME 1
+[2010C]
+segment=NM1:1:IL:Subscriber Name:R:1
+segment=REF:::Subscriber Supplemental Identification:S:9
+segment=AAA:::Subscriber Request Validation:S:9
+segment=DMG:::Subscriber Demographic Information:S:1
+
+#LOOP ID - 2000D DEPENDENT LEVEL 1
+[2000D]
+segment=HL:3:23:Dependent Level:S:1
+segment=AAA:::Dependent Request Validation:S:9
+segment=DTP:::Accident Date:S:1
+segment=DTP:::Last Menstrual Period Date:S:1
+segment=DTP:::Estimated Date of Birth:S:1
+segment=DTP:::Onset of Current Symptoms or Illness Date:S:1
+segment=HI:::Dependent Diagnosis:S:1
+loop=2010D
+
+#LOOP ID - 2010D DEPENDENT NAME 1
+[2010D]
+segment=NM1:1:QC:Dependent Name:R:1
+segment=REF:::Dependent Supplemental Identification:S:3
+segment=AAA:::Dependent Request Validation:S:9
+segment=DMG:::Dependent Demographic Information:S:1
+segment=INS:::Dependent Relationship:S:1
+
+#LOOP ID - 2000E SERVICE PROVIDER LEVEL >1
+[2000E]
+segment=HL:3:19:Service Provider Level:R:1
+segment=MSG:::Message Text:S:1
+loop=2010E
+
+#LOOP ID - 2010E SERVICE PROVIDER NAME 3
+[2010E]
+segment=NM1:1:1T,FA,SJ:Service Provider Name:R:1
+segment=REF:::Service Provider Supplemental Identification:S:7
+segment=N3:::Service Provider Address:S:1
+segment=N4:::Service Provider City/State/ZIP Code:S:1
+segment=PER:::Service Provider Contact Information:S:1
+segment=AAA:::Service Provider Request Validation:S:9
+segment=PRV:::Service Provider Information:S:1
+
+#LOOP ID - 2000F SERVICE LEVEL >1
+[2000F]
+segment=HL:3:SS:Service Level:R:1
+segment=TRN:::Service Trace Number:S:3
+segment=AAA:::Service Request Validation:S:9
+segment=UM:::Health Care Services Review Information:R:1
+segment=HCR:::Health Care Services Review:S:1
+segment=REF:::Previous Certification Identification:S:1
+segment=DTP:::Service Date:S:1
+segment=DTP:::Admission Date:S:1
+segment=DTP:::Discharge Date:S:1
+segment=DTP:::Surgery Date:S:1
+segment=DTP:::Certification Issue Date:S:1
+segment=DTP:::Certification Expiration Date:S:1
+segment=DTP:::Certification Effective Date:S:1
+segment=HI:::Procedures:S:1
+segment=HSD:::Health Care Services Delivery:S:1
+segment=CL1:::Institutional Claim Code:S:1
+segment=CR1:::Ambulance Transport Information:S:1
+segment=CR2:::Spinal Manipulation Service Information:S:1
+segment=CR5:::Home Oxygen Therapy Information:S:1
+segment=CR6:::Home Health Care Information:S:1
+segment=MSG:::Message Text:S:1
+
+#LOOP ID - TRAILER
+[SE]
+segment=SE:::Transaction Set Trailer:R:1
+
+[GE]
+segment=GE:::GE:R:1
+
+[IEA]
+segment=IEA:::IEA:R:1

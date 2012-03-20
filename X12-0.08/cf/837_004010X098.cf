@@ -1,0 +1,423 @@
+[LOOPS]
+ISA
+GS
+ST
+1000A
+1000B
+2000A
+2000B
+2000C
+SE
+GE
+IEA
+
+#--- start of loop details ---#
+
+[ISA]
+segment=ISA:::ISA:R:1
+
+[GS]
+segment=GS:::GS:R:1
+
+#LOOP ID - HEADER
+[ST]
+segment=ST:::Transaction Set Header:R:1
+segment=BHT:::Beginning of Hierarchical Transaction:R:1
+segment=REF:::Transmission Type Identification:R:1
+
+#LOOP ID - 1000A SUBMITTER NAME 1
+[1000A]
+segment=NM1:1:41:Submitter Name:R:1
+segment=N2:::Additional Submitter Name Information:S:1
+segment=PER:::Submitter EDI Contact Information:R:2
+
+#LOOP ID - 1000B RECEIVER NAME 1
+[1000B]
+segment=NM1:1:40:Receiver Name:R:1
+segment=N2:::Receiver Additional Name Information:S:1
+
+#LOOP ID - 2000A BILLING/PAY-TO PROVIDER >1
+[2000A]
+segment=HL:3:20:Billing/Pay-to Provider Hierarchical Level:R:1
+segment=PRV:::Billing/Pay-to Provider Specialty Information:S:1
+segment=CUR:::Foreign Currency Information:S:1
+loop=2010AA
+loop=2010AB
+
+#LOOP ID - 2010AA BILLING PROVIDER NAME 1
+[2010AA]
+segment=NM1:1:85:Billing Provider Name:R:1
+segment=N2:::Additional Billing Provider Name Information:S:1
+segment=N3:::Billing Provider Address:R:1
+segment=N4:::Billing Provider City/State/ZIP Code:R:1
+segment=REF:::Billing Provider Secondary Identification:S:8
+segment=REF:::Credit/Debit Card Billing Information:S:8
+segment=PER:::Billing Provider Contact Information:S:2
+
+#LOOP ID - 2010AB PAY-TO PROVIDER NAME 1
+[2010AB]
+segment=NM1:1:87:Pay-to Provider Name:S:1
+segment=N2:::Additional Pay-to Provider Name Information:S:1
+segment=N3:::Pay-to Provider Address:R:1
+segment=N4:::Pay-to Provider City/State/ZIP Code:R:1
+segment=REF:::Pay-to-Provider Secondary Identification:S:5
+
+#LOOP ID - 2000B SUBSCRIBER HIERARCHICAL LEVEL >1
+[2000B]
+segment=HL:3:22:Subscriber Hierarchical Level:R:1
+segment=SBR:::Subscriber Information:R:1
+segment=PAT:::Patient Information:S:1
+loop=2010BA
+loop=2010BB
+loop=2010BC
+loop=2010BD
+loop=2300
+
+#LOOP ID - 2010BA SUBSCRIBER NAME 1
+[2010BA]
+segment=NM1:1:IL:Subscriber Name:R:1
+segment=N2:::Additional Subscriber Name Information:S:1
+segment=N3:::Subscriber Address:S:1
+segment=N4:::Subscriber City/State/ZIP Code:S:1
+segment=DMG:::Subscriber Demographic Information:S:1
+segment=REF:::Subscriber Secondary Identification:S:4
+segment=REF:::Property and Casualty Claim Number:S:1
+
+#LOOP ID - 2010BB PAYER NAME 1
+[2010BB]
+segment=NM1:1:PR:Payer Name:R:1
+segment=N2:::Additional Payer Name Information:S:1
+segment=N3:::Payer Address:S:1
+segment=N4:::Payer City/State/ZIP Code:S:1
+segment=REF:::Payer Secondary Identification:S:3
+
+#LOOP ID - 2010BC RESPONSIBLE PARTY NAME 1
+[2010BC]
+segment=NM1:1:QD:Responsible Party Name:S:1
+segment=N2:::Additional Responsible Party Name Information:S:1
+segment=N3:::Responsible Party Address:R:1
+segment=N4:::Responsible Party City/State/ZIP Code:R:1
+
+#LOOP ID - 2010BD CREDIT/DEBIT CARD HOLDER NAME 1
+[2010BD]
+segment=NM1:1:AO:Credit/Debit Card Holder Name:S:1
+segment=N2:::Additional Credit/Debit Card Holder Name Information:S:1
+segment=REF:::Credit/Debit Card Information:S:2
+
+#LOOP ID - 2000C PATIENT HIERARCHICAL LEVEL >1
+[2000C]
+segment=HL:3:23:Patient Hierarchical Level:S:1
+segment=PAT:::Patient Information:R:1
+loop=2010CA
+loop=2300
+
+#LOOP ID - 2010CA PATIENT NAME 1
+[2010CA]
+segment=NM1:1:QC:Patient Name:R:1
+segment=N2:::Additional Patient Name Information:S:1
+segment=N3:::Patient Address:R:1
+segment=N4:::Patient City/State/ZIP Code:R:1
+segment=DMG:::Patient Demographic Information:R:1
+segment=REF:::Patient Secondary Identification:S:5
+segment=REF:::Property and Casualty Claim Number:S:1
+
+#LOOP ID - 2300 CLAIM INFORMATION 100
+[2300]
+segment=CLM:::Claim Information:R:1
+segment=DTP:::Date - Order Date:S:1
+segment=DTP:::Date - Initial Treatment:S:1
+segment=DTP:::Date - Referral Date:S:1
+segment=DTP:::Date - Date Last Seen:S:1
+segment=DTP:::Date - Onset of Current Illness/Symptom:S:1
+segment=DTP:::Date - Acute Manifestation:S:5
+segment=DTP:::Date - Similar Illness/Symptom Onset:S:10
+segment=DTP:::Date - Accident:S:10
+segment=DTP:::Date - Last Menstrual Period:S:1
+segment=DTP:::Date - Last X-ray:S:1
+segment=DTP:::Date - Estimated Date of Birth:S:1
+segment=DTP:::Date - Hearing and Vision Prescription Date:S:1
+segment=DTP:::Date - Disability Begin:S:5
+segment=DTP:::Date - Disability End:S:5
+segment=DTP:::Date - Last Worked:S:1
+segment=DTP:::Date - Authorized Return to Work:S:1
+segment=DTP:::Date - Admission:S:1
+segment=DTP:::Date - Discharge:S:1
+segment=DTP:::Date - Assumed and Relinquished Care Dates:S:2
+segment=PWK:::Claim Supplemental Information:S:10
+segment=CN1:::Contract Information:S:1
+segment=AMT:::Credit/Debit Card Maximum Amount:S:1
+segment=AMT:::Patient Amount Paid:S:1
+segment=AMT:::Total Purchased Service Amount:S:1
+segment=REF:::Service Authorization Exception Code:S:1
+segment=REF:::Mandatory Medicare (Section 4081) Crossover Indicator:S:1
+segment=REF:::Mammography Certification Number:S:1
+segment=REF:::Prior Authorization or Referral Number:S:2
+segment=REF:::Original Reference Number (ICN/DCN):S:1
+segment=REF:::Clinical Laboratory Improvement Amendment (CLIA)Number:S:3
+segment=REF:::Repriced Claim Number:S:1
+segment=REF:::Adjusted Repriced Claim Number:S:1
+segment=REF:::Investigational Device Exemption Number:S:1
+segment=REF:::Claim Identification Number for Clearing Houses and Other Transmission Intermediaries:S:1
+segment=REF:::Ambulatory Patient Group (APG):S:4
+segment=REF:::Medical Record Number:S:1
+segment=REF:::Demonstration Project Identifier:S:1
+segment=K3:::File Information:S:10
+segment=NTE:::Claim Note:S:1
+segment=CR1:::Ambulance Transport Information:S:1
+segment=CR2:::Spinal Manipulation Service Information:S:1
+segment=CRC:::Ambulance Certification:S:3
+segment=CRC:::Patient Condition Information Vision:S:3
+segment=CRC:::Homebound Indicator:S:1
+segment=HI:::Health Care Diagnosis Code:S:1
+segment=HCP:::Claim Pricing/Repricing Information:S:1
+loop=2305
+loop=2310A
+loop=2310B
+loop=2310C
+loop=2310D
+loop=2310E
+loop=2320
+loop=2400
+
+#LOOP ID - 2305 HOME HEALTH CARE PLAN INFORMATION 6
+[2305]
+segment=CR7:::Home Health Care Plan Information:S:1
+segment=HSD:::Health Care Services Delivery:S:3
+
+#LOOP ID - 2310A REFERRING PROVIDER NAME 2
+[2310A]
+segment=NM1:1:DN,P3:Referring Provider Name:S:1
+segment=PRV:::Referring Provider Specialty Information:S:1
+segment=N2:::Additional Referring Provider Name Information:S:1
+segment=REF:::Referring Provider Secondary Identification:S:5
+
+#LOOP ID - 2310B RENDERING PROVIDER NAME 1
+[2310B]
+segment=NM1:1:82:Rendering Provider Name:S:1
+segment=PRV:::Rendering Provider Specialty Information:R:1
+segment=N2:::Additional Rendering Provider Name Information:S:1
+segment=REF:::Rendering Provider Secondary Identification:S:5
+
+#LOOP ID - 2310C PURCHASED SERVICE PROVIDER NAME 1
+[2310C]
+segment=NM1:1:QB:Purchased Service Provider Name:S:1
+segment=REF:::Purchased Service Provider Secondary Identification:S:5
+
+#LOOP ID - 2310D SERVICE FACILITY LOCATION 1
+[2310D]
+segment=NM1:1:77,FA,LI,TL:Service Facility Location:S:1
+segment=N2:::Additional Service Facility Location Name Information:S:1
+segment=N3:::Service Facility Location Address:R:1
+segment=N4:::Service Facility Location City/State/ZIP:R:1
+segment=REF:::Service Facility Location Secondary Identification:S:5
+
+#LOOP ID - 2310E SUPERVISING PROVIDER NAME 1
+[2310E]
+segment=NM1:1:DQ:Supervising Provider Name:S:1
+segment=N2:::Additional Supervising Provider Name Information:S:1
+segment=REF:::Supervising Provider Secondary Identification:S:5
+
+#LOOP ID - 2320 OTHER SUBSCRIBER INFORMATION 10
+[2320]
+segment=SBR:::Other Subscriber Information:S:1
+segment=CAS:::Claim Level Adjustments:S:5
+segment=AMT:::Coordination of Benefits (COB) Payer Paid Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Approved Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Allowed Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Patient Responsibility Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Covered Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Discount Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Per Day Limit Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Patient Paid Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Tax Amount:S:1
+segment=AMT:::Coordination of Benefits (COB) Total Claim Before Taxes Amount:S:1
+segment=DMG:::Subscriber Demographic Information:S:1
+segment=OI:::Other Insurance Coverage Information:R:1
+segment=MOA:::Medicare Outpatient Adjudication Information:S:1
+loop=2330A
+loop=2330B
+loop=2330C
+loop=2330D
+loop=2330E
+loop=2330F
+loop=2330G
+loop=2330H
+
+#LOOP ID - 2330A OTHER SUBSCRIBER NAME 1
+[2330A]
+segment=NM1:1:IL:Other Subscriber Name:R:1
+segment=N2:::Additional Other Subscriber Name Information:S:1
+segment=N3:::Other Subscriber Address:S:1
+segment=N4:::Other Subscriber City/State/ZIP Code:S:1
+segment=REF:::Other Subscriber Secondary Identification:S:3
+
+#LOOP ID - 2330B OTHER PAYER NAME 1
+[2330B]
+segment=NM1:1:PR:Other Payer Name:R:1
+segment=N2:::Additional Other Payer Name Information:S:1
+segment=PER:::Other Payer Contact Information:S:2
+segment=DTP:::Claim Adjudication Date:S:1
+segment=REF:::Other Payer Secondary Identifier:S:2
+segment=REF:::Other Payer Prior Authorization or Referral Number:S:2
+segment=REF:::Other Payer Claim Adjustment Indicator:S:2
+
+#LOOP ID - 2330C OTHER PAYER PATIENT INFORMATION 1
+[2330C]
+segment=NM1:1:QC:Other Payer Patient Information:S:1
+segment=REF:::Other Payer Patient Identification:S:3
+
+#LOOP ID - 2330D OTHER PAYER REFERRING PROVIDER 2
+[2330D]
+segment=NM1:1:DN,P3:Other Payer Referring Provider:S:1
+segment=REF:::Other Payer Referring Provider Identification:R:3
+
+#LOOP ID - 2330E OTHER PAYER RENDERING PROVIDER 1
+[2330E]
+segment=NM1:1:82:Other Payer Rendering Provider:S:1
+segment=REF:::Other Payer Rendering Provider Secondary Identification:R:3
+
+#LOOP ID - 2330F OTHER PAYER PURCHASED SERVICE PROVIDER 1
+[2330F]
+segment=NM1:1:QB:Other Payer Purchased Service Provider:S:1
+segment=REF:::Other Payer Purchased Service Provider Identification:R:3
+
+#LOOP ID - 2330G OTHER PAYER SERVICE FACILITY LOCATION 1
+[2330G]
+segment=NM1:1:77,FA,LI,TL:Other Payer Service Facility Location:S:1
+segment=REF:::Other Payer Service Facility Location Identification:R:3
+
+#LOOP ID - 2330H OTHER PAYER SUPERVISING PROVIDER 1
+[2330H]
+segment=NM1:1:DQ:Other Payer Supervising Provider:S:1
+segment=REF:::Other Payer Supervising Provider Identification:R:3
+
+#LOOP ID - 2400 SERVICE LINE 50
+[2400]
+segment=LX:::Service Line:R:1
+segment=SV1:::Professional Service:R:1
+segment=SV4:::Prescription Number:S:1
+segment=PWK:::DMERC CMN Indicator:S:1
+segment=CR1:::Ambulance Transport Information:S:1
+segment=CR2:::Spinal Manipulation Service Information:S:5
+segment=CR3:::Durable Medical Equipment Certification:S:1
+segment=CR5:::Home Oxygen Therapy Information:S:1
+segment=CRC:::Ambulance Certification:S:3
+segment=CRC:::Hospice Employee Indicator:S:1
+segment=CRC:::DMERC Condition Indicator:S:2
+segment=DTP:::Date - Service Date:R:1
+segment=DTP:::Date - Certification Revision Date:S:1
+segment=DTP:::Date - Referral Date:S:1
+segment=DTP:::Date - Begin Therapy Date:S:1
+segment=DTP:::Date - Last Certification Date:S:1
+segment=DTP:::Date - Order Date:S:1
+segment=DTP:::Date - Date Last Seen:S:1
+segment=DTP:::Date - Test:S:2
+segment=DTP:::Date - Oxygen Saturation/Arterial Blood Gas Test:S:3
+segment=DTP:::Date - Shipped:S:1
+segment=DTP:::Date - Onset of Current Symptom/Illness:S:1
+segment=DTP:::Date - Last X-ray:S:1
+segment=DTP:::Date - Acute Manifestation:S:1
+segment=DTP:::Date - Initial Treatment:S:1
+segment=DTP:::Date - Similar Illness/Symptom Onset:S:1
+segment=QTY:::Anesthesia Modifying Units:S:5
+segment=MEA:::Test Result:S:20
+segment=CN1:::Contract Information:S:1
+segment=REF:::Repriced Line Item Reference Number:S:1
+segment=REF:::Adjusted Repriced Line Item Reference Number:S:1
+segment=REF:::Prior Authorization or Referral Number:S:2
+segment=REF:::Line Item Control Number:S:1
+segment=REF:::Mammography Certification Number:S:1
+segment=REF:::Clinical Laboratory Improvement Amendment (CLIA) Identification:S:1
+segment=REF:::Referring Clinical Laboratory Improvement Amendment (CLIA) Facility Identification:S:1
+segment=REF:::Immunization Batch Number:S:1
+segment=REF:::Ambulatory Patient Group (APG):S:4
+segment=REF:::Oxygen Flow Rate:S:1
+segment=REF:::Universal Product Number (UPN):S:1
+segment=AMT:::Sales Tax Amount:S:1
+segment=AMT:::Approved Amount:S:1
+segment=AMT:::Postage Claimed Amount:S:1
+segment=K3:::File Information:S:10
+segment=NTE:::Line Note:S:1
+segment=PS1:::Purchased Service Information:S:1
+segment=HSD:::Health Care Services Delivery:S:1
+segment=HCP:::Line Pricing/Repricing Information:S:1
+loop=2420A
+loop=2420B
+loop=2420C
+loop=2420D
+loop=2420E
+loop=2420F
+loop=2420G
+loop=2430
+loop=2440
+
+#LOOP ID - 2420A RENDERING PROVIDER NAME 1
+[2420A]
+segment=NM1:1:82:Rendering Provider Name:S:1
+segment=PRV:::Rendering Provider Specialty Information:R:1
+segment=N2:::Additional Rendering Provider Name Information:S:1
+segment=REF:::Rendering Provider Secondary Identification:S:5
+
+#LOOP ID - 2420B PURCHASED SERVICE PROVIDER NAME 1
+[2420B]
+segment=NM1:1:QB:Purchased Service Provider Name:S:1
+segment=REF:::Purchased Service Provider Secondary Identification:S:5
+
+#LOOP ID - 2420C SERVICE FACILITY LOCATION 1
+[2420C]
+segment=NM1:1:77,FA,LI,TL:Service Facility Location:S:1
+segment=N2:::Additional Service Facility Location Name Information:S:1
+segment=N3:::Service Facility Location Address:R:1
+segment=N4:::Service Facility Location City/State/ZIP:R:1
+segment=REF:::Service Facility Location Secondary Identification:S:5
+
+#LOOP ID - 2420D SUPERVISING PROVIDER NAME 1
+[2420D]
+segment=NM1:1:DQ:Supervising Provider Name:S:1
+segment=N2:::Additional Supervising Provider Name Information:S:1
+segment=REF:::Supervising Provider Secondary Identification:S:5
+
+#LOOP ID - 2420E ORDERING PROVIDER NAME 1
+[2420E]
+segment=NM1:1:DK:Ordering Provider Name:S:1
+segment=N2:::Additional Ordering Provider Name Information:S:1
+segment=N3:::Ordering Provider Address:S:1
+segment=N4:::Ordering Provider City/State/ZIP Code:S:1
+segment=REF:::Ordering Provider Secondary Identification:S:5
+segment=PER:::Ordering Provider Contact Information:S:1
+
+#LOOP ID - 2420F REFERRING PROVIDER NAME 2
+[2420F]
+segment=NM1:1:DN,P3:Referring Provider Name:S:1
+segment=PRV:::Referring Provider Specialty Information:S:1
+segment=N2:::Additional Referring Provider Name Information:S:1
+segment=REF:::Referring Provider Secondary Identification:S:5
+
+#LOOP ID - 2420G OTHER PAYER PRIOR AUTHORIZATION OR REFERRAL NUMBER 4
+[2420G]
+segment=NM1:1:PR:Other Payer Prior Authorization or Referral Number:S:1
+segment=REF:::Other Payer Prior Authorization or Referral Number:R:2
+
+#LOOP ID - 2430 LINE ADJUDICATION INFORMATION 25
+[2430]
+segment=SVD:::Line Adjudication Information:S:1
+segment=CAS:::Line Adjustment:S:99
+segment=DTP:::Line Adjudication Date:R:1
+
+#LOOP ID - 2440 FORM IDENTIFICATION CODE 5
+[2440]
+segment=LQ:::Form Identification Code:S:1
+segment=FRM:::Supporting Documentation:R:99
+
+#LOOP ID - TRAILER
+[SE]
+segment=SE:::Transaction Set Trailer:R:1
+
+[GE]
+segment=GE:::GE:R:1
+
+[IEA]
+segment=IEA:::IEA:R:1
+
+
+

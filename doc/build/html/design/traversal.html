@@ -1,0 +1,221 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design Note: Message Structure Traversal &mdash; TigerShark 3.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
+    <link rel="up" title="Design Notes" href="index.html" />
+    <link rel="next" title="Design Note: Reconciling “Bare” Python Classes with Django" href="ORMPlanning.html" />
+    <link rel="prev" title="Design Notes" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ORMPlanning.html" title="Design Note: Reconciling “Bare” Python Classes with Django"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Design Notes"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Design Notes</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="design-note-message-structure-traversal">
+<span id="traversal"></span><h1>Design Note: Message Structure Traversal<a class="headerlink" href="#design-note-message-structure-traversal" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="../architecture.html#architecture"><em>Architecture and Design</em></a></p>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+<p>The standard visitor design pattern traverses the entire structure.
+To &#8220;flatten&#8221; Loop definitions, we need to have a &#8220;definition&#8221; view which
+looks at details, and a &#8220;reference&#8221; view which doesn&#8217;t look at details.</p>
+</div>
+<div class="section" id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="visitor-and-in-order-traveral">
+<h3><strong>Visitor</strong> and In-Order Traveral<a class="headerlink" href="#visitor-and-in-order-traveral" title="Permalink to this headline">¶</a></h3>
+<p>Here&#8217;s the standard design pattern for <strong>Visitor</strong>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Visitor</span><span class="p">(</span> <span class="nb">object</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">preVisit</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">aNode</span> <span class="p">):</span>
+        <span class="k">pass</span> <span class="c"># process aNode</span>
+    <span class="k">def</span> <span class="nf">postVisit</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">aNode</span> <span class="p">):</span>
+        <span class="k">pass</span> <span class="c"># process aNode</span>
+
+<span class="k">class</span> <span class="nc">Structure</span><span class="p">(</span> <span class="nb">object</span> <span class="p">):</span>
+    <span class="k">def</span> <span class="nf">visit</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">aVisitor</span> <span class="p">):</span>
+        <span class="n">aVisitor</span><span class="o">.</span><span class="n">preVisit</span><span class="p">(</span> <span class="bp">self</span> <span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">structure</span><span class="p">:</span>
+            <span class="n">i</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span> <span class="n">aVisitor</span> <span class="p">)</span>
+        <span class="n">aVisitor</span><span class="o">.</span><span class="n">postVisit</span><span class="p">(</span> <span class="bp">self</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>This implements basic in-order traversal of the structure</p>
+<div class="highlight-python"><pre>- preVisit( top )
+    - preVisit( "I." )
+        - preVisit( "I.A." )
+        - postVisit( "I.A." )
+        - preVisit( "I.B." )
+        - postVisit( "I.B." )
+    - postVisit( "I." )
+    - preVisit( "II." )
+        - preVisit( "II.A." )
+        - postVisit( "II.A." )
+        - preVisit( "II.B." )
+        - postVisit( "II.B." )
+    - postVisit( "II." )
+- postVisit( top )</pre>
+</div>
+</div>
+<div class="section" id="depth-first-pre-order-traversal">
+<h3>Depth-First Pre-Order Traversal<a class="headerlink" href="#depth-first-pre-order-traversal" title="Permalink to this headline">¶</a></h3>
+<p>Some requirements are somewhat different from the standard traveral shown
+above.  We need first to emit Definitions.  Then we need to emit a
+resulting structure using References to the Definitions.</p>
+<p>Note that each part (definitions and references) are completely flat.
+The definition of a Loop contains just Segments and references to any subLoops.</p>
+<p>We want the following</p>
+<div class="highlight-python"><pre>- [preVisit( top )] no output
+    - [preVisit( "I." )] no output
+        - postVisit( "I.A." ) - definition
+        - postVisit( "I.A." ) - definition
+    - postVisit( "I." ) - definition with references to children
+    - [preVisit( "II". )] no output
+        - postVisit( "II.A." ) - definition
+        - postVisit( "II.B." ) - definition
+    - postVisit( "II." ) - definition with references to children
+- postVisit( top ) - definition with references to children</pre>
+</div>
+<p>In order to get this, we have to descend through each level of the structure
+until we reach the bottom-most level, where we begin emitting definitions.</p>
+<p>The trick is that the &#8220;post&#8221; processing contains a review of the top-level
+of a structure with proper references inserted.</p>
+<p>The ordinary visitor processing creates the definitions which are used by
+the &#8220;post&#8221; method.</p>
+</div>
+</div>
+<div class="section" id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+<p>The nature of the structures mean that we often have two kinds of traveral.
+For Segment-Composite-Element, we use ordinary in-order traversal, since this
+structure is essentially a Segment with the occasioanl sub-Segment (Composite).</p>
+<p>For Message-Loop, we have to use a post-order traversal to be sure that loops
+emit their definition first (which will involve Segments) and then references to
+those definitions.</p>
+</div>
+<div class="section" id="consequence">
+<h2>Consequence<a class="headerlink" href="#consequence" title="Permalink to this headline">¶</a></h2>
+<p>We won&#8217;t have simple, single-visitor design.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Design Note: Message Structure Traversal</a><ul>
+<li><a class="reference internal" href="#problem">Problem</a></li>
+<li><a class="reference internal" href="#forces">Forces</a><ul>
+<li><a class="reference internal" href="#visitor-and-in-order-traveral"><strong>Visitor</strong> and In-Order Traveral</a></li>
+<li><a class="reference internal" href="#depth-first-pre-order-traversal">Depth-First Pre-Order Traversal</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
+<li><a class="reference internal" href="#consequence">Consequence</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Design Notes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ORMPlanning.html"
+                        title="next chapter">Design Note: Reconciling &#8220;Bare&#8221; Python Classes with Django</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/design/traversal.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ORMPlanning.html" title="Design Note: Reconciling “Bare” Python Classes with Django"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Design Notes"
+             >previous</a> |</li>
+        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Design Notes</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

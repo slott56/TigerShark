@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design Note: Key Generation for X12Messages &mdash; Tiger v3.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Tiger v3.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="design-note-key-generation-for-x12messages">
+<span id="key-generation"></span><h1>Design Note: Key Generation for X12Messages<a class="headerlink" href="#design-note-key-generation-for-x12messages" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="architecture.html#architecture"><em>Architecture and Design</em></a></p>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+<p>Django assigns DB PK&#8217;s at <tt class="docutils literal"><span class="pre">save()</span></tt> time.  An <tt class="docutils literal"><span class="pre">X12Message</span></tt>, however, is parsed in pieces,
+working from top down.  This means that each parent has to be saved before any children
+can be parsed and attached to the parent.</p>
+<p>See <a class="reference external" href="recursiveStructures.html">Recursive Structures</a> for more information.</p>
+<blockquote>
+<div></div></blockquote>
+</div>
+<div class="section" id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
+<p>While Django&#8217;s default PK generation slightly simplifies the programs, it means a great
+deal of saving during message parsing, making it slow.  While message parsing is relatively rare,
+the slowness leads to using two forms of a message: a Django form and a separate &#8220;internal&#8221; form.</p>
+<p>Pythonic speeds can be achieved if the message is parsed in its entirety without
+doing any saves.  (Django requires the saves to have the DB generate the PK&#8217;s.)
+While the message can easily be assigned a unique id by the load process, we still
+have to create keys for each Loop and Segment within the overall message.</p>
+<div class="section" id="use-cases">
+<h3>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h3>
+<p>We have three use cases to consider.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Parsing a message.  Here, we create the X12Message object first.
+Each X12Loop must have an FK to an enclosing X12Loop.  Each X12Segment must
+have an FK to the enclosing X12Loop.  For convenience, it works out
+well if each X12Loop and X12Segment also has an FK to the overall
+X12Message.</li>
+<li>Messages are &#8220;cloned&#8221; to implement a &#8220;Save As...&#8221; technique.  This means
+that all associated Loops and Segments must be cloned to have the
+proper parent message key.  The remaining FK&#8217;s for X12Loop parentage
+and X12Segment parentage must also be properly revised.</li>
+<li>Messages can be expanded (or contracted) to add or remove Loops and Segments.
+It helps slightly if the unique ID&#8217;s aren&#8217;t expected to be sequential.
+However, we have to work out a sequential numbering scheme that either
+permits inserts without renumbering, or develop a <strong>Visitor</strong> which can
+renumber Segments and Loops after an insert.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="choices">
+<h3>Choices<a class="headerlink" href="#choices" title="Permalink to this headline">¶</a></h3>
+<p>We have several choices for Loop and Segment key generation.  Note that all of
+these techniques must completely replace all DB-generated keys.</p>
+<ul>
+<li><p class="first">Emulate a DB key generator with a global <strong>Singleton</strong> object that creates unique
+sequence of integers (or more complex GUID&#8217;s).  This has to coordinate with the
+database to assure that the in-memory key generator doesn&#8217;t duplicate a DB key.</p>
+</li>
+<li><p class="first">Use a multi-column key that doesn&#8217;t require global uniqueness.  In this case,
+we have a number of choices for the multi-part key.</p>
+<ul>
+<li><p class="first">Loops have names, but these names can repeat, so an occurrence number is required to
+make the name unique.  This technique is limited because it is challenging
+to reconstruct the original message in order unless each segment is
+assigned a proper sequential number, irrespective of the loop structure.</p>
+<p>We would have to use 3-part key: Message/LoopName/LoopOccurance.  This is
+significantly more complex than simple Django ID&#8217;s, and undesirable.</p>
+</li>
+<li><p class="first">Loops nest, so it&#8217;s challenging to assign simple sequential numbers
+to the loops.  A loop should have a bracketing pair of numbers
+to show all of the segments it contains.</p>
+<p>However, we can assign simple sequential numbers to each Loop of a Message,
+giving us a 2-part key: Message/LoopSeq.  This is only slightly more
+complex than Django&#8217;s simple ID&#8217;s.</p>
+<p>However, when we try to insert a new Loop, the simple sequential numbering
+falls apart.</p>
+</li>
+<li><p class="first">Segments have an absolute position within the message as a whole, plus they
+have a relative position within a loop.  We have a parent FK
+to show the Loop to which a Segment belongs.  We also have a simple sequence
+for each Segment of a Message to assure that we keep them in the original order.</p>
+<p>Again, when we try to insert a new Message, the simple sequential numbering
+falls apart.</p>
+</li>
+</ul>
+</li>
+</ul>
+<p>Django makes it trivial to fetch an entire message in what behaves as
+a single, simple query.  To insert segments, we must traverse the message structure reassigning
+the sequence numbers for Loops and Segments to assure that they are processed
+in the correct order.</p>
+</div>
+</div>
+<div class="section" id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+<p>The best approach is to have a two part key for Loops and Segments.  This key
+is a Message ID + Component ID.</p>
+<p>The X12Message contain two methods which are sequence generators for segments
+and loops.  The generator assigns simple ascending sequential numbers to each
+X12Segment and X12Loop that is part of the message.  These are meaningless surrogate keys.
+These use persistent attributes of the message so that loops and segments can be
+added without inadvertent duplication.</p>
+</div>
+<div class="section" id="consequences">
+<h2>Consequences<a class="headerlink" href="#consequences" title="Permalink to this headline">¶</a></h2>
+<p>In addition to the simple identity key of Message Name and Component Number,
+a Segment requires a
+sequential position.  When a new Segment is inserted, other segment positions must
+be updated to make space for the new segment.</p>
+<p>A Loop, similarly, requires information on it&#8217;s position within the overall message
+and parent loops.  We can use either bracketing positions of the Segments within that Loop,
+or direct parentage.</p>
+<blockquote>
+<div><ul class="simple">
+<li>bracketing segment number ranges permits easy SQL queries.</li>
+<li>direct parentage FK&#8217;s requires Python methods for navigation.</li>
+</ul>
+</div></blockquote>
+<p>Currently, there&#8217;s no real barrier to using Python methods for navigation.  A SQL-only
+query is not part of the design.  Bracketing segment numbers will not be used initially,
+but can be added later.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Design Note: Key Generation for X12Messages</a><ul>
+<li><a class="reference internal" href="#problem">Problem</a></li>
+<li><a class="reference internal" href="#forces">Forces</a><ul>
+<li><a class="reference internal" href="#use-cases">Use Cases</a></li>
+<li><a class="reference internal" href="#choices">Choices</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
+<li><a class="reference internal" href="#consequences">Consequences</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/keygen.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,120 @@
+[LOOPS]
+ISA
+GS
+ST
+2000A
+2000B
+2000C
+2000D
+2000E
+SE
+GE
+IEA
+
+#--- start of loop details ---#
+
+[ISA]
+segment=ISA:::ISA:R:1
+
+[GS]
+segment=GS:::GS:R:1
+
+#LOOP ID - HEADER
+[ST]
+segment=ST:::Transaction Set Header:R:1
+segment=BHT:::Beginning of Hierarchical Transaction:R:1
+
+#LOOP ID - 2000A INFORMATION SOURCE LEVEL >1
+[2000A]
+segment=HL:3:20:Information Source Level:R:1
+loop=2100A
+
+#LOOP ID - 2100A PAYER NAME >1
+[2100A]
+segment=NM1:1:PR:Payer Name:R:1
+segment=PER:::Payer Contact Information:S:1
+
+#LOOP ID - 2000B INFORMATION RECEIVER LEVEL >1
+[2000B]
+segment=HL:3:21:Information Receiver Level:R:1
+loop=2100B
+
+#LOOP ID - 2100B INFORMATION RECEIVER NAME >1
+[2100B]
+segment=NM1:1:41:Information Receiver Name:R:1
+
+#LOOP ID - 2000C SERVICE PROVIDER LEVEL >1
+[2000C]
+segment=HL:3:19:Service Provider Level:R:1
+loop=2100C
+
+#LOOP ID - 2100C PROVIDER NAME >1
+[2100C]
+segment=NM1:1:1P:Provider Name:R:1
+
+#LOOP ID - 2000D SUBSCRIBER LEVEL >1
+[2000D]
+segment=HL:3:22:Subscriber Level:R:1
+segment=DMG:::Subscriber Demographic Information:S:1
+loop=2100D
+loop=2200D
+
+#LOOP ID - 2100D SUBSCRIBER NAME >1
+[2100D]
+segment=NM1:1:IL,QC:Subscriber Name:R:1
+
+#LOOP ID - 2200D CLAIM SUBMITTER TRACE NUMBER >1
+[2200D]
+segment=TRN:::Claim Submitter Trace Number:R:1
+segment=REF:::Payer Claim Identification Number:S:1
+segment=REF:::Institutional Bill Type Identification:S:1
+segment=REF:::Medical Record Identification:S:1
+segment=AMT:::Claim Submitted Charges:S:1
+segment=DTP:::Claim Service Date:S:1
+loop=2210D
+
+#LOOP ID - 2210D SERVICE LINE INFORMATION >1
+[2210D]
+segment=SVC:::Service Line Information:S:1
+segment=REF:::Service Line Item Identification:S:1
+segment=DTP:::Service Line Date:R:1
+
+#LOOP ID - 2000E DEPENDENT LEVEL >1
+[2000E]
+segment=HL:3:23:Dependent Level:S:1
+segment=DMG:::Dependent Demographic Information:R:1
+loop=2100E
+loop=2200E
+
+#LOOP ID - 2100E DEPENDENT NAME >1
+[2100E]
+segment=NM1:1:QC:Dependent Name:R:1
+
+#LOOP ID - 2200E CLAIM SUBMITTER TRACE NUMBER >1
+[2200E]
+segment=TRN:::Claim Submitter Trace Number:R:1
+segment=REF:::Payer Claim Identification Number:S:1
+segment=REF:::Institutional Bill Type Identification:S:1
+segment=REF:::Medical Record Identification:S:1
+segment=AMT:::Claim Submitted Charges:S:1
+segment=DTP:::Claim Service Date:S:1
+loop=2210E
+
+#LOOP ID - 2210E SERVICE LINE INFORMATION >1
+[2210E]
+segment=SVC:::Service Line Information:S:1
+segment=REF:::Service Line Item Identification:S:1
+segment=DTP:::Service Line Date:S:1
+
+#LOOP ID - TRAILER
+[SE]
+segment=SE:::Transaction Set Trailer:R:1
+
+[GE]
+segment=GE:::GE:R:1
+
+[IEA]
+segment=IEA:::IEA:R:1
+
+
+

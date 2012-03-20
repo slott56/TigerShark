@@ -1,0 +1,306 @@
+=head1 NAME
+
+X12::Parser::Readme - understanding configuration (cf) files 
+for X12::Parser
+
+=head2 X12 transactions
+
+ASC X12 standards define commonly used EDI transactions. The
+standards define a structure/format for exchange of EDI data.
+
+Each transaction type is called a "transaction set". The smallest
+data item in a transaction is called an "element". Groups of related
+elements form a data segment. A data element separator separates
+the elements within a segment. A segment starts with a element
+which is called the segment ID, and ends with a segment
+terminator.
+
+Logical groups of segments are called loops. There are some
+segments, which are used only to identify the beginning of a loop,
+these are called as control segments. A logical set of loops
+together form a "transaction set".
+
+Similar transaction sets can be lumped together by enclosing them
+in data segments that are known as functional group headers and
+trailers. Functional groups are grouped together using interchange
+control headers and trailers.
+
+=head2 Parsing
+
+Unlike XML/HTML parsers which relies on "<" and ">" tags to
+determine start and end of data blocks, X12 transactions rely on
+pre-defined values (segment IDs) to indicate start and end of
+related data blocks (loops). Developing a parser that would work
+for all X12 transactions poses a challenge in this respect, as each
+transaction has its own hierarchy of loops and start/end indicators.
+
+This lead to the development of the X12 configuration file (I<cf>)
+specification. The cf specification is created to specify details
+regarding the blocks/loops and start/end information in a common
+format. Cf files can be created for the different transaction sets.
+(see section I<Building a cf file>). 
+
+Now you can parse your EDI data file by invoking the X12::Parser 
+specifying the cf file to use. This allows you to parse any X12 
+transaction data files just by building the cf file for that
+transaction type.
+
+=head2 Cf file specification for X12::Parser
+
+The cf file specifies any transaction in a hierarchical form. It
+identifies the loops and segments in a transaction. This
+information is used to parse the transaction file. The X12::Parser
+uses the X12::Parser::Cf module to read the cf file information before
+parsing a transaction file. Since the X12::Parser parses files based
+on the cf file it allows the user to parse different X12 transaction
+types just by using the appropriate cf file. The user can use the cf
+files that are bundled with this package or create new cf files. The
+cf provided with this package is for the HIPAA X12 Ver 4010
+X12 transactions.
+
+A cf file has two types of information: I<section> and I<key=value>
+pairs. A section contains information in key=value pairs.
+
+=head3 section
+
+Sections are identified by the square brackets ("[" and "]"). Section
+represents loops (or logical blocks) in a X12 transaction. The
+name of the loop or the block is specified in square brackets. The
+section I<[LOOPS]> is mandatory in a configuration file. It consists
+only the names of the top level loops instead of key=value pairs.
+The X12::Parser::Cf cf file reader starts reading a cf file from the
+[LOOPS] section.
+
+=head3 key=value
+
+There are two predefined keys, which are recognized by the Cf
+file reader, namely: I<segment> and I<loop>. Segment key is used to
+define the segments that are part of the current section/loop. The
+loop key is used to define the sub-loops or the child loops for the
+current section/loop.
+
+Note: The term section and loop is used interchangeably as a
+section in the cf file represents a loop in a X12 transaction.
+
+Within a section, the first key=value pair represents the start of 
+the loop. Each section/loop should have atleast one key=value
+pair for the X12::Parser to identify the loop in the X12 transaction
+file. Although the X12::Parser::Cf modules reads all the key=value
+pairs, the X12::Parser uses only the first key=value pair to
+identify the loops. The user may specify only the first key=value
+pairs for each loop.
+
+Value itself consists of 6 fields separated by I<':'>. All values 
+are not currently used.
+
+	  key=value1:value2:value3:value4:value5:value6
+
+When parsing a X12 transaction file, the values help the
+X12::Parser determine if a segment is the start of a loop.
+
+a. value1, is the segment id for a segment in a X12 transaction.
+The first key=value pair within a section tells the X12::Parser
+how to identify the loop.
+
+b. In some cases, to identify a loop correctly it is not enough 
+to look at the segment id, you need to look at the qualifier too.
+
+value2 and value3 are used to specify this. value2 is used to
+specify the position on the segment that the X12::Parser should
+look for value3. value3 consists of a I<','> separated list of qualifiers.
+
+c. value4 is a description of the segment. (not used)
+
+d. value5 indicates if the segment is required or situational. (not used)
+
+e. value6 indicates the allowable repeat count for the segment.(not used)
+
+Currently values 1, 2 and 3 are used for parsing the transaction
+file. The others may be used in later versions of this package.
+
+=head2 Limitations 
+
+The X12::Parser::Cf module does not do validation of the Cf files. Since the 
+goal of the X12::Parser module is to parse X12 files, the X12::Parser::Cf 
+module is very minimal. The user should ensure that the cf files 
+are appropriate.
+
+Do not put extra spaces after [ ] sections. Do not have leading 
+spaces for section name and key=value pairs. Lines with a leading #,
+are considered comments.
+
+To validate if X12::Parser::Cf is reading the cf file correctly try 
+something like 
+
+ use X12::Parser::Cf;
+
+ my $cf = new X12::Parser::Cf;
+ $cf->load("sample.cf");
+
+ for (my $i=0; $i<@{$cf->{'looptree'}}; $i++) {
+   print "$cf->{'looptree'}->[$i][0]\t";          #- loop level
+   print "$cf->{'looptree'}->[$i][1]\t";          #- loop name
+   print "$cf->{'segmentstart'}->{$loop}->[0]\n"; #- loop start
+ }
+
+This would print a list of loop levels, loop names and loop start segment 
+information. If this doesn't look like what you wanted, go back and fix 
+your cf file.
+
+=head2 Building a cf file
+
+Lets take the case of building a cf file for Version 004010 of
+ANSI ASC X12.85, Health Care Claim Payment/Advice (835) transaction.
+
+=head3 835 transaction
+
+A 835 transaction structure would contain the following loops.
+
+    ISA
+    |-- GS
+        |-- ST
+            |-- 1000A
+            |-- 1000B
+            |-- 2000
+                |-- 2100
+                |-- 2110
+        |-- SE
+    |-- GE
+    IEA
+
+The above diagram shows the hierarchy of the loops. The data segments
+are not shown.
+
+=head3 Sample cf file
+
+     /-------------------------------------------------\
+     | ### start of the configuration file ###         |
+ (1) | [LOOPS]                                         |
+ (2) | ISA                                             |
+     | IEA                                             |
+     |                                                 |
+     | #--- start of loop details ---#                 |
+ (3) | [ISA]                                           |
+ (4) | segment=ISA:::Interchange Control Header:R:1    |
+ (5) | loop=GS                                         |
+     |                                                 |
+ (6) | [GS]                                            |
+     | segment=GS:::Functional Group Header:R:1        |
+     | loop=ST                                         |
+     |                                                 |
+ (7) | [ST]                                            |
+     | segment=ST:1:835:Transaction Set Header:R:1     |
+ (8) | loop=1000A                                      |
+     | loop=1000B                                      |
+     | loop=2000                                       |
+     |                                                 |
+     | [1000A]                                         |
+ (9) | segment=N1:1:PR:Payer Identification:R:1        |
+     |                                                 |
+     | [1000B]                                         |
+     | segment=N1:1:PE:Payee Identification:R:1        |
+     |                                                 |
+     | [2000]                                          |
+     | segment=LX:::Header Number:S:1                  |
+     | loop=2100                                       |
+     | loop=2110                                       |
+     |                                                 |
+     | [2100]                                          |
+     | segment=CLP:::Claim Payment Information:R:1     |
+     |                                                 |
+     | [2110]                                          |
+     | segment=SVC:::Service Payment Information:S:1   |
+     |                                                 |
+     | [SE]                                            |
+     | segment=SE:::Transaction Set Trailer:R:1        |
+     |                                                 |
+     | [GE]                                            |
+     | segment=GE:::Functional Group Trailer:R:1       |
+     |                                                 |
+ (3) | [IEA]                                           |
+     | segment=IEA:::Interchange Group Trailer:R:1     |
+     | ### end of the configuration file ###           |
+     \-------------------------------------------------/
+
+=head3 Description
+
+(1) LOOPS section is mandatory. Add the main loops under this section.
+Here we have added ISA and IEA loops (2). These are the top level loops.
+ 
+(3) Create a section for each of the loops mentioned under LOOPS
+ 
+(4) use the segment key to specify how the X12::Parser should determine
+the start of the ISA loop. We will explain the fields better when we
+come to (9).
+ 
+(5) if any, specify the sub-loops for ISA segment. In the above 
+example GS is a sub loop for ISA. In there are more than one 
+sub loops under ISA specify them too using the loop keyword. See (8)
+how three sub loops are specified.
+ 
+(6) create a section for all loops specified under section ISA. Here it
+is GS. Use the section key and if there are any sub loops use the loop
+key to define their values.
+ 
+Follow the same procedure to define all the loops and sub-loops.
+ 
+(9) Here's a description of the fields of the values for segment.
+       segment=N1:1:PR:Payer Identification:R:1
+               |  |  |            |         | |
+              (a)(b)(c)          (d)       (e)(f)
+
+   (a) specify the segment id here. Loop 1000A starts with N1 so 
+       specify N1 here.
+
+   (b) and (c), there are cases when the segment id does not uniquely
+       identify a loop. For eg. Loop 1000A and 1000B both start
+       with N1 segment id. When parsing a transaction file, if the 
+       parser encounters a segment starting with N1, it needs additional
+       information to decide if it is Loop 1000A or 1000B. 
+       This is done by specifying the the qualifier information 
+       in the fields (b) and (c).
+       (b) specify the position in the X12 segment where the parser 
+           should look for the qualifier specified in (c).
+          
+       If there are multiple qualifiers which identify a loop, specify
+       all of them in position (c) separated by a comma.
+
+   (d) This is the description of the segment. You may leave this 
+       blank. (not used)
+
+   (e) Specify if the segment is required or situational. (not used)
+
+   (f) Specify the number of times the segment can be repeated.
+       (not used)
+
+       The fields (d) (e) and (f) are not used currently, but later
+       releases may support these fields.
+
+
+=head1 SEE ALSO
+
+o For details on Transaction sets refer to:
+National Electronic Data Interchange Transaction Set Implementaion Guide.
+Implementation guides are available for all the Transaction sets.
+
+o I<X12::Parser::Readme> for more information on the Parser and
+  configuration files.
+
+o I<X12::Parser::Cf>
+
+If you have a mailing list set up for your module, mention it here.
+
+If you have a web site set up for your module, mention it here.
+
+=head1 AUTHOR
+
+Prasad Poruporuthan, I<prasad@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright 2003 by Prasad Poruporuthan
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut

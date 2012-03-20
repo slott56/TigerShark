@@ -1,0 +1,283 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Use Cases &mdash; TigerShark 3.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="TigerShark 3.1 documentation" href="index.html" />
+    <link rel="next" title="Architecture and Design" href="architecture.html" />
+    <link rel="prev" title="Overview" href="overview.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="architecture.html" title="Architecture and Design"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="use-cases">
+<span id="usecase"></span><h1>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h1>
+<p>This document provides a <a class="reference internal" href="#actors">Actors</a> with an overview
+of the actors.</p>
+<p>The <a class="reference internal" href="#use-case-scenarios">Use Case Scenarios</a> chapter describes the individual use cases.</p>
+<p>The <a class="reference internal" href="#data-model">Data Model</a> chapter provides an overview of the key data entities.</p>
+<p>Architecture: <a class="reference internal" href="architecture.html#architecture"><em>Architecture and Design</em></a></p>
+<div class="section" id="actors">
+<h2>Actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h2>
+<p>There are two actors.</p>
+<ul>
+<li><p class="first">Developer</p>
+<p>This person transforms XML definitions of X12 transactions (e.g.,
+270 Eligibility) into Python class definitions.  This includes
+the structure definitions, plus an unmarshalling Factory.</p>
+<p>They may tweak or adjust the XML or the Python based on specific
+source or target implementation details.</p>
+<p>They will then build EDI applications which depend on the X12 message
+structures.</p>
+</li>
+<li><p class="first">EDI Application</p>
+<p>An EDI application will import the class definitions and the
+unmarshalling Factory.  The Factory is used to unmarshall X12 messages.
+The application can use the parsed message and marshall a resulting
+message.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="use-case-scenarios">
+<h2>Use Case Scenarios<a class="headerlink" href="#use-case-scenarios" title="Permalink to this headline">¶</a></h2>
+<p>The following use cases are defined:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#create-a-structure-and-factory">Create A Structure and Factory</a></li>
+<li><a class="reference internal" href="#unmarshall-a-message">Unmarshall A Message</a></li>
+<li><a class="reference internal" href="#synthesize-a-message">Synthesize A Message</a></li>
+<li><a class="reference internal" href="#marshall-a-message">Marshall A Message</a></li>
+</ul>
+</div></blockquote>
+<div class="section" id="create-a-structure-and-factory">
+<h3>Create A Structure and Factory<a class="headerlink" href="#create-a-structure-and-factory" title="Permalink to this headline">¶</a></h3>
+<p>Actor locates an XML file that describes a message, for example,
+<tt class="file docutils literal"><span class="pre">pyx12-1.5.0map270.4010.X092.A1.xml</span></tt>
+in the <tt class="file docutils literal"><span class="pre">pyx12-1.5.0.zip</span></tt> archive.</p>
+<p>Actor runs the X12.MakePython converter.  System creates a module
+of Python classes plus an unmarshalling Factory class, for example
+<tt class="xref py py-mod docutils literal"><span class="pre">M270_4010_X092_A1</span></tt>.</p>
+</div>
+<div class="section" id="unmarshall-a-message">
+<span id="unmarshall"></span><h3>Unmarshall A Message<a class="headerlink" href="#unmarshall-a-message" title="Permalink to this headline">¶</a></h3>
+<p>An application imports the module with message
+definition classes and unmarshalling
+Factory class.</p>
+<p>The application creates a Factory object.</p>
+<p>The application uses the object
+to unmarshall a message.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">M270_4010_X092_A1</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">M270_4010_X092_A1</span><span class="o">.</span><span class="n">Unmarshaller</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;a_file&#39;</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
+    <span class="n">msg</span><span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span> <span class="n">source</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="synthesize-a-message">
+<span id="synthesize"></span><h3>Synthesize A Message<a class="headerlink" href="#synthesize-a-message" title="Permalink to this headline">¶</a></h3>
+<p>An application imports the module with message
+definition classes.</p>
+<p>The application creates the message object.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">M270_4010_X092_A1</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">M270_4010_X092_A1</span><span class="o">.</span><span class="n">M270</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="marshall-a-message">
+<span id="marshall"></span><h3>Marshall A Message<a class="headerlink" href="#marshall-a-message" title="Permalink to this headline">¶</a></h3>
+<p>An application imports the module with message definition classes and marshalling
+Factory class.</p>
+<p>The application develops a message and a Factory object.  Perhaps
+through the <a class="reference internal" href="#unmarshall-a-message">Unmarshall a Message</a> use case.  Perhaps through
+a <a class="reference internal" href="#synthesize-a-message">Synthesize a Message</a> use case.</p>
+<p>It uses
+the Factory object to marshall the message.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">M270_4010_X092_A1</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">M270_4010_X092_A1</span><span class="o">.</span><span class="n">Marshaller</span><span class="p">()</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;a_file&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">destination</span><span class="p">:</span>
+    <span class="n">m</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span> <span class="n">msg</span><span class="p">,</span> <span class="n">destination</span> <span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="data-model">
+<h2>Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h2>
+<p>There are three subject areas:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#message-schema-and-factory">Message Schema and Factory</a>.  The message structure and the
+marshall/unmarshall Factory class.
+This is the essential X12 message structure
+xreated</li>
+<li><a class="reference internal" href="#module-builder">Module Builder</a>.  This is a module which transforms the XML
+schema definition into a module with POPO&#8217;s and a Factory.</li>
+<li><a class="reference internal" href="#xml-schema">XML Schema</a>.  The master definition of the X12 message.</li>
+</ul>
+<div class="section" id="message-schema-and-factory">
+<h3>Message Schema and Factory<a class="headerlink" href="#message-schema-and-factory" title="Permalink to this headline">¶</a></h3>
+<p>An X12Message contains X12Loops.
+Each X12Loop is a recursive structure that contains X12Loops and X12Segments.
+An X12Segment contains Composite Elements and Atomic Elements.</p>
+<p>The standard technique for recursive structures involves a polymorphic design,
+as shown in <a class="reference internal" href="#figure-1">Figure 1</a>.</p>
+<div class="figure">
+<img alt="_images/usecaseclaim.png" src="_images/usecaseclaim.png" />
+<p class="caption"><span class="target" id="figure-1">Figure 1</span>.</p>
+</div>
+<p>An X12Message is an X12Structure, and contains X12Structure elements.
+An X12Loop, similarly, is an X12Structure and contains X12Structure elements.
+This allows a loop to contain subloops as well as segments.  An X12Segment
+is an X12Structure (and contained within an X12Loop), but is not a container
+of other elements.</p>
+<p>X12Element and X12Composite contain the attributes of an X12Segment.</p>
+<p>For implementation notes, see <a class="reference internal" href="design/recursiveStructures.html#recursive-structures"><em>Design Note: Recursive Structures in SQL</em></a>.</p>
+</div>
+<div class="section" id="module-builder">
+<h3>Module  Builder<a class="headerlink" href="#module-builder" title="Permalink to this headline">¶</a></h3>
+<p>Transform XML definitions of X12 messages into POPO and marshall/unmarshall
+factory class.</p>
+<p>Generally, this is an XML parser which creates DOM objects,
+and a suite of Visitors to emit Python class definitions which
+reflect the X12 message structure.</p>
+<p>Other visitors can be defined wich will emit Django model definitions
+or, perhaps, SQLAlchemy model definitions.</p>
+</div>
+<div class="section" id="xml-schema">
+<h3>XML Schema<a class="headerlink" href="#xml-schema" title="Permalink to this headline">¶</a></h3>
+<p>This is the definition of X12 messages.  We borrow these from the Py12
+package which provides definitions of X12 messages.</p>
+<p>The schema repository contains three types of XML files.</p>
+<ul class="simple">
+<li><tt class="file docutils literal"><span class="pre">270.4010.X092.A1.xml</span></tt> message definition</li>
+<li><tt class="file docutils literal"><span class="pre">codes.xml</span></tt></li>
+<li><tt class="file docutils literal"><span class="pre">dataele.xml</span></tt></li>
+<li><tt class="file docutils literal"><span class="pre">maps.xml</span></tt></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/Tiger_shark2.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Use Cases</a><ul>
+<li><a class="reference internal" href="#actors">Actors</a></li>
+<li><a class="reference internal" href="#use-case-scenarios">Use Case Scenarios</a><ul>
+<li><a class="reference internal" href="#create-a-structure-and-factory">Create A Structure and Factory</a></li>
+<li><a class="reference internal" href="#unmarshall-a-message">Unmarshall A Message</a></li>
+<li><a class="reference internal" href="#synthesize-a-message">Synthesize A Message</a></li>
+<li><a class="reference internal" href="#marshall-a-message">Marshall A Message</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#data-model">Data Model</a><ul>
+<li><a class="reference internal" href="#message-schema-and-factory">Message Schema and Factory</a></li>
+<li><a class="reference internal" href="#module-builder">Module  Builder</a></li>
+<li><a class="reference internal" href="#xml-schema">XML Schema</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="overview.html"
+                        title="previous chapter">Overview</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="architecture.html"
+                        title="next chapter">Architecture and Design</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/usecase.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="architecture.html" title="Architecture and Design"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="overview.html" title="Overview"
+             >previous</a> |</li>
+        <li><a href="index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

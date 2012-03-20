@@ -1,0 +1,171 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design Note: Recursive Structures in SQL &mdash; Tiger v3.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Tiger v3.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="design-note-recursive-structures-in-sql">
+<span id="recursive-structures"></span><h1>Design Note: Recursive Structures in SQL<a class="headerlink" href="#design-note-recursive-structures-in-sql" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="architecture.html#architecture"><em>Architecture and Design</em></a></p>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+<p>Recursive structures, as exemplified by the Loop definition, are a long-standing
+problem in SQL.  While pure SQL can &#8211; to an extent &#8211; cope, an ORM mapping of
+a class hierarchy makes this more difficult.</p>
+<p>Specifically, Django&#8217;s strongly-typed mapping to SQL is challenging because of the
+way it handles superclasses.  Any class with a Model attribute must become
+a distinct table.  A superclass must either be &#8220;abstract&#8221; in that it has no
+Model attributes, or &#8220;concrete&#8221; and allocated to a distinct table.</p>
+</div>
+<div class="section" id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
+<p>The standard technique for recursive structures involves a polymorphic design,
+as shown in <a class="reference internal" href="#figure-1">Figure 1</a>.</p>
+<div class="figure">
+<img alt="polymorphic.png" src="polymorphic.png" />
+<p class="caption"><span class="target" id="figure-1">Figure 1</span>.</p>
+</div>
+<p>This shows the standard object design for recursive structures.  The
+superclass (X12Structure) has a number of subclasses.  The X12Loop
+class can contain any mixture of X12Structures (X12Loop or X12Segment).</p>
+<p>This doesn&#8217;t work in Django because we don&#8217;t have polymorphism.
+Django forces us to target a specific class, not a polymorphic union of classes.</p>
+<p>We have two principle choices.</p>
+<ul>
+<li><p class="first">A Loop contains two collections: Subloops and Segments.  A sequence
+number can be used to order the union of Loops and Segments and
+reconstruct the original Loop with the Loops and Segments the correct order.</p>
+<p>In this case, the children method is a fairly complex Union query (which aren&#8217;t directly
+supported in Django).  We must do two queries, then merge the results
+into a Python list structure.</p>
+<p>When we add Loops or Segments to a Loop they go into their appropriate
+collection with a proper sequence number.</p>
+</li>
+<li><p class="first">A Loop can contain either a collection subLoops or a single Segment.
+Some Loops are the degenerate case
+which contain exactly one Segment and no subLoops.  These degenerate
+SubLoops don&#8217;t even have names.  Other Loops have a name and subLoops (but no Segment.)</p>
+<p>In this case, we have a <tt class="docutils literal"><span class="pre">children</span></tt> method which does a <tt class="docutils literal"><span class="pre">subloop_set.all()</span></tt>
+query, then iterates through this result set, replacing degenerate Loops
+with their one-and-only child Segment to create a proper List that contains
+mixed Loops and Segments in their correct order.</p>
+<p>When we append a Segment to a Loop, we have to do a two-step
+operation: append the degenerate Loop, then put the Segment in the degerate
+Loop.</p>
+<p>When we append a Loop to a Loop, we simply append the Loop.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+<p>The Django-friendly design is shown in <a class="reference internal" href="#figure-2">Figure 2</a>.</p>
+<div class="figure">
+<img alt="stronglytyped.png" src="stronglytyped.png" />
+<p class="caption"><span class="target" id="figure-2">Figure 2</span>.</p>
+</div>
+<p>This shows the basic Message - Loop - Segment structure.  It also shows the
+constraint imposed on Loops: they either contain subloops or a single Segment.
+While it seems appealing to have multiple segments, it isn&#8217;t practical to keep
+the sequence numbering straight.</p>
+</div>
+<div class="section" id="consequence">
+<h2>Consequence<a class="headerlink" href="#consequence" title="Permalink to this headline">¶</a></h2>
+<p>We won&#8217;t have a simple polymorphic, recursive container.</p>
+<p>Either solution requires that we provide navigation methods.
+The XPath standard provides guidance on what this navigation should look like.</p>
+<p>We need a unique keys for a message (and all loops and segments of that
+message) plus we need unique keys for the loops.  See <a class="reference external" href="keygen.html">Key Generation</a> for
+more information on this issue.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Design Note: Recursive Structures in SQL</a><ul>
+<li><a class="reference internal" href="#problem">Problem</a></li>
+<li><a class="reference internal" href="#forces">Forces</a></li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
+<li><a class="reference internal" href="#consequence">Consequence</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/recursiveStructures.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

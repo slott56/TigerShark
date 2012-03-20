@@ -1,0 +1,127 @@
+..  _`Key Generation`:
+
+###########################################
+Design Note: Key Generation for X12Messages
+###########################################
+
+:ref:`architecture`
+
+Problem
+=======
+
+Django assigns DB PK's at ``save()`` time.  An ``X12Message``, however, is parsed in pieces,
+working from top down.  This means that each parent has to be saved before any children
+can be parsed and attached to the parent.
+
+See :ref:`Recursive Structures` for more information.
+
+Forces
+======
+
+While Django's default PK generation slightly simplifies the programs, it means a great
+deal of saving during message parsing, making it slow.  While message parsing is relatively rare,
+the slowness leads to using two forms of a message: a Django form and a separate "internal" form.
+
+Pythonic speeds can be achieved if the message is parsed in its entirety without
+doing any saves.  (Django requires the saves to have the DB generate the PK's.)
+While the message can easily be assigned a unique id by the load process, we still
+have to create keys for each Loop and Segment within the overall message.
+
+Use Cases
+---------
+
+We have three use cases to consider.
+
+    -   Parsing a message.  Here, we create the X12Message object first.
+        Each X12Loop must have an FK to an enclosing X12Loop.  Each X12Segment must
+        have an FK to the enclosing X12Loop.  For convenience, it works out
+        well if each X12Loop and X12Segment also has an FK to the overall
+        X12Message.
+
+    -   Messages are "cloned" to implement a "Save As..." technique.  This means
+        that all associated Loops and Segments must be cloned to have the
+        proper parent message key.  The remaining FK's for X12Loop parentage
+        and X12Segment parentage must also be properly revised.
+
+    -   Messages can be expanded (or contracted) to add or remove Loops and Segments.
+        It helps slightly if the unique ID's aren't expected to be sequential.
+        However, we have to work out a sequential numbering scheme that either
+        permits inserts without renumbering, or develop a **Visitor** which can
+        renumber Segments and Loops after an insert.
+
+Choices
+-------
+
+We have several choices for Loop and Segment key generation.  Note that all of
+these techniques must completely replace all DB-generated keys.
+
+-   Emulate a DB key generator with a global **Singleton** object that creates unique
+    sequence of integers (or more complex GUID's).  This has to coordinate with the
+    database to assure that the in-memory key generator doesn't duplicate a DB key.
+
+-   Use a multi-column key that doesn't require global uniqueness.  In this case,
+    we have a number of choices for the multi-part key.
+
+    -   Loops have names, but these names can repeat, so an occurrence number is required to
+        make the name unique.  This technique is limited because it is challenging
+        to reconstruct the original message in order unless each segment is
+        assigned a proper sequential number, irrespective of the loop structure.
+
+        We would have to use 3-part key: Message/LoopName/LoopOccurance.  This is
+        significantly more complex than simple Django ID's, and undesirable.
+
+    -   Loops nest, so it's challenging to assign simple sequential numbers
+        to the loops.  A loop should have a bracketing pair of numbers
+        to show all of the segments it contains.
+
+        However, we can assign simple sequential numbers to each Loop of a Message,
+        giving us a 2-part key: Message/LoopSeq.  This is only slightly more
+        complex than Django's simple ID's.
+
+        However, when we try to insert a new Loop, the simple sequential numbering
+        falls apart.
+
+    -   Segments have an absolute position within the message as a whole, plus they
+        have a relative position within a loop.  We have a parent FK
+        to show the Loop to which a Segment belongs.  We also have a simple sequence
+        for each Segment of a Message to assure that we keep them in the original order.
+
+        Again, when we try to insert a new Message, the simple sequential numbering
+        falls apart.
+
+Django makes it trivial to fetch an entire message in what behaves as
+a single, simple query.  To insert segments, we must traverse the message structure reassigning
+the sequence numbers for Loops and Segments to assure that they are processed
+in the correct order.
+
+Solution
+========
+
+The best approach is to have a two part key for Loops and Segments.  This key
+is a Message ID + Component ID.
+
+The X12Message contain two methods which are sequence generators for segments
+and loops.  The generator assigns simple ascending sequential numbers to each
+X12Segment and X12Loop that is part of the message.  These are meaningless surrogate keys.
+These use persistent attributes of the message so that loops and segments can be
+added without inadvertent duplication.
+
+Consequences
+============
+
+In addition to the simple identity key of Message Name and Component Number,
+a Segment requires a
+sequential position.  When a new Segment is inserted, other segment positions must
+be updated to make space for the new segment.
+
+A Loop, similarly, requires information on it's position within the overall message
+and parent loops.  We can use either bracketing positions of the Segments within that Loop,
+or direct parentage.
+
+    - bracketing segment number ranges permits easy SQL queries.
+
+    - direct parentage FK's requires Python methods for navigation.
+
+Currently, there's no real barrier to using Python methods for navigation.  A SQL-only
+query is not part of the design.  Bracketing segment numbers will not be used initially,
+but can be added later.

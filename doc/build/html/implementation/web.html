@@ -1,0 +1,1383 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>web Django Project &mdash; TigerShark 3.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
+    <link rel="up" title="Implementation" href="index.html" />
+    <link rel="prev" title="test Package" href="test.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="test.html" title="test Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Implementation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="web-django-project">
+<h1><tt class="docutils literal"><span class="pre">web</span></tt> Django Project<a class="headerlink" href="#web-django-project" title="Permalink to this headline">¶</a></h1>
+<p>This is a sample implementation that uses a number of X12 message
+parsing features.</p>
+<span class="target" id="module-web"></span><p>This sample web site shows an approach to integrating X12 message
+processing with Django applications.</p>
+<div class="section" id="web-claims">
+<h2>web.claims<a class="headerlink" href="#web-claims" title="Permalink to this headline">¶</a></h2>
+<p>This application uses an application-specific claim definition.
+The definition is entirely developed &#8220;by hand&#8221; and represents some
+specific use cases.</p>
+<span class="target" id="module-web.claims"></span><p><tt class="docutils literal"><span class="pre">web.claims</span></tt> looks at hand-crafted Python classes for Claim <tt class="samp docutils literal"><span class="pre">837</span></tt> messages.</p>
+<p>The application &#8211; as a whole &#8211; relies in the Django admin pages to do
+interactive work.</p>
+<p>It defines two web services for loading and fetching.</p>
+<div class="section" id="module-web.claims.models">
+<span id="models"></span><h3>Models<a class="headerlink" href="#module-web.claims.models" title="Permalink to this headline">¶</a></h3>
+<p>Definitions of persistent parts of an X12 message.</p>
+<p>An X12 message instance is a recursive construction of Loops, sub-Loops and Segments.
+The leaf elements are always Segments.  Segments contain, in turn, Composites
+and Elements.</p>
+<p>There are a number of operations on a Message.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Unmarshalling (&#8220;parsing&#8221;).  This is done by an instance of classes
+defined in the <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> package.  The results of parsing is a
+Message Instance, built from classes in this module.</li>
+<li>Marshalling.  Each message can marshall itself into a block
+of text.</li>
+<li>Persisting.  Since the message instance is build from subclasses
+of <tt class="xref py py-mod docutils literal"><span class="pre">django.db.models.Model</span></tt>, a call to <tt class="xref py py-meth docutils literal"><span class="pre">save()</span></tt> persists
+the message.</li>
+<li>Retrieving.  The  <tt class="xref py py-mod docutils literal"><span class="pre">X12Message.objects</span></tt> manager can retreive any
+Message.  Ordinary navigation will fetch Loops and Segments for that
+Message.</li>
+</ul>
+</div></blockquote>
+<p>This must be changed in two ways to stop using DB-generated PK&#8217;s.</p>
+<blockquote>
+<div><ul class="simple">
+<li>XXX - introduce an application-defined PK,
+at the Message level as the 1st part of all keys in a message structure.</li>
+<li>XXX - introduce a 2nd part to the key generated by the <a class="reference internal" href="#web.claims.models.Factory" title="web.claims.models.Factory"><tt class="xref py py-class docutils literal"><span class="pre">Factory</span></tt></a> or
+the <a class="reference internal" href="#web.claims.models.X12Message" title="web.claims.models.X12Message"><tt class="xref py py-class docutils literal"><span class="pre">X12Message</span></tt></a> rather than the key created by the database.</li>
+</ul>
+</div></blockquote>
+<div class="section" id="navigation">
+<h4>Navigation<a class="headerlink" href="#navigation" title="Permalink to this headline">¶</a></h4>
+<p>Look at <a class="reference internal" href="x12.html#module-X12.message" title="X12.message"><tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt></a> for the XPath-like navigation model.
+This leads to a number of navgiation-oriented methods being folded into the
+class definitions.</p>
+</div>
+<div class="section" id="module-contents">
+<h4>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h4>
+<p>Here are the class definitions within this module.</p>
+<blockquote>
+<div><ul>
+<li><p class="first"><a class="reference internal" href="#web.claims.models.X12Message" title="web.claims.models.X12Message"><tt class="xref py py-class docutils literal"><span class="pre">X12Message</span></tt></a>.  The overall message &#8211; a collection of Loops.</p>
+</li>
+<li><p class="first"><a class="reference internal" href="#web.claims.models.X12Loop" title="web.claims.models.X12Loop"><tt class="xref py py-class docutils literal"><span class="pre">X12Loop</span></tt></a>. A Loop is a collection of Segments and sub-Loops.
+In a SQL implementation, a Loop has an FK to the owning Message, as well
+as an FK to its immediate parent Loop.  Top-level Loops, which belong
+directly to the Message have a NULL parent.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Some Loops are &#8220;wrappers&#8221;: a degenerate case that contain one Segment
+and no subLoops.  This allows a Loop to contain a proper collection of
+Loops.</li>
+<li>Some Loops are &#8220;explicit&#8221;: a properly named Loop which contains
+explicit subloops or wrapper loops around.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><a class="reference internal" href="#web.claims.models.X12Segment" title="web.claims.models.X12Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12Segment</span></tt></a>. A Segment is a collection of Elements and Composites.
+Segments names are essentially a type name; there can be multiple instances
+within a single Loop, each with different semantics.  In a SQL implementation,
+a Segment has an FK to the owning Message, as well as an FK to the
+immediate parent Loop.</p>
+</li>
+<li><p class="first">X12Composite.  A Composite is a collection of Elements.  This is
+not actually implemented.  It is merely attributes of a Segment.</p>
+</li>
+<li><p class="first">X12Element.  An atomic piece of data.  These are identified
+positionally within a segment&#8217;s source text.</p>
+</li>
+</ul>
+</div></blockquote>
+<dl class="class">
+<dt id="web.claims.models.Benefit">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">Benefit</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.Benefit" title="Permalink to this definition">¶</a></dt>
+<dd><p>The primary benefit for this claim.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>benefit</strong> &#8211; short name of the benefit</li>
+<li><strong>description</strong> &#8211; long description of the benefit.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.ClaimGroup">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">ClaimGroup</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.ClaimGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Group of claims.  A group of claims has a status
+which collects groups together for different kinds of testing.
+A group also may have a dynamic processing state which reflects
+whether or not it has been sent to the claim processing system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; name of the claim group.  <tt class="samp docutils literal"><span class="pre">Base</span></tt> claims have
+a system-supplied default name.  All other claim status
+have user-supplied names.</li>
+<li><strong>description</strong> &#8211; long description of this claim group.</li>
+<li><strong>status</strong> &#8211; the Group Status for this Claim Group.</li>
+<li><strong>owner</strong> &#8211; the User who created this Claim group.</li>
+<li><strong>created</strong> &#8211; the datetime of creation of this group definition.</li>
+<li><strong>modified</strong> &#8211; the datetime of modification of the group definition.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.ClaimProperties">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">ClaimProperties</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.ClaimProperties" title="Permalink to this definition">¶</a></dt>
+<dd><p>Selected properties of a claim.
+XXX - add source system.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>claimType</strong> &#8211; one of the defined L{ClaimType}s for this claim</li>
+<li><strong>secondaryCoverage</strong> &#8211; one of the defined L{SecondaryCoverage}s for this claim</li>
+<li><strong>location</strong> &#8211; one of the defined L{Location}s for this claim</li>
+<li><strong>typeOfService</strong> &#8211; one of the define L{TypeOfService}s for this claim</li>
+<li><strong>created</strong> &#8211; creation datetime for this property</li>
+<li><strong>modified</strong> &#8211; modification datetime for this property</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.ClaimType">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">ClaimType</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.ClaimType" title="Permalink to this definition">¶</a></dt>
+<dd><p>The subtype of the <tt class="samp docutils literal"><span class="pre">837</span></tt> claim - Professional, Institutional, Dental.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; short name of the claim type (usually 1 character)</li>
+<li><strong>description</strong> &#8211; long name of the claim type</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.Factory">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">Factory</tt><a class="headerlink" href="#web.claims.models.Factory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create Django versions of the X12Message structures.</p>
+<p>This object is used by an <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> to unmarshall message
+text and create Django objects.</p>
+<dl class="staticmethod">
+<dt id="web.claims.models.Factory.makeLoop">
+<em class="property">static </em><tt class="descname">makeLoop</tt><big>(</big><em>name</em>, <em>*structure</em><big>)</big><a class="headerlink" href="#web.claims.models.Factory.makeLoop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new X12Loop object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> &#8211; name of this Loop</li>
+<li><strong>structure</strong> &#8211; the various sub-Loops and Segments of this Loop</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">X12Loop instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="web.claims.models.Factory.makeMessage">
+<em class="property">static </em><tt class="descname">makeMessage</tt><big>(</big><em>name</em>, <em>*structure</em><big>)</big><a class="headerlink" href="#web.claims.models.Factory.makeMessage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new X12Message object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> &#8211; name of this Message</li>
+<li><strong>structure</strong> &#8211; the various Loops of this Message</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">X12Message instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="web.claims.models.Factory.makeSegment">
+<em class="property">static </em><tt class="descname">makeSegment</tt><big>(</big><em>segmentToken</em>, <em>compositeSep=':'</em>, <em>segmentType=None</em><big>)</big><a class="headerlink" href="#web.claims.models.Factory.makeSegment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Segment from a SegmentToken and an Segment definition.</p>
+<p>Another application can extend this data model to include
+Segment-type specific classes.  That application will
+provide it&#8217;s own Factory, which is a subclass of this Factory,
+and will override this method to handle Segment-specific bindings.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>segmentToken</strong> &#8211; An <a class="reference internal" href="x12.html#X12.parse.SegmentToken" title="X12.parse.SegmentToken"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.SegmentToken</span></tt></a> instance:
+a list-like collection of Element values.  It turns out that a simple
+list of values may also work, if it does NOT have trailing empty
+items omitted.  Real Segment Tokens can have trailing empty items
+omitted.</li>
+<li><strong>compositeSep</strong> &#8211; Composite internal separator from the ISA segment.</li>
+<li><strong>segmentType</strong> &#8211; An <a class="reference internal" href="x12.html#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> instance, which
+defines the Elements and Composites of this X12Segment.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">X12Segment instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.GroupStatus">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">GroupStatus</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.GroupStatus" title="Permalink to this definition">¶</a></dt>
+<dd><p>The status of a claim group.
+This defines what processing is allowed for claim group.
+Claims in a <tt class="samp docutils literal"><span class="pre">Base</span></tt> group, for instance, cannot be changed.
+Other status may have additional or different features.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; short status string</li>
+<li><strong>description</strong> &#8211; definition of the status</li>
+<li><strong>can_change</strong> &#8211; can claims in this group be changed?</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.Location">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">Location</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.Location" title="Permalink to this definition">¶</a></dt>
+<dd><p>A named &#8216;location&#8217; for a claim, usually geographic, but also possibly
+a line of business.  Often this is a constraint on
+members or providers associated with a claim.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; short name of the location</li>
+<li><strong>description</strong> &#8211; long description of the location</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.SecondaryCoverage">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">SecondaryCoverage</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.SecondaryCoverage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Any secondary coverage in the claim.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; short name of the secondary coverage.</li>
+<li><strong>description</strong> &#8211; long name of the secondary coverage.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.TestConstraints">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">TestConstraints</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.TestConstraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>The constraints that define how to modify this claim
+for unit test purposes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>gender</strong> &#8211; allowed member genders.</li>
+<li><strong>age_low</strong> &#8211; minimum member age.</li>
+<li><strong>age_high</strong> &#8211; maximum member age.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.TypeOfService">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">TypeOfService</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.TypeOfService" title="Permalink to this definition">¶</a></dt>
+<dd><p>The type of service associated with this benefit.
+A benefit may have more than one type of service.
+The <tt class="xref py py-data docutils literal"><span class="pre">fullName</span></tt> is the &#8220;benefit / type of service&#8221; string.</p>
+<p>XXX - needs validator: TOS is just unique for a given benefit, not
+globally unique.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>benefit</strong> &#8211; the associated benefit</li>
+<li><strong>typeOfService</strong> &#8211; short name of the type of service</li>
+<li><strong>description</strong> &#8211; long description of the type of service.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.X12Loop">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">X12Loop</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Loop in an X12 message; it contains either subLoops or a Segment.
+A Loop which contains a Segment is a &#8220;Wrapper&#8221; and has no other information.
+A Loop which contains subloops is &#8220;Explicit&#8221; and has a name and could have
+other attributes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; Name of this Loop</li>
+<li><strong>kind</strong> &#8211; Kind of loop: either &#8216;W&#8217; for wrappers or &#8216;E&#8217; for explicit</li>
+<li><strong>message</strong> &#8211; The Message to which this Loop belongs.
+This is set by addChild.</li>
+<li><strong>sequenceMessage</strong> &#8211; the sequence of this Loop within the overall Message.
+<em>XXX - not fully supported.</em></li>
+<li><strong>parent</strong> &#8211; the parent Loop (or None) if this is a top loop in a message.
+This is set by addChild.</li>
+<li><strong>thePosition</strong> &#8211; the sequence of this Loop within the parent.
+This is set by addChild.</li>
+<li><strong>occurrence</strong> &#8211; the occurrence of this Loop type within a parent loop.
+This is set by the parser when handling multiple occurrences of loops or
+segments.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="web.claims.models.X12Loop.addChild">
+<tt class="descname">addChild</tt><big>(</big><em>part</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Loop.addChild" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add either a Segment or a Loop to this Loop, setting overal
+message, parent and position of this child.</p>
+<p>X12Segments can only be added under &#8220;Wrapper&#8221; Loops, where
+Loops can be added directly to Loops.  Consequently, we need
+to delegate the work to the part. X12Segments will
+check for a wrapper; X12Loops will simply add themselves.</p>
+<p>NOTE.  Can&#8217;t add children unless the parent has a DB ID, which
+is assigned at SAVE time; hence, an initial save.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>part</strong> &#8211; the X12Segment or X12Loop to add to this Loop.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Loop.addToParent">
+<tt class="descname">addToParent</tt><big>(</big><em>parent</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Loop.addToParent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds ourself to a parent Explicit Loop.
+An X12Segment will do this in a different way; a Segment must
+assure that it&#8217;s being added to a Wrapper loop.  We&#8217;re an X12Loop,
+however, and can add ourself to Explicit loops, only.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> &#8211; the parent loop to which we&#8217;re adding ourself.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Loop.children">
+<tt class="descname">children</tt><big>(</big><big>)</big><a class="headerlink" href="#web.claims.models.X12Loop.children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of meaningful children &#8211; supressing unnamed Wrapper Loops.
+:returns: list of X12Loops mingled with X12Segments in the correct order.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Loop.matches">
+<tt class="descname">matches</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Loop.matches" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Xpath self axis</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Loop.segmentWrapper">
+<tt class="descname">segmentWrapper</tt><big>(</big><big>)</big><a class="headerlink" href="#web.claims.models.X12Loop.segmentWrapper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Wrapper X12Loop for a Segment to add itself to.
+If we are a Wrapper loop, we return ourself.
+If we are an Explicit loop, we need to add a Wrapper and then
+return that Wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">X12Loop of kind==&#8221;W&#8221;</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Loop.segs">
+<tt class="descname">segs</tt><big>(</big><big>)</big><a class="headerlink" href="#web.claims.models.X12Loop.segs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a flat list of Segments under this Loop.
+This is the list of segments used for marshalling this message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of X12Segments.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.X12Message">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">X12Message</tt><big>(</big><em>*arg</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Message" title="Permalink to this definition">¶</a></dt>
+<dd><p>An overall X12 Message: essentially a collection of Loops.
+To depict a unique message we can display unique internal identifiers
+tucked away inside the X12 structure, or the Database-assigned ID field,
+or an external identifier assigned at load time.</p>
+<p>Two of these are relatively unpleasant.</p>
+<p>It&#8217;s challenging to provide the internal identifiers for a message
+since a message is assembled in pieces. We don&#8217;t have the ISA
+segment or BHT segment until long after the message was initially
+created and assigned a internal ID.</p>
+<p>The internal DB ID is assigned by the save() operation, making it difficult
+to build a message from the top down.  We have to save the empty X12Message
+row in order to correctly associate X12Loops with it.  Then we have to
+save the X12Loops to correctly associate X12Segment instances.</p>
+<p>Therefore, we require a unique message ID to be supplied at load time.
+This is the physical PK &#8211; a DB defined PK is not used.  Each Loop
+gets a PK generated by our application, not a DB-defined PK, so that
+we can build an entire message structure before deciding to persist it.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>name</strong> &#8211; Name of this message. XXX - replace with ID as PK.</li>
+<li><strong>properties</strong> &#8211; Claim Properties for this message.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="web.claims.models.X12Message.addChild">
+<tt class="descname">addChild</tt><big>(</big><em>aLoop</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Message.addChild" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a loop to this Message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>aLoop</strong> &#8211; an X12Loop instance.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Message.getBHTid">
+<tt class="descname">getBHTid</tt><big>(</big><big>)</big><a class="headerlink" href="#web.claims.models.X12Message.getBHTid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to get ID information from the BHT segment.
+BHT03 might be a unique ID.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Message.getISAid">
+<tt class="descname">getISAid</tt><big>(</big><big>)</big><a class="headerlink" href="#web.claims.models.X12Message.getISAid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Try to get ID information from the ISA segment.
+ISA09 + ISA10 + ISA13 provide date, time and an ID.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Message.marshall">
+<tt class="descname">marshall</tt><big>(</big><em>segSep='~'</em>, <em>eltSep='*'</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Message.marshall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marshall this message into an X12 string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>segSep</strong> &#8211; (optional) Segment Terminator, usually <tt class="samp docutils literal"><span class="pre">~</span></tt></li>
+<li><strong>eltSep</strong> &#8211; (optional) Element Separator, usually <tt class="samp docutils literal"><span class="pre">*</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">String with this X12 message marshalled</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Message.matches">
+<tt class="descname">matches</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Message.matches" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Xpath self axis</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Message.segs">
+<tt class="descname">segs</tt><big>(</big><big>)</big><a class="headerlink" href="#web.claims.models.X12Message.segs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the flat list of Segments under this Message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of X12Segment instances.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="web.claims.models.X12Segment">
+<em class="property">class </em><tt class="descclassname">web.claims.models.</tt><tt class="descname">X12Segment</tt><big>(</big><em>*arg</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A generic segment in an X12 message, created by a parser from a segmentToken.
+Type-specific Segments will have a 1:1 relationship with this
+Segment, but will have detailed Element definitions instead of this
+generic definition.</p>
+<p>To make this generic version work, we store the entire <a class="reference internal" href="x12.html#X12.parse.SegmentToken" title="X12.parse.SegmentToken"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.SegmentToken</span></tt></a>
+as a big-ole block of text in the database.  Methods within this object
+unpack the text block to access individual Elements.  Further, if a change
+is made, the text block is repacked from the element list.</p>
+<p>We could use a Django Custom Field definition for this.  It would make
+the conversion back and forth between list and database-friendly String
+transparent.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
+<li><strong>elements</strong> &#8211; internal list of elements derived from self.text.</li>
+<li><strong>segType</strong> &#8211; internal reference to <a class="reference internal" href="x12.html#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> definition.</li>
+<li><strong>name</strong> &#8211; Name of this Segment</li>
+<li><strong>text</strong> &#8211; SegmentToken text for this segment.</li>
+<li><strong>message</strong> &#8211; top-most Message which contains this Segment</li>
+<li><strong>sequence</strong> &#8211; Message sequence of this Segment within the overall Message.</li>
+<li><strong>loop</strong> &#8211; parent Loop for this Segment.  Must be a Wrapper kind of Loop.</li>
+<li><strong>occurrence</strong> &#8211; Occurrence of this segment type within the parent Loop.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="web.claims.models.X12Segment.addToParent">
+<tt class="descname">addToParent</tt><big>(</big><em>parentLoop</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.addToParent" title="Permalink to this definition">¶</a></dt>
+<dd><p>X12Segment adding itself to a parent Wrapper Loop.
+Or &#8211; if the parent is Explicit &#8211; adding the needed Wrapper.
+We ask the parent for the &#8220;segmentWrapper&#8221;: if the parent is a
+Wrapper, that&#8217;s what is returned; if the parent is Explicit,
+the parent inserts the necessary wrapper and returns the wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parentLoop</strong> &#8211; parent X12Loop to which we must add ourself.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Segment.bind">
+<tt class="descname">bind</tt><big>(</big><em>segment</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bind an <a class="reference internal" href="x12.html#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> to this data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>segment</strong> &#8211; An <a class="reference internal" href="x12.html#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> instance</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Segment.getByName">
+<tt class="descname">getByName</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.getByName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of an Element by the element name.
+This only works if this X12Segment is bound to an <a class="reference internal" href="x12.html#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; name of the Element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string value of the Element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Segment.getByPos">
+<tt class="descname">getByPos</tt><big>(</big><em>position</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.getByPos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the value of an Element by the position number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>position</strong> &#8211; position of the Element</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">string value of the Element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Segment.marshall">
+<tt class="descname">marshall</tt><big>(</big><em>eltSep='*'</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.marshall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marshalls this Segment&#8217;s elements as a text string.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">String value of this Segment.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Segment.matches">
+<tt class="descname">matches</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.matches" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Xpath self axis</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Segment.positionOf">
+<tt class="descname">positionOf</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.positionOf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the position of a named Element.
+This only works if this X12Segment is bound to an <a class="reference internal" href="x12.html#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> &#8211; Element name</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">numberic position of this Element.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Segment.segs">
+<tt class="descname">segs</tt><big>(</big><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.segs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns this Segment in a list, consistent with X12Loop and X12Message.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.claims.models.X12Segment.setByPos">
+<tt class="descname">setByPos</tt><big>(</big><em>position</em>, <em>value</em><big>)</big><a class="headerlink" href="#web.claims.models.X12Segment.setByPos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the value of an Element by the position number.
+This updates the text attribute of the persistent object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>position</strong> &#8211; position of the Element</li>
+<li><strong>value</strong> &#8211; String value to replace</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-web.claims.views">
+<span id="views"></span><h3>Views<a class="headerlink" href="#module-web.claims.views" title="Permalink to this headline">¶</a></h3>
+<p>Claims view functions.</p>
+<dl class="class">
+<dt id="web.claims.views.Loader">
+<em class="property">class </em><tt class="descclassname">web.claims.views.</tt><tt class="descname">Loader</tt><big>(</big><em>parser</em><big>)</big><a class="headerlink" href="#web.claims.views.Loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load generic claims.
+Loading a claim, creates the associated properties,
+test constraints, and a default group that claims are loaded to.</p>
+<dl class="method">
+<dt id="web.claims.views.Loader.load">
+<tt class="descname">load</tt><big>(</big><em>claim</em>, <em>claimID</em>, <em>properties</em>, <em>constraints</em><big>)</big><a class="headerlink" href="#web.claims.views.Loader.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a Claim, conforming it with ClaimProperties and TestConstraints.
+A generic parser defined
+in <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> is tried to 
+parse the message.  If the message can be parsed, the resulting object
+is persisted in the database, associated with the given properties
+and constraints.</p>
+<p>Note that the properties and constraints are conformed into several
+different dimensions.  If there are unique values in the attributes,
+new rows will be created in the dimension tables.  If this is not
+intended, there are two choices:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Validate the constraints against the dimensions outside
+this service.</li>
+<li>Report the new values in the dimension to the users and
+have them reassign the dimension values.  This seems
+like needless work, but it turns out to be simpler because
+it gets fewer rejections and helps users discover and respond
+to changes in the baseline claim-processing system.</li>
+</ul>
+</div></blockquote>
+<p>XXX - get actual user as an argument &#8211; it&#8217;s originally in the request.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>claim</strong> &#8211; source text for a generic X12 claim.</li>
+<li><strong>claimID</strong> &#8211; a unique identifier for this claim.</li>
+<li><strong>properties</strong> &#8211; dictionary of properties attributes,
+used by <tt class="xref py py-meth docutils literal"><span class="pre">_conformProperties()</span></tt></li>
+<li><strong>constraints</strong> &#8211; dictionary of automod constrain attributes,
+used by <tt class="xref py py-meth docutils literal"><span class="pre">_conformConstraints()</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the Claim loaded or an exception</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="web.claims.views.fetch">
+<tt class="descclassname">web.claims.views.</tt><tt class="descname">fetch</tt><big>(</big><em>request</em>, <em>claim_id</em><big>)</big><a class="headerlink" href="#web.claims.views.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>GET request with claim_id.</p>
+<p>Fetch a given claim from the database.  Marshall it as an X12 message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>claimID</strong> &#8211; the claim identifier provided when the claim was loaded.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">status tuple ( status, message )</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="web.claims.views.load">
+<tt class="descclassname">web.claims.views.</tt><tt class="descname">load</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims.views.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>POST request with claim, claim_id, properties, constraints.</p>
+<p>The POST request has four parameters:</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Claim :</th><td class="field-body">is the X12-encoded message.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Claim_id :</th><td class="field-body">is the user-assigned unique ID for this claim.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Properties :</th><td class="field-body">is a JSON-encoded Properties object for this claim.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Constraints :</th><td class="field-body">is a JSON-encoded TestConstraint object for this claim.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-web.claims.urls">
+<span id="urls"></span><h3>URLs<a class="headerlink" href="#module-web.claims.urls" title="Permalink to this headline">¶</a></h3>
+<p>claims.urls</p>
+<p>There two RESTful URL&#8217;s here.  They work in JSON notation.</p>
+<ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">load/</span></tt> is the load service.  This requires a number of parameters.
+See <a class="reference internal" href="#web.claims.views.load" title="web.claims.views.load"><tt class="xref py py-func docutils literal"><span class="pre">web.claims.views.load()</span></tt></a>.</li>
+<li><tt class="samp docutils literal"><em><span class="pre">claim_id</span></em><span class="pre">/</span></tt> is the fetch service.  See <a class="reference internal" href="#web.claims.views.fetch" title="web.claims.views.fetch"><tt class="xref py py-func docutils literal"><span class="pre">web.claims.views.fetch()</span></tt></a>.</li>
+</ul>
+</div>
+<div class="section" id="module-web.claims.parse">
+<span id="parse"></span><h3>Parse<a class="headerlink" href="#module-web.claims.parse" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="web-claims-837">
+<h2>web.claims_837<a class="headerlink" href="#web-claims-837" title="Permalink to this headline">¶</a></h2>
+<p>This application uses an 837 parser built by <a class="reference internal" href="tools.html#module-tools.convertPyX12" title="tools.convertPyX12"><tt class="xref py py-mod docutils literal"><span class="pre">tools.convertPyX12</span></tt></a>.
+This conversion creates the Django models so that more generic claims
+processing can be performed.</p>
+<span class="target" id="module-web.claims_837"></span><p><tt class="docutils literal"><span class="pre">web.claims_837</span></tt> is a web application for looking at Claim <tt class="samp docutils literal"><span class="pre">837</span></tt> messages.</p>
+<p>The <a class="reference internal" href="#module-web.claims_837.models" title="web.claims_837.models"><tt class="xref py py-mod docutils literal"><span class="pre">web.claims_837.models</span></tt></a> module defines the X12 message instance classes
+based on parsed definitions built by the <a class="reference internal" href="tools.html#module-tools.convertPyX12" title="tools.convertPyX12"><tt class="xref py py-mod docutils literal"><span class="pre">tools.convertPyX12</span></tt></a>.</p>
+<div class="section" id="id1">
+<h3>Models<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-web.claims_837.models"></span><p>Generated by make837.py on 2008-02-12 14:41:11.161000</p>
+</div>
+<div class="section" id="id2">
+<h3>Views<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-web.claims_837.views"></span><p>Claims_837 views.</p>
+<dl class="class">
+<dt id="web.claims_837.views.Loader">
+<em class="property">class </em><tt class="descclassname">web.claims_837.views.</tt><tt class="descname">Loader</tt><a class="headerlink" href="#web.claims_837.views.Loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load claims_837-specific claim segments.
+Loading a claim, creates the associated properties,
+automod constraints, and a default group that claims are loaded to.</p>
+<dl class="method">
+<dt id="web.claims_837.views.Loader.load">
+<tt class="descname">load</tt><big>(</big><em>claim</em>, <em>claimID</em>, <em>properties</em>, <em>constraints</em><big>)</big><a class="headerlink" href="#web.claims_837.views.Loader.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a Claim, conforming it with ClaimProperties.
+The various parsers (<tt class="xref py py-class docutils literal"><span class="pre">parse_837p</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">parse_837i</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">parse_837d</span></tt>) defined
+in L{web.claims_837.parse} are tried to see which can successfully
+parse the message.  If the message can be parsed, the resulting object
+is persisted in the database, associated with the given properties.</p>
+<p>Note that the properties are conformed into several
+different dimensions.  If there are unique values in the attributes,
+new rows will be created in the dimension tables.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>claim</strong> &#8211; source text for an <tt class="docutils literal"><span class="pre">837</span></tt> claim.</li>
+<li><strong>claimID</strong> &#8211; a unique identifier for this claim.</li>
+<li><strong>properties</strong> &#8211; dictionary of properties attributes,
+used by <tt class="xref py py-class docutils literal"><span class="pre">_conformProperties</span></tt></li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the Claim loaded or an exception</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="web.claims_837.views.fetch">
+<tt class="descclassname">web.claims_837.views.</tt><tt class="descname">fetch</tt><big>(</big><em>request</em>, <em>claim_id</em><big>)</big><a class="headerlink" href="#web.claims_837.views.fetch" title="Permalink to this definition">¶</a></dt>
+<dd><p>GET request with claim_id.
+Fetch a given claim from the database.  Marshall it as an X12 message.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>claimID</strong> &#8211; the claim identifier provided when the claim was loaded.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">status tuple ( status, message )</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="web.claims_837.views.load">
+<tt class="descclassname">web.claims_837.views.</tt><tt class="descname">load</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#web.claims_837.views.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>POST request with claim, claim_id, properties.
+Use the &#8220;claims_837&#8221; model.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-web.claims_837.extract">
+<span id="extract"></span><h3>Extract<a class="headerlink" href="#module-web.claims_837.extract" title="Permalink to this headline">¶</a></h3>
+<p>Extract Claims Messages.</p>
+<div class="section" id="synopsis">
+<h4>Synopsis<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h4>
+<p><tt class="samp docutils literal"><span class="pre">extract.py</span> <em><span class="pre">description.csv</span></em><span class="pre">...</span></tt></p>
+</div>
+<div class="section" id="description">
+<h4>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="options">
+<h4>Options<a class="headerlink" href="#options" title="Permalink to this headline">¶</a></h4>
+</div>
+<div class="section" id="environment-variables">
+<h4>Environment Variables<a class="headerlink" href="#environment-variables" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="samp docutils literal"><span class="pre">DJANGO_SETTINGS_MODULE</span></tt> is the Django Settings Module that defines the
+database and other runtime environment parameters.</div></blockquote>
+</div>
+</div>
+<div class="section" id="module-web.claims_837.fetch">
+<span id="fetch"></span><h3>Fetch<a class="headerlink" href="#module-web.claims_837.fetch" title="Permalink to this headline">¶</a></h3>
+<p>Batch Fetch Claims Messages.</p>
+<div class="section" id="id3">
+<h4>Synopsis<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<p><tt class="samp docutils literal"><span class="pre">fetch.py</span> <em><span class="pre">description.csv</span></em><span class="pre">...</span></tt></p>
+</div>
+<div class="section" id="id4">
+<h4>Description<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<p>Reads the CSV-format descriptions, either from stdin or files supplied as command-line
+arguments.  Each file contains rows which provide the claim identifiers.  Other
+attributes are silently ignored.</p>
+<p>This program calls the claim fetch service, and writes a log of success
+and failures.</p>
+</div>
+<div class="section" id="id5">
+<h4>Options<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="file docutils literal"><span class="pre">*description.csv`*</span> <span class="pre">a</span> <span class="pre">CSV-format</span> <span class="pre">files</span> <span class="pre">which</span> <span class="pre">identifies</span> <span class="pre">claims</span> <span class="pre">to</span> <span class="pre">fetch.</span>
+<span class="pre">If</span> <span class="pre">omitted,</span> <span class="pre">:file:`stdin</span></tt> is read.</div></blockquote>
+</div>
+<div class="section" id="id6">
+<h4>Environment Variables<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><span class="target" id="index-1"></span><tt class="xref std std-envvar docutils literal"><span class="pre">DJANGO_SETTINGS_MODULE</span></tt> is the Django Settings Module that defines the
+database and other runtime environment parameters.</div></blockquote>
+</div>
+<div class="section" id="csv-file-format">
+<h4>CSV FILE FORMAT<a class="headerlink" href="#csv-file-format" title="Permalink to this headline">¶</a></h4>
+<p>The claim description file has the following format.  Either the columns MUST be in
+the following order, or the first row MUST have these column titles.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">CLAIM-ID</span></tt>.  This is the unique claim ID which will be assigned.</li>
+</ul>
+<p>Other columns are permitted in this file.  They are ignored. For example, the following
+additional column is often used.</p>
+<ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">GWID</span></tt>  This is the HIPAA Gateway Transaction ID for the claim, used to retrieve it
+from FACETS.</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="module-web.claims_837.load">
+<span id="load"></span><h3>Load<a class="headerlink" href="#module-web.claims_837.load" title="Permalink to this headline">¶</a></h3>
+<p>Batch Load Claims Messages associated with Classification plus Automod Parameters.</p>
+<div class="section" id="id7">
+<h4>Synopsis<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<p><tt class="samp docutils literal"><span class="pre">load.py</span> <em><span class="pre">description.csv</span></em><span class="pre">...</span></tt></p>
+</div>
+<div class="section" id="id8">
+<h4>Description<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<p>Reads the CSV-format descriptions, either from stdin or files supplied as command-line
+arguments.  Each file contains rows which provide three separate things:</p>
+<blockquote>
+<div><ul class="simple">
+<li>name of a file with claim(s) to parse (or the claim itself),</li>
+<li>classification parameters for the claims,</li>
+<li>automod constraints for the claims <em>[XXX this may be derivable from the claim]</em>.</li>
+</ul>
+</div></blockquote>
+<p>This program calls the claim load service, and writes a log of success
+and failures.</p>
+<p>Before this program can be run, an extract must be used to get the X12N claims
+out of the source application&#8217;s HIPAA gateway.  The extract process uses a
+request <tt class="docutils literal"><span class="pre">.csv</span></tt> file, and writes the X12N files, plus the description <tt class="docutils literal"><span class="pre">.csv</span></tt> file.</p>
+<p>The typical use case for this loader is as follows:</p>
+<div class="highlight-python"><pre>claimExtract request.csv | load.py</pre>
+</div>
+</div>
+<div class="section" id="id9">
+<h4>Options<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><tt class="file docutils literal"><span class="pre">*description.csv`*</span> <span class="pre">a</span> <span class="pre">CSV-format</span> <span class="pre">files</span> <span class="pre">which</span> <span class="pre">identifies</span> <span class="pre">claims</span> <span class="pre">to</span> <span class="pre">load.</span>
+<span class="pre">If</span> <span class="pre">omitted,</span> <span class="pre">:file:`stdin</span></tt> is read.</div></blockquote>
+</div>
+<div class="section" id="id10">
+<h4>Environment Variables<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<blockquote>
+<div><span class="target" id="index-2"></span><tt class="xref std std-envvar docutils literal"><span class="pre">DJANGO_SETTINGS_MODULE</span></tt> is the Django Settings Module that defines the
+database and other runtime environment parameters.</div></blockquote>
+</div>
+<div class="section" id="id11">
+<h4>CSV FILE FORMAT<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<p>The claim description file has the following format.  Either the columns MUST be in
+the following order, or the first row MUST have these column titles.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">CLAIM-ID</span></tt>.  This is the unique claim ID which will be assigned.</li>
+<li><tt class="samp docutils literal"><span class="pre">BENEFIT</span></tt> The Benefit ID to assign to this claim.  This is checked against the
+TOS/Benefit list.</li>
+<li><tt class="samp docutils literal"><span class="pre">TYPE-OF-SERVICE</span></tt> The Type of Service ID to assign to this claim.  This is checked against the
+TOS/Benefit list.</li>
+<li><tt class="samp docutils literal"><span class="pre">LOCATION</span></tt> The codes are ALB, BUF, CE and CW.
+Descriptions are Albany, Buffalo, Central NY West, and Central NY East.</li>
+<li><tt class="samp docutils literal"><span class="pre">TYPE</span></tt> The codes are I, P, O or D.
+Descriptions are In-Patient, Professional, Out-Patient and Dental.</li>
+<li><tt class="samp docutils literal"><span class="pre">SECONDARY</span></tt>  The codes are M and R.
+Descriptions are Medicare and Regular.</li>
+<li><tt class="samp docutils literal"><span class="pre">GENDER</span></tt> This is used to define an automod constraint.
+Codes are M, F and U.</li>
+<li><tt class="samp docutils literal"><span class="pre">AGE-FROM</span></tt> This is used to define an automod constraint.</li>
+<li><tt class="samp docutils literal"><span class="pre">AGE-TO</span></tt> This is used to define an automod constraint.</li>
+<li><tt class="samp docutils literal"><span class="pre">CLAIM-FILE</span></tt> If present, this is the file that contains the X12 message for this claim.
+If omitted, the <cite>CLAIM-TEXT</cite> column must be used to provide
+the actual X12N message.</li>
+<li><tt class="samp docutils literal"><span class="pre">CLAIM-TEXT</span></tt> If present, this is the text of the X12 message for this claim.
+If omitted, the <cite>CLAIM-FILE</cite> column must be used to provide the
+name of a file with the actual X12N message.</li>
+</ul>
+</div></blockquote>
+<p>Other columns are permitted in this file.  They are ignored. For example, the following
+additional column is often used.</p>
+<blockquote>
+<div><ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">GWID</span></tt>  This is the HIPAA Gateway Transaction ID for the claim, used to retrieve it
+from FACETS.</li>
+</ul>
+</div></blockquote>
+<dl class="function">
+<dt id="web.claims_837.load.loadClaimAndDescription">
+<tt class="descclassname">web.claims_837.load.</tt><tt class="descname">loadClaimAndDescription</tt><big>(</big><em>csvFile</em><big>)</big><a class="headerlink" href="#web.claims_837.load.loadClaimAndDescription" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a set of claims provided in a CSV-format file.
+Each row of the CSV file describes one (rarely multiple) claim.
+It provides a complete set of Properties and AutomodConstraints for
+the claim.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>csvFile</strong> &#8211; an open file (or file-like object) that can be used
+by csv.DictReader to get claims, properties and constraints.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="web.claims_837.load.loadClaims">
+<tt class="descclassname">web.claims_837.load.</tt><tt class="descname">loadClaims</tt><big>(</big><em>claimIter</em>, <em>claimId</em>, <em>properties=None</em>, <em>constraints=None</em><big>)</big><a class="headerlink" href="#web.claims_837.load.loadClaims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a collection of claims, all of which have a common set of properties
+and automod constraints.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>claimIter</strong> &#8211; An iterator over some claims, a list or a file will work.
+Often an <a class="reference internal" href="x12.html#module-X12.file" title="X12.file"><tt class="xref py py-mod docutils literal"><span class="pre">X12.file</span></tt></a> is used because it streamlines the file reading.</li>
+<li><strong>claimId</strong> &#8211; The base claim id.  If multiple claims are loaded, then
+claims after the first will have &#8220;-<em>n</em>&#8221; appended to the claim id string.</li>
+<li><strong>properties</strong> &#8211; A dict with Claim Properties.</li>
+<li><strong>constraints</strong> &#8211; A dict with Automod constraints.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="id12">
+<h3>Parse<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-web.claims_837.parse"></span><p>Generated by make837.py on 2008-02-12 14:41:11.161000</p>
+</div>
+<div class="section" id="id13">
+<h3>URLs<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h3>
+<span class="target" id="module-web.claims_837.urls"></span><p>claims_837.urls</p>
+<p>There two RESTful URL&#8217;s here.  They work in JSON notation.</p>
+<ul class="simple">
+<li><tt class="samp docutils literal"><span class="pre">load/</span></tt> is the load service.  This requires a number of parameters.
+See <a class="reference internal" href="#web.claims_837.views.load" title="web.claims_837.views.load"><tt class="xref py py-func docutils literal"><span class="pre">web.claims_837.views.load()</span></tt></a>.</li>
+<li><tt class="samp docutils literal"><em><span class="pre">claim_id</span></em><span class="pre">/</span></tt> is the fetch service.  See <a class="reference internal" href="#web.claims_837.views.fetch" title="web.claims_837.views.fetch"><tt class="xref py py-func docutils literal"><span class="pre">web.claims_837.views.fetch()</span></tt></a>.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="web-make837">
+<h2>web.make837<a class="headerlink" href="#web-make837" title="Permalink to this headline">¶</a></h2>
+<p>Converts the <tt class="samp docutils literal"><span class="pre">837</span></tt> claim message definitions into Python parsers
+and Django ORM structures to define the <a class="reference internal" href="#module-web.claims_837.models" title="web.claims_837.models"><tt class="xref py py-mod docutils literal"><span class="pre">web.claims_837.models</span></tt></a>
+classes.</p>
+<span class="target" id="module-web.make837"></span><p>Build 837 parsers and 837 Segment definitions from XML Configuration.</p>
+<div class="section" id="id14">
+<h3>Synopsis<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h3>
+<p><tt class="samp docutils literal"><span class="pre">make837.py</span> <span class="pre">-p</span> <em><span class="pre">python</span></em> <span class="pre">-d</span> <em><span class="pre">django</span></em> <span class="pre">-b</span> <em><span class="pre">baseDir</span></em> <em><span class="pre">name=source</span></em><span class="pre">...</span></tt></p>
+</div>
+<div class="section" id="id15">
+<h3>Description<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h3>
+<p>Reads the PyX12 source files (in .XML) and writes a Python parser module
+for unmarshalling messages as well as a Django model for persisting the
+message instances.</p>
+<p>Prior to this step you must initialize the application directory
+structure with <tt class="samp docutils literal"><span class="pre">manage.py</span> <span class="pre">startapp</span> <em><span class="pre">newApp</span></em></tt>.</p>
+<p>After this step, you must update <tt class="file docutils literal"><span class="pre">settings.py</span></tt> to include the new application.</p>
+<p>Then you must sync the database with the following command before you can start
+using the parser, factory and Django persistent class definitions you&#8217;ve created.</p>
+<p><tt class="samp docutils literal"><span class="pre">manage.py</span> <span class="pre">syncdb</span> <span class="pre">--pythonpath=&quot;..&quot;</span></tt></p>
+</div>
+<div class="section" id="id16">
+<h3>Options<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p><tt class="samp docutils literal"><span class="pre">-p</span> <em><span class="pre">python</span></em></tt> writes the Python module for unmarshalling the given messages.</p>
+<dl class="docutils">
+<dt><tt class="samp docutils literal"><span class="pre">-d</span> <em><span class="pre">django</span></em></tt> writes two Django modules for persisting the given message instances.</dt>
+<dd>This will be <tt class="samp docutils literal"><em><span class="pre">django</span></em><span class="pre">/models.py</span></tt> and <tt class="samp docutils literal"><em><span class="pre">django</span></em><span class="pre">/admin.py</span></tt>.</dd>
+</dl>
+<p><tt class="samp docutils literal"><span class="pre">-b</span> <em><span class="pre">baseDir</span></em></tt> is the base directory for the various source files.</p>
+<p><tt class="samp docutils literal"><span class="pre">name=</span><em><span class="pre">source</span></em></tt> a list of parser names and message definitions.
+The name is the Python variable name; the source is the PyX12 XML source file.</p>
+</div></blockquote>
+</div>
+<div class="section" id="notes">
+<h3>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h3>
+<p>An X12 parser is defined to use a Factory object to emit message instance objects.
+This Factory object is a run-time binding between a parser and some message instance module.
+Generic message instance modules include <a class="reference internal" href="x12.html#module-X12.message" title="X12.message"><tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt></a> and <a class="reference internal" href="#module-web.claims.models" title="web.claims.models"><tt class="xref py py-mod docutils literal"><span class="pre">web.claims.models</span></tt></a>.</p>
+<p>This application builds a specific message instance module, with specific message types.
+In order for an <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> module to make use of the Django message instance module,
+a Factory is required to instantiate the Django objects as well as the generic
+X12Segment object defined in <a class="reference internal" href="#module-web.claims.models" title="web.claims.models"><tt class="xref py py-mod docutils literal"><span class="pre">web.claims.models</span></tt></a>.</p>
+<dl class="class">
+<dt id="web.make837.ApplicationBuilder">
+<em class="property">class </em><tt class="descclassname">web.make837.</tt><tt class="descname">ApplicationBuilder</tt><big>(</big><em>baseDir=None</em><big>)</big><a class="headerlink" href="#web.make837.ApplicationBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build the core parser and message persistence modules for
+an application.</p>
+<p>Generally, given a base directly, we&#8217;ll load a number of XML files
+which will define X12N message parsers.  We have to emit a Python
+source module for each individual message type, since they have unique
+compliance rules.</p>
+<p>After seeing all of those XML files, we&#8217;ll also know the various
+segments defined and can emit a peristence model for the unique
+kinds of segments.</p>
+<p>Note that the Django Visitor <em>accumulates</em> the various definitions.
+Only the last output from the Django Visitor is particularly useful.</p>
+<dl class="method">
+<dt id="web.make837.ApplicationBuilder.getDjangoAdmin">
+<tt class="descname">getDjangoAdmin</tt><big>(</big><em>appname='claims_837'</em><big>)</big><a class="headerlink" href="#web.make837.ApplicationBuilder.getDjangoAdmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emit the Django Admin code built so far.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.make837.ApplicationBuilder.getDjangoModel">
+<tt class="descname">getDjangoModel</tt><big>(</big><big>)</big><a class="headerlink" href="#web.make837.ApplicationBuilder.getDjangoModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emit the Django model code built so far.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="web.make837.ApplicationBuilder.getParser">
+<tt class="descname">getParser</tt><a class="headerlink" href="#web.make837.ApplicationBuilder.getParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the current message&#8217;s parser object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.make837.ApplicationBuilder.getPython">
+<tt class="descname">getPython</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#web.make837.ApplicationBuilder.getPython" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return Python source for the current message.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="web.make837.ApplicationBuilder.load">
+<tt class="descname">load</tt><big>(</big><em>xmlDef</em><big>)</big><a class="headerlink" href="#web.make837.ApplicationBuilder.load" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load another message definition.  This will also accumulate
+Django Segment definitions.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">web</span></tt> Django Project</a><ul>
+<li><a class="reference internal" href="#web-claims">web.claims</a><ul>
+<li><a class="reference internal" href="#module-web.claims.models">Models</a><ul>
+<li><a class="reference internal" href="#navigation">Navigation</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-web.claims.views">Views</a></li>
+<li><a class="reference internal" href="#module-web.claims.urls">URLs</a></li>
+<li><a class="reference internal" href="#module-web.claims.parse">Parse</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#web-claims-837">web.claims_837</a><ul>
+<li><a class="reference internal" href="#id1">Models</a></li>
+<li><a class="reference internal" href="#id2">Views</a></li>
+<li><a class="reference internal" href="#module-web.claims_837.extract">Extract</a><ul>
+<li><a class="reference internal" href="#synopsis">Synopsis</a></li>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#options">Options</a></li>
+<li><a class="reference internal" href="#environment-variables">Environment Variables</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-web.claims_837.fetch">Fetch</a><ul>
+<li><a class="reference internal" href="#id3">Synopsis</a></li>
+<li><a class="reference internal" href="#id4">Description</a></li>
+<li><a class="reference internal" href="#id5">Options</a></li>
+<li><a class="reference internal" href="#id6">Environment Variables</a></li>
+<li><a class="reference internal" href="#csv-file-format">CSV FILE FORMAT</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-web.claims_837.load">Load</a><ul>
+<li><a class="reference internal" href="#id7">Synopsis</a></li>
+<li><a class="reference internal" href="#id8">Description</a></li>
+<li><a class="reference internal" href="#id9">Options</a></li>
+<li><a class="reference internal" href="#id10">Environment Variables</a></li>
+<li><a class="reference internal" href="#id11">CSV FILE FORMAT</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id12">Parse</a></li>
+<li><a class="reference internal" href="#id13">URLs</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#web-make837">web.make837</a><ul>
+<li><a class="reference internal" href="#id14">Synopsis</a></li>
+<li><a class="reference internal" href="#id15">Description</a></li>
+<li><a class="reference internal" href="#id16">Options</a></li>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test.html"
+                        title="previous chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">test</span></tt> Package</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/implementation/web.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="test.html" title="test Package"
+             >previous</a> |</li>
+        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Implementation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

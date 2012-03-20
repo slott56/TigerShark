@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 69
+/svn/!svn/ver/6671/django/trunk/django/contrib/admin/templates/widget
+END
+file.html
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svn/!svn/ver/3352/django/trunk/django/contrib/admin/templates/widget/file.html
+END
+default.html
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/1443/django/trunk/django/contrib/admin/templates/widget/default.html
+END
+one_to_one.html
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svn/!svn/ver/6671/django/trunk/django/contrib/admin/templates/widget/one_to_one.html
+END
+foreign.html
+K 25
+svn:wc:ra_dav:version-url
+V 82
+/svn/!svn/ver/6671/django/trunk/django/contrib/admin/templates/widget/foreign.html
+END
+many_to_many.html
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/!svn/ver/2809/django/trunk/django/contrib/admin/templates/widget/many_to_many.html
+END
+date_time.html
+K 25
+svn:wc:ra_dav:version-url
+V 84
+/svn/!svn/ver/1530/django/trunk/django/contrib/admin/templates/widget/date_time.html
+END

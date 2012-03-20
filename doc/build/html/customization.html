@@ -1,0 +1,161 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Design Note: Customization of Message Structures &mdash; Tiger v3.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Tiger v3.1 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="design-note-customization-of-message-structures">
+<h1>Design Note: Customization of Message Structures<a class="headerlink" href="#design-note-customization-of-message-structures" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference internal" href="architecture.html#architecture"><em>Architecture and Design</em></a></p>
+<div class="section" id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+<p>Since we have a number of customers, each with a unique Implementation Guide,
+we have to adjust the data model for each customer.  We want to permit each
+customer as a simple extension module to a core application design.</p>
+</div>
+<div class="section" id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
+<p>On one hand, it&#8217;s easiest to use &#8220;copy and paste&#8221; customization of the
+application, making it difficult to make across-the-board changes.</p>
+<p>On the other hand, there are 57 or so distinct Segment types, making customization
+challenging.</p>
+</div>
+<div class="section" id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+<p>A set of tools and design patterns are required.</p>
+<p>We use the following design patterns.</p>
+<ul class="simple">
+<li>Generic Parser (&#8220;unmarshalling&#8221;) class hierarchy.  A core class hierchy
+defines the essential parser technology.  A message-specific parser object is built
+from these classes.  This parser includes customer-specific extensions.</li>
+<li>A <strong>Factory</strong>-based parser.  The parser object uses a <strong>Factory</strong> object
+which generates a specific implementation&#8217;s segment types.</li>
+<li>Meta-data driven customizations.  A <tt class="docutils literal"><span class="pre">tools</span></tt> package to include a number
+of conversions from various kinds of metadata to our application programs.</li>
+</ul>
+</div>
+<div class="section" id="consequences">
+<h2>Consequences<a class="headerlink" href="#consequences" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="unmarshalling-and-segment-customization">
+<h3>Unmarshalling and Segment Customization<a class="headerlink" href="#unmarshalling-and-segment-customization" title="Permalink to this headline">¶</a></h3>
+<p>We have to bind a parser to a specific message implementation.
+We can bind the parser to the generic <tt class="docutils literal"><span class="pre">X12.message</span></tt> or we can bind it
+to <tt class="docutils literal"><span class="pre">tiger.claims.model</span></tt> or <tt class="docutils literal"><span class="pre">tiger.claims-837.model</span></tt>.</p>
+<p>Each of these implementations has a common <tt class="docutils literal"><span class="pre">Factory</span></tt> object that emits
+the proper objects.</p>
+<p>However, the Factory is shared by all classes in the X12.parse structure.
+This is relatively &#8220;global&#8221; among the various classes.  We can&#8217;t easily
+fiddle this in at Construction time.  It has to come in later.
+Each <tt class="docutils literal"><span class="pre">X12.parse</span></tt> object must acquire a Factory when it executes.</p>
+<p>Further, the X12.parse we&#8217;re using isn&#8217;t part of the X12.parse package, it&#8217;s a
+separate package, with a name like <tt class="docutils literal"><span class="pre">tiger.claims-837.model</span></tt>.</p>
+<p>This can be handled a number of ways:</p>
+<blockquote>
+<div><ul class="simple">
+<li>a Configuration <strong>Singleton</strong> that each parser locates at run time.</li>
+<li>a Configuration object given to the Message parser, and then provided
+to each subsidiary object.</li>
+</ul>
+</div></blockquote>
+<p>Since all of the various Parser classes are proper subclasses of <tt class="docutils literal"><span class="pre">X12.parse.Parser</span></tt>,
+we can provide a property in the top-level class which propagates the selected
+Factory down to each element.</p>
+<p>Further, since Parsing is a translation from one form to another, we can easily
+make the <tt class="docutils literal"><span class="pre">unmarshall</span></tt> method accept the Factory as a parameter.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Design Note: Customization of Message Structures</a><ul>
+<li><a class="reference internal" href="#problem">Problem</a></li>
+<li><a class="reference internal" href="#forces">Forces</a></li>
+<li><a class="reference internal" href="#solution">Solution</a></li>
+<li><a class="reference internal" href="#consequences">Consequences</a><ul>
+<li><a class="reference internal" href="#unmarshalling-and-segment-customization">Unmarshalling and Segment Customization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/customization.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li><a href="index.html">Tiger v3.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, S.Lott.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

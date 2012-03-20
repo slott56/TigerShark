@@ -1,0 +1,22 @@
+lib/X12/Parser/Cf.pm         X12::Parser::Cf module
+CHANGES                      changes file
+Makefile.PL                  Makefile
+MANIFEST                     This file
+lib/X12/Parser.pm            X12::Parser module
+README                       readme file
+Readme.pod                   X12::Parser::Readme man page
+cf/270_004010X092.cf         cf file
+cf/271_004010X092.cf         cf file
+cf/276_004010X093.cf         cf file
+cf/277_004010X092.cf         cf file
+cf/278_004010X094_Req.cf     cf file
+cf/278_004010X094_Res.cf     cf file
+cf/820_004010X061.cf         cf file
+cf/834_004010X095.cf         cf file
+cf/835_004010X091.cf         cf file
+cf/837_004010X096.cf         cf file
+cf/837_004010X097.cf         cf file
+cf/837_004010X098.cf         cf file
+cf/997.cf                    cf file
+t/1.t                        test file
+t/sample_835.txt             data for test file

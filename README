@@ -1,0 +1,11 @@
+TigerShark is an X12 EDI message parser that can be tailored to
+a specific partner in the health care payment ecosystem.
+
+It contains a test directory, tools and a demo web application that does
+a little bit of claim display and edit.
+
+This does not (currently) have a proper Python ``setup.py`` script for installation,
+since this is such a random mixture of components.
+
+It's probably best to include a ``.pth`` file in your ``lib/site-packages``
+that references this working directory.

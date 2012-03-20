@@ -1,0 +1,102 @@
+[LOOPS]
+ISA
+GS
+ST
+1000A
+1000B
+2000A
+2000B
+SE
+GE
+IEA
+
+#--- start of loop details ---#
+
+[ISA]
+segment=ISA:::ISA:R:1
+
+[GS]
+segment=GS:::GS:R:1
+
+#LOOP ID - HEADER
+[ST]
+segment=ST:::820 Header:R:1
+segment=BPR:::Financial Information:R:1
+segment=TRN:::Reassociation Key:R:1
+segment=CUR:::Non-US Dollars Currency:S:1
+segment=REF:::Premium Receivers Identification Key:S:>1
+segment=DTM:::Process Date:S:1
+segment=DTM:::Delivery Date:S:1
+segment=DTM:::Coverage Period:S:1
+
+#LOOP ID - 1000A PREMIUM RECEIVER’S NAME 1
+[1000A]
+segment=N1:1:PE:Premium Receiver’s Name:R:1
+segment=N2:::Premium Receiver Additional Name:S:1
+segment=N3:::Premium Receiver’s Address:S:1
+segment=N4:::Premium Receiver’s City, State, Zip:S:1
+
+#LOOP ID - 1000B PREMIUM PAYER’S NAME 1
+[1000B]
+segment=N1:1:PR:Premium Payer’s Name:R:1
+segment=N2:::Premium Payer Additional Name:S:1
+segment=N3:::Premium Payer’s Address:S:1
+segment=N4:::Premium Payer’s City, State, Zip:S:1
+segment=PER:::Premium Payer’s Administrative Contact:S:>1
+
+#LOOP ID - 2000A ORGANIZATION SUMMARY REMITTANCE 1
+[2000A]
+segment=ENT:::Organization Summary Remittance:S:1
+loop=2300A
+
+#LOOP ID - 2300A ORGANIZATION SUMMARY REMITTANCE DETAIL >1
+[2300A]
+segment=RMR:::Organization Summary Remittance Detail:R:1
+loop=2310A
+loop=2320A
+
+#LOOP ID - 2310A SUMMARY LINE ITEM 1
+[2310A]
+segment=IT1:::Summary Line Item:S:1
+loop=2315A
+
+#LOOP ID - 2315A MEMBER COUNT >1
+[2315A]
+segment=SLN:::Member Count:S:1
+
+#LOOP ID - 2320A ORGANIZATION SUMMARY REMITTANCE LEVEL ADJUSTMENT >1
+[2320A]
+segment=ADX:::Organization Summary Remittance Level Adjustment:S:1
+
+#LOOP ID - 2000B INDIVIDUAL REMITTANCE >1
+[2000B]
+segment=ENT:::Individual Remittance:S:1
+loop=2100B
+loop=2300B
+
+#LOOP ID - 2100B INDIVIDUAL NAME >1
+[2100B]
+segment=NM1:1:EY:Individual Name:S:1
+
+#LOOP ID - 2300B INDIVIDUAL PREMIUM REMITTANCE DETAIL >1
+[2300B]
+segment=RMR:::Individual Premium Remittance Detail:S:1
+segment=DTM:::Individual Coverage Period:S:1
+loop=2320B
+
+#LOOP ID - 2320B INDIVIDUAL PREMIUM ADJUSTMENT >1
+[2320B]
+segment=ADX:::Individual Premium Adjustment:S:1
+
+#LOOP ID - TRAILER
+[SE]
+segment=SE:::820 Trailer:R:1
+
+[GE]
+segment=GE:::GE:R:1
+
+[IEA]
+segment=IEA:::IEA:R:1
+
+
+

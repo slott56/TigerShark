@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/6391/django/trunk/django/contrib/admin/templates/registration
+END
+password_change_done.html
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/!svn/ver/6391/django/trunk/django/contrib/admin/templates/registration/password_change_done.html
+END
+password_reset_form.html
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/!svn/ver/2809/django/trunk/django/contrib/admin/templates/registration/password_reset_form.html
+END
+logged_out.html
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/!svn/ver/2809/django/trunk/django/contrib/admin/templates/registration/logged_out.html
+END
+password_reset_done.html
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/!svn/ver/2809/django/trunk/django/contrib/admin/templates/registration/password_reset_done.html
+END
+password_change_form.html
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/!svn/ver/6391/django/trunk/django/contrib/admin/templates/registration/password_change_form.html
+END
+password_reset_email.html
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/!svn/ver/3140/django/trunk/django/contrib/admin/templates/registration/password_reset_email.html
+END

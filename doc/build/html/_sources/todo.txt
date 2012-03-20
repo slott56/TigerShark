@@ -1,0 +1,542 @@
+##########################
+Backlog and TODO List
+##########################
+
+The next thing to do is `XXX - Start Here`_.
+
+This is version 0.1 of the Tiger 3.1 TODO List.
+This is a Scrum product feature backlog identifying a number of sprints.
+
+Introduction
+^^^^^^^^^^^^^^^^
+
+This document provides a `Release Overview`_ with the series of
+anticipated product releases.
+
+This is followed by `Release 1 - Core SaaS Capabilities`_,
+`Release 2 - Tiger 3.1 Features`_ and `Release 3 - New Features`_,
+each of which provide more detailed definition for the releases.
+
+Release Overview
+^^^^^^^^^^^^^^^^
+
+1.  `Release 1 - Core SaaS Capabilities`_.  This replaces the desktop
+    version with a nearly-equivalent web application.
+
+#.  `Release 2 - Tiger 3.1 Features`_.  This upgrades the web application
+    to provide *all* of the current desktop features, plus the high-priority
+    Tiger 3.1 features.
+
+#.  `Release 3 - New Features`_.  This is new development.
+
+Release 1 - Core SaaS Capabilities
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The Tiger SaaS renovation replaces the desktop Tiger with
+the web-based Tiger application.  This is done with a series
+of sprints to build the capabilities incrementally.  The core features
+are built first as internal batch jobs, then wrapped in web services,
+then made accessible through a web GUI.
+
+Here is a summary of the sprints that seem essential to building this
+release.
+
+1.  `Sprint 1 - Technology Stack`_
+
+#.  `Sprint 2 - Core X12 Processing`_
+
+#.  `Sprint 3 - Core Automod Application`_
+
+#.  `Sprint 4 - Automod WS Definition`_.  At this point, we can do
+    Automod processing.  The customer will need to invoke the automod
+    WS with a complete set of claims, customers and paramters.
+
+#.  `Sprint 5 - Claim Upload`_
+
+#.  `Sprint 6 - Group/Member Upload`_.  At this point, we can handle
+    more sophisticated automod capabilities, since we now retain
+    claims and groups/members.
+
+#.  `Sprint 7 - User Login`_
+
+#.  `Sprint 8 - Automod GUI`_.  At this point, we have a simple web page
+    that relies on batch upload, but can do interactive automodding.
+
+#.  `Sprint 9 - Claim Upload`_
+
+#.  `Sprint 10 - Group/Member Upload`_
+
+#.  `Sprint 11 - Release`_.  At this point, we have a complete web application
+    that replaces the essential features of the desktop app.
+
+Sprint 1 - Technology Stack
+===========================
+
+There are two significant design decisions required.
+
+See :ref:`Architecture` for details.
+
+The overall technology stack, described in :ref:`Technology Stack Alternatives`.  We
+must choose between :ref:`LAMP` and :ref:`J2EE`.
+The database design patterns, described in :ref:`Database Design Alternatives`.  We
+must choose between :ref:`Metadata-based Design` and :ref:`Segment-type Design`.
+
+The technology stack is built incrementally.
+These essential features are anticipated in `Sprint 1 - Technology Stack`_.
+However, they are actually built incrementally through the various sprints.
+For example, much of security can be deferred until `Sprint 5 - Claim Upload`_.
+The security implementation is finalized in `Sprint 7 - User Login`_.
+
+**Recommendations.**  :ref:`LAMP` and :ref:`Segment-type Design` will allow Django
+Admin to build a default user experience with no programming.
+
+**Alternative.**  The :ref:`J2EE` and :ref:`Metadata-based Design` involves the most
+programming.  J2EE requires careful type and interface definitions to handle
+various X12 messages in a uniform way (Python's dynamic type definition doesn't
+require as much up-front design work.)  A metadata-based design, while leading
+to a simple RDBMS model, requires writing RDBMS mapping and user interface
+mapping, things which have already been done in tools like toplink.
+
+Sprint 2 - Core X12 Processing
+==============================
+
+1.  Basic Conversion
+
+    1.  *[Done 1/28/08]* Fix 278 XML file to have proper nesting.
+
+    #.  *[Done 1/28/08]* Get TestConvert to pass.
+
+#.  ``837`` Marshal and Unmarshal
+
+    1.  *[Done 1/28/08]* Examine all ``837`` guides and prepare a collection of test ``837``\ 's.
+
+    #.  *[Done 1/29/08]* Convert the ``837`` XML files to create ``837`` Parsers.
+
+    #.  *[Done 1/29/08]* Decompose ParseX12 and rename to create X12 package with
+        ``x12.parse``, ``x12.message`` and the like.
+
+    #.  *[Done 1/30/08]* Expand the ``X12.parse`` API to include clear Marshal and Unmarshal capabilities.
+
+    #.  *[Started 1/30/08]* Create Unit Test set.
+
+#.  ``837`` Data Model
+
+    1.  *[Done 1/30/08]* Segregate the structual **Visitor** from the parsing capability of
+        the message.  There are several structure visitors:
+
+        - Python source for parser
+
+        - SQL DDL
+
+        - SqlAlchemy ORM
+
+        - Django ORM
+
+    #.  *[Done 1/30/08]* Create bare SQL model Visitor.
+
+    #.  Prepare for proper ORM implementation.
+
+        a.  *[Done 1/31/08]* ``X12.message`` is promoted from module to package header.  It has
+            a default implementation of ``X12.message``.
+
+        #.  *[Done 1/31/08]* Survey all available message definitions to get the complete
+            domain of segment types.
+
+        #.  *[Done 2/5/08]* Move Python vistors to ``X12.map.source`` module. Retest.
+
+        #.  *[Done 2/5/08]* Define Factory functions for ``X12.message``.  Eliminate direct
+            mention of class contructors.
+
+    #.  Create Django Object Model.
+
+        a.  *[Done 2/6/08]* Create the necessary Django project and app structure: settings.py, etc.
+
+        #.  *[Done 2/7/08]* Create the ``tiger.claims.models`` module with the Django
+            version of the ``X12.message`` Message and Loop structures.
+            Also includes the generic Segment structure.
+
+        #.  *[Done 2/7/08]* Create a Django ``tests`` module to exercise the Django ``models`` module.
+            Be sure the flat-list-of-segments and marshalling all work correctly.
+            Unmarshalling has already been tested in ``X12.parse``.
+
+        #.  *[Done 2/7/08]* Create an ``X12.map.dj`` module which converts a ``Segment`` definition
+            into a: a segment-type ``Model`` class with a 1:1 relationship to
+            the ``tiger.claims.models.X12Segment``.  Ideally a new ``Factory`` handles the
+            binding of the segment-type Model class seamlessly and silently, leaving the
+            Segment parser blissfully ignorant of the expanded semantics in the
+            persistence layer.
+
+#.  ``837`` Parsers.  These modules have the complete suite of ``837`` parsers
+    with the available compliance checking.  Plus an extra convenience
+    function which determines which flavor of ``837`` we're seeing.
+
+    1.  *[Done 2/8/08]* Rework X12.parse to be configurable to use either X12.message
+        or tiger.claims.models.
+
+    #.  *[Done 2/8/08]* Include navigation in ``X12.message`` hierarchy.
+        Specifically, we want Xpath-like navigation down through a Message
+        to locate Loops and Segments by name and name(instance).
+
+    #.  *[Done 2/11/08]* Create an additional module, ``tools.make837``.  There are two outputs:
+        Create ``837`` parser modules; create ``837`` Django application ``models.py``.
+        This module leverages ``convertPyX12``.  This will also require an extended
+        Factory to load the various Segment types when unmarshalling.
+
+        An instance of ``X12.parse.Segment`` will use a Factory to create one or
+        two things.  For the generic ``X12.message``, it creates a simple instance
+        of ``X12Segment``.  For the SQLAlchemy bindings to make sense, the Factory
+        has to create a dynamically identified subclass of ``X12Segment``.  For the
+        Django bindings, it creates the generic ``X12Segment`` object, which connects
+        into the ``X12Loop`` and ``X12Message`` structure; it also creates an ``X12Segment_``\ *xxx*
+        partner object, which is linked to the ``X12Segment`` object.
+
+    #.  *[Done 2/12/08]* Build the ``tiger.claims-837`` application.
+        Run the conversion application to generate the Parser and Django ``837`` ``models.py``
+        for this application.  Note that the ``manage.py`` requires the ``--pythonpath`` setup.
+
+    #.  *[Done 2/12/08]* Create qualification test suite for the generated ``837`` parsers.  Does it correctly
+        unmarshall each kind of ``837`` message to the generic ``X12.message`` structure?
+
+    #.  *[Done 2/12/08]* Create qualification test suite for the generated ``837`` model.  Does it correctly
+        persist each kind of ``837`` message?
+
+#.  ``837`` Unmarshall and Load, Unload and Marshall as stand-alone Applications.
+
+    1.  *[Done 2/15/08]* Expand data model with claim identification similar to Benefit/TOS in
+        legacy Tiger.  Include external claim identification (GWID)
+        plus internal claim identifiers (ISA09 + ISA10 + ISA13, BHT03).
+        Include enough Meta and Admin features to make a resonable Admin
+        display in Django.
+
+    #.  *[Done 2/19/08]* Expand data model with automod constraint information.
+
+    #.  *[Done 2/19/08]* Create an essential SOA framework from WSGI components.
+        Include basic logging, authentication and XML-RPC capabilities.
+
+    #.  *[Done 2/20/08]* Claim Load Service.  Load a Claim, Characteristics and Automod Constraints.
+
+    #.  *[Done 2/20/08]* Batch Load.  Given a CSV *Claim Description* file, call the Claim Loader
+        web service.
+
+    #.  *[Done 2/25/08]* Given Benefit/TOS, extract ``837``\ 's from RDBMS, marshall, create file.
+        This is the core of the Automod process.  Automod algorithms will be added in a later sprint.
+
+    #.  *[Done 2/26/08]* Separate STATUS from other claim Properties?  No, it's just another dimension collected
+        into a ClaimProperties instance.  When status of a claim changes, the claim moves to
+        another ClaimProperties association.
+
+    #.  *[Done 2/26/08]* Formal unit test of the load and fetch web services.
+
+Deferred from Sprint 2
+----------------------
+
+1.  Create SA Object Model, similar to construction of Django
+    object model.  Reconcile differences from the Django
+    version regarding the method names, navigation, object construction, etc.
+    This isn't high-value, since we can easily use ``settings.configure``
+    to make use of the Django model outside the Django app framework.
+
+    a.  Create SA Subversion repository.  Get latest version of SA.
+        Install and configure.  *[Done 2/5/08]*
+
+    #.  Lift the Django DDL for use by SQLAlchemy.  ``manage.py sql claims``
+        will provide some core SQL definitions that can be leveraged
+        by SQLAlchemy.
+
+    #.  Define SA mappings from SQL tables to ``X12.message`` classes.
+        Include Django-like methods for navigation in the ``X12.message``
+        class definitions.
+
+    #.  Create an SA configuration that correctly defines database engine
+        and metadata connection so that the mappings will work correctly.
+
+#.  An instance of X12.parse.Segment will use a Factory to create one or
+    two things.  For the generic ``X12.message``, it creates a simple instance
+    of X12Segment.  For the SQLAlchemy bindings to make sense, the Factory
+    has to create a dynamically identified subclass of X12Segment.
+
+#.  Debug the sample data.
+
+    a. 837I message 1 near ``HL*1**20*1~ PRV*PE*ZZ*103T00000X~``.
+       See parse_837i_2000A loop, the PRV doesn't allow PE, but the IG
+       for this sample data likely does allow PE.
+
+    b. 837I message 1 near
+       ``CL1*2*1*01~ AMT*F3*100.00~ PWK*AS*EL***AC*123456~ REF*G1*MAA36169000029~``.
+       See parse_837i_2300.  This loop occurs twice: inside 2000B and 2000C.
+       But, the AMT and PWK are reversed from the message definition.
+
+    #. 837I message 2 near ``QTY*CA*5*DA~ QTY*LA*5*DA~`` in the second message.
+
+Client-Site Integration Issues
+------------------------------
+
+Source Extract must run at the client site.  This application has the following
+outline:
+
+    1.  Given a CSV file of claims, extract these
+        from the claim processing system's HIPAA gateway
+
+    2.  Create a *Claim Load Document* which provide Claim Properties,
+        Automod Constraints, and the Claim itself (or the filename for the claim).
+
+    3.  Upload the *Claim Load Document* for processing by the RPC2/claim/load
+        service.
+
+Sprint 3 - Core Automod Application
+===================================
+
+1.  Reverse engineer Automod features from doco and VB code.
+
+    a.  *[Done 2/27/08]* Write a repeatable "nightly build" ``testDriver.py`` to run all
+        unit tests in a simple, uniform way.
+
+    #.  *[Done 3/1/08]* Clean up data modelling issues from Sprint 2.
+        Specifically, the Claim Group and Claim Group Status
+        must be separated from Claim Properties.  They're unrelated.
+
+        This has a profound ripple effect in ``tiger.claims.models``,
+        and ``ws.wsClaims`` and ``load.py``
+
+#.  *[Done 3/10/08]* Reverse engineer Automod.  See :ref:`Automod` for more information.
+
+
+    .. rubric:: _`XXX - Start Here`
+
+#.  Define Claim-oriented class model over the X12 message model.
+    This will allow the automod processing to use business-appropriate terminology.
+
+    See ``claims.__init__.py``
+
+    There are several dimensions to the use cases:
+
+    -   Source Segments/Composites: Segment or Segments that match simple qualifications, or
+        from Composites that match simple Criteria, but are found in multiple Segements.
+
+    -   Element Selection: Fixed position within each Segment, OneOf a Number of Positions
+        within a Segment, Fixed position(s) within a Composite, Sequence of Positions
+        within a Segment
+
+    -   Conversion: No conversion, single-element conversion, multi-element conversion
+
+    -   Result Stucture: Single Occurance vs. Sequence.
+
+#.  Define automod parameter set; create Django model for this.
+    This must be extensible to permit additional
+    or different parameters to be used by a customer.
+
+#.  Create batch Automod.
+
+    ``python claimsmod.py -c *claims* -m *group/member* -p *params* -o *837 file*``
+
+    Either needs a Django SETTINGS file, or it creates a suitable settings
+    setup on the fly to connect to a required database.
+
+    -   Connects to the DB.
+
+    -   Fetches the given set of *claims* from the DB.
+
+    -   Fetches the given set of automod *params* from the DB.
+
+    -   Reads the *group/member* CSV file.
+
+    -   Writes the requested *837 file*.
+
+Deferred From Sprint 3
+----------------------
+
+1.  We have to look at how Segments and Loops are tracked within a Message.
+    We want to be able to insert new Segments, resequencing all following
+    Segments.
+
+    We may have to look at message identification, fixing how ID's are
+    assigned to ``X12Message`` and related structures.  The PK can be assigned
+    without regard to the database ``save()``.
+
+    See :ref:`Key Generation` for more information.
+
+    This has a ripple effect in the ``tiger`` model
+    and it's ``Factory`` class.  Since ``X12`` doesn't use FK's, there's no
+    change to that model.
+
+#.  Make proper use of the Composite Separator passed into the ``tiger.claims_837.Factory``
+    and ``X12.message.Factory``.  Add methods to pick apart composites.
+
+#.  Retest everything after the data model changes.
+
+Sprint 4 - Automod WS Definition
+================================
+
+This requires some technology exploration.  Django is -- fundamentally -- a
+web server for people, not XML-RPC.  It's POST processing expects to parse
+the data from an a Form, not a WS request.
+
+We have two fundamental choices.
+
+-   Use Apache to redirect WS requests to an  XML-RPC server that is separate
+    from the Django server.  Both use the same ``PYTHONPATH`` and therefore have
+    a common code base.
+
+-   Use Django to handle WS requests -- parse the XML document in the POST
+    content; send back an XML document instead of HTML.
+
+Once we have a technology chosen, we can implement the WS.
+
+1.  Build the "big" Automod service - based on a really complex set of input
+    docs.  The source ``837``\ 's in a single doc; the group/member in s single doc;
+    the parameters in a third doc.
+
+#.  Package into the web environment.
+
+#.  Write the required test set.
+
+Note that we now have the opportunity for a hybrid product.  We can rewrite
+the desktop app to remove the Automodder from the desktop and get the
+merge out of the application completely.  Instead, we connect
+to the web service.  We package the local data for web service processing,
+invoke the web service, and save the results onto the local hard drive.
+
+This version has no security, since nothing is retained on the web server.
+
+Sprint 5 - Claim Upload
+=======================
+
+This is where :ref:`Security`, and :ref:`Privacy`  enter the picture.
+These are often lumped into *HIPAA Compliance*.
+
+There are two parts to claim upload:
+
+-   The WS, which accepts and stores the claims.  This, in turn, requires
+    several related technologies.
+
+    -   User Authentication with passwords (built in to Django), plus
+        personal information (add-on) and header monitoring.  Also, mapping
+        of users to customer-site configurations.
+
+    -   Token exchange for each transaction.
+
+    -   Authorization to execute the given transaction.
+
+-   The Client, which autheticates, gets a token, then uploads the claims.
+    The client, BTW, is completely responsible for HIPAA compliance, and
+    deidentification.  Often, this is embedded in a larger application that
+    does Facets extracts and deidentifies.
+
+Sprint 6 - Group/Member Upload
+==============================
+
+As with claims upload, there are two parts.
+
+-   The WS, which accepts and stores groups and members.
+
+-   The Client, which authenticates and uploads the groups and members.
+    This can be embedded in a larger application that
+    does Facets extracts and deidentifies.
+
+Sprint 7 - User Login
+=====================
+
+This is where the web site enters the picture.  This requires a little bit
+of care to assure that templates are used appropirately.  This is also completes the
+implementation of the :ref:`Architectural Features`.
+
+The login page is part of a larger front-end application.
+
+-   The "home" page that introduces Tiger.  Thas has the login form,
+    as well as a menu of generic information: "about", "getting started", "demo",
+    "security", "privacy", etc.
+
+-   The login form has a forgotten password and first time links as well
+    as username and password.
+
+-   The forgotten password and first time operations are nearly identical.
+    The user must answer the personal information questions to be allowed to
+    reset their password.  Note that we can't send password reminders -- we
+    don't have the passwords!
+
+Users are "pre-identified".  A customer's initial list of users is put in
+as part of starting up their contract.  After that, the customer's admin
+person will pre-identify the new users.
+
+There is no self-sign-up  There is no drop-down list of customers.  Essentially
+nothing is revealed.
+
+Once a user is authenticated, their group membership is used to redirect them
+to URL's which aim them at the proper backend Django server.  The URL's, BTW,
+are internally generated -- not the customer's name.  It isn't possible to
+hypothesize and guess a customer-specific URL.
+
+Also, URL failures are reported to our security and the customer's security
+admin person.  If you "shop around" for a URL other than those which direct
+you to your own data, the resulting 404 error sends an immediate security
+alert.  When a user accumulated more than five 404 errors, their account
+is disabled.
+
+Session cookies don't last very long.  You will get a security challenge
+perdiocally.
+
+We monitor headers.  Changing computers will result in a security
+challenge.  Upgrading your OS or browser will result in a security challenge.
+
+We may reconfirm authorized users with the customer security admin
+from time-to-time.  When we do this, we will disable all acccess except the
+security admin, who must reauthorize individuals one at a time, by name.
+(We keep the master list of users secret even from the security admin,
+just to be sure they're paying attention.)
+
+Sprint 8 - Automod GUI
+======================
+
+Create Django Automod app.
+
+1.  Automod Home.  Links to Claim Upload, Claim Storage,
+    Group/Member Upload, Automod Config.
+    Main Operation is Select Claims, Select Group/Member, Select
+    Automod Config, click Go.
+
+#.   Claim Upload Page.  Uploads raw ``837`` files only.
+
+#.  Claim Storage Page.  Pick a file; persist this into the DB, or
+    see errors because it's invalid in some way.
+
+#.  Group/Member Upload Page.  Uploads CSV files only.
+
+#.  Use Admin to create Automod config.
+
+The Automod app is the first of many separate Tiger applications.
+After successful login, the user is directed to the Customer home page, which
+has generic status/MOTD stuff and the menu of use cases (Upload, Download,
+Modify, Check Status, etc.)
+
+Sprint 9 - Claim Upload
+=======================
+
+Upload ``837`` files for persistence in the database and use by Automod.
+
+Additional Automod WS to fetch claims from the DB instead of accepting
+them as a massive XML document.
+
+Sprint 10 - Group/Member Upload
+===============================
+
+Upload group/member files for persistence in the database and use by Automod.
+
+Additional Automod WS to fetch group/member from the DB instead of accepting
+them as a massive XML document.
+
+Sprint 11 - Release
+===================
+
+Additional cleanup required for release to customers.
+
+Release 2 - Tiger 3.1 Features
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Once we have a working conversion, we can several Tiger 3.1 features.
+This includes things like better organization of claim test sets,
+customer generation (instead of upload.)
+
+Release 3 - New Features
+^^^^^^^^^^^^^^^^^^^^^^^^
+
+Prioritized list of new requirements.

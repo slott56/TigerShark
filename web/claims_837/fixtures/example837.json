@@ -1,0 +1,376 @@
+[
+  {
+    "pk": 1, 
+    "model": "claims.location", 
+    "fields": {
+      "name": "BUF", 
+      "description": "Buffalo"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "claims.location", 
+    "fields": {
+      "name": "ALB", 
+      "description": "Albany"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "claims.location", 
+    "fields": {
+      "name": "CNYW", 
+      "description": "Central New York West"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "claims.location", 
+    "fields": {
+      "name": "CNYE", 
+      "description": "Central New York East"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "claims.claimtype", 
+    "fields": {
+      "name": "837P", 
+      "description": "Professional"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "claims.claimtype", 
+    "fields": {
+      "name": "837I", 
+      "description": "Inpatient"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "claims.claimtype", 
+    "fields": {
+      "name": "837O", 
+      "description": "Outpatient"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "claims.claimtype", 
+    "fields": {
+      "name": "837D", 
+      "description": "Dental"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "claims.secondarycoverage", 
+    "fields": {
+      "name": "Regular", 
+      "description": "Regular"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "claims.secondarycoverage", 
+    "fields": {
+      "name": "Medicare", 
+      "description": "Medicare"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "claims.secondarycoverage", 
+    "fields": {
+      "name": "COB", 
+      "description": "COB"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "claims.secondarycoverage", 
+    "fields": {
+      "name": "NASCO", 
+      "description": "NASCO"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "AMSU", 
+      "description": "Ambulatory Surgical Center"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "INPT", 
+      "description": "Inpatient Care"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "IPDX", 
+      "description": "Alcohol & Substance Detox"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "MAMN", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "DME", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "SNF", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ABOR", 
+      "description": "Abortion"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ACCD", 
+      "description": "Accidental Dental"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ACPR", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ACUP", 
+      "description": "Accupuncture"
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "AI", 
+      "description": "Aritificial Insemination"
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ALLI", 
+      "description": "Allergy Testing & Injections"
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ALLT", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "AMBA", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "AMBL", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ANES", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "APPR", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ASMD", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ASPA", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ASRC", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ASRH", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "BD", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "CHEM", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "CHRC", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "CHRP", 
+      "description": null
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "MRI", 
+      "description": "MRI/MRA"
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "OBEV", 
+      "description": "Observation / Acuity Evaluation"
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "OBSV", 
+      "description": "Observation Room"
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "ORTH", 
+      "description": "Orthotics"
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "claims.benefit", 
+    "fields": {
+      "benefit": "OT", 
+      "description": "Rehabilitative Therapy - Occupational"
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "claims.groupstatus", 
+    "fields": {
+      "can_change": false, 
+      "name": "Base", 
+      "description": "Initial Load"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "claims.groupstatus", 
+    "fields": {
+      "can_change": false, 
+      "name": "Benchmark", 
+      "description": "Benchmark"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "claims.groupstatus", 
+    "fields": {
+      "can_change": false, 
+      "name": "Pending", 
+      "description": "Work In Process"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "claims.x12message", 
+    "fields": {
+      "group": null, 
+      "name": "837_example", 
+      "created": "2011-12-23 14:09:09", 
+      "modified": "2011-12-23 14:09:09", 
+      "properties": null
+    }
+  }
+]
