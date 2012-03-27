@@ -37,4 +37,30 @@ using the utlities:
 
 This will generate a M835_4010_X091_A1.py file in your parsers directory.
 
-TODO: Still need a Factory?
+Use it as follows:
+
+    import M835_4010_X091_A1
+    from X12.parse import Properties
+    p = Properties(eltPunct="|", compPunc="^")
+    m = M835_4010_X091_A1.name
+    with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
+        parsed = m.unmarshall(f.read(), p)
+    
+Unfortunately, this is throwing the following error:
+
+    TypeError                                 Traceback (most recent call last)
+    /Users/sbuss/envs/tigershark/src/TigerShark/parsers/<ipython-input-5-ba4da6e5b7b4> in <module>()
+          1 with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
+    ----> 2     parsed = m.unmarshall(f.read(), p)
+          3 
+
+    /Users/sbuss/envs/tigershark/src/TigerShark/X12/parse.py in unmarshall(self, message, factory)
+        811             )
+        812             raise ex
+    --> 813         theMssg= self.factory.makeMessage( self.name )
+        814         self.getParts( self.segmentTokens, theMssg )
+        815         if len(self.segmentTokens) != 0:
+
+    TypeError: 'NoneType' object is not callable
+
+so the Factory isn't getting created/set properly.
