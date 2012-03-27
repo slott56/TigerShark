@@ -33,7 +33,7 @@ using the utlities:
     mkdir parsers
     touch parsers/__init__.py
     cd parsers
-    python ../web/make837.py -p M835_4010_X091_A1.py -b Downloads/pys12-1.5.0/map name=835.4010.X091.A1.xml
+    python ../web/make837.py -p M835_4010_X091_A1.py -b ../Downloads/pyx12-1.5.0/map name=835.4010.X091.A1.xml
 
 This will generate a M835_4010_X091_A1.py file in your parsers directory.
 
