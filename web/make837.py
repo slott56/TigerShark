@@ -81,7 +81,7 @@ class ApplicationBuilder( object ):
         self.bldParser= tools.convertPyX12.ParserBuilder()
         # Accumulate Django definitions until after all messages have been examined
         self.djMap= X12.map.dj.DjangoModelVisitor( )
-        self.djAdm= X12.map.dh.DjangoAdminVisitor( )
+        self.djAdm= X12.map.dj.DjangoAdminVisitor( )
         self.x12p= None
     def load( self, xmlDef ):
         """Load another message definition.  This will also accumulate
