@@ -664,17 +664,25 @@ class Segment( Parser ):
         :param segments: list of SegmentTokens for the current message.
         :returns: yields a single parsed Segment or raises StopIteration
         """
-        if self.match( segments[0] ):
-            compPunct= self.getMessage().compPunct
-            theSegment= self.theFactory.makeSegment( segments.pop(0), compPunct, self )
-            yield theSegment
-        elif self.situational or self.notused:
-            pass
-        else:
-            error= ParseError(
-                "Could not unmarshall %s Segment" % ( self.name, ),
-                description=self.message.desc, parser=self, segments=segments )
-            raise error
+        try:
+            if self.repeat.startswith(">"):
+                repeat = 999
+            else:
+                repeat = int(self.repeat)
+        except:
+            repeat = 1
+        for i in range(repeat):
+            if self.match( segments[0] ):
+                compPunct= self.getMessage().compPunct
+                theSegment= self.theFactory.makeSegment( segments.pop(0), compPunct, self )
+                yield theSegment
+            elif self.situational or self.notused:
+                raise StopIteration
+            else:
+                error= ParseError(
+                    "Could not unmarshall %s Segment" % ( self.name, ),
+                    description=self.message.desc, parser=self, segments=segments )
+                raise error
     def preVisit( self, visitor, indent ):
         """Call class-specific method of visitor."""
         visitor.preSegment( self, indent )
@@ -766,6 +774,7 @@ class Message( Parser ):
         :raises StructureError: if the attempted message structure is invalid.
         """
         super(Message,self).__init__( name, properties, *loops )
+        self.log = logging.getLogger("X12.parse.Message")
         self.desc= self.props.desc
     def __repr__( self ):
         structure= ",\n".join( map(repr,self.structure) )
