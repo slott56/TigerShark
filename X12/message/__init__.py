@@ -329,7 +329,7 @@ class X12Segment( X12Structure ):
         if self.segType is None:
             raise NotImplementedError( "No Segment bound to this data." )
         for en in range(len(self.segType.structure)):
-            if name == self.segType.structure[fn].name:
+            if name == self.segType.structure[en].name:
                 return en+1
         raise ValueError( "Name %s Is Unknown in Segment %s" % ( name, self.name ))
     def getByName( self, name ):
@@ -337,7 +337,7 @@ class X12Segment( X12Structure ):
         :param name: the name of the element.
         :returns: string value in the element's position.  No type conversion is done.
         """
-        return self.elements.getByPos(self.positionOf(name))
+        return self.getByPos(self.positionOf(name))
     def child( self, test, name=None, pos=None ):
         """Examine immediate children of this node;
         segments have no children; the result is an empty list."""
