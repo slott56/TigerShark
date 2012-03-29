@@ -30,8 +30,6 @@ several common file formats, which is included in the Download directory:
 After extracting the xml files, you can create the related parser objects
 using the utlities:
 
-    mkdir parsers
-    touch parsers/__init__.py
     cd parsers
     python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../Downloads/pyx12-1.5.0/map/ -n parsed_835
 
