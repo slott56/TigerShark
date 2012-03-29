@@ -502,9 +502,9 @@ class Parser( object ):
         for part in self.structure:
             count= 0
             for subloop in part.parse( segments ):
-                count += 1
                 subloop.occurrence= count
                 theLoop.addChild( subloop )
+                count += 1
     def visit( self, visitor, indent=0 ):
         """Iterate through the components."""
         try:
