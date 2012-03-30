@@ -27,6 +27,9 @@ several common file formats, which is included in the Download directory:
     unzip pyx12-1.5.0.zip
     cd ..
 
+Generating a Parser
+===================
+
 After extracting the xml files, you can create the related parser objects
 using the utlities:
 
@@ -41,3 +44,16 @@ Use it as follows:
     m = M835_4010_X091_A1.parsed_835
     with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
         parsed = m.unmarshall(f.read().strip())
+
+Building a Facade
+=================
+
+Once you have parsed an X12 file, you can build a Facade around it:
+
+    from facade.f835 import f835_4010
+    f = F835_4010(parsed)
+
+Now you can access the segments of the X12 file in an easy and pythonic way
+
+    >>> print(f.payee[0].zip)
+    94066
