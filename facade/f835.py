@@ -10,7 +10,7 @@ from facade import ElementAccess
 from facade import D8
 
 
-class f835_4010(object):
+class F835_4010(object):
     class _Payer(X12LoopBridge):
         """Payer information from the 1000A loop."""
         loopName = "1000A"
@@ -91,6 +91,6 @@ class f835_4010(object):
 
     def __init__(self, anX12Message):
         """Examine the message and extract the relevant Loops."""
-        self.payer = self.loops(self._Payer, anX12Message)
-        self.payee = self.loops(self._Payee, anX12Message)
+        self.payer = self.loops(self._Payer, anX12Message)[0]  # Only 1 allowed
+        self.payee = self.loops(self._Payee, anX12Message)[0]  # Only 1 allowed
         self.claims = self.loops(self._Claims, anX12Message)
