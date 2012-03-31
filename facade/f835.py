@@ -71,7 +71,7 @@ class F835_4010(Facade):
         total_contractual_adjustment = ElementAccess("TS3", 11)
         total_gramm_rudman_reduction = ElementAccess("TS3", 12)
         total_msp_payer = ElementAccess("TS3", 13)
-        total_blood_deducible = ElementAccess("TS3", 14)
+        total_blood_deductible = ElementAccess("TS3", 14)
         total_non_lab_charge = ElementAccess("TS3", 15)
         total_coinsurance = ElementAccess("TS3", 16)
         total_hcpcs_reported_charge = ElementAccess("TS3", 17)
