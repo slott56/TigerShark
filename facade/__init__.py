@@ -242,7 +242,13 @@ Exceptions
 ..  autoclass:: MissingSegment
 """
 import datetime
-from X12.message import X12Message
+
+
+class Facade(object):
+    def loops(self, theClass, anX12Message):
+        return [theClass(loop) for loop in
+                anX12Message.descendant("loop", theClass.loopName)]
+
 
 class MissingSegment( Exception ):
     """This exception is raised if the target Segment cannot be found
