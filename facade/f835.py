@@ -190,37 +190,37 @@ class F835_4010(Facade):
                 qualifier=(1, "74"))
         # Service Provider
         service_provider_entity_type = ElementAccess("NM1", 2,
-                qualifier=(1, "74"))
+                qualifier=(1, "82"))
         service_provider_last_name = ElementAccess("NM1", 3,
-                qualifier=(1, "74"))
+                qualifier=(1, "82"))
         service_provider_first_name = ElementAccess("NM1", 4,
-                qualifier=(1, "74"))
+                qualifier=(1, "82"))
         service_provider_middle_initial = ElementAccess("NM1", 5,
-                qualifier=(1, "74"))
+                qualifier=(1, "82"))
         service_provider_suffix = ElementAccess("NM1", 7,
-                qualifier=(1, "74"))
+                qualifier=(1, "82"))
         service_provider_id_code_qual = ElementAccess("NM1", 8,
-                qualifier=(1, "74"))  # TODO enum?
+                qualifier=(1, "82"))  # TODO enum?
         service_provider_id_code = ElementAccess("NM1", 9,
-                qualifier=(1, "74"))
+                qualifier=(1, "82"))
         # Crossover Carrier
         crossover_carrier_entity_type = ElementAccess("NM1", 2,
                 qualifier=(1, "TT"))
         crossover_carrier_org_name = ElementAccess("NM1", 3,
-                qualifier=(1, "74"))
+                qualifier=(1, "TT"))
         crossover_carrier_id_code_qual = ElementAccess("NM1", 8,
                 qualifier=(1, "TT"))  # TODO enum?
         crossover_carrier_id_code = ElementAccess("NM1", 9,
                 qualifier=(1, "TT"))
         # Corrected Priority Payer
         corrected_priority_payer_entity_type = ElementAccess("NM1", 2,
-                qualifier=(1, "TT"))
+                qualifier=(1, "PR"))
         corrected_priority_payer_org_name = ElementAccess("NM1", 3,
-                qualifier=(1, "74"))
+                qualifier=(1, "PR"))
         corrected_priority_payer_id_code_qual = ElementAccess("NM1", 8,
-                qualifier=(1, "TT"))  # TODO enum?
+                qualifier=(1, "PR"))  # TODO enum?
         corrected_priority_payer_id_code = ElementAccess("NM1", 9,
-                qualifier=(1, "TT"))
+                qualifier=(1, "PR"))
         # TODO: Medicare inpatient/outpatient adjudication?
 
         # References
