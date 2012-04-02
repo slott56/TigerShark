@@ -11,48 +11,51 @@ from facade import D8
 from facade import Facade
 
 
+class Entity(X12LoopBridge):
+    def __init__(self, aLoop):
+        super(Entity, self).__init__(aLoop)
+        self.contact_details = ContactDetails(aLoop)
+
+
+class ContactDetails(X12LoopBridge):
+    addr1 = ElementAccess("N3", 1)
+    addr2 = ElementAccess("N3", 2)
+    city = ElementAccess("N4", 1)
+    state = ElementAccess("N4", 2)
+    zip = ElementAccess("N4", 3)
+    email = ElementAccess("PER", oneOf=("EM", (3, 4), (5, 6), (7, 8)))
+    fax = ElementAccess("PER", oneOf=("FX", (3, 4), (5, 6), (7, 8)))
+    phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
+
+
+class Payer(Entity):
+    """Payer information from the 1000A loop."""
+    loopName = "1000A"
+    payer_id = ElementAccess("REF", 2, qualifier=(1, "2U"))
+    submitter_id = ElementAccess("REF", 2, qualifier=(1, "EO"))
+    # health industry number
+    hin = ElementAccess("REF", 2, qualifier=(1, "HI"))
+    naic_code = ElementAccess("REF", 2, qualifier=(1, "NF"))
+
+    def __str__(self):
+        return "%s, %s %s %s" % (self.last, self.first, self.mid,
+                self.suffix)
+
+
+class Payee(Entity):
+    """Payee information from 1000B loop."""
+    loopName = "1000B"
+    name = ElementAccess("N1", 2)
+    qualifier = ElementAccess("NM1", 3)
+    id = ElementAccess("NM1", 4)
+    state_license = ElementAccess("REF", 2, qualifier=(1, "0B"))
+    provider_UPIN = ElementAccess("REF", 2, qualifier=(1, "1G"))
+    pharmacy_number = ElementAccess("REF", 2, qualifier=(1, "D3"))
+    payee_id = ElementAccess("REF", 2, qualifier=(1, "PQ"))
+    tax_id = ElementAccess("REF", 2, qualifier=(1, "TJ"))
+
+
 class F835_4010(Facade):
-    class _Payer(X12LoopBridge):
-        """Payer information from the 1000A loop."""
-        loopName = "1000A"
-        name = ElementAccess("N1", 2)
-        qualifier = ElementAccess("NM1", 3)
-        id = ElementAccess("NM1", 4)
-        addr1 = ElementAccess("N3", 1)
-        addr2 = ElementAccess("N3", 2)
-        city = ElementAccess("N4", 1)
-        state = ElementAccess("N4", 2)
-        zip = ElementAccess("N4", 3)
-        payer_id = ElementAccess("REF", 2, qualifier=(1, "2U"))
-        submitter_id = ElementAccess("REF", 2, qualifier=(1, "EO"))
-        # health industry number
-        hin = ElementAccess("REF", 2, qualifier=(1, "HI"))
-        naic_code = ElementAccess("REF", 2, qualifier=(1, "NF"))
-        email = ElementAccess("PER", oneOf=("EM", (3, 4), (5, 6), (7, 8)))
-        fax = ElementAccess("PER", oneOf=("FX", (3, 4), (5, 6), (7, 8)))
-        phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
-
-        def __str__(self):
-            return "%s, %s %s %s" % (self.last, self.first, self.mid,
-                    self.suffix)
-
-    class _Payee(X12LoopBridge):
-        """Payee information from 1000B loop."""
-        loopName = "1000B"
-        name = ElementAccess("N1", 2)
-        qualifier = ElementAccess("NM1", 3)
-        id = ElementAccess("NM1", 4)
-        addr1 = ElementAccess("N3", 1)
-        addr2 = ElementAccess("N3", 2)
-        city = ElementAccess("N4", 1)
-        state = ElementAccess("N4", 2)
-        zip = ElementAccess("N4", 3)
-        state_license = ElementAccess("REF", 2, qualifier=(1, "0B"))
-        provider_UPIN = ElementAccess("REF", 2, qualifier=(1, "1G"))
-        pharmacy_number = ElementAccess("REF", 2, qualifier=(1, "D3"))
-        payee_id = ElementAccess("REF", 2, qualifier=(1, "PQ"))
-        tax_id = ElementAccess("REF", 2, qualifier=(1, "TJ"))
-
     class _ClaimsOverview(X12LoopBridge):
         loopName = "2000"
         number = ElementAccess("LX", 1)
@@ -274,7 +277,7 @@ class F835_4010(Facade):
 
     def __init__(self, anX12Message):
         """Examine the message and extract the relevant Loops."""
-        self.payer = self.loops(self._Payer, anX12Message)
-        self.payee = self.loops(self._Payee, anX12Message)
+        self.payer = self.loops(Payer, anX12Message)
+        self.payee = self.loops(Payee, anX12Message)
         self.claims_overview = self.loops(self._ClaimsOverview, anX12Message)
         self.claims = self.loops(self._Claim, anX12Message)
