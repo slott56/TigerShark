@@ -924,3 +924,15 @@ def enum(options):
                         return k
             return ""
     return Enum
+
+def boolean(match):
+    """ True if the field matches match. Match must be a string. """
+    class Boolean(Conversion):
+        @staticmethod
+        def x12_to_python(raw):
+            return raw == match
+
+        @staticmethod
+        def python_to_x12(value):
+            return match
+    return Boolean
