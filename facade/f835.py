@@ -105,9 +105,17 @@ class Person(NamedEntity):
     middle_initial = ElementAccess("NM1", 5)
     suffix = ElementAccess("NM1", 7)
 
+    def __str__(self):
+        return "<<Person> {first} {last}>".format(
+                first=self.first_name,
+                last=self.last_name)
+
 
 class Organization(NamedEntity):
     org_name = ElementAccess("NM1", 3)
+
+    def __str__(self):
+        return "<<Organization> %s" % self.org_name
 
 
 class Claim(Facade, X12LoopBridge):
