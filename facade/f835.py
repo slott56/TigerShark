@@ -8,6 +8,7 @@ from facade import ElementAccess
 from facade import CompositeAccess
 #from facade import CompositeSequenceAccess
 from facade import D8
+from facade import Money
 from facade import Facade
 
 
@@ -64,27 +65,27 @@ class ClaimsOverview(X12LoopBridge):
     facility_type_code = ElementAccess("TS3", 2)
     fiscal_period_end = ElementAccess("TS3", 3, x12type=D8)
     claim_count = ElementAccess("TS3", 4)
-    total_claim_charge = ElementAccess("TS3", 5)
+    total_claim_charge = ElementAccess("TS3", 5, x12type=Money)
     # All of the below are optional and a 0/None value does not
     # neccessarily mean that value is *actually* 0
-    total_covered_charge = ElementAccess("TS3", 6)
-    total_noncovered_charge = ElementAccess("TS3", 7)
-    total_denied_charge = ElementAccess("TS3", 8)
-    total_provider_payment = ElementAccess("TS3", 9)
-    total_interest = ElementAccess("TS3", 10)
-    total_contractual_adjustment = ElementAccess("TS3", 11)
-    total_gramm_rudman_reduction = ElementAccess("TS3", 12)
-    total_msp_payer = ElementAccess("TS3", 13)
-    total_blood_deductible = ElementAccess("TS3", 14)
-    total_non_lab_charge = ElementAccess("TS3", 15)
-    total_coinsurance = ElementAccess("TS3", 16)
-    total_hcpcs_reported_charge = ElementAccess("TS3", 17)
-    total_hspcs_payable = ElementAccess("TS3", 18)
-    total_deductible = ElementAccess("TS3", 19)
-    total_professional_component = ElementAccess("TS3", 20)
-    total_msp_patient_liability_met = ElementAccess("TS3", 21)
-    total_patient_reimbursement = ElementAccess("TS3", 22)
-    total_pip_claim = ElementAccess("TS3", 23)
+    total_covered_charge = ElementAccess("TS3", 6, x12type=Money)
+    total_noncovered_charge = ElementAccess("TS3", 7, x12type=Money)
+    total_denied_charge = ElementAccess("TS3", 8, x12type=Money)
+    total_provider_payment = ElementAccess("TS3", 9, x12type=Money)
+    total_interest = ElementAccess("TS3", 10, x12type=Money)
+    total_contractual_adjustment = ElementAccess("TS3", 11, x12type=Money)
+    total_gramm_rudman_reduction = ElementAccess("TS3", 12, x12type=Money)
+    total_msp_payer = ElementAccess("TS3", 13, x12type=Money)
+    total_blood_deductible = ElementAccess("TS3", 14, x12type=Money)
+    total_non_lab_charge = ElementAccess("TS3", 15, x12type=Money)
+    total_coinsurance = ElementAccess("TS3", 16, x12type=Money)
+    total_hcpcs_reported_charge = ElementAccess("TS3", 17, x12type=Money)
+    total_hspcs_payable = ElementAccess("TS3", 18, x12type=Money)
+    total_deductible = ElementAccess("TS3", 19, x12type=Money)
+    total_professional_component = ElementAccess("TS3", 20, x12type=Money)
+    total_msp_patient_liability_met = ElementAccess("TS3", 21, x12type=Money)
+    total_patient_reimbursement = ElementAccess("TS3", 22, x12type=Money)
+    total_pip_claim = ElementAccess("TS3", 23, x12type=Money)
     # TODO: TS2 segment
 
 
@@ -122,8 +123,8 @@ class Claim(Facade, X12LoopBridge):
         Rest assured I did not come to this decision lightly."""
         loopName = "2110"
         hcpcs_code = CompositeAccess("SVC", "HC", 1)
-        charge = ElementAccess("SVC", 2)
-        payment = ElementAccess("SVC", 3)
+        charge = ElementAccess("SVC", 2, x12type=Money)
+        payment = ElementAccess("SVC", 3, x12type=Money)
         quantity = ElementAccess("SVC", 5)
         start_date = ElementAccess("DTM", 2, qualifier=(1, "150"),
                 x12type=D8)
@@ -133,14 +134,15 @@ class Claim(Facade, X12LoopBridge):
         # WARNING: This should add up all of the amounts in this segment,
         # but it DOESN'T!
         adjustment_contractual_obligation = ElementAccess("CAS", 3,
-                qualifier=(1, "CO"))
+                qualifier=(1, "CO"), x12type=Money)
         adjustment_correction_and_reveral = ElementAccess("CAS", 3,
-                qualifier=(1, "CR"))
-        adjustment_other = ElementAccess("CAS", 3, qualifier=(1, "OA"))
+                qualifier=(1, "CR"), x12type=Money)
+        adjustment_other = ElementAccess("CAS", 3, qualifier=(1, "OA"),
+                x12type=Money)
         adjustment_payor_initiated_reductions = ElementAccess("CAS", 3,
-                qualifier=(1, "PI"))
+                qualifier=(1, "PI"), x12type=Money)
         adjustment_patient_responsibility = ElementAccess("CAS", 3,
-                qualifier=(1, "PR"))
+                qualifier=(1, "PR"), x12type=Money)
 
         # Identification
         apg_number = ElementAccess("REF", 2, qualifier=(1, "1S"))
@@ -158,21 +160,25 @@ class Claim(Facade, X12LoopBridge):
         # TODO: Rendering provider info?
 
         # Line-item claim amounts
-        allowed_amount = ElementAccess("AMT", 2, qualifier=(1, "B6"))
-        per_day_limit = ElementAccess("AMT", 2, qualifier=(1, "DY"))
-        deduction_amount = ElementAccess("AMT", 2, qualifier=(1, "KH"))
-        tax_amount = ElementAccess("AMT", 2, qualifier=(1, "T"))
+        allowed_amount = ElementAccess("AMT", 2, qualifier=(1, "B6"),
+                x12type=Money)
+        per_day_limit = ElementAccess("AMT", 2, qualifier=(1, "DY"),
+                x12type=Money)
+        deduction_amount = ElementAccess("AMT", 2, qualifier=(1, "KH"),
+                x12type=Money)
+        tax_amount = ElementAccess("AMT", 2, qualifier=(1, "T"),
+                x12type=Money)
         total_claim_before_taxes = ElementAccess("AMT", 2,
-                qualifier=(1, "T2"))
+                qualifier=(1, "T2"), x12type=Money)
 
         not_covered_quantity = ElementAccess("QTY", 2, qualifier=(1, "NE"))
 
     loopName = "2100"
     patient_control_number = ElementAccess("CLP", 1)
     status_code = ElementAccess("CLP", 2)  # TODO enum?
-    total_charge = ElementAccess("CLP", 3)
-    payment = ElementAccess("CLP", 4)
-    patient_responsibility = ElementAccess("CLP", 5)
+    total_charge = ElementAccess("CLP", 3, x12type=Money)
+    payment = ElementAccess("CLP", 4, x12type=Money)
+    patient_responsibility = ElementAccess("CLP", 5, x12type=Money)
     claim_type = ElementAccess("CLP", 6)  # TODO enum?
     payer_claim_control_number = ElementAccess("CLP", 7)
     facility_type = ElementAccess("CLP", 8)
@@ -215,15 +221,20 @@ class Claim(Facade, X12LoopBridge):
             qualifier=(1, "233"), x12type=D8)
 
     # Claim payment info
-    total_covered_charge = ElementAccess("AMT", 2, qualifier=(1, "AU"))
-    discount_amount = ElementAccess("AMT", 2, qualifier=(1, "D8"))
-    per_day_limit = ElementAccess("AMT", 2, qualifier=(1, "DY"))
-    patient_amount_paid = ElementAccess("AMT", 2, qualifier=(1, "F5"))
-    interest = ElementAccess("AMT", 2, qualifier=(1, "I"))
-    negative_ledger = ElementAccess("AMT", 2, qualifier=(1, "NL"))
-    tax_amount = ElementAccess("AMT", 2, qualifier=(1, "T"))
+    total_covered_charge = ElementAccess("AMT", 2, qualifier=(1, "AU"),
+            x12type=Money)
+    discount_amount = ElementAccess("AMT", 2, qualifier=(1, "D8"),
+            x12type=Money)
+    per_day_limit = ElementAccess("AMT", 2, qualifier=(1, "DY"),
+            x12type=Money)
+    patient_amount_paid = ElementAccess("AMT", 2, qualifier=(1, "F5"),
+            x12type=Money)
+    interest = ElementAccess("AMT", 2, qualifier=(1, "I"), x12type=Money)
+    negative_ledger = ElementAccess("AMT", 2, qualifier=(1, "NL"),
+            x12type=Money)
+    tax_amount = ElementAccess("AMT", 2, qualifier=(1, "T"), x12type=Money)
     total_claim_before_taxes = ElementAccess("AMT", 2,
-            qualifier=(1, "T2"))
+            qualifier=(1, "T2"), x12type=Money)
 
     def __init__(self, anX12Message, *args, **kwargs):
         super(Claim, self).__init__(anX12Message, *args,
