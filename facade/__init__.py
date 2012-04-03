@@ -627,9 +627,11 @@ class ElementAccess( object ):
         but I need to get this running asap.
         """
         if self.qualifier is None or self.qualifier == (None,):
-            return instance.qualifier
+            if hasattr(instance, 'qualifier'):
+                return instance.qualifier
         else:
             return self.qualifier
+        return (None,)
 
     def __get__( self, instance, owner ):
         qualifier = self.get_qualifier(instance, owner)
