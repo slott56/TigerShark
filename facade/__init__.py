@@ -539,6 +539,23 @@ class ElementAccess( object ):
     objects, so "instance" is always a specific X12LoopBridge, and owner is
     a subclass of X12LoopBridge.
 
+    The instance object that has ElementAccess attribtues may influence the
+    default qualifier used. For example:
+
+        class Person(X12LoopBridge):
+            first_name = ElementAccess("NM1", 4)
+            last_name = ElementAccess("NM1", 3, qualifier=(1, "IL"))
+
+            def __init__(self, aLoop):
+                self.qualifier = (1, "QC")
+                super(Person, self).__init__(aLoop)
+
+    When you instantiate this Person class, the resulting object will have a
+    first_name ElementAccess attributes that uses (1, "QC") as its qualifier,
+    and a last_name ElementAccess that uses (1, "IL"). This is pretty awful,
+    and I do apologize for the weird behavior but I have a deadline to meet.
+    At least I left behind this helpful comment...
+
         -   __get__ must locate the elements and provide string to a Conversion class.
 
         -   __set__ must convert strings, then locate the elements and replace their
@@ -599,20 +616,37 @@ class ElementAccess( object ):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
         return "ElementAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
+
+    def get_qualifier(self, instance, owner):
+        """ Allow instance to influence the qualifier.
+        
+        This is a huge, regrettable hack. This will cause bugs that will take
+        you hours to track down. I'm so sorry.
+
+        I promise I'll come back some day and make all of this more reasonable,
+        but I need to get this running asap.
+        """
+        if self.qualifier is None or self.qualifier == (None,):
+            return instance.qualifier
+        else:
+            return self.qualifier
+
     def __get__( self, instance, owner ):
-        segBridge= instance.segment( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
+        qualifier = self.get_qualifier(instance, owner)
+        segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
         if segBridge is None: return None
         raw= self.position.get( segBridge.segment )
         if self.x12type is not None: return self.x12type.x12_to_python( raw )
         else: return raw
     def __set__( self, instance, value ):
+        qualifier = self.get_qualifier(instance, owner)
         if x12type is not None:
             raw= self.x12type.python_to_x12( value )
         else:
             raw= value
-        segBridge= instance.segment( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
+        segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
         if segBridge is None:
-            raise MissingSegment( "Segment %s (%r) Not Found" % ( self.segment, self.qualifier ) )
+            raise MissingSegment( "Segment %s (%r) Not Found" % ( self.segment, qualifier ) )
         else:
             self.position.set( segBridge.segment, raw )
 
