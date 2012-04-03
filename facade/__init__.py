@@ -873,3 +873,18 @@ class SegmentConversion( Conversion ):
         return self.someClass( raw )
     def python_to_x12( self, value ):
         return value.segment
+
+class Money(Conversion):
+    @staticmethod
+    def x12_to_python(raw):
+        if raw == "" or raw is None:
+            return 0.0
+        if "(" in raw:
+            raw = raw.replace("(", "-").replace(")", "")
+        return float(raw)
+
+    @staticmethod
+    def python_to_x12(value):
+        if isinstance(value, str):
+            return value
+        return "{:.2f}".format(value)
