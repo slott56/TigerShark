@@ -11,12 +11,6 @@ from facade import D8
 from facade import Facade
 
 
-class Entity(X12LoopBridge):
-    def __init__(self, aLoop):
-        super(Entity, self).__init__(aLoop)
-        self.contact_details = ContactDetails(aLoop)
-
-
 class ContactDetails(X12LoopBridge):
     addr1 = ElementAccess("N3", 1)
     addr2 = ElementAccess("N3", 2)
@@ -28,7 +22,7 @@ class ContactDetails(X12LoopBridge):
     phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
 
 
-class Payer(Entity):
+class Payer(X12LoopBridge):
     """Payer information from the 1000A loop."""
     loopName = "1000A"
     payer_id = ElementAccess("REF", 2, qualifier=(1, "2U"))
@@ -41,8 +35,12 @@ class Payer(Entity):
         return "%s, %s %s %s" % (self.last, self.first, self.mid,
                 self.suffix)
 
+    def __init__(self, aLoop, *args, **kwargs):
+        super(Payer, self).__init__(aLoop, *args, **kwargs)
+        self.contact_details = ContactDetails(aLoop, *args, **kwargs)
 
-class Payee(Entity):
+
+class Payee(X12LoopBridge):
     """Payee information from 1000B loop."""
     loopName = "1000B"
     name = ElementAccess("N1", 2)
@@ -53,6 +51,10 @@ class Payee(Entity):
     pharmacy_number = ElementAccess("REF", 2, qualifier=(1, "D3"))
     payee_id = ElementAccess("REF", 2, qualifier=(1, "PQ"))
     tax_id = ElementAccess("REF", 2, qualifier=(1, "TJ"))
+
+    def __init__(self, aLoop, *args, **kwargs):
+        super(Payee, self).__init__(aLoop, *args, **kwargs)
+        self.contact_details = ContactDetails(aLoop, *args, **kwargs)
 
 
 class ClaimsOverview(X12LoopBridge):
