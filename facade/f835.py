@@ -401,8 +401,13 @@ class Header(X12LoopBridge):
 class F835_4010(Facade):
     def __init__(self, anX12Message):
         """Examine the message and extract the relevant Loops."""
-        self.header = Header(anX12Message)
-        self.payer = self.loops(Payer, anX12Message)
-        self.payee = self.loops(Payee, anX12Message)
-        self.claims_overview = self.loops(ClaimsOverview, anX12Message)
+        def first(l):
+            try:
+                return l.pop()
+            except:
+                return None
+        self.header = first(self.loops(Header, anX12Message))
+        self.payer = first(self.loops(Payer, anX12Message))
+        self.payee = first(self.loops(Payee, anX12Message))
+        self.claims_overview = first(self.loops(ClaimsOverview, anX12Message))
         self.claims = self.loops(Claim, anX12Message)
