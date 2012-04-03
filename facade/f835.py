@@ -184,11 +184,38 @@ class Claim(Facade, X12LoopBridge):
 
     loopName = "2100"
     patient_control_number = ElementAccess("CLP", 1)
-    status_code = ElementAccess("CLP", 2)  # TODO enum?
+    status_code = ElementAccess("CLP", 2, x12type=enum({
+            "1": "Processed as Primary",
+            "2": "Processed as Secondary",
+            "3": "Processed as Tertiary",
+            "4": "Denied",
+            "19": "Processed as Primary, Forwarded to Additional Payer(s)",
+            "20": "Processed as Secondary, Forwarded to Additional Payer(s)",
+            "21": "Processed as Tertiary, Forwarded to Additional Payer(s)",
+            "22": "Reversal of Previous Payment",
+            "23": "Not Our Claim, Forwarded to Additional Payer(s)",
+            "25": "Predetermination Pricing Only - No Payment"}))
     total_charge = ElementAccess("CLP", 3, x12type=Money)
     payment = ElementAccess("CLP", 4, x12type=Money)
     patient_responsibility = ElementAccess("CLP", 5, x12type=Money)
-    claim_type = ElementAccess("CLP", 6)  # TODO enum?
+    claim_type = ElementAccess("CLP", 6, x12type=enum({
+            "12": "Preferred Provider Organization (PPO)",
+            "13": "Point of Service (POS)",
+            "14": "Exclusive Provider Organization (EPO)",
+            "15": "Indemnity Insurance",
+            "16": "Health Maintenance Organization (HMO) Medicare Risk",
+            "AM": "Automobile Medical",
+            "CH": "Champus",
+            "DS": "Disability",
+            "HM": "Health Maintenance Organization",
+            "LM": "Liability Medical",
+            "MA": "Medicare Part A",
+            "MB": "Medicare Part B",
+            "MC": "Medicaid",
+            "OF": "Other Federal Program",
+            "TV": "Title V",
+            "VA": "Veteran Administration Plan",
+            "WC": "Workers Compensation Health Claim"}))
     payer_claim_control_number = ElementAccess("CLP", 7)
     facility_type = ElementAccess("CLP", 8)
     frequency_code = ElementAccess("CLP", 9)
