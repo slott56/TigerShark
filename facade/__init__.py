@@ -888,3 +888,39 @@ class Money(Conversion):
         if isinstance(value, str):
             return value
         return "{:.2f}".format(value)
+
+def enum(options):
+    """ Give it a dictionary of options, eg:
+
+    class Header(X12LoopBridge):
+        loopName = "HEADER"
+        type = ElementAccess("BPR", 1, x12type=enum(
+            {"C": "Payment accompanies remittance advice",
+             "D": "Make payment only",
+             "H": "Notification only",
+             "I": "Remittance information only",
+             "P": "Prenotification of future transfers",
+             "U": "Split payment and remittance",
+             "X": "Handling party's option to split payment and remittance."}))
+    """
+    class Enum(Conversion):
+        @staticmethod
+        def x12_to_python(raw):
+            if raw == "" or raw is None:
+                return None
+            elif raw in options:
+                return (raw, options[raw])
+            return None
+
+        @staticmethod
+        def python_to_x12(value):
+            if value is None or value == "":
+                return ""
+            elif value in options:
+                return value
+            else:
+                for (k,v) in options.iteritems():
+                    if value == v:
+                        return k
+            return ""
+    return Enum
