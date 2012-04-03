@@ -636,10 +636,14 @@ class ElementAccess( object ):
     def __get__( self, instance, owner ):
         qualifier = self.get_qualifier(instance, owner)
         segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
-        if segBridge is None: return None
-        raw= self.position.get( segBridge.segment )
-        if self.x12type is not None: return self.x12type.x12_to_python( raw )
-        else: return raw
+        if segBridge is None:
+            raw = None
+        else:
+            raw = self.position.get( segBridge.segment )
+        if self.x12type is not None:
+            return self.x12type.x12_to_python( raw )
+        else:
+            return raw
     def __set__( self, instance, value ):
         qualifier = self.get_qualifier(instance, owner)
         if x12type is not None:
