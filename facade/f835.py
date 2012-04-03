@@ -330,10 +330,10 @@ class Header(X12LoopBridge):
         sender_id = ElementAccess("BPR", 10)
         sender_supplemental_id = ElementAccess("BPR", 11)
 
-        receiver_aba_transit_routing_number = ElementAccess("BPR", 12,
-                qualifier=(6, "01"))
+        receiver_aba_transit_routing_number = ElementAccess("BPR", 13,
+                qualifier=(12, "01"))
         receiver_canadian_bank_branch_and_institution_number = ElementAccess(
-                "BPR", 13, qualifier=(6, "04"))
+                "BPR", 13, qualifier=(12, "04"))
         receiver_account_type = ElementAccess("BPR", 14, x12type=enum(
                 {"DA": "Demand Deposit",
                  "SG": "Savings"}))
@@ -353,6 +353,7 @@ class Header(X12LoopBridge):
         payer_id = ElementAccess("TRN", 3)
         originating_company_supplemental_code = ElementAccess("TRN", 4)
 
+    # TODO tests
     class _CurrencyInformation(X12LoopBridge):
         """ Specify the currency and exchange rate, if applicable.
 
@@ -362,10 +363,12 @@ class Header(X12LoopBridge):
         currency_code = ElementAccess("CUR", 2)
         exchange_rate = ElementAccess("CUR", 3)
 
+    # TODO tests
     class _Receiver(X12LoopBridge):
         """ Used when the receiver of the transaction is not the payee. """
         id = ElementAccess("REF", 2, qualifier=(1, "EV"))
 
+    # TODO tests
     class _Version(X12LoopBridge):
         """ Reports the version number of the adjudication system which
         generated the claim payments.
