@@ -88,6 +88,27 @@ class ClaimsOverview(X12LoopBridge):
     # TODO: TS2 segment
 
 
+class NamedEntity(X12LoopBridge):
+    entity_type = ElementAccess("NM1", 2)
+    id_code_qual = ElementAccess("NM1", 8)
+    id_code = ElementAccess("NM1", 9)
+
+    def __init__(self, aLoop, qualifier):
+        self.qualifier = qualifier
+        super(NamedEntity, self).__init__(aLoop)
+
+
+class Person(NamedEntity):
+    last_name = ElementAccess("NM1", 3)
+    first_name = ElementAccess("NM1", 4)
+    middle_initial = ElementAccess("NM1", 5)
+    suffix = ElementAccess("NM1", 7)
+
+
+class Organization(NamedEntity):
+    org_name = ElementAccess("NM1", 3)
+
+
 class Claim(Facade, X12LoopBridge):
     class ServiceInfo(X12LoopBridge):
         """ Oh jeez, I'm so sorry about this mess.
@@ -158,74 +179,6 @@ class Claim(Facade, X12LoopBridge):
     frequency_code = ElementAccess("CLP", 9)
     diagnosis_related_group_weight = ElementAccess("CLP", 11)
     discharge_fraction = ElementAccess("CLP", 12)
-    # OH MAN, is there really no better way to do this?
-    # Patient Info
-    patient_entity_type = ElementAccess("NM1", 2, qualifier=(1, "QC"))
-    patient_last_name = ElementAccess("NM1", 3, qualifier=(1, "QC"))
-    patient_first_name = ElementAccess("NM1", 4, qualifier=(1, "QC"))
-    patient_middle_initial = ElementAccess("NM1", 5, qualifier=(1, "QC"))
-    patient_suffix = ElementAccess("NM1", 7, qualifier=(1, "QC"))
-    patient_id_code_qual = ElementAccess("NM1", 8,
-            qualifier=(1, "QC"))  # TODO enum?
-    patient_id_code = ElementAccess("NM1", 9, qualifier=(1, "QC"))
-    # Insured Info
-    insured_entity_type = ElementAccess("NM1", 2, qualifier=(1, "IL"))
-    insured_last_name = ElementAccess("NM1", 3, qualifier=(1, "IL"))
-    insured_first_name = ElementAccess("NM1", 4, qualifier=(1, "IL"))
-    insured_middle_initial = ElementAccess("NM1", 5, qualifier=(1, "IL"))
-    insured_suffix = ElementAccess("NM1", 7, qualifier=(1, "IL"))
-
-    insured_id_code_qual = ElementAccess("NM1", 8,
-            qualifier=(1, "IL"))  # TODO enum?
-    insured_id_code = ElementAccess("NM1", 9, qualifier=(1, "IL"))
-    # Corrected Info
-    corrected_insured_entity_type = ElementAccess("NM1", 2,
-            qualifier=(1, "74"))
-    corrected_insured_last_name = ElementAccess("NM1", 3,
-            qualifier=(1, "74"))
-    corrected_insured_first_name = ElementAccess("NM1", 4,
-            qualifier=(1, "74"))
-    corrected_insured_middle_initial = ElementAccess("NM1", 5,
-            qualifier=(1, "74"))
-    corrected_insured_suffix = ElementAccess("NM1", 7,
-            qualifier=(1, "74"))
-    corrected_insured_id_code_qual = ElementAccess("NM1", 8,
-            qualifier=(1, "74"))  # TODO enum?
-    corrected_insured_id_code = ElementAccess("NM1", 9,
-            qualifier=(1, "74"))
-    # Service Provider
-    service_provider_entity_type = ElementAccess("NM1", 2,
-            qualifier=(1, "82"))
-    service_provider_last_name = ElementAccess("NM1", 3,
-            qualifier=(1, "82"))
-    service_provider_first_name = ElementAccess("NM1", 4,
-            qualifier=(1, "82"))
-    service_provider_middle_initial = ElementAccess("NM1", 5,
-            qualifier=(1, "82"))
-    service_provider_suffix = ElementAccess("NM1", 7,
-            qualifier=(1, "82"))
-    service_provider_id_code_qual = ElementAccess("NM1", 8,
-            qualifier=(1, "82"))  # TODO enum?
-    service_provider_id_code = ElementAccess("NM1", 9,
-            qualifier=(1, "82"))
-    # Crossover Carrier
-    crossover_carrier_entity_type = ElementAccess("NM1", 2,
-            qualifier=(1, "TT"))
-    crossover_carrier_org_name = ElementAccess("NM1", 3,
-            qualifier=(1, "TT"))
-    crossover_carrier_id_code_qual = ElementAccess("NM1", 8,
-            qualifier=(1, "TT"))  # TODO enum?
-    crossover_carrier_id_code = ElementAccess("NM1", 9,
-            qualifier=(1, "TT"))
-    # Corrected Priority Payer
-    corrected_priority_payer_entity_type = ElementAccess("NM1", 2,
-            qualifier=(1, "PR"))
-    corrected_priority_payer_org_name = ElementAccess("NM1", 3,
-            qualifier=(1, "PR"))
-    corrected_priority_payer_id_code_qual = ElementAccess("NM1", 8,
-            qualifier=(1, "PR"))  # TODO enum?
-    corrected_priority_payer_id_code = ElementAccess("NM1", 9,
-            qualifier=(1, "PR"))
     # TODO: Medicare inpatient/outpatient adjudication?
 
     # References
@@ -276,6 +229,16 @@ class Claim(Facade, X12LoopBridge):
         super(Claim, self).__init__(anX12Message, *args,
                 **kwargs)
         self.line_items = self.loops(self.ServiceInfo, anX12Message)
+        # Take advantage of ElementAccess attributes inheriting their parent's
+        # qualifier. This needs to be fixed someday.
+        self.patient = Person(anX12Message, qualifier=(1, "QC"))
+        self.insured = Person(anX12Message, qualifier=(1, "IL"))
+        self.corrected_insured = Person(anX12Message, qualifier=(1, "74"))
+        self.service_provider = Person(anX12Message, qualifier=(1, "82"))
+        self.crossover_carrier = Organization(anX12Message,
+                qualifier=(1, "TT"))
+        self.corrected_priority_payer = Organization(anX12Message,
+                qualifier=(1, "PR"))
 
 
 class F835_4010(Facade):
