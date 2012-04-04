@@ -209,52 +209,6 @@ class ClaimsOverview(X12LoopBridge):
     # TODO: TS2 segment
 
 
-class NamedEntity(X12LoopBridge):
-    entity_type = ElementAccess("NM1", 2, x12type=enum({
-            "1": "Person",
-            "2": "Non-Person Entity"}))
-    id_code_qual = ElementAccess("NM1", 8, x12type=enum({
-            "34": "Social Security Number",
-            "HN": "HN Health Insurance Claim (HIC) Number",
-            "II": "United States National Individual Identifier",
-            "MI": "Member Identification Number",
-            "MR": "Medicaid Recipient Identification Number",
-            "BD": "Blue Cross Provider Number",
-            "BS": "Blue Shield Provider Number",
-            "FI": "Federal Taxpayer's Identification Number",
-            "to": "represent the Social Security Number.",
-            "MC": "Medicaid Provider Number",
-            "PC": "Provider Commercial Number",
-            "SL": "State License Number",
-            "UP": "Unique Physician Identification Number (UPIN)",
-            "XX": "Health Care Financing Administration National Provider "\
-                    "Identifier"}))
-    id_code = ElementAccess("NM1", 9)
-
-    def __init__(self, aLoop, qualifier):
-        self.qualifier = qualifier
-        super(NamedEntity, self).__init__(aLoop)
-
-
-class Person(NamedEntity):
-    last_name = ElementAccess("NM1", 3)
-    first_name = ElementAccess("NM1", 4)
-    middle_initial = ElementAccess("NM1", 5)
-    suffix = ElementAccess("NM1", 7)
-
-    def __str__(self):
-        return "<<Person> {first} {last}>".format(
-                first=self.first_name,
-                last=self.last_name)
-
-
-class Organization(NamedEntity):
-    org_name = ElementAccess("NM1", 3)
-
-    def __str__(self):
-        return "<<Organization> %s" % self.org_name
-
-
 class Claim(Facade, X12LoopBridge):
     class ServiceInfo(X12LoopBridge):
         """ Oh jeez, I'm so sorry about this mess.
@@ -319,6 +273,43 @@ class Claim(Facade, X12LoopBridge):
                 qualifier=(1, "T2"), x12type=Money)
 
         not_covered_quantity = ElementAccess("QTY", 2, qualifier=(1, "NE"))
+
+    class _NamedEntity(X12LoopBridge):
+        entity_type = ElementAccess("NM1", 2, x12type=enum({
+                "1": "Person",
+                "2": "Non-Person Entity"}))
+        id_code_qual = ElementAccess("NM1", 8, x12type=enum({
+                "34": "Social Security Number",
+                "HN": "HN Health Insurance Claim (HIC) Number",
+                "II": "United States National Individual Identifier",
+                "MI": "Member Identification Number",
+                "MR": "Medicaid Recipient Identification Number",
+                "BD": "Blue Cross Provider Number",
+                "BS": "Blue Shield Provider Number",
+                "FI": "Federal Taxpayer's Identification Number",
+                "to": "represent the Social Security Number.",
+                "MC": "Medicaid Provider Number",
+                "PC": "Provider Commercial Number",
+                "SL": "State License Number",
+                "UP": "Unique Physician Identification Number (UPIN)",
+                "XX": "Health Care Financing Administration National "\
+                        "Provider Identifier"}))
+        id_code = ElementAccess("NM1", 9)
+        last_name = ElementAccess("NM1", 3)
+        org_name = ElementAccess("NM1", 3)
+        first_name = ElementAccess("NM1", 4)
+        middle_initial = ElementAccess("NM1", 5)
+        suffix = ElementAccess("NM1", 7)
+
+        def is_person(self):
+            return self.entity_type[0] == "1"
+
+        def is_organization(self):
+            return self.entity_type[0] == "2"
+
+        def __init__(self, aLoop, qualifier):
+            self.qualifier = qualifier
+            super(Claim._NamedEntity, self).__init__(aLoop)
 
     loopName = "2100"
     patient_control_number = ElementAccess("CLP", 1)
@@ -416,13 +407,15 @@ class Claim(Facade, X12LoopBridge):
         self.line_items = self.loops(self.ServiceInfo, anX12Message)
         # Take advantage of ElementAccess attributes inheriting their parent's
         # qualifier. This needs to be fixed someday.
-        self.patient = Person(anX12Message, qualifier=(1, "QC"))
-        self.insured = Person(anX12Message, qualifier=(1, "IL"))
-        self.corrected_insured = Person(anX12Message, qualifier=(1, "74"))
-        self.service_provider = Organization(anX12Message, qualifier=(1, "82"))
-        self.crossover_carrier = Organization(anX12Message,
+        self.patient = self._NamedEntity(anX12Message, qualifier=(1, "QC"))
+        self.insured = self._NamedEntity(anX12Message, qualifier=(1, "IL"))
+        self.corrected_insured = self._NamedEntity(anX12Message,
+                qualifier=(1, "74"))
+        self.service_provider = self._NamedEntity(anX12Message,
+                qualifier=(1, "82"))
+        self.crossover_carrier = self._NamedEntity(anX12Message,
                 qualifier=(1, "TT"))
-        self.corrected_priority_payer = Organization(anX12Message,
+        self.corrected_priority_payer = self._NamedEntity(anX12Message,
                 qualifier=(1, "PR"))
 
 
