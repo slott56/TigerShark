@@ -107,7 +107,8 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(pi.payment, 200.02)
         self.assertEqual(pi.patient_responsibility, 0.0)
         self.assertEqual(pi.claim_type, ('13', 'Point of Service (POS)'))
-        self.assertEqual(pi.payer_claim_control_number, '1234567890 0987654321')
+        self.assertEqual(pi.payer_claim_control_number,
+                '1234567890 0987654321')
         self.assertEqual(pi.facility_type, '81')
         self.assertEqual(pi.total_covered_charge, 200.02)
 
@@ -173,7 +174,8 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(pi.patient_responsibility, 145.0)
         self.assertEqual(pi.claim_type,
                 ("14", "Exclusive Provider Organization (EPO)"))
-        self.assertEqual(pi.payer_claim_control_number, '2234567890 0987654322')
+        self.assertEqual(pi.payer_claim_control_number,
+                '2234567890 0987654322')
         self.assertEqual(pi.facility_type, '81')
         self.assertEqual(pi.total_covered_charge, 12145.65)
 
