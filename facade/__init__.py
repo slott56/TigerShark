@@ -245,8 +245,8 @@ import datetime
 
 
 class Facade(object):
-    def loops(self, theClass, anX12Message):
-        return [theClass(loop) for loop in
+    def loops(self, theClass, anX12Message, *args, **kwargs):
+        return [theClass(loop, *args, **kwargs) for loop in
                 anX12Message.descendant("loop", theClass.loopName)]
 
 
