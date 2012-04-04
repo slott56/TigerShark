@@ -205,6 +205,7 @@ class ClaimsOverview(X12LoopBridge):
     total_msp_patient_liability_met = ElementAccess("TS3", 21, x12type=Money)
     total_patient_reimbursement = ElementAccess("TS3", 22, x12type=Money)
     total_pip_claim = ElementAccess("TS3", 23, x12type=Money)
+    total_pip_adjustment = ElementAccess("TS3", 24, x12type=Money)
     # TODO: TS2 segment
 
 
