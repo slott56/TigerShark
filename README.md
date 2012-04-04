@@ -55,5 +55,9 @@ Once you have parsed an X12 file, you can build a Facade around it:
 
 Now you can access the segments of the X12 file in an easy and pythonic way
 
-    >>> print(f.payee[0].zip)
+    >>> print(f.payee.zip)
     94066
+    >>> print(f.payer.name)
+    United Healthcare
+    >>> print(len(f.claims))
+    150
