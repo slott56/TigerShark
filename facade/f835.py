@@ -210,8 +210,25 @@ class ClaimsOverview(X12LoopBridge):
 
 
 class NamedEntity(X12LoopBridge):
-    entity_type = ElementAccess("NM1", 2)
-    id_code_qual = ElementAccess("NM1", 8)
+    entity_type = ElementAccess("NM1", 2, x12type=enum({
+            "1": "Person",
+            "2": "Non-Person Entity"}))
+    id_code_qual = ElementAccess("NM1", 8, x12type=enum({
+            "34": "Social Security Number",
+            "HN": "HN Health Insurance Claim (HIC) Number",
+            "II": "United States National Individual Identifier",
+            "MI": "Member Identification Number",
+            "MR": "Medicaid Recipient Identification Number",
+            "BD": "Blue Cross Provider Number",
+            "BS": "Blue Shield Provider Number",
+            "FI": "Federal Taxpayer's Identification Number",
+            "to": "represent the Social Security Number.",
+            "MC": "Medicaid Provider Number",
+            "PC": "Provider Commercial Number",
+            "SL": "State License Number",
+            "UP": "Unique Physician Identification Number (UPIN)",
+            "XX": "Health Care Financing Administration National Provider "\
+                    "Identifier"}))
     id_code = ElementAccess("NM1", 9)
 
     def __init__(self, aLoop, qualifier):
