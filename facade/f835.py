@@ -419,7 +419,7 @@ class Claim(Facade, X12LoopBridge):
         self.patient = Person(anX12Message, qualifier=(1, "QC"))
         self.insured = Person(anX12Message, qualifier=(1, "IL"))
         self.corrected_insured = Person(anX12Message, qualifier=(1, "74"))
-        self.service_provider = Person(anX12Message, qualifier=(1, "82"))
+        self.service_provider = Organization(anX12Message, qualifier=(1, "82"))
         self.crossover_carrier = Organization(anX12Message,
                 qualifier=(1, "TT"))
         self.corrected_priority_payer = Organization(anX12Message,
