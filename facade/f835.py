@@ -274,6 +274,64 @@ class Claim(Facade, X12LoopBridge):
 
         not_covered_quantity = ElementAccess("QTY", 2, qualifier=(1, "NE"))
 
+    class _ClaimPaymentInfo(X12LoopBridge):
+        patient_control_number = ElementAccess("CLP", 1)
+        status_code = ElementAccess("CLP", 2, x12type=enum({
+                "1": "Processed as Primary",
+                "2": "Processed as Secondary",
+                "3": "Processed as Tertiary",
+                "4": "Denied",
+                "19": "Processed as Primary, Forwarded to Additional Payer(s)",
+                "20": "Processed as Secondary, Forwarded to Additional "\
+                        "Payer(s)",
+                "21": "Processed as Tertiary, Forwarded to Additional "\
+                        "Payer(s)",
+                "22": "Reversal of Previous Payment",
+                "23": "Not Our Claim, Forwarded to Additional Payer(s)",
+                "25": "Predetermination Pricing Only - No Payment"}))
+        total_charge = ElementAccess("CLP", 3, x12type=Money)
+        payment = ElementAccess("CLP", 4, x12type=Money)
+        patient_responsibility = ElementAccess("CLP", 5, x12type=Money)
+        claim_type = ElementAccess("CLP", 6, x12type=enum({
+                "12": "Preferred Provider Organization (PPO)",
+                "13": "Point of Service (POS)",
+                "14": "Exclusive Provider Organization (EPO)",
+                "15": "Indemnity Insurance",
+                "16": "Health Maintenance Organization (HMO) Medicare Risk",
+                "AM": "Automobile Medical",
+                "CH": "Champus",
+                "DS": "Disability",
+                "HM": "Health Maintenance Organization",
+                "LM": "Liability Medical",
+                "MA": "Medicare Part A",
+                "MB": "Medicare Part B",
+                "MC": "Medicaid",
+                "OF": "Other Federal Program",
+                "TV": "Title V",
+                "VA": "Veteran Administration Plan",
+                "WC": "Workers Compensation Health Claim"}))
+        payer_claim_control_number = ElementAccess("CLP", 7)
+        facility_type = ElementAccess("CLP", 8)
+        frequency_code = ElementAccess("CLP", 9)
+        diagnosis_related_group_weight = ElementAccess("CLP", 11)
+        discharge_fraction = ElementAccess("CLP", 12)
+        # TODO: Medicare inpatient/outpatient adjudication?
+
+        total_covered_charge = ElementAccess("AMT", 2, qualifier=(1, "AU"),
+                x12type=Money)
+        discount_amount = ElementAccess("AMT", 2, qualifier=(1, "D8"),
+                x12type=Money)
+        per_day_limit = ElementAccess("AMT", 2, qualifier=(1, "DY"),
+                x12type=Money)
+        patient_amount_paid = ElementAccess("AMT", 2, qualifier=(1, "F5"),
+                x12type=Money)
+        interest = ElementAccess("AMT", 2, qualifier=(1, "I"), x12type=Money)
+        negative_ledger = ElementAccess("AMT", 2, qualifier=(1, "NL"),
+                x12type=Money)
+        tax_amount = ElementAccess("AMT", 2, qualifier=(1, "T"), x12type=Money)
+        total_claim_before_taxes = ElementAccess("AMT", 2,
+                qualifier=(1, "T2"), x12type=Money)
+
     class _NamedEntity(X12LoopBridge):
         entity_type = ElementAccess("NM1", 2, x12type=enum({
                 "1": "Person",
@@ -312,45 +370,6 @@ class Claim(Facade, X12LoopBridge):
             super(Claim._NamedEntity, self).__init__(aLoop)
 
     loopName = "2100"
-    patient_control_number = ElementAccess("CLP", 1)
-    status_code = ElementAccess("CLP", 2, x12type=enum({
-            "1": "Processed as Primary",
-            "2": "Processed as Secondary",
-            "3": "Processed as Tertiary",
-            "4": "Denied",
-            "19": "Processed as Primary, Forwarded to Additional Payer(s)",
-            "20": "Processed as Secondary, Forwarded to Additional Payer(s)",
-            "21": "Processed as Tertiary, Forwarded to Additional Payer(s)",
-            "22": "Reversal of Previous Payment",
-            "23": "Not Our Claim, Forwarded to Additional Payer(s)",
-            "25": "Predetermination Pricing Only - No Payment"}))
-    total_charge = ElementAccess("CLP", 3, x12type=Money)
-    payment = ElementAccess("CLP", 4, x12type=Money)
-    patient_responsibility = ElementAccess("CLP", 5, x12type=Money)
-    claim_type = ElementAccess("CLP", 6, x12type=enum({
-            "12": "Preferred Provider Organization (PPO)",
-            "13": "Point of Service (POS)",
-            "14": "Exclusive Provider Organization (EPO)",
-            "15": "Indemnity Insurance",
-            "16": "Health Maintenance Organization (HMO) Medicare Risk",
-            "AM": "Automobile Medical",
-            "CH": "Champus",
-            "DS": "Disability",
-            "HM": "Health Maintenance Organization",
-            "LM": "Liability Medical",
-            "MA": "Medicare Part A",
-            "MB": "Medicare Part B",
-            "MC": "Medicaid",
-            "OF": "Other Federal Program",
-            "TV": "Title V",
-            "VA": "Veteran Administration Plan",
-            "WC": "Workers Compensation Health Claim"}))
-    payer_claim_control_number = ElementAccess("CLP", 7)
-    facility_type = ElementAccess("CLP", 8)
-    frequency_code = ElementAccess("CLP", 9)
-    diagnosis_related_group_weight = ElementAccess("CLP", 11)
-    discharge_fraction = ElementAccess("CLP", 12)
-    # TODO: Medicare inpatient/outpatient adjudication?
 
     # References
     group_or_policy_number = ElementAccess("REF", 2, qualifier=(1, "1L"))
@@ -385,22 +404,6 @@ class Claim(Facade, X12LoopBridge):
     date_statement_period_end = ElementAccess("DTM", 2,
             qualifier=(1, "233"), x12type=D8)
 
-    # Claim payment info
-    total_covered_charge = ElementAccess("AMT", 2, qualifier=(1, "AU"),
-            x12type=Money)
-    discount_amount = ElementAccess("AMT", 2, qualifier=(1, "D8"),
-            x12type=Money)
-    per_day_limit = ElementAccess("AMT", 2, qualifier=(1, "DY"),
-            x12type=Money)
-    patient_amount_paid = ElementAccess("AMT", 2, qualifier=(1, "F5"),
-            x12type=Money)
-    interest = ElementAccess("AMT", 2, qualifier=(1, "I"), x12type=Money)
-    negative_ledger = ElementAccess("AMT", 2, qualifier=(1, "NL"),
-            x12type=Money)
-    tax_amount = ElementAccess("AMT", 2, qualifier=(1, "T"), x12type=Money)
-    total_claim_before_taxes = ElementAccess("AMT", 2,
-            qualifier=(1, "T2"), x12type=Money)
-
     def __init__(self, anX12Message, *args, **kwargs):
         super(Claim, self).__init__(anX12Message, *args,
                 **kwargs)
@@ -417,6 +420,7 @@ class Claim(Facade, X12LoopBridge):
                 qualifier=(1, "TT"))
         self.corrected_priority_payer = self._NamedEntity(anX12Message,
                 qualifier=(1, "PR"))
+        self.payment_info = self._ClaimPaymentInfo(anX12Message)
 
 
 class F835_4010(Facade):

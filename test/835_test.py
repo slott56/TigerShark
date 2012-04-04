@@ -100,14 +100,16 @@ class TestParsed835(unittest.TestCase):
         claims = self.f.claims
         c = claims[0]
         # Claim details
-        self.assertEqual(c.patient_control_number, "001-DDDDDDDDDD")
-        self.assertEqual(c.status_code, ('1', 'Processed as Primary'))
-        self.assertEqual(c.total_charge, 200.02)
-        self.assertEqual(c.payment, 200.02)
-        self.assertEqual(c.patient_responsibility, 0.0)
-        self.assertEqual(c.claim_type, ('13', 'Point of Service (POS)'))
-        self.assertEqual(c.payer_claim_control_number, '1234567890 0987654321')
-        self.assertEqual(c.facility_type, '81')
+        pi = c.payment_info
+        self.assertEqual(pi.patient_control_number, "001-DDDDDDDDDD")
+        self.assertEqual(pi.status_code, ('1', 'Processed as Primary'))
+        self.assertEqual(pi.total_charge, 200.02)
+        self.assertEqual(pi.payment, 200.02)
+        self.assertEqual(pi.patient_responsibility, 0.0)
+        self.assertEqual(pi.claim_type, ('13', 'Point of Service (POS)'))
+        self.assertEqual(pi.payer_claim_control_number, '1234567890 0987654321')
+        self.assertEqual(pi.facility_type, '81')
+        self.assertEqual(pi.total_covered_charge, 200.02)
 
         # Patient
         patient = c.patient
@@ -149,7 +151,6 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.date_received, datetime.date(2012, 03, 02))
         self.assertEqual(c.date_statement_period_start,
                 datetime.date(2012, 02, 22))
-        self.assertEqual(c.total_covered_charge, 200.02)
 
         # Line item charges
         l = c.line_items[0]
@@ -164,15 +165,17 @@ class TestParsed835(unittest.TestCase):
         # Second claim!
         c = claims[1]
         # Claim details
-        self.assertEqual(c.patient_control_number, "001-SSSSSSSSSS")
-        self.assertEqual(c.status_code, ('1', 'Processed as Primary'))
-        self.assertEqual(c.total_charge, 23276.56)
-        self.assertEqual(c.payment, 12000.65)
-        self.assertEqual(c.patient_responsibility, 145.0)
-        self.assertEqual(c.claim_type,
+        pi = c.payment_info
+        self.assertEqual(pi.patient_control_number, "001-SSSSSSSSSS")
+        self.assertEqual(pi.status_code, ('1', 'Processed as Primary'))
+        self.assertEqual(pi.total_charge, 23276.56)
+        self.assertEqual(pi.payment, 12000.65)
+        self.assertEqual(pi.patient_responsibility, 145.0)
+        self.assertEqual(pi.claim_type,
                 ("14", "Exclusive Provider Organization (EPO)"))
-        self.assertEqual(c.payer_claim_control_number, '2234567890 0987654322')
-        self.assertEqual(c.facility_type, '81')
+        self.assertEqual(pi.payer_claim_control_number, '2234567890 0987654322')
+        self.assertEqual(pi.facility_type, '81')
+        self.assertEqual(pi.total_covered_charge, 12145.65)
 
         # Patient
         patient = c.patient
@@ -203,7 +206,6 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.date_received, datetime.date(2012, 03, 03))
         self.assertEqual(c.date_statement_period_start,
                 datetime.date(2012, 02, 23))
-        self.assertEqual(c.total_covered_charge, 12145.65)
 
         # Line item charges
         l = c.line_items[0]
