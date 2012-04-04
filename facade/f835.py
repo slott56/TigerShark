@@ -210,7 +210,7 @@ class ClaimsOverview(X12LoopBridge):
 
 
 class Claim(Facade, X12LoopBridge):
-    class ServiceInfo(X12LoopBridge):
+    class _ServiceInfo(X12LoopBridge):
         """ Oh jeez, I'm so sorry about this mess.
 
         Each claim has several nested 2110 loops that have additional
@@ -404,7 +404,7 @@ class Claim(Facade, X12LoopBridge):
     def __init__(self, anX12Message, *args, **kwargs):
         super(Claim, self).__init__(anX12Message, *args,
                 **kwargs)
-        self.line_items = self.loops(self.ServiceInfo, anX12Message)
+        self.line_items = self.loops(self._ServiceInfo, anX12Message)
         # Take advantage of ElementAccess attributes inheriting their parent's
         # qualifier. This needs to be fixed someday.
         self.patient = self._NamedEntity(anX12Message, qualifier=(1, "QC"))
