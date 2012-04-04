@@ -3,6 +3,7 @@ import logging
 import sys
 import datetime
 
+
 from parsers import M835_4010_X091_A1
 from facade import f835
 
@@ -82,6 +83,134 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.city, 'SAN FRANCISCO')
         self.assertEqual(c.zip, '94109')
         self.assertEqual(p.tax_id, '777777777')
+
+    ## Claims Overview ##
+    def test_claims_overview(self):
+        co = self.f.claims_overview
+        self.assertEqual(co.number, '1')
+        self.assertEqual(co.provider_id, '1333333333')
+        self.assertEqual(co.facility_type_code, '81')
+        self.assertEqual(co.fiscal_period_end, datetime.date(2012, 12, 31))
+        self.assertEqual(co.claim_count, '2')
+        self.assertEqual(co.total_claim_charge, 23456.78)
+        self.assertEqual(co.total_covered_charge, 12345.67)
+
+    ## Claims ##
+    def test_claims(self):
+        claims = self.f.claims
+        c = claims[0]
+        # Claim details
+        self.assertEqual(c.patient_control_number, "001-DDDDDDDDDD")
+        self.assertEqual(c.status_code, ('1', 'Processed as Primary'))
+        self.assertEqual(c.total_charge, 200.02)
+        self.assertEqual(c.payment, 200.02)
+        self.assertEqual(c.patient_responsibility, 0.0)
+        self.assertEqual(c.claim_type, ('13', 'Point of Service (POS)'))
+        self.assertEqual(c.payer_claim_control_number, '1234567890 0987654321')
+        self.assertEqual(c.facility_type, '81')
+
+        # Patient
+        patient = c.patient
+        self.assertEqual(patient.last_name, "DOE")
+        self.assertEqual(patient.first_name, "JOHN")
+        self.assertEqual(patient.middle_initial, "")
+        self.assertEqual(patient.suffix, "")
+
+        # Insured
+        insured = c.insured
+        self.assertEqual(insured.last_name, "DOE")
+        self.assertEqual(insured.first_name, "JANE")
+        self.assertEqual(insured.middle_initial, "")
+        self.assertEqual(insured.suffix, "")
+        self.assertEqual(insured.id_code_qual,
+                ("MI", "Member Identification Number"))
+        self.assertEqual(insured.id_code, "123111111")
+
+        # Corrected Info
+        corrected = c.corrected_insured
+        self.assertEqual(corrected.last_name, "DOE")
+        self.assertEqual(corrected.first_name, "JANE")
+        self.assertEqual(corrected.middle_initial, "D")
+
+        # Service Provider
+        provider = c.service_provider
+        self.assertEqual(provider.org_name, "MY CLINIC")
+        self.assertEqual(provider.id_code_qual, (
+                ("XX", "Health Care Financing Administration National "\
+                        "Provider Identifier")))
+        self.assertEqual(provider.id_code, '1333333333')
+
+        # Other stuff
+        self.assertEqual(c.group_or_policy_number, '5G5G5G')
+        self.assertEqual(c.contract_class, 'CHOYC+')
+        self.assertEqual(c.date_received, datetime.date(2012, 03, 02))
+        self.assertEqual(c.date_statement_period_start,
+                datetime.date(2012, 02, 22))
+        self.assertEqual(c.total_covered_charge, 200.02)
+
+        # Line item charges
+        l = c.line_items[0]
+        self.assertEqual(l.hcpcs_code[0], '88888')
+        self.assertEqual(l.charge, 200.02)
+        self.assertEqual(l.payment, 200.02)
+        self.assertEqual(l.quantity, '1')
+        self.assertEqual(l.service_date, datetime.date(2012, 02, 22))
+        self.assertEqual(l.provider_control_number, '251111111111')
+        self.assertEqual(l.allowed_amount, 200.02)
+
+        # Second claim!
+        c = claims[1]
+        # Claim details
+        self.assertEqual(c.patient_control_number, "001-SSSSSSSSSS")
+        self.assertEqual(c.status_code, ('1', 'Processed as Primary'))
+        self.assertEqual(c.total_charge, 23276.56)
+        self.assertEqual(c.payment, 12000.65)
+        self.assertEqual(c.patient_responsibility, 145.0)
+        self.assertEqual(c.claim_type,
+                ("14", "Exclusive Provider Organization (EPO)"))
+        self.assertEqual(c.payer_claim_control_number, '2234567890 0987654322')
+        self.assertEqual(c.facility_type, '81')
+
+        # Patient
+        patient = c.patient
+        self.assertEqual(patient.last_name, "SMITH")
+        self.assertEqual(patient.first_name, "JOHN")
+
+        # Insured
+        insured = c.insured
+        self.assertEqual(insured.last_name, "SMITH")
+        self.assertEqual(insured.first_name, "JANE")
+        self.assertEqual(insured.middle_initial, "")
+        self.assertEqual(insured.suffix, "")
+        self.assertEqual(insured.id_code_qual,
+                ("MI", "Member Identification Number"))
+        self.assertEqual(insured.id_code, "123222222")
+
+        # Corrected Info
+        corrected = c.corrected_insured
+        self.assertEqual(corrected.last_name, "SMITH")
+        self.assertEqual(corrected.first_name, "JANE")
+        self.assertEqual(corrected.middle_initial, "A")
+
+        # Other stuff
+        self.assertEqual(c.group_or_policy_number, '717171')
+        self.assertEqual(c.contract_class, 'CHOYC')
+        self.assertEqual(c.date_received, datetime.date(2012, 03, 03))
+        self.assertEqual(c.date_statement_period_start,
+                datetime.date(2012, 02, 23))
+        self.assertEqual(c.total_covered_charge, 12145.65)
+
+        # Line item charges
+        l = c.line_items[0]
+        self.assertEqual(l.hcpcs_code[0], '88888')
+        self.assertEqual(l.charge, 23276.56)
+        self.assertEqual(l.payment, 12145.65)
+        self.assertEqual(l.quantity, '1')
+        self.assertEqual(l.service_date, datetime.date(2012, 02, 21))
+        self.assertEqual(l.provider_control_number, '252222222222')
+        self.assertEqual(l.adjustment_contractual_obligation, 11130.91)
+        self.assertEqual(l.allowed_amount, 12145.65)
+
 
 if __name__ == "__main__":
     logging.basicConfig(
