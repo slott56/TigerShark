@@ -275,6 +275,8 @@ class Claim(Facade, X12LoopBridge):
                 x12type=D8)
         end_date = ElementAccess("DTM", 2, qualifier=(1, "151"),
                 x12type=D8)
+        service_date = ElementAccess("DTM", 2, qualifier=(1, "472"),
+                x12type=D8)
         # Claim adjustments
         # WARNING: This should add up all of the amounts in this segment,
         # but it DOESN'T!
