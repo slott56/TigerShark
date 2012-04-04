@@ -13,6 +13,116 @@ from facade import Facade
 from facade import enum
 
 
+class Header(X12LoopBridge):
+    loopName = "HEADER"
+
+    class _FinancialInformation(X12LoopBridge):
+        """ Use this to address a single payment to a single payee.
+
+        A payee may represent a single provider, a provider group, or multiple
+        providers in a chain. The BPR contains mandatory information, even
+        when it is not being used to move funds electronically.
+        """
+        transaction_type = ElementAccess("BPR", 1, x12type=enum(
+                {"C": "Payment Accompanies Remittance Advice",
+                 "D": "Make Payment Only",
+                 "H": "Notification Only",
+                 "I": "Remittance Information Only",
+                 "P": "Prenotification of Ruture Transfers",
+                 "U": "Split Payment and Remittance",
+                 "X": "Handling Party's Option to Split Payment and "\
+                         "Remittance."}))
+        amount = ElementAccess("BPR", 2, x12type=Money)
+        credit_or_debit = ElementAccess("BPR", 3, x12type=enum(
+                    {"C": "Credit",
+                     "D": "Debit"}))
+        payment_method = ElementAccess("BPR", 4, x12type=enum(
+                {"ACH": "Automated Clearing House (ACH)",
+                 "BOP": "Financial Institution Option",
+                 "CHK": "Check",
+                 "FWT": "Federal Reserve Funds/Wire Transfer - Nonrepetitive",
+                 "NON": "Non-payment Data (only for transaction-type=H)"}))
+        payment_format = ElementAccess("BPR", 5, x12type=enum(
+                {"CCP": "Cash Concentration/Disbursement Plus Addenda",
+                 "CTX": "Coporate Trade Exchange"}))
+        sender_aba_transit_routing_number = ElementAccess("BPR", 7,
+                qualifier=(6, "01"))
+        sender_canadian_bank_branch_and_institution_number = ElementAccess(
+                "BPR", 7, qualifier=(6, "04"))
+        sender_account_type = ElementAccess("BPR", 8, x12type=enum(
+                {"DA": "Demand Deposit"}))
+        sender_bank_account_number = ElementAccess("BPR", 9)
+        sender_id = ElementAccess("BPR", 10)
+        sender_supplemental_id = ElementAccess("BPR", 11)
+
+        receiver_aba_transit_routing_number = ElementAccess("BPR", 13,
+                qualifier=(12, "01"))
+        receiver_canadian_bank_branch_and_institution_number = ElementAccess(
+                "BPR", 13, qualifier=(12, "04"))
+        receiver_account_type = ElementAccess("BPR", 14, x12type=enum(
+                {"DA": "Demand Deposit",
+                 "SG": "Savings"}))
+        receiver_bank_account_number = ElementAccess("BPR", 15)
+
+        issue_date = ElementAccess("BPR", 16, x12type=D8)
+
+    class _ReassociationTraceNumber(X12LoopBridge):
+        """ Uniquely identify this transaction set.
+
+        Also aid in reassociating payments and remittances that have been
+        separated.
+        """
+        trace_type = ElementAccess("TRN", 1, x12type=enum({
+                "1": "Current Transaction Trace Numbers"}))
+        check_or_eft_trace_number = ElementAccess("TRN", 2)
+        payer_id = ElementAccess("TRN", 3)
+        originating_company_supplemental_code = ElementAccess("TRN", 4)
+
+    # TODO tests
+    class _CurrencyInformation(X12LoopBridge):
+        """ Specify the currency and exchange rate, if applicable.
+
+        Only used when the payment is not being made in United States Dollars
+        or when the payment is made in a currency different from that in the
+        original claim."""
+        currency_code = ElementAccess("CUR", 2)
+        exchange_rate = ElementAccess("CUR", 3)
+
+    # TODO tests
+    class _Receiver(X12LoopBridge):
+        """ Used when the receiver of the transaction is not the payee. """
+        id = ElementAccess("REF", 2, qualifier=(1, "EV"))
+
+    # TODO tests
+    class _Version(X12LoopBridge):
+        """ Reports the version number of the adjudication system which
+        generated the claim payments.
+
+        This is *NOT* the version number reported in the GS segment of the
+        underlying EDI file. This is sometimes used for customer service
+        requests, to help track down where an error was introduced."""
+        version_number = ElementAccess("REF", 2, qualifier=(1, "F2"))
+
+    class _ProductionDate(X12LoopBridge):
+        """ Production date of the claim.
+
+        This *MUST* be supplied when the cutoff date of the adjudication
+        system is difference from the date of the 835."""
+        date = ElementAccess("DTM", 2, qualifier=(1, "405"), x12type=D8)
+
+    def __init__(self, aLoop, *args, **kwargs):
+        super(Header, self).__init__(aLoop, *args, **kwargs)
+        self.financial_information = Header._FinancialInformation(
+                aLoop, *args, **kwargs)
+        self.reassociation_trace_number = Header._ReassociationTraceNumber(
+                aLoop, *args, **kwargs)
+        self.currency_information = Header._CurrencyInformation(
+                aLoop, *args, **kwargs)
+        self.receiver = Header._Receiver(aLoop, *args, **kwargs)
+        self.version = Header._Version(aLoop, *args, **kwargs)
+        self.production_date = Header._ProductionDate(aLoop, *args, **kwargs)
+
+
 class ContactDetails(X12LoopBridge):
     name = ElementAccess("N1", 2)
     id_qualifier = ElementAccess("N1", 3, x12type=enum({
@@ -294,116 +404,6 @@ class Claim(Facade, X12LoopBridge):
                 qualifier=(1, "TT"))
         self.corrected_priority_payer = Organization(anX12Message,
                 qualifier=(1, "PR"))
-
-
-class Header(X12LoopBridge):
-    loopName = "HEADER"
-
-    class _FinancialInformation(X12LoopBridge):
-        """ Use this to address a single payment to a single payee.
-
-        A payee may represent a single provider, a provider group, or multiple
-        providers in a chain. The BPR contains mandatory information, even
-        when it is not being used to move funds electronically.
-        """
-        transaction_type = ElementAccess("BPR", 1, x12type=enum(
-                {"C": "Payment Accompanies Remittance Advice",
-                 "D": "Make Payment Only",
-                 "H": "Notification Only",
-                 "I": "Remittance Information Only",
-                 "P": "Prenotification of Ruture Transfers",
-                 "U": "Split Payment and Remittance",
-                 "X": "Handling Party's Option to Split Payment and "\
-                         "Remittance."}))
-        amount = ElementAccess("BPR", 2, x12type=Money)
-        credit_or_debit = ElementAccess("BPR", 3, x12type=enum(
-                    {"C": "Credit",
-                     "D": "Debit"}))
-        payment_method = ElementAccess("BPR", 4, x12type=enum(
-                {"ACH": "Automated Clearing House (ACH)",
-                 "BOP": "Financial Institution Option",
-                 "CHK": "Check",
-                 "FWT": "Federal Reserve Funds/Wire Transfer - Nonrepetitive",
-                 "NON": "Non-payment Data (only for transaction-type=H)"}))
-        payment_format = ElementAccess("BPR", 5, x12type=enum(
-                {"CCP": "Cash Concentration/Disbursement Plus Addenda",
-                 "CTX": "Coporate Trade Exchange"}))
-        sender_aba_transit_routing_number = ElementAccess("BPR", 7,
-                qualifier=(6, "01"))
-        sender_canadian_bank_branch_and_institution_number = ElementAccess(
-                "BPR", 7, qualifier=(6, "04"))
-        sender_account_type = ElementAccess("BPR", 8, x12type=enum(
-                {"DA": "Demand Deposit"}))
-        sender_bank_account_number = ElementAccess("BPR", 9)
-        sender_id = ElementAccess("BPR", 10)
-        sender_supplemental_id = ElementAccess("BPR", 11)
-
-        receiver_aba_transit_routing_number = ElementAccess("BPR", 13,
-                qualifier=(12, "01"))
-        receiver_canadian_bank_branch_and_institution_number = ElementAccess(
-                "BPR", 13, qualifier=(12, "04"))
-        receiver_account_type = ElementAccess("BPR", 14, x12type=enum(
-                {"DA": "Demand Deposit",
-                 "SG": "Savings"}))
-        receiver_bank_account_number = ElementAccess("BPR", 15)
-
-        issue_date = ElementAccess("BPR", 16, x12type=D8)
-
-    class _ReassociationTraceNumber(X12LoopBridge):
-        """ Uniquely identify this transaction set.
-
-        Also aid in reassociating payments and remittances that have been
-        separated.
-        """
-        trace_type = ElementAccess("TRN", 1, x12type=enum({
-                "1": "Current Transaction Trace Numbers"}))
-        check_or_eft_trace_number = ElementAccess("TRN", 2)
-        payer_id = ElementAccess("TRN", 3)
-        originating_company_supplemental_code = ElementAccess("TRN", 4)
-
-    # TODO tests
-    class _CurrencyInformation(X12LoopBridge):
-        """ Specify the currency and exchange rate, if applicable.
-
-        Only used when the payment is not being made in United States Dollars
-        or when the payment is made in a currency different from that in the
-        original claim."""
-        currency_code = ElementAccess("CUR", 2)
-        exchange_rate = ElementAccess("CUR", 3)
-
-    # TODO tests
-    class _Receiver(X12LoopBridge):
-        """ Used when the receiver of the transaction is not the payee. """
-        id = ElementAccess("REF", 2, qualifier=(1, "EV"))
-
-    # TODO tests
-    class _Version(X12LoopBridge):
-        """ Reports the version number of the adjudication system which
-        generated the claim payments.
-
-        This is *NOT* the version number reported in the GS segment of the
-        underlying EDI file. This is sometimes used for customer service
-        requests, to help track down where an error was introduced."""
-        version_number = ElementAccess("REF", 2, qualifier=(1, "F2"))
-
-    class _ProductionDate(X12LoopBridge):
-        """ Production date of the claim.
-
-        This *MUST* be supplied when the cutoff date of the adjudication
-        system is difference from the date of the 835."""
-        date = ElementAccess("DTM", 2, qualifier=(1, "405"), x12type=D8)
-
-    def __init__(self, aLoop, *args, **kwargs):
-        super(Header, self).__init__(aLoop, *args, **kwargs)
-        self.financial_information = Header._FinancialInformation(
-                aLoop, *args, **kwargs)
-        self.reassociation_trace_number = Header._ReassociationTraceNumber(
-                aLoop, *args, **kwargs)
-        self.currency_information = Header._CurrencyInformation(
-                aLoop, *args, **kwargs)
-        self.receiver = Header._Receiver(aLoop, *args, **kwargs)
-        self.version = Header._Version(aLoop, *args, **kwargs)
-        self.production_date = Header._ProductionDate(aLoop, *args, **kwargs)
 
 
 class F835_4010(Facade):
