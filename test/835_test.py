@@ -115,6 +115,7 @@ class TestParsed835(unittest.TestCase):
         # Patient
         patient = c.patient
         self.assertTrue(patient.is_person())
+        self.assertFalse(patient.is_organization())
         self.assertEqual(patient.last_name, "DOE")
         self.assertEqual(patient.first_name, "JOHN")
         self.assertEqual(patient.middle_initial, "")
@@ -123,6 +124,7 @@ class TestParsed835(unittest.TestCase):
         # Insured
         insured = c.insured
         self.assertTrue(insured.is_person())
+        self.assertFalse(insured.is_organization())
         self.assertEqual(insured.last_name, "DOE")
         self.assertEqual(insured.first_name, "JANE")
         self.assertEqual(insured.middle_initial, "")
@@ -139,6 +141,7 @@ class TestParsed835(unittest.TestCase):
 
         # Service Provider
         provider = c.service_provider
+        self.assertFalse(provider.is_person())
         self.assertTrue(provider.is_organization())
         self.assertEqual(provider.org_name, "MY CLINIC")
         self.assertEqual(provider.id_code_qual, (
@@ -182,12 +185,14 @@ class TestParsed835(unittest.TestCase):
         # Patient
         patient = c.patient
         self.assertTrue(patient.is_person())
+        self.assertFalse(patient.is_organization())
         self.assertEqual(patient.last_name, "SMITH")
         self.assertEqual(patient.first_name, "JOHN")
 
         # Insured
         insured = c.insured
         self.assertTrue(insured.is_person())
+        self.assertFalse(insured.is_organization())
         self.assertEqual(insured.last_name, "SMITH")
         self.assertEqual(insured.first_name, "JANE")
         self.assertEqual(insured.middle_initial, "")
