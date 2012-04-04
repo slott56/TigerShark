@@ -52,6 +52,37 @@ class TestParsed835(unittest.TestCase):
         pd = self.f.header.production_date
         self.assertEqual(pd.date, datetime.date(2012, 03, 19))
 
+    ## PAYER ##
+    def test_payer(self):
+        p = self.f.payer
+        c = p.contact_details
+        self.assertEqual(c.name, 'UNITED HEALTHCARE INSURANCE COMPANY')
+        self.assertEqual(c.id_qualifier,
+            ('XV', 'Health Care Financing Administration National Plan ID'))
+        self.assertEqual(c.id, '87726')
+        self.assertEqual(c.addr1, '9900 BREN ROAD')
+        self.assertEqual(c.city, 'MINNETONKA')
+        self.assertEqual(c.state, 'MN')
+        self.assertEqual(c.zip, '553430000')
+        self.assertEqual(c.contact_name, 'ATLANTA SERVICE CENTER')
+        self.assertEqual(c.contact_phone, '8778423210')
+        self.assertEqual(c.contact_phone_ext, None)
+        self.assertEqual(p.payer_id, '87726')
+
+    ## PAYEE ##
+    def test_payee(self):
+        p = self.f.payee
+        c = p.contact_details
+        self.assertEqual(c.name, 'MY CLINIC')
+        self.assertEqual(c.id_qualifier,
+                ('XX', 'Health Care Financing Administration National '\
+                        'Provider ID'))
+        self.assertEqual(c.id, '1333333333')
+        self.assertEqual(c.addr1, '123 HEALTHCARE STREET')
+        self.assertEqual(c.city, 'SAN FRANCISCO')
+        self.assertEqual(c.zip, '94109')
+        self.assertEqual(p.tax_id, '777777777')
+
 if __name__ == "__main__":
     logging.basicConfig(
         stream=sys.stderr,
