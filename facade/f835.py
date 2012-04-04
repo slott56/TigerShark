@@ -14,14 +14,25 @@ from facade import enum
 
 
 class ContactDetails(X12LoopBridge):
+    name = ElementAccess("N1", 2)
+    id_qualifier = ElementAccess("N1", 3, x12type=enum({
+            "XV": "Health Care Financing Administration National Plan ID",
+            "FI": "Federal Taxpayer Identification Number",
+            "XX": "Health Care Financing Administration National Provider ID"
+            }))
+    id = ElementAccess("N1", 4)
     addr1 = ElementAccess("N3", 1)
     addr2 = ElementAccess("N3", 2)
     city = ElementAccess("N4", 1)
     state = ElementAccess("N4", 2)
     zip = ElementAccess("N4", 3)
-    email = ElementAccess("PER", oneOf=("EM", (3, 4), (5, 6), (7, 8)))
-    fax = ElementAccess("PER", oneOf=("FX", (3, 4), (5, 6), (7, 8)))
-    phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
+    contact_code = ElementAccess("PER", 1)
+    contact_name = ElementAccess("PER", 2)
+    contact_email = ElementAccess("PER", oneOf=("EM", (3, 4), (5, 6), (7, 8)))
+    contact_fax = ElementAccess("PER", oneOf=("FX", (3, 4), (5, 6), (7, 8)))
+    contact_phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
+    contact_phone_ext = ElementAccess("PER",
+            oneOf=("EX", (3, 4), (5, 6), (7, 8)))
 
 
 class Payer(X12LoopBridge):
@@ -45,9 +56,6 @@ class Payer(X12LoopBridge):
 class Payee(X12LoopBridge):
     """Payee information from 1000B loop."""
     loopName = "1000B"
-    name = ElementAccess("N1", 2)
-    qualifier = ElementAccess("NM1", 3)
-    id = ElementAccess("NM1", 4)
     state_license = ElementAccess("REF", 2, qualifier=(1, "0B"))
     provider_UPIN = ElementAccess("REF", 2, qualifier=(1, "1G"))
     pharmacy_number = ElementAccess("REF", 2, qualifier=(1, "D3"))
