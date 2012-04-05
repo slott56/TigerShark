@@ -28,6 +28,8 @@ There are two principle classes in this module.
 
 There are two convenience functions.
 
+..  autofunction:: convertFilePath
+
 ..  autofunction:: convertFile
 
 ..  autofunction:: convertAll
@@ -496,21 +498,27 @@ class XMLParser( object ):
                 walk( c, depth+1 )
         walk( aDoc )
 
-def convertFile( baseDir, aFile, dataeleFile="dataele.xml", codesFile="codes.xml" ):
+def convertFilePath( baseDir, aFile, dataeleFile="dataele.xml",
+        codesFile="codes.xml" ):
     """Converts a single message file from XML to :mod:`X12.parse`."""
-    log= logging.getLogger( "tools.convertPyX12.convertFile")
-    bp= ParserBuilder()
-    try:
-        xml= XMLParser()
-        xml.data( os.path.join( baseDir, dataeleFile) )
-        xml.codes( os.path.join( baseDir, codesFile) )
-        xml.read(  os.path.join( baseDir, aFile) )
+    return convertFile(open(os.path.join(baseDir, aFile)),
+            open(os.path.join(baseDir, dataeleFile)),
+            open(os.path.join(baseDir, codesFile)))
 
-        x12p= bp.build( xml )
-    except Exception, e:
-        log.error( "Failed in %s: %s", aFile, e )
+
+def convertFile(xml_file, data_ele_file, codes_file):
+    log = logging.getLogger("tools.convertPyX12.convertFile")
+    bp = ParserBuilder()
+    try:
+        xml = XMLParser()
+        xml.data(data_ele_file)
+        xml.codes(codes_file)
+        xml.read(xml_file)
+        return bp.build(xml)
+    except Exception as e:
+        log.error("Failed to convert %s: %s" % (xml_file.name, e))
         raise
-    return x12p
+
 
 def convertAll( baseDir ):
     """Convert all :file:`nnn*.4010.X*.xml` files in the given directory.
@@ -520,13 +528,11 @@ def convertAll( baseDir ):
     for path,dirs,names in os.walk(baseDir):
         for fn in names:
             if fnmatch.fnmatch( fn, "[0-9][0-9][0-9]*.4010.X*.xml"):
-                convertFile( path, fn )
+                convertFilePath( path, fn )
 
-def writeFile(baseDir, aFile, name, x12, structure="flat"):
+def writeFile(aFile, name, x12, structure="flat"):
     """Write the x12 python module to a file.
     
-    :param baseDir: Directory with message definition, dataele and codes files.
-    :type baseDir: String
     :param aFile: Filename of destination file.
     :type aFile: String
     :param name: The name of the generated class.
@@ -573,7 +579,7 @@ if __name__ == "__main__":
     parser.add_argument('-n', '--name', help="The name of the generated "\
             "class. Defaults to the py_file argument, minus the filetype.")
     args = parser.parse_args()
-    x12 = convertFile( args.base_dir, args.x12_file)
+    x12 = convertFilePath( args.base_dir, args.x12_file)
     if args.name is not None:
         name = args.name
     else:
