@@ -12,7 +12,7 @@ See :ref:`traversal` for notes on the **Visitor** design pattern.
 ..  autoclass:: SQLTableVisitor
     :members:
 """
-import X12.parse
+from tigershark import X12
 
 class SQLDetailsVisitor( X12.parse.StructureVisitor ):
     """Details means, effectively, column definitions, which are X12.parse.Elements.

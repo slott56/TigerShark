@@ -21,7 +21,7 @@ See :ref:`traversal` for notes on the **Visitor** design pattern.
 ..  autoclass:: FlatPythonVisitor
     :members:
 """
-import X12.parse
+from tigershark import X12
 
 class PythonVisitor( X12.parse.StructureVisitor ):
     """Builds a single, huge definition.  Not very practical except
@@ -40,7 +40,7 @@ class PythonVisitor( X12.parse.StructureVisitor ):
         self.varName= varName
         self.skipElement= False # change to True to prune tree, skipping elements
     def preMessage( self, msg, indent=0 ):
-        self.result.append( "from X12.parse import Message, Loop, Segment, Composite, Element, Properties" )
+        self.result.append( "from tigershark.X12.parse import Message, Loop, Segment, Composite, Element, Properties" )
         if self.varName is None: self.varName= "x%s" % ( msg.name, )
         self.result.append( "%s = Message( %r, %r, " % ( self.varName, msg.name, msg.props ) )
     def postMessage( self, msg, indent=0 ):
@@ -107,7 +107,7 @@ class FlatPythonVisitor( X12.parse.StructureVisitor ):
         self.result= []
         self.varName= varName
     def preMessage( self, msg, indent=0 ):
-        self.result.append( "from X12.parse import Message, Loop, Segment, Composite, Element, Properties" )
+        self.result.append( "from tigershark.X12.parse import Message, Loop, Segment, Composite, Element, Properties" )
     def postMessage( self, msg, indent=0 ):
         if self.varName is None: self.varName= "x%s" % ( msg.name, )
         self.result.append( "%s = Message( %r, %r, " % ( self.varName, msg.name, msg.props ) )

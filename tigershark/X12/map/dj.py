@@ -9,7 +9,7 @@ See :ref:`traversal` for notes on the **Visitor** design pattern.
 ..  autoclass:: DjangoAdminVisitor
     :members:
 """
-import X12.parse
+from tigershark import X12
 
 class DjangoModelVisitor( X12.parse.StructureVisitor ):
     """Emit Django class definitions for Segments.

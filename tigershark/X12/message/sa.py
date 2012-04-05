@@ -30,7 +30,7 @@ This module inherits mappings for the following class definitions.
     :members:
 """
 import sqlalchemy as sa
-import X12.message
+from tigershark import X12
 
 # Get some settings to define the SA engine dynamically.
 # This allows us to have Django-like run-time binding to a specific database.

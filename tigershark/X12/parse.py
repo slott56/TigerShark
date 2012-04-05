@@ -27,7 +27,7 @@ Unmarshall/Parsing
 
 The typical usage is something like the following::
 
-    import x12.message
+    from tigershark import X12
     import x278
 
     ... read some text into txt ...
@@ -254,7 +254,7 @@ import sys
 import logging
 
 # This is only to give us access a default Factory.
-import X12.message
+from tigershark import X12
 
 class SegmentToken( object ):
     """A list-like object that gracefully handles a Segment with missing elements.
