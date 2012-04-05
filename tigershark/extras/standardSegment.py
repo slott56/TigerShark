@@ -19,7 +19,7 @@ X12 Segments.
 ..  autofunction:: buildSegment
 """
 from __future__ import print_function
-from X12.parse import Segment, Element, Properties
+from tigershark.X12.parse import Segment, Element, Properties
 
 ISAFields= """  ISA01 Authorization Information Qualifier
   ISA02 Authorization Information
