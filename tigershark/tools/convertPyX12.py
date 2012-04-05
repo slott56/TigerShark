@@ -125,9 +125,9 @@ import argparse
 from datetime import datetime
 import os.path, logging, sys, fnmatch
 import warnings
-import X12.parse
-from X12.map.source import FlatPythonVisitor
-from X12.map.source import PythonVisitor
+from tigershark import X12
+from tigershark.X12.map.source import FlatPythonVisitor
+from tigershark.X12.map.source import PythonVisitor
 
 class XMLWarning( UserWarning ):
     """A superclass for a number of warnings regarding the XML definition."""
