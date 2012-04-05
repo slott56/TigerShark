@@ -250,7 +250,6 @@ Class Definitions
 ..  autofunction:: preParse
 """
 from __future__ import print_function
-import sys
 import logging
 
 # This is only to give us access a default Factory.
@@ -596,6 +595,7 @@ class Composite( Parser ):
             " and ".join(
                 [se.logMatch(compositeData) for se in self.structure] ) )
         m= all( [se.match(compositeData) for se in self.structure] )
+        # TODO return m?
         return True
     def logMatch( self, candidate ):
         if candidate[self.position] is None:
@@ -849,7 +849,7 @@ def scan( msg ):
     return wrappers, segments
 
 def preParse( msg ):
-    wrapper, segments = scan(msg1)
+    wrapper, segments = scan(msg)
     for w in wrapper:
         print( w, wrapper[w] )
     print( "trans=",wrapper["ST"][1] )
