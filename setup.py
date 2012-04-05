@@ -18,7 +18,7 @@ class GenerateParsers(build_py):
             codes_file = zipf.open("pyx12-1.5.0/map/codes.xml")
             convertPyX12.writeFile(
                 os.path.join(self.build_lib, "tigershark", "parsers", "M%s.py") % \
-                        filename.rsplit('/', 1)[1].rsplit('/', 1)[0].\
+                        filename.rsplit('/', 1)[1].rsplit('.', 1)[0].\
                         replace(".", "_"),
                 "parsed_%s" % filename.rsplit('/', 1)[1].split('.', 1)[0],
                 convertPyX12.convertFile(zipf.open(filename), data_ele_file,
