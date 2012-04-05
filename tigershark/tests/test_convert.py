@@ -11,13 +11,13 @@ Each TestCase is reasonably similar to the following.
 from __future__ import print_function
 import unittest, logging, sys
 import os.path
-import tools.convertPyX12
-import X12.map.SQL
-import X12.map.source
+from tigershark import tools
+from tigershark import X12
 import cStringIO
 import sqlite3.dbapi2 as sqlite
 import zipfile
-from X12.parse import Message, Properties
+from tigershark.X12.parse import Message
+from tigershark.X12.parse import Properties
 
 logger= logging.getLogger( __name__ )
 

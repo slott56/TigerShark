@@ -16,16 +16,19 @@ import unittest
 import logging, sys
 import os.path
 
-import X12
-from X12.parse import Message, Loop, Segment, Element, Properties
-import X12.map.SQL
-import X12.map.source
-import X12.map.dj
+from tigershark import X12
+from tigershark.X12.parse import Message
+from tigershark.X12.parse import Loop
+from tigershark.X12.parse import Segment
+from tigershark.X12.parse import Element
+from tigershark.X12.parse import Properties
 
 logger= logging.getLogger( __name__ )
 
 # THE MANUALLY-BUILT PARSER:
-from example_278 import parse_278, loop2000F, loop2000A
+from tigershark.tests.example_278 import parse_278
+from tigershark.tests.example_278 import loop2000F
+from tigershark.tests.example_278 import loop2000A
 
 class TestStructure(unittest.TestCase):
     """Test Message Structure."""
@@ -87,7 +90,7 @@ class TestVisitor1(unittest.TestCase):
         python= X12.map.source.PythonVisitor( "parse_278" )
         parse_278.visit( python )
         text= python.getSource()
-        sample="""from X12.parse import Message, Loop, Segment, Composite, Element, Properties
+        sample="""from tigershark.X12.parse import Message, Loop, Segment, Composite, Element, Properties
 parse_278 = Message( '278', Properties(desc='HIPAA Health Care Services Review: Request X094A1-278'),
   Loop( 'ISA', Properties(req_sit='R',repeat='1',desc='ISA'),
     Segment( 'ISA', Properties(),

@@ -1,5 +1,11 @@
 #!/usr/bin/env python
-from X12.parse import Message, Loop, Segment, Composite, Element, Properties
+from tigershark.X12.parse import Message
+from tigershark.X12.parse import Loop
+from tigershark.X12.parse import Segment
+from tigershark.X12.parse import Composite
+from tigershark.X12.parse import Element
+from tigershark.X12.parse import Properties
+
 parse_278 = Message( '278', Properties(desc='278'),
   Loop( 'ISA', Properties(req_sit='R',repeat='1',desc='ISA'),
     Segment( 'ISA', Properties(),

@@ -4,8 +4,8 @@ import sys
 import datetime
 
 
-import M835_4010_X091_A1
-from facade import f835
+from tigershark.facade import f835
+from tigershark.parsers import M835_4010_X091_A1
 
 
 class TestParsed835(unittest.TestCase):

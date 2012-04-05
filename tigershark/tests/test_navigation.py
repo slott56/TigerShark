@@ -6,9 +6,8 @@ in a stand-alone mode.
 """
 import unittest
 import logging, sys
-import X12.parse
+from tigershark import X12
 
-import X12.message
 
 class TestNavigationX12( unittest.TestCase ):
     """Test XPath-like Navigation methods."""

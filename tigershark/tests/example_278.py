@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # EXAMPLE IMPLEMENTATION - 278 Request Parser
-from X12.parse import Message, Loop, Segment, Composite, Element, Properties
+from tigershark.X12.parse import Message
+from tigershark.X12.parse import Loop
+from tigershark.X12.parse import Segment
+from tigershark.X12.parse import Composite
+from tigershark.X12.parse import Element
+from tigershark.X12.parse import Properties
 
 loop2000A= Loop( "2000A", Properties( desc="2000A", req_sit="R", repeat="1", ),
     Segment("HL", Properties( qual=(3,"20"), desc="Utilization Management Organization (UMO) Level", req_sit="R", repeat="1"),
