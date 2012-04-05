@@ -1,16 +1,10 @@
-from facade import X12LoopBridge
-#from facade import X12SegmentBridge
-from facade import ElementAccess
-#from facade import SegmentSequenceAccess
-#from facade import SegmentConversion
-#from facade import SequenceOf
-#from facade import ElementSequenceAccess
-from facade import CompositeAccess
-#from facade import CompositeSequenceAccess
-from facade import D8
-from facade import Money
-from facade import Facade
-from facade import enum
+from tigershark.facade import X12LoopBridge
+from tigershark.facade import ElementAccess
+from tigershark.facade import CompositeAccess
+from tigershark.facade import D8
+from tigershark.facade import Money
+from tigershark.facade import Facade
+from tigershark.facade import enum
 
 
 class Header(X12LoopBridge):

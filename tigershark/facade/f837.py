@@ -61,16 +61,16 @@ Top-Level **Claim**.
 
 ..  autoclass:: Claim
 """
-from facade import X12LoopBridge
-from facade import X12SegmentBridge
-from facade import ElementAccess
-from facade import SegmentSequenceAccess
-from facade import SegmentConversion
-from facade import SequenceOf
-from facade import ElementSequenceAccess
-from facade import CompositeAccess
-from facade import CompositeSequenceAccess
-from facade import D8
+from tigershark.facade import X12LoopBridge
+from tigershark.facade import X12SegmentBridge
+from tigershark.facade import ElementAccess
+from tigershark.facade import SegmentSequenceAccess
+from tigershark.facade import SegmentConversion
+from tigershark.facade import SequenceOf
+from tigershark.facade import ElementSequenceAccess
+from tigershark.facade import CompositeAccess
+from tigershark.facade import CompositeSequenceAccess
+from tigershark.facade import D8
 
 
 class Patient( X12LoopBridge ):
