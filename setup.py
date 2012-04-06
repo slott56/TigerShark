@@ -7,20 +7,22 @@ import zipfile
 
 from tigershark import __version__
 
+
 class GenerateParsers(build_py):
     def run(self):
         build_py.run(self)
-        #super(PostInstall, self).run()
         from tigershark.tools import convertPyX12
 
         def convert(filename):
             data_ele_file = zipf.open("pyx12-1.5.0/map/dataele.xml")
             codes_file = zipf.open("pyx12-1.5.0/map/codes.xml")
-            convertPyX12.writeFile(
-                os.path.join(self.build_lib, "tigershark", "parsers", "M%s.py") % \
-                        filename.rsplit('/', 1)[1].rsplit('.', 1)[0].\
-                        replace(".", "_"),
-                "parsed_%s" % filename.rsplit('/', 1)[1].split('.', 1)[0],
+            fname = "M%s.py" % filename.rsplit('/', 1)[1].rsplit('.', 1)[0].\
+                        replace(".", "_")
+            dest_fname = os.path.join(self.build_lib, "tigershark", "parsers",
+                    fname)
+            parser_name = "parsed_%s" % \
+                    filename.rsplit('/', 1)[1].split('.', 1)[0]
+            convertPyX12.writeFile(dest_fname, parser_name,
                 convertPyX12.convertFile(zipf.open(filename), data_ele_file,
                     codes_file))
             # ZipFile file-like objects don't support seek, so we have to
@@ -47,10 +49,13 @@ setup(
     name='TigerShark',
     version=__version__,
     description='TigerShark: An X12 file parser.',
-    long_description='TigerShark is an X12 EDI message parser that can be tailored to a specific partner in the health care payment ecosystem.',
+    long_description='TigerShark is an X12 EDI message parser that can be '\
+            'tailored to a specific partner in the health care payment '\
+            'ecosystem.',
     author='Steven Buss & Steven Lott',
     author_email='steven.buss@gmail.com',
-    download_url='https://github.com/sbuss/TigerShark/tarball/v%s' % __version__,
+    download_url='https://github.com/sbuss/TigerShark/tarball/v%s' % \
+            __version__,
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
