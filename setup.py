@@ -9,6 +9,11 @@ from tigershark import __version__
 
 
 class GenerateParsers(build_py):
+    """ After building tigershark, use it to build the parsers.
+
+    This happens before everything in the build directory is copied to
+    site-packages, so this effectively installs global default parsers.
+    """
     def run(self):
         build_py.run(self)
         from tigershark.tools import convertPyX12
