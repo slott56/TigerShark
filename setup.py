@@ -43,7 +43,6 @@ class GenerateParsers(build_py):
                     logging.error(e)
 
 
-
 setup(
     name='TigerShark',
     version=__version__,
@@ -62,13 +61,18 @@ setup(
     ],
     packages=[
         'tigershark',
-        'tigershark.parsers',
+        'tigershark.extras',
         'tigershark.facade',
+        'tigershark.parsers',
         'tigershark.tests',
         'tigershark.tools',
+        'tigershark.X12',
+        'tigershark.X12.map',
+        'tigershark.X12.message',
     ],
     scripts=[
         'tigershark/tools/convertPyX12.py',
     ],
+    package_data={'tigershark': ['tests/*.txt', 'tests/*.xml', 'tests/*.csv']},
     cmdclass={"build_py": GenerateParsers},
 )
