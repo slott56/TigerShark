@@ -61,4 +61,3 @@ The :mod:`X12.message` package defines a message instance.
 
 ..  automodule:: X12.parse
 """
-__version__= "0.1"
