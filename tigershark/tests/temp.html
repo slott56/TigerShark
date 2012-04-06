@@ -1,0 +1,2121 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="robots" content="NONE,NOARCHIVE">
+  <title>ValueError at /claim/load/</title>
+  <style type="text/css">
+    html * { padding:0; margin:0; }
+    body * { padding:10px 20px; }
+    body * * { padding:0; }
+    body { font:small sans-serif; }
+    body>div { border-bottom:1px solid #ddd; }
+    h1 { font-weight:normal; }
+    h2 { margin-bottom:.8em; }
+    h2 span { font-size:80%; color:#666; font-weight:normal; }
+    h3 { margin:1em 0 .5em 0; }
+    h4 { margin:0 0 .5em 0; font-weight: normal; }
+    code, pre { font-size: 100%; }
+    table { border:1px solid #ccc; border-collapse: collapse; width:100%; background:white; }
+    tbody td, tbody th { vertical-align:top; padding:2px 3px; }
+    thead th { padding:1px 6px 1px 3px; background:#fefefe; text-align:left; font-weight:normal; font-size:11px; border:1px solid #ddd; }
+    tbody th { width:12em; text-align:right; color:#666; padding-right:.5em; }
+    table.vars { margin:5px 0 2px 40px; }
+    table.vars td, table.req td { font-family:monospace; }
+    table td.code { width:100%; }
+    table td.code pre { overflow:hidden; }
+    table.source th { color:#666; }
+    table.source td { font-family:monospace; white-space:pre; border-bottom:1px solid #eee; }
+    ul.traceback { list-style-type:none; }
+    ul.traceback li.frame { padding-bottom:1em; }
+    div.context { padding:10px 0; overflow:hidden; }
+    div.context ol { padding-left:30px; margin:0 10px; list-style-position: inside; }
+    div.context ol li { font-family:monospace; white-space:pre; color:#666; cursor:pointer; }
+    div.context ol li pre { display:inline; }
+    div.context ol.context-line li { color:black; background-color:#ccc; }
+    div.context ol.context-line li span { position:absolute; right:32px; }
+    div.commands { margin-left: 40px; }
+    div.commands a { color:black; text-decoration:none; }
+    #summary { background: #ffc; }
+    #summary h2 { font-weight: normal; color: #666; }
+    #explanation { background:#eee; }
+    #template, #template-not-exist { background:#f6f6f6; }
+    #template-not-exist ul { margin: 0 0 0 20px; }
+    #unicode-hint { background:#eee; }
+    #traceback { background:#eee; }
+    #requestinfo { background:#f6f6f6; padding-left:120px; }
+    #summary table { border:none; background:transparent; }
+    #requestinfo h2, #requestinfo h3 { position:relative; margin-left:-100px; }
+    #requestinfo h3 { margin-bottom:-1em; }
+    .error { background: #ffc; }
+    .specific { color:#cc3300; font-weight:bold; }
+    h2 span.commands { font-size:.7em;}
+    span.commands a:link {color:#5E5694;}
+    pre.exception_value { font-family: sans-serif; color: #666; font-size: 1.5em; margin: 10px 0 10px 0; }
+  </style>
+  
+  <script type="text/javascript">
+  //<!--
+    function getElementsByClassName(oElm, strTagName, strClassName){
+        // Written by Jonathan Snook, http://www.snook.ca/jon; Add-ons by Robert Nyman, http://www.robertnyman.com
+        var arrElements = (strTagName == "*" && document.all)? document.all :
+        oElm.getElementsByTagName(strTagName);
+        var arrReturnElements = new Array();
+        strClassName = strClassName.replace(/\-/g, "\-");
+        var oRegExp = new RegExp("(^|\s)" + strClassName + "(\s|$)");
+        var oElement;
+        for(var i=0; i<arrElements.length; i++){
+            oElement = arrElements[i];
+            if(oRegExp.test(oElement.className)){
+                arrReturnElements.push(oElement);
+            }
+        }
+        return (arrReturnElements)
+    }
+    function hideAll(elems) {
+      for (var e = 0; e < elems.length; e++) {
+        elems[e].style.display = 'none';
+      }
+    }
+    window.onload = function() {
+      hideAll(getElementsByClassName(document, 'table', 'vars'));
+      hideAll(getElementsByClassName(document, 'ol', 'pre-context'));
+      hideAll(getElementsByClassName(document, 'ol', 'post-context'));
+      hideAll(getElementsByClassName(document, 'div', 'pastebin'));
+    }
+    function toggle() {
+      for (var i = 0; i < arguments.length; i++) {
+        var e = document.getElementById(arguments[i]);
+        if (e) {
+          e.style.display = e.style.display == 'none' ? 'block' : 'none';
+        }
+      }
+      return false;
+    }
+    function varToggle(link, id) {
+      toggle('v' + id);
+      var s = link.getElementsByTagName('span')[0];
+      var uarr = String.fromCharCode(0x25b6);
+      var darr = String.fromCharCode(0x25bc);
+      s.innerHTML = s.innerHTML == uarr ? darr : uarr;
+      return false;
+    }
+    function switchPastebinFriendly(link) {
+      s1 = "Switch to copy-and-paste view";
+      s2 = "Switch back to interactive view";
+      link.innerHTML = link.innerHTML == s1 ? s2 : s1;
+      toggle('browserTraceback', 'pastebinTraceback');
+      return false;
+    }
+    //-->
+  </script>
+  
+</head>
+<body>
+<div id="summary">
+  <h1>ValueError at /claim/load/</h1>
+  <pre class="exception_value">Expecting property name: line 1 column 1 (char 1)</pre>
+  <table class="meta">
+
+    <tr>
+      <th>Request Method:</th>
+      <td>POST</td>
+    </tr>
+    <tr>
+      <th>Request URL:</th>
+      <td>http://localhost:18000/claim/load/</td>
+    </tr>
+
+    <tr>
+      <th>Django Version:</th>
+      <td>1.3.1</td>
+    </tr>
+
+    <tr>
+      <th>Exception Type:</th>
+      <td>ValueError</td>
+    </tr>
+
+
+    <tr>
+      <th>Exception Value:</th>
+      <td><pre>Expecting property name: line 1 column 1 (char 1)</pre></td>
+    </tr>
+
+
+    <tr>
+      <th>Exception Location:</th>
+      <td>C:\Python27\lib\json\decoder.py in raw_decode, line 382</td>
+    </tr>
+
+    <tr>
+      <th>Python Executable:</th>
+      <td>C:\Python27\python.exe</td>
+    </tr>
+    <tr>
+      <th>Python Version:</th>
+      <td>2.7.2</td>
+    </tr>
+    <tr>
+      <th>Python Path:</th>
+      <td><pre>[&#39;&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\xlrd-0.7.1-py2.7-win32.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\sphinx-1.0.8-py2.7.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\docutils-0.8.1-py2.7.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\jinja2-2.6-py2.7.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\pygments-1.4-py2.7.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\stingray-3.1-py2.7.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\django-1.3.1-py2.7.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\pil-1.1.7-py2.7-win32.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\beautifulsoup-3.2.0-py2.7.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\sqlalchemy-0.7.4-py2.7.egg&#39;,
+ &#39;C:\\Python27\\lib\\site-packages\\coverage-3.5.1-py2.7-win32.egg&#39;,
+ &#39;F:\\Tiger&#39;,
+ &#39;C:\\WINDOWS\\system32\\python27.zip&#39;,
+ &#39;C:\\Python27\\DLLs&#39;,
+ &#39;C:\\Python27\\lib&#39;,
+ &#39;C:\\Python27\\lib\\plat-win&#39;,
+ &#39;C:\\Python27\\lib\\lib-tk&#39;,
+ &#39;C:\\Python27&#39;,
+ &#39;C:\\Python27\\lib\\site-packages&#39;]</pre></td>
+    </tr>
+    <tr>
+      <th>Server time:</th>
+      <td>Tue, 27 Dec 2011 16:31:39 -0500</td>
+    </tr>
+  </table>
+</div>
+
+
+
+
+<div id="traceback">
+  <h2>Traceback <span class="commands"><a href="#" onclick="return switchPastebinFriendly(this);">Switch to copy-and-paste view</a></span></h2>
+  
+  <div id="browserTraceback">
+    <ul class="traceback">
+      
+        <li class="frame">
+          <code>C:\Python27\lib\site-packages\django-1.3.1-py2.7.egg\django\core\handlers\base.py</code> in <code>get_response</code>
+
+          
+            <div class="context" id="c24336224">
+              
+                <ol start="104" class="pre-context" id="pre24336224"><li onclick="toggle('pre24336224', 'post24336224')"><pre>                    for middleware_method in self._view_middleware:</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                        response = middleware_method(request, callback, callback_args, callback_kwargs)</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                        if response:</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                            break</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre></pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                if response is None:</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                    try:</pre></li></ol>
+              
+              <ol start="111" class="context-line"><li onclick="toggle('pre24336224', 'post24336224')"><pre>                        response = callback(request, *callback_args, **callback_kwargs)</pre> <span>...</span></li></ol>
+              
+                <ol start='112' class="post-context" id="post24336224"><li onclick="toggle('pre24336224', 'post24336224')"><pre>                    except Exception, e:</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                        # If the view raised an exception, run it through exception</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                        # middleware, and if the exception middleware returns a</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                        # response, use that. Otherwise, reraise the exception.</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                        for middleware_method in self._exception_middleware:</pre></li><li onclick="toggle('pre24336224', 'post24336224')"><pre>                            response = middleware_method(request, e)</pre></li></ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '24336224')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v24336224">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>exceptions</td>
+                    <td class="code"><pre>&lt;module &#39;django.core.exceptions&#39; from &#39;C:\Python27\lib\site-packages\django-1.3.1-py2.7.egg\django\core\exceptions.pyc&#39;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>e</td>
+                    <td class="code"><pre>ValueError(&#39;Expecting property name: line 1 column 1 (char 1)&#39;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_args</td>
+                    <td class="code"><pre>()</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>receivers</td>
+                    <td class="code"><pre>[(&lt;function _rollback_on_exception at 0x010E4670&gt;, None)]</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>middleware_method</td>
+                    <td class="code"><pre>&lt;bound method FlushLog.process_exception of &lt;web.middleware.FlushLog object at 0x01856930&gt;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;django.core.handlers.wsgi.WSGIHandler object at 0x018565B0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>settings</td>
+                    <td class="code"><pre>&lt;django.conf.LazySettings object at 0x00D09250&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest
+GET:&lt;QueryDict: {}&gt;,
+POST:&lt;QueryDict: {u&#39;claim&#39;: [u&#39;ISA*00* *00* *ZZ*123456789 *30*41-1674742 *060209*0826*U*00401*000000002*0*P*:~GS*HC*123456789*41-1674742*20060209*0826*2*X*004010X098A1~ST*837*0001~BHT*0019*00*180*20060209*0826*CH~REF*87*004010X098A1~NM1*41*2*Brisbane Schools*****46*567891234~PER*IC*Some Contact*TE*5551231234~NM1*40*2*MN Department of Human Services*****46*41-1674742~HL*1**20*1~NM1*85*2*Brisbane Schools*****24*12-3456789~N3*101 Brisbane Lane~N4*Brisbane*MN*561641234~REF*1D*123456789~HL*2*1*22*0~SBR*S*18*******MC~NM1*IL*1*Student*Some****MI*12345678~N3*109 Plum Street~N4*Somewherein*MN.*56123~DMG*D8*19950505*M~NM1*PR*2*MN Department of Human Services*****PI*41-1674742~CLM*0777-0777-12345678*32.73***03::1*Y*A*Y*Y*C~LX*1~SV1*HC:T1018:U1*10.63*UN*1~DTP*472*D8*20060102~LX*2~SV1*HC:T1018:U8*22.1*UN*10~DTP*472*D8*20060102~SE*26*0001~GE*1*2~IEA*1*000000002~&#39;], u&#39;claim_id&#39;: [u&#39;22559311&#39;], u&#39;properties&#39;: [u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;], u&#39;constraints&#39;: [u&quot;{&#39;GENDER&#39;: &#39;U&#39;, &#39;AGE-FROM&#39;: &#39;0&#39;, &#39;AGE-TO&#39;: &#39;125&#39;}&quot;]}&gt;,
+COOKIES:{},
+META:{&#39;ALLUSERSPROFILE&#39;: &#39;C:\\Documents and Settings\\All Users&#39;,
+ &#39;APPDATA&#39;: &#39;C:\\Documents and Settings\\slott\\Application Data&#39;,
+ &#39;COMMONPROGRAMFILES&#39;: &#39;C:\\Program Files\\Common Files&#39;,
+ &#39;COMPUTERNAME&#39;: &#39;1YZ55G1JE&#39;,
+ &#39;COMSPEC&#39;: &#39;C:\\WINDOWS\\system32\\cmd.exe&#39;,
+ &#39;CONTENT_LENGTH&#39;: &#39;1485&#39;,
+ &#39;CONTENT_TYPE&#39;: &#39;text/plain&#39;,
+ &#39;CSRF_COOKIE&#39;: &#39;2cd60e887ecd138260851c1cb3801f46&#39;,
+ &#39;DJANGO_SETTINGS_MODULE&#39;: &#39;web.settings&#39;,
+ &#39;FP_NO_HOST_CHECK&#39;: &#39;NO&#39;,
+ &#39;GATEWAY_INTERFACE&#39;: &#39;CGI/1.1&#39;,
+ &#39;HOMEDRIVE&#39;: &#39;C:&#39;,
+ &#39;HOMEPATH&#39;: &#39;\\Documents and Settings\\slott&#39;,
+ &#39;HTTP_ACCEPT_ENCODING&#39;: &#39;identity&#39;,
+ &#39;HTTP_AUTHORIZATION&#39;: &#39;BASIC YWRtaW46YWRtaW4=&#39;,
+ &#39;HTTP_HOST&#39;: &#39;localhost:18000&#39;,
+ &#39;LOGONSERVER&#39;: &#39;\\\\BUF-DC1&#39;,
+ &#39;NUMBER_OF_PROCESSORS&#39;: &#39;2&#39;,
+ &#39;OS&#39;: &#39;Windows_NT&#39;,
+ &#39;PATH&#39;: &#39;C:\\Program Files\\ActiveState Komodo Edit 6\\lib\\mozilla;C:\\Program Files\\ActiveState Komodo Edit 6\\;C:\\Program Files\\Common Files\\Microsoft Shared\\Windows Live;C:\\Program Files\\MiKTeX 2.8\\miktex\\bin;C:\\Program Files\\ActiveState Komodo Edit 5\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\PROGRA~1\\IBM\\CLIENT~1;C:\\PROGRA~1\\IBM\\CLIENT~1\\Shared;C:\\PROGRA~1\\IBM\\CLIENT~1\\Emulator;C:\\Program Files\\Common Files\\Roxio Shared\\DLLShared\\;C:\\Program Files\\SlikSvn\\bin\\;C:\\Python27;C:\\Python27\\Scripts;c:\\Sun\\SDK\\JDK\\bin;C:\\MinGW\\bin;;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Windows Imaging\\;C:\\MinGW\\bin;C:\\Program Files\\VMware\\VMware VIX;C:\\Program Files\\SQLite ODBC Driver;C:\\Program Files\\TortoiseSVN\\bin;C:\\Sun\\SDK\\bin&#39;,
+ &#39;PATHEXT&#39;: &#39;.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.PSC1&#39;,
+ &#39;PATH_INFO&#39;: u&#39;/claim/load/&#39;,
+ &#39;PROCESSOR_ARCHITECTURE&#39;: &#39;x86&#39;,
+ &#39;PROCESSOR_IDENTIFIER&#39;: &#39;x86 Family 6 Model 23 Stepping 6, GenuineIntel&#39;,
+ &#39;PROCESSOR_LEVEL&#39;: &#39;6&#39;,
+ &#39;PROCESSOR_REVISION&#39;: &#39;1706&#39;,
+ &#39;PROGRAMFILES&#39;: &#39;C:\\Program Files&#39;,
+ &#39;PROMPT&#39;: &#39;$P$G&#39;,
+ &#39;PSMODULEPATH&#39;: &#39;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules\\&#39;,
+ &#39;PYTHONPATH&#39;: &#39;F:\\Tiger&#39;,
+ &#39;QUERY_STRING&#39;: &#39;&#39;,
+ &#39;REMOTE_ADDR&#39;: &#39;127.0.0.1&#39;,
+ &#39;REMOTE_HOST&#39;: &#39;&#39;,
+ &#39;REQUEST_METHOD&#39;: &#39;POST&#39;,
+ &#39;ROXIOCENTRAL&#39;: &#39;C:\\Program Files\\Common Files\\Roxio Shared\\9.0\\Roxio Central33\\&#39;,
+ &#39;SCRIPT_NAME&#39;: u&#39;&#39;,
+ &#39;SERVER_NAME&#39;: &#39;localhost&#39;,
+ &#39;SERVER_PORT&#39;: &#39;18000&#39;,
+ &#39;SERVER_PROTOCOL&#39;: &#39;HTTP/1.1&#39;,
+ &#39;SERVER_SOFTWARE&#39;: &#39;WSGIServer/0.1 Python/2.7.2&#39;,
+ &#39;SESSIONNAME&#39;: &#39;Console&#39;,
+ &#39;SYSTEMDRIVE&#39;: &#39;C:&#39;,
+ &#39;SYSTEMROOT&#39;: &#39;C:\\WINDOWS&#39;,
+ &#39;TEMP&#39;: &#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;,
+ &#39;TMP&#39;: &#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;,
+ &#39;UATDATA&#39;: &#39;C:\\WINDOWS\\system32\\CCM\\UATData\\D9F8C395-CAB8-491d-B8AC-179A1FE1BE77&#39;,
+ &#39;USERDNSDOMAIN&#39;: &#39;CTG.COM&#39;,
+ &#39;USERDOMAIN&#39;: &#39;CTG&#39;,
+ &#39;USERNAME&#39;: &#39;slott&#39;,
+ &#39;USERPROFILE&#39;: &#39;C:\\Documents and Settings\\slott&#39;,
+ &#39;WINDIR&#39;: &#39;C:\\WINDOWS&#39;,
+ &#39;wsgi.errors&#39;: &lt;open file &#39;&lt;stderr&gt;&#39;, mode &#39;w&#39; at 0x00A550D0&gt;,
+ &#39;wsgi.file_wrapper&#39;: &lt;class &#39;django.core.servers.basehttp.FileWrapper&#39;&gt;,
+ &#39;wsgi.input&#39;: &lt;socket._fileobject object at 0x0185C0F0&gt;,
+ &#39;wsgi.multiprocess&#39;: False,
+ &#39;wsgi.multithread&#39;: True,
+ &#39;wsgi.run_once&#39;: False,
+ &#39;wsgi.url_scheme&#39;: &#39;http&#39;,
+ &#39;wsgi.version&#39;: (1, 0)}&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback</td>
+                    <td class="code"><pre>&lt;function load at 0x0172F470&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>resolver</td>
+                    <td class="code"><pre>&lt;RegexURLResolver web.urls (None:None) ^/&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>urlresolvers</td>
+                    <td class="code"><pre>&lt;module &#39;django.core.urlresolvers&#39; from &#39;C:\Python27\lib\site-packages\django-1.3.1-py2.7.egg\django\core\urlresolvers.pyc&#39;&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>callback_kwargs</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>response</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>urlconf</td>
+                    <td class="code"><pre>&#39;web.urls&#39;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        <li class="frame">
+          <code>C:\Python27\lib\site-packages\django-1.3.1-py2.7.egg\django\views\decorators\csrf.py</code> in <code>wrapped_view</code>
+
+          
+            <div class="context" id="c24336184">
+              
+                <ol start="32" class="pre-context" id="pre24336184"><li onclick="toggle('pre24336184', 'post24336184')"><pre></pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>def csrf_response_exempt(view_func):</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>    &quot;&quot;&quot;</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>    Modifies a view function so that its response is exempt</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>    from the post-processing of the CSRF middleware.</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>    &quot;&quot;&quot;</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>    def wrapped_view(*args, **kwargs):</pre></li></ol>
+              
+              <ol start="39" class="context-line"><li onclick="toggle('pre24336184', 'post24336184')"><pre>        resp = view_func(*args, **kwargs)</pre> <span>...</span></li></ol>
+              
+                <ol start='40' class="post-context" id="post24336184"><li onclick="toggle('pre24336184', 'post24336184')"><pre>        resp.csrf_exempt = True</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>        return resp</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>    return wraps(view_func, assigned=available_attrs(view_func))(wrapped_view)</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre></pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>def csrf_view_exempt(view_func):</pre></li><li onclick="toggle('pre24336184', 'post24336184')"><pre>    &quot;&quot;&quot;</pre></li></ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '24336184')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v24336184">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>args</td>
+                    <td class="code"><pre>(&lt;WSGIRequest
+GET:&lt;QueryDict: {}&gt;,
+POST:&lt;QueryDict: {u&#39;claim&#39;: [u&#39;ISA*00* *00* *ZZ*123456789 *30*41-1674742 *060209*0826*U*00401*000000002*0*P*:~GS*HC*123456789*41-1674742*20060209*0826*2*X*004010X098A1~ST*837*0001~BHT*0019*00*180*20060209*0826*CH~REF*87*004010X098A1~NM1*41*2*Brisbane Schools*****46*567891234~PER*IC*Some Contact*TE*5551231234~NM1*40*2*MN Department of Human Services*****46*41-1674742~HL*1**20*1~NM1*85*2*Brisbane Schools*****24*12-3456789~N3*101 Brisbane Lane~N4*Brisbane*MN*561641234~REF*1D*123456789~HL*2*1*22*0~SBR*S*18*******MC~NM1*IL*1*Student*Some****MI*12345678~N3*109 Plum Street~N4*Somewherein*MN.*56123~DMG*D8*19950505*M~NM1*PR*2*MN Department of Human Services*****PI*41-1674742~CLM*0777-0777-12345678*32.73***03::1*Y*A*Y*Y*C~LX*1~SV1*HC:T1018:U1*10.63*UN*1~DTP*472*D8*20060102~LX*2~SV1*HC:T1018:U8*22.1*UN*10~DTP*472*D8*20060102~SE*26*0001~GE*1*2~IEA*1*000000002~&#39;], u&#39;claim_id&#39;: [u&#39;22559311&#39;], u&#39;properties&#39;: [u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;], u&#39;constraints&#39;: [u&quot;{&#39;GENDER&#39;: &#39;U&#39;, &#39;AGE-FROM&#39;: &#39;0&#39;, &#39;AGE-TO&#39;: &#39;125&#39;}&quot;]}&gt;,
+COOKIES:{},
+META:{&#39;ALLUSERSPROFILE&#39;: &#39;C:\\Documents and Settings\\All Users&#39;,
+ &#39;APPDATA&#39;: &#39;C:\\Documents and Settings\\slott\\Application Data&#39;,
+ &#39;COMMONPROGRAMFILES&#39;: &#39;C:\\Program Files\\Common Files&#39;,
+ &#39;COMPUTERNAME&#39;: &#39;1YZ55G1JE&#39;,
+ &#39;COMSPEC&#39;: &#39;C:\\WINDOWS\\system32\\cmd.exe&#39;,
+ &#39;CONTENT_LENGTH&#39;: &#39;1485&#39;,
+ &#39;CONTENT_TYPE&#39;: &#39;text/plain&#39;,
+ &#39;CSRF_COOKIE&#39;: &#39;2cd60e887ecd138260851c1cb3801f46&#39;,
+ &#39;DJANGO_SETTINGS_MODULE&#39;: &#39;web.settings&#39;,
+ &#39;FP_NO_HOST_CHECK&#39;: &#39;NO&#39;,
+ &#39;GATEWAY_INTERFACE&#39;: &#39;CGI/1.1&#39;,
+ &#39;HOMEDRIVE&#39;: &#39;C:&#39;,
+ &#39;HOMEPATH&#39;: &#39;\\Documents and Settings\\slott&#39;,
+ &#39;HTTP_ACCEPT_ENCODING&#39;: &#39;identity&#39;,
+ &#39;HTTP_AUTHORIZATION&#39;: &#39;BASIC YWRtaW46YWRtaW4=&#39;,
+ &#39;HTTP_HOST&#39;: &#39;localhost:18000&#39;,
+ &#39;LOGONSERVER&#39;: &#39;\\\\BUF-DC1&#39;,
+ &#39;NUMBER_OF_PROCESSORS&#39;: &#39;2&#39;,
+ &#39;OS&#39;: &#39;Windows_NT&#39;,
+ &#39;PATH&#39;: &#39;C:\\Program Files\\ActiveState Komodo Edit 6\\lib\\mozilla;C:\\Program Files\\ActiveState Komodo Edit 6\\;C:\\Program Files\\Common Files\\Microsoft Shared\\Windows Live;C:\\Program Files\\MiKTeX 2.8\\miktex\\bin;C:\\Program Files\\ActiveState Komodo Edit 5\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\PROGRA~1\\IBM\\CLIENT~1;C:\\PROGRA~1\\IBM\\CLIENT~1\\Shared;C:\\PROGRA~1\\IBM\\CLIENT~1\\Emulator;C:\\Program Files\\Common Files\\Roxio Shared\\DLLShared\\;C:\\Program Files\\SlikSvn\\bin\\;C:\\Python27;C:\\Python27\\Scripts;c:\\Sun\\SDK\\JDK\\bin;C:\\MinGW\\bin;;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Windows Imaging\\;C:\\MinGW\\bin;C:\\Program Files\\VMware\\VMware VIX;C:\\Program Files\\SQLite ODBC Driver;C:\\Program Files\\TortoiseSVN\\bin;C:\\Sun\\SDK\\bin&#39;,
+ &#39;PATHEXT&#39;: &#39;.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.PSC1&#39;,
+ &#39;PATH_INFO&#39;: u&#39;/claim/load/&#39;,
+ &#39;PROCESSOR_ARCHITECTURE&#39;: &#39;x86&#39;,
+ &#39;PROCESSOR_IDENTIFIER&#39;: &#39;x86 Family 6 Model 23 Stepping 6, GenuineIntel&#39;,
+ &#39;PROCESSOR_LEVEL&#39;: &#39;6&#39;,
+ &#39;PROCESSOR_REVISION&#39;: &#39;1706&#39;,
+ &#39;PROGRAMFILES&#39;: &#39;C:\\Program Files&#39;,
+ &#39;PROMPT&#39;: &#39;$P$G&#39;,
+ &#39;PSMODULEPATH&#39;: &#39;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules\\&#39;,
+ &#39;PYTHONPATH&#39;: &#39;F:\\Tiger&#39;,
+ &#39;QUERY_STRING&#39;: &#39;&#39;,
+ &#39;REMOTE_ADDR&#39;: &#39;127.0.0.1&#39;,
+ &#39;REMOTE_HOST&#39;: &#39;&#39;,
+ &#39;REQUEST_METHOD&#39;: &#39;POST&#39;,
+ &#39;ROXIOCENTRAL&#39;: &#39;C:\\Program Files\\Common Files\\Roxio Shared\\9.0\\Roxio Central33\\&#39;,
+ &#39;SCRIPT_NAME&#39;: u&#39;&#39;,
+ &#39;SERVER_NAME&#39;: &#39;localhost&#39;,
+ &#39;SERVER_PORT&#39;: &#39;18000&#39;,
+ &#39;SERVER_PROTOCOL&#39;: &#39;HTTP/1.1&#39;,
+ &#39;SERVER_SOFTWARE&#39;: &#39;WSGIServer/0.1 Python/2.7.2&#39;,
+ &#39;SESSIONNAME&#39;: &#39;Console&#39;,
+ &#39;SYSTEMDRIVE&#39;: &#39;C:&#39;,
+ &#39;SYSTEMROOT&#39;: &#39;C:\\WINDOWS&#39;,
+ &#39;TEMP&#39;: &#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;,
+ &#39;TMP&#39;: &#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;,
+ &#39;UATDATA&#39;: &#39;C:\\WINDOWS\\system32\\CCM\\UATData\\D9F8C395-CAB8-491d-B8AC-179A1FE1BE77&#39;,
+ &#39;USERDNSDOMAIN&#39;: &#39;CTG.COM&#39;,
+ &#39;USERDOMAIN&#39;: &#39;CTG&#39;,
+ &#39;USERNAME&#39;: &#39;slott&#39;,
+ &#39;USERPROFILE&#39;: &#39;C:\\Documents and Settings\\slott&#39;,
+ &#39;WINDIR&#39;: &#39;C:\\WINDOWS&#39;,
+ &#39;wsgi.errors&#39;: &lt;open file &#39;&lt;stderr&gt;&#39;, mode &#39;w&#39; at 0x00A550D0&gt;,
+ &#39;wsgi.file_wrapper&#39;: &lt;class &#39;django.core.servers.basehttp.FileWrapper&#39;&gt;,
+ &#39;wsgi.input&#39;: &lt;socket._fileobject object at 0x0185C0F0&gt;,
+ &#39;wsgi.multiprocess&#39;: False,
+ &#39;wsgi.multithread&#39;: True,
+ &#39;wsgi.run_once&#39;: False,
+ &#39;wsgi.url_scheme&#39;: &#39;http&#39;,
+ &#39;wsgi.version&#39;: (1, 0)}&gt;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>view_func</td>
+                    <td class="code"><pre>&lt;function load at 0x0172F430&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>kwargs</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        <li class="frame">
+          <code>C:\Python27\lib\site-packages\django-1.3.1-py2.7.egg\django\views\decorators\csrf.py</code> in <code>wrapped_view</code>
+
+          
+            <div class="context" id="c24336144">
+              
+                <ol start="45" class="pre-context" id="pre24336144"><li onclick="toggle('pre24336144', 'post24336144')"><pre>    &quot;&quot;&quot;</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    Marks a view function as being exempt from CSRF view protection.</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    &quot;&quot;&quot;</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    # We could just do view_func.csrf_exempt = True, but decorators</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    # are nicer if they don&#39;t have side-effects, so we return a new</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    # function.</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    def wrapped_view(*args, **kwargs):</pre></li></ol>
+              
+              <ol start="52" class="context-line"><li onclick="toggle('pre24336144', 'post24336144')"><pre>        return view_func(*args, **kwargs)</pre> <span>...</span></li></ol>
+              
+                <ol start='53' class="post-context" id="post24336144"><li onclick="toggle('pre24336144', 'post24336144')"><pre>    wrapped_view.csrf_exempt = True</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    return wraps(view_func, assigned=available_attrs(view_func))(wrapped_view)</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre></pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>def csrf_exempt(view_func):</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    &quot;&quot;&quot;</pre></li><li onclick="toggle('pre24336144', 'post24336144')"><pre>    Marks a view function as being exempt from the CSRF checks</pre></li></ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '24336144')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v24336144">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>args</td>
+                    <td class="code"><pre>(&lt;WSGIRequest
+GET:&lt;QueryDict: {}&gt;,
+POST:&lt;QueryDict: {u&#39;claim&#39;: [u&#39;ISA*00* *00* *ZZ*123456789 *30*41-1674742 *060209*0826*U*00401*000000002*0*P*:~GS*HC*123456789*41-1674742*20060209*0826*2*X*004010X098A1~ST*837*0001~BHT*0019*00*180*20060209*0826*CH~REF*87*004010X098A1~NM1*41*2*Brisbane Schools*****46*567891234~PER*IC*Some Contact*TE*5551231234~NM1*40*2*MN Department of Human Services*****46*41-1674742~HL*1**20*1~NM1*85*2*Brisbane Schools*****24*12-3456789~N3*101 Brisbane Lane~N4*Brisbane*MN*561641234~REF*1D*123456789~HL*2*1*22*0~SBR*S*18*******MC~NM1*IL*1*Student*Some****MI*12345678~N3*109 Plum Street~N4*Somewherein*MN.*56123~DMG*D8*19950505*M~NM1*PR*2*MN Department of Human Services*****PI*41-1674742~CLM*0777-0777-12345678*32.73***03::1*Y*A*Y*Y*C~LX*1~SV1*HC:T1018:U1*10.63*UN*1~DTP*472*D8*20060102~LX*2~SV1*HC:T1018:U8*22.1*UN*10~DTP*472*D8*20060102~SE*26*0001~GE*1*2~IEA*1*000000002~&#39;], u&#39;claim_id&#39;: [u&#39;22559311&#39;], u&#39;properties&#39;: [u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;], u&#39;constraints&#39;: [u&quot;{&#39;GENDER&#39;: &#39;U&#39;, &#39;AGE-FROM&#39;: &#39;0&#39;, &#39;AGE-TO&#39;: &#39;125&#39;}&quot;]}&gt;,
+COOKIES:{},
+META:{&#39;ALLUSERSPROFILE&#39;: &#39;C:\\Documents and Settings\\All Users&#39;,
+ &#39;APPDATA&#39;: &#39;C:\\Documents and Settings\\slott\\Application Data&#39;,
+ &#39;COMMONPROGRAMFILES&#39;: &#39;C:\\Program Files\\Common Files&#39;,
+ &#39;COMPUTERNAME&#39;: &#39;1YZ55G1JE&#39;,
+ &#39;COMSPEC&#39;: &#39;C:\\WINDOWS\\system32\\cmd.exe&#39;,
+ &#39;CONTENT_LENGTH&#39;: &#39;1485&#39;,
+ &#39;CONTENT_TYPE&#39;: &#39;text/plain&#39;,
+ &#39;CSRF_COOKIE&#39;: &#39;2cd60e887ecd138260851c1cb3801f46&#39;,
+ &#39;DJANGO_SETTINGS_MODULE&#39;: &#39;web.settings&#39;,
+ &#39;FP_NO_HOST_CHECK&#39;: &#39;NO&#39;,
+ &#39;GATEWAY_INTERFACE&#39;: &#39;CGI/1.1&#39;,
+ &#39;HOMEDRIVE&#39;: &#39;C:&#39;,
+ &#39;HOMEPATH&#39;: &#39;\\Documents and Settings\\slott&#39;,
+ &#39;HTTP_ACCEPT_ENCODING&#39;: &#39;identity&#39;,
+ &#39;HTTP_AUTHORIZATION&#39;: &#39;BASIC YWRtaW46YWRtaW4=&#39;,
+ &#39;HTTP_HOST&#39;: &#39;localhost:18000&#39;,
+ &#39;LOGONSERVER&#39;: &#39;\\\\BUF-DC1&#39;,
+ &#39;NUMBER_OF_PROCESSORS&#39;: &#39;2&#39;,
+ &#39;OS&#39;: &#39;Windows_NT&#39;,
+ &#39;PATH&#39;: &#39;C:\\Program Files\\ActiveState Komodo Edit 6\\lib\\mozilla;C:\\Program Files\\ActiveState Komodo Edit 6\\;C:\\Program Files\\Common Files\\Microsoft Shared\\Windows Live;C:\\Program Files\\MiKTeX 2.8\\miktex\\bin;C:\\Program Files\\ActiveState Komodo Edit 5\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\PROGRA~1\\IBM\\CLIENT~1;C:\\PROGRA~1\\IBM\\CLIENT~1\\Shared;C:\\PROGRA~1\\IBM\\CLIENT~1\\Emulator;C:\\Program Files\\Common Files\\Roxio Shared\\DLLShared\\;C:\\Program Files\\SlikSvn\\bin\\;C:\\Python27;C:\\Python27\\Scripts;c:\\Sun\\SDK\\JDK\\bin;C:\\MinGW\\bin;;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Windows Imaging\\;C:\\MinGW\\bin;C:\\Program Files\\VMware\\VMware VIX;C:\\Program Files\\SQLite ODBC Driver;C:\\Program Files\\TortoiseSVN\\bin;C:\\Sun\\SDK\\bin&#39;,
+ &#39;PATHEXT&#39;: &#39;.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.PSC1&#39;,
+ &#39;PATH_INFO&#39;: u&#39;/claim/load/&#39;,
+ &#39;PROCESSOR_ARCHITECTURE&#39;: &#39;x86&#39;,
+ &#39;PROCESSOR_IDENTIFIER&#39;: &#39;x86 Family 6 Model 23 Stepping 6, GenuineIntel&#39;,
+ &#39;PROCESSOR_LEVEL&#39;: &#39;6&#39;,
+ &#39;PROCESSOR_REVISION&#39;: &#39;1706&#39;,
+ &#39;PROGRAMFILES&#39;: &#39;C:\\Program Files&#39;,
+ &#39;PROMPT&#39;: &#39;$P$G&#39;,
+ &#39;PSMODULEPATH&#39;: &#39;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules\\&#39;,
+ &#39;PYTHONPATH&#39;: &#39;F:\\Tiger&#39;,
+ &#39;QUERY_STRING&#39;: &#39;&#39;,
+ &#39;REMOTE_ADDR&#39;: &#39;127.0.0.1&#39;,
+ &#39;REMOTE_HOST&#39;: &#39;&#39;,
+ &#39;REQUEST_METHOD&#39;: &#39;POST&#39;,
+ &#39;ROXIOCENTRAL&#39;: &#39;C:\\Program Files\\Common Files\\Roxio Shared\\9.0\\Roxio Central33\\&#39;,
+ &#39;SCRIPT_NAME&#39;: u&#39;&#39;,
+ &#39;SERVER_NAME&#39;: &#39;localhost&#39;,
+ &#39;SERVER_PORT&#39;: &#39;18000&#39;,
+ &#39;SERVER_PROTOCOL&#39;: &#39;HTTP/1.1&#39;,
+ &#39;SERVER_SOFTWARE&#39;: &#39;WSGIServer/0.1 Python/2.7.2&#39;,
+ &#39;SESSIONNAME&#39;: &#39;Console&#39;,
+ &#39;SYSTEMDRIVE&#39;: &#39;C:&#39;,
+ &#39;SYSTEMROOT&#39;: &#39;C:\\WINDOWS&#39;,
+ &#39;TEMP&#39;: &#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;,
+ &#39;TMP&#39;: &#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;,
+ &#39;UATDATA&#39;: &#39;C:\\WINDOWS\\system32\\CCM\\UATData\\D9F8C395-CAB8-491d-B8AC-179A1FE1BE77&#39;,
+ &#39;USERDNSDOMAIN&#39;: &#39;CTG.COM&#39;,
+ &#39;USERDOMAIN&#39;: &#39;CTG&#39;,
+ &#39;USERNAME&#39;: &#39;slott&#39;,
+ &#39;USERPROFILE&#39;: &#39;C:\\Documents and Settings\\slott&#39;,
+ &#39;WINDIR&#39;: &#39;C:\\WINDOWS&#39;,
+ &#39;wsgi.errors&#39;: &lt;open file &#39;&lt;stderr&gt;&#39;, mode &#39;w&#39; at 0x00A550D0&gt;,
+ &#39;wsgi.file_wrapper&#39;: &lt;class &#39;django.core.servers.basehttp.FileWrapper&#39;&gt;,
+ &#39;wsgi.input&#39;: &lt;socket._fileobject object at 0x0185C0F0&gt;,
+ &#39;wsgi.multiprocess&#39;: False,
+ &#39;wsgi.multithread&#39;: True,
+ &#39;wsgi.run_once&#39;: False,
+ &#39;wsgi.url_scheme&#39;: &#39;http&#39;,
+ &#39;wsgi.version&#39;: (1, 0)}&gt;,)</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>view_func</td>
+                    <td class="code"><pre>&lt;function load at 0x0172F3F0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>kwargs</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        <li class="frame">
+          <code>web\claims\views.py</code> in <code>load</code>
+
+          
+            <div class="context" id="c24336104">
+              
+                <ol start="23" class="pre-context" id="pre24336104"><li onclick="toggle('pre24336104', 'post24336104')"><pre>    &quot;&quot;&quot;POST request with claim, claimID, properties, constraints.</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>    Use the generic &quot;claims&quot; model.</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>    &quot;&quot;&quot;</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>    if request.method == &#39;POST&#39;:</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>        claim= request.POST[&#39;claim&#39;]</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>        claim_id= request.POST[&#39;claim_id&#39;]</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>        prop_json= request.POST.get(&#39;properties&#39;,{})</pre></li></ol>
+              
+              <ol start="30" class="context-line"><li onclick="toggle('pre24336104', 'post24336104')"><pre>        properties= json.loads( prop_json )</pre> <span>...</span></li></ol>
+              
+                <ol start='31' class="post-context" id="post24336104"><li onclick="toggle('pre24336104', 'post24336104')"><pre>        cons_json= request.POST.get(&#39;constraints&#39;,{})</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>        constraints= json.loads( cons_json )</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>        try:</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>            loader= Loader(parser) # Could be a different configuration</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>            msg= loader.load( claim, claim_id, properties, constraints )</pre></li><li onclick="toggle('pre24336104', 'post24336104')"><pre>            response= {&#39;claim&#39;: msg.marshall(), &#39;claim_id&#39;:msg.name,</pre></li></ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '24336104')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v24336104">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>request</td>
+                    <td class="code"><pre>&lt;WSGIRequest
+GET:&lt;QueryDict: {}&gt;,
+POST:&lt;QueryDict: {u&#39;claim&#39;: [u&#39;ISA*00* *00* *ZZ*123456789 *30*41-1674742 *060209*0826*U*00401*000000002*0*P*:~GS*HC*123456789*41-1674742*20060209*0826*2*X*004010X098A1~ST*837*0001~BHT*0019*00*180*20060209*0826*CH~REF*87*004010X098A1~NM1*41*2*Brisbane Schools*****46*567891234~PER*IC*Some Contact*TE*5551231234~NM1*40*2*MN Department of Human Services*****46*41-1674742~HL*1**20*1~NM1*85*2*Brisbane Schools*****24*12-3456789~N3*101 Brisbane Lane~N4*Brisbane*MN*561641234~REF*1D*123456789~HL*2*1*22*0~SBR*S*18*******MC~NM1*IL*1*Student*Some****MI*12345678~N3*109 Plum Street~N4*Somewherein*MN.*56123~DMG*D8*19950505*M~NM1*PR*2*MN Department of Human Services*****PI*41-1674742~CLM*0777-0777-12345678*32.73***03::1*Y*A*Y*Y*C~LX*1~SV1*HC:T1018:U1*10.63*UN*1~DTP*472*D8*20060102~LX*2~SV1*HC:T1018:U8*22.1*UN*10~DTP*472*D8*20060102~SE*26*0001~GE*1*2~IEA*1*000000002~&#39;], u&#39;claim_id&#39;: [u&#39;22559311&#39;], u&#39;properties&#39;: [u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;], u&#39;constraints&#39;: [u&quot;{&#39;GENDER&#39;: &#39;U&#39;, &#39;AGE-FROM&#39;: &#39;0&#39;, &#39;AGE-TO&#39;: &#39;125&#39;}&quot;]}&gt;,
+COOKIES:{},
+META:{&#39;ALLUSERSPROFILE&#39;: &#39;C:\\Documents and Settings\\All Users&#39;,
+ &#39;APPDATA&#39;: &#39;C:\\Documents and Settings\\slott\\Application Data&#39;,
+ &#39;COMMONPROGRAMFILES&#39;: &#39;C:\\Program Files\\Common Files&#39;,
+ &#39;COMPUTERNAME&#39;: &#39;1YZ55G1JE&#39;,
+ &#39;COMSPEC&#39;: &#39;C:\\WINDOWS\\system32\\cmd.exe&#39;,
+ &#39;CONTENT_LENGTH&#39;: &#39;1485&#39;,
+ &#39;CONTENT_TYPE&#39;: &#39;text/plain&#39;,
+ &#39;CSRF_COOKIE&#39;: &#39;2cd60e887ecd138260851c1cb3801f46&#39;,
+ &#39;DJANGO_SETTINGS_MODULE&#39;: &#39;web.settings&#39;,
+ &#39;FP_NO_HOST_CHECK&#39;: &#39;NO&#39;,
+ &#39;GATEWAY_INTERFACE&#39;: &#39;CGI/1.1&#39;,
+ &#39;HOMEDRIVE&#39;: &#39;C:&#39;,
+ &#39;HOMEPATH&#39;: &#39;\\Documents and Settings\\slott&#39;,
+ &#39;HTTP_ACCEPT_ENCODING&#39;: &#39;identity&#39;,
+ &#39;HTTP_AUTHORIZATION&#39;: &#39;BASIC YWRtaW46YWRtaW4=&#39;,
+ &#39;HTTP_HOST&#39;: &#39;localhost:18000&#39;,
+ &#39;LOGONSERVER&#39;: &#39;\\\\BUF-DC1&#39;,
+ &#39;NUMBER_OF_PROCESSORS&#39;: &#39;2&#39;,
+ &#39;OS&#39;: &#39;Windows_NT&#39;,
+ &#39;PATH&#39;: &#39;C:\\Program Files\\ActiveState Komodo Edit 6\\lib\\mozilla;C:\\Program Files\\ActiveState Komodo Edit 6\\;C:\\Program Files\\Common Files\\Microsoft Shared\\Windows Live;C:\\Program Files\\MiKTeX 2.8\\miktex\\bin;C:\\Program Files\\ActiveState Komodo Edit 5\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\PROGRA~1\\IBM\\CLIENT~1;C:\\PROGRA~1\\IBM\\CLIENT~1\\Shared;C:\\PROGRA~1\\IBM\\CLIENT~1\\Emulator;C:\\Program Files\\Common Files\\Roxio Shared\\DLLShared\\;C:\\Program Files\\SlikSvn\\bin\\;C:\\Python27;C:\\Python27\\Scripts;c:\\Sun\\SDK\\JDK\\bin;C:\\MinGW\\bin;;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Windows Imaging\\;C:\\MinGW\\bin;C:\\Program Files\\VMware\\VMware VIX;C:\\Program Files\\SQLite ODBC Driver;C:\\Program Files\\TortoiseSVN\\bin;C:\\Sun\\SDK\\bin&#39;,
+ &#39;PATHEXT&#39;: &#39;.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.PSC1&#39;,
+ &#39;PATH_INFO&#39;: u&#39;/claim/load/&#39;,
+ &#39;PROCESSOR_ARCHITECTURE&#39;: &#39;x86&#39;,
+ &#39;PROCESSOR_IDENTIFIER&#39;: &#39;x86 Family 6 Model 23 Stepping 6, GenuineIntel&#39;,
+ &#39;PROCESSOR_LEVEL&#39;: &#39;6&#39;,
+ &#39;PROCESSOR_REVISION&#39;: &#39;1706&#39;,
+ &#39;PROGRAMFILES&#39;: &#39;C:\\Program Files&#39;,
+ &#39;PROMPT&#39;: &#39;$P$G&#39;,
+ &#39;PSMODULEPATH&#39;: &#39;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules\\&#39;,
+ &#39;PYTHONPATH&#39;: &#39;F:\\Tiger&#39;,
+ &#39;QUERY_STRING&#39;: &#39;&#39;,
+ &#39;REMOTE_ADDR&#39;: &#39;127.0.0.1&#39;,
+ &#39;REMOTE_HOST&#39;: &#39;&#39;,
+ &#39;REQUEST_METHOD&#39;: &#39;POST&#39;,
+ &#39;ROXIOCENTRAL&#39;: &#39;C:\\Program Files\\Common Files\\Roxio Shared\\9.0\\Roxio Central33\\&#39;,
+ &#39;SCRIPT_NAME&#39;: u&#39;&#39;,
+ &#39;SERVER_NAME&#39;: &#39;localhost&#39;,
+ &#39;SERVER_PORT&#39;: &#39;18000&#39;,
+ &#39;SERVER_PROTOCOL&#39;: &#39;HTTP/1.1&#39;,
+ &#39;SERVER_SOFTWARE&#39;: &#39;WSGIServer/0.1 Python/2.7.2&#39;,
+ &#39;SESSIONNAME&#39;: &#39;Console&#39;,
+ &#39;SYSTEMDRIVE&#39;: &#39;C:&#39;,
+ &#39;SYSTEMROOT&#39;: &#39;C:\\WINDOWS&#39;,
+ &#39;TEMP&#39;: &#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;,
+ &#39;TMP&#39;: &#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;,
+ &#39;UATDATA&#39;: &#39;C:\\WINDOWS\\system32\\CCM\\UATData\\D9F8C395-CAB8-491d-B8AC-179A1FE1BE77&#39;,
+ &#39;USERDNSDOMAIN&#39;: &#39;CTG.COM&#39;,
+ &#39;USERDOMAIN&#39;: &#39;CTG&#39;,
+ &#39;USERNAME&#39;: &#39;slott&#39;,
+ &#39;USERPROFILE&#39;: &#39;C:\\Documents and Settings\\slott&#39;,
+ &#39;WINDIR&#39;: &#39;C:\\WINDOWS&#39;,
+ &#39;wsgi.errors&#39;: &lt;open file &#39;&lt;stderr&gt;&#39;, mode &#39;w&#39; at 0x00A550D0&gt;,
+ &#39;wsgi.file_wrapper&#39;: &lt;class &#39;django.core.servers.basehttp.FileWrapper&#39;&gt;,
+ &#39;wsgi.input&#39;: &lt;socket._fileobject object at 0x0185C0F0&gt;,
+ &#39;wsgi.multiprocess&#39;: False,
+ &#39;wsgi.multithread&#39;: True,
+ &#39;wsgi.run_once&#39;: False,
+ &#39;wsgi.url_scheme&#39;: &#39;http&#39;,
+ &#39;wsgi.version&#39;: (1, 0)}&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>claim</td>
+                    <td class="code"><pre>u&#39;ISA*00* *00* *ZZ*123456789 *30*41-1674742 *060209*0826*U*00401*000000002*0*P*:~GS*HC*123456789*41-1674742*20060209*0826*2*X*004010X098A1~ST*837*0001~BHT*0019*00*180*20060209*0826*CH~REF*87*004010X098A1~NM1*41*2*Brisbane Schools*****46*567891234~PER*IC*Some Contact*TE*5551231234~NM1*40*2*MN Department of Human Services*****46*41-1674742~HL*1**20*1~NM1*85*2*Brisbane Schools*****24*12-3456789~N3*101 Brisbane Lane~N4*Brisbane*MN*561641234~REF*1D*123456789~HL*2*1*22*0~SBR*S*18*******MC~NM1*IL*1*Student*Some****MI*12345678~N3*109 Plum Street~N4*Somewherein*MN.*56123~DMG*D8*19950505*M~NM1*PR*2*MN Department of Human Services*****PI*41-1674742~CLM*0777-0777-12345678*32.73***03::1*Y*A*Y*Y*C~LX*1~SV1*HC:T1018:U1*10.63*UN*1~DTP*472*D8*20060102~LX*2~SV1*HC:T1018:U8*22.1*UN*10~DTP*472*D8*20060102~SE*26*0001~GE*1*2~IEA*1*000000002~&#39;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>claim_id</td>
+                    <td class="code"><pre>u&#39;22559311&#39;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>prop_json</td>
+                    <td class="code"><pre>u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        <li class="frame">
+          <code>C:\Python27\lib\json\__init__.py</code> in <code>loads</code>
+
+          
+            <div class="context" id="c24336064">
+              
+                <ol start="319" class="pre-context" id="pre24336064"><li onclick="toggle('pre24336064', 'post24336064')"><pre>    To use a custom ``JSONDecoder`` subclass, specify it with the ``cls``</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>    kwarg; otherwise ``JSONDecoder`` is used.</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre></pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>    &quot;&quot;&quot;</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>    if (cls is None and encoding is None and object_hook is None and</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>            parse_int is None and parse_float is None and</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>            parse_constant is None and object_pairs_hook is None and not kw):</pre></li></ol>
+              
+              <ol start="326" class="context-line"><li onclick="toggle('pre24336064', 'post24336064')"><pre>        return _default_decoder.decode(s)</pre> <span>...</span></li></ol>
+              
+                <ol start='327' class="post-context" id="post24336064"><li onclick="toggle('pre24336064', 'post24336064')"><pre>    if cls is None:</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>        cls = JSONDecoder</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>    if object_hook is not None:</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>        kw[&#39;object_hook&#39;] = object_hook</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>    if object_pairs_hook is not None:</pre></li><li onclick="toggle('pre24336064', 'post24336064')"><pre>        kw[&#39;object_pairs_hook&#39;] = object_pairs_hook</pre></li></ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '24336064')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v24336064">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>parse_int</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>parse_float</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>object_hook</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>encoding</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>parse_constant</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>s</td>
+                    <td class="code"><pre>u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>kw</td>
+                    <td class="code"><pre>{}</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>object_pairs_hook</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>cls</td>
+                    <td class="code"><pre>None</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        <li class="frame">
+          <code>C:\Python27\lib\json\decoder.py</code> in <code>decode</code>
+
+          
+            <div class="context" id="c24334984">
+              
+                <ol start="359" class="pre-context" id="pre24334984"><li onclick="toggle('pre24334984', 'post24334984')"><pre>        self.scan_once = scanner.make_scanner(self)</pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre></pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre>    def decode(self, s, _w=WHITESPACE.match):</pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre>        &quot;&quot;&quot;Return the Python representation of ``s`` (a ``str`` or ``unicode``</pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre>        instance containing a JSON document)</pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre></pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre>        &quot;&quot;&quot;</pre></li></ol>
+              
+              <ol start="366" class="context-line"><li onclick="toggle('pre24334984', 'post24334984')"><pre>        obj, end = self.raw_decode(s, idx=_w(s, 0).end())</pre> <span>...</span></li></ol>
+              
+                <ol start='367' class="post-context" id="post24334984"><li onclick="toggle('pre24334984', 'post24334984')"><pre>        end = _w(s, end).end()</pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre>        if end != len(s):</pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre>            raise ValueError(errmsg(&quot;Extra data&quot;, s, end, len(s)))</pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre>        return obj</pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre></pre></li><li onclick="toggle('pre24334984', 'post24334984')"><pre>    def raw_decode(self, s, idx=0):</pre></li></ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '24334984')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v24334984">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>_w</td>
+                    <td class="code"><pre>&lt;built-in method match of _sre.SRE_Pattern object at 0x017DE5C0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>s</td>
+                    <td class="code"><pre>u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;json.decoder.JSONDecoder object at 0x017FE6F0&gt;</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+        <li class="frame">
+          <code>C:\Python27\lib\json\decoder.py</code> in <code>raw_decode</code>
+
+          
+            <div class="context" id="c24335064">
+              
+                <ol start="375" class="pre-context" id="pre24335064"><li onclick="toggle('pre24335064', 'post24335064')"><pre>        representation and the index in ``s`` where the document ended.</pre></li><li onclick="toggle('pre24335064', 'post24335064')"><pre></pre></li><li onclick="toggle('pre24335064', 'post24335064')"><pre>        This can be used to decode a JSON document from a string that may</pre></li><li onclick="toggle('pre24335064', 'post24335064')"><pre>        have extraneous data at the end.</pre></li><li onclick="toggle('pre24335064', 'post24335064')"><pre></pre></li><li onclick="toggle('pre24335064', 'post24335064')"><pre>        &quot;&quot;&quot;</pre></li><li onclick="toggle('pre24335064', 'post24335064')"><pre>        try:</pre></li></ol>
+              
+              <ol start="382" class="context-line"><li onclick="toggle('pre24335064', 'post24335064')"><pre>            obj, end = self.scan_once(s, idx)</pre> <span>...</span></li></ol>
+              
+                <ol start='383' class="post-context" id="post24335064"><li onclick="toggle('pre24335064', 'post24335064')"><pre>        except StopIteration:</pre></li><li onclick="toggle('pre24335064', 'post24335064')"><pre>            raise ValueError(&quot;No JSON object could be decoded&quot;)</pre></li><li onclick="toggle('pre24335064', 'post24335064')"><pre>        return obj, end</pre></li></ol>
+              
+            </div>
+          
+
+          
+            <div class="commands">
+                
+                    <a href="#" onclick="return varToggle(this, '24335064')"><span>&#x25b6;</span> Local vars</a>
+                
+            </div>
+            <table class="vars" id="v24335064">
+              <thead>
+                <tr>
+                  <th>Variable</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                
+                  <tr>
+                    <td>s</td>
+                    <td class="code"><pre>u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>self</td>
+                    <td class="code"><pre>&lt;json.decoder.JSONDecoder object at 0x017FE6F0&gt;</pre></td>
+                  </tr>
+                
+                  <tr>
+                    <td>idx</td>
+                    <td class="code"><pre>0</pre></td>
+                  </tr>
+                
+              </tbody>
+            </table>
+          
+        </li>
+      
+    </ul>
+  </div>
+  
+  <form action="http://dpaste.com/" name="pasteform" id="pasteform" method="post">
+
+  <div id="pastebinTraceback" class="pastebin">
+    <input type="hidden" name="language" value="PythonConsole">
+    <input type="hidden" name="title" value="ValueError at /claim/load/">
+    <input type="hidden" name="source" value="Django Dpaste Agent">
+    <input type="hidden" name="poster" value="Django">
+    <textarea name="content" id="traceback_area" cols="140" rows="25">
+Environment:
+
+
+Request Method: POST
+Request URL: http://localhost:18000/claim/load/
+
+Django Version: 1.3.1
+Python Version: 2.7.2
+Installed Applications:
+[&#39;django.contrib.admin&#39;,
+ &#39;django.contrib.auth&#39;,
+ &#39;django.contrib.contenttypes&#39;,
+ &#39;django.contrib.messages&#39;,
+ &#39;django.contrib.sessions&#39;,
+ &#39;django.contrib.sites&#39;,
+ &#39;web.claims&#39;,
+ &#39;web.claims_837&#39;]
+Installed Middleware:
+(&#39;web.middleware.FlushLog&#39;,
+ &#39;django.middleware.common.CommonMiddleware&#39;,
+ &#39;django.contrib.sessions.middleware.SessionMiddleware&#39;,
+ &#39;django.middleware.csrf.CsrfViewMiddleware&#39;,
+ &#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;,
+ &#39;django.contrib.messages.middleware.MessageMiddleware&#39;)
+
+
+Traceback:
+File "C:\Python27\lib\site-packages\django-1.3.1-py2.7.egg\django\core\handlers\base.py" in get_response
+  111.                         response = callback(request, *callback_args, **callback_kwargs)
+File "C:\Python27\lib\site-packages\django-1.3.1-py2.7.egg\django\views\decorators\csrf.py" in wrapped_view
+  39.         resp = view_func(*args, **kwargs)
+File "C:\Python27\lib\site-packages\django-1.3.1-py2.7.egg\django\views\decorators\csrf.py" in wrapped_view
+  52.         return view_func(*args, **kwargs)
+File "web\claims\views.py" in load
+  30.         properties= json.loads( prop_json )
+File "C:\Python27\lib\json\__init__.py" in loads
+  326.         return _default_decoder.decode(s)
+File "C:\Python27\lib\json\decoder.py" in decode
+  366.         obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+File "C:\Python27\lib\json\decoder.py" in raw_decode
+  382.             obj, end = self.scan_once(s, idx)
+
+Exception Type: ValueError at /claim/load/
+Exception Value: Expecting property name: line 1 column 1 (char 1)
+</textarea>
+  <br><br>
+  <input type="submit" value="Share this traceback on a public Web site">
+  </div>
+</form>
+</div>
+
+
+
+<div id="requestinfo">
+  <h2>Request information</h2>
+
+
+  <h3 id="get-info">GET</h3>
+  
+    <p>No GET data</p>
+  
+
+  <h3 id="post-info">POST</h3>
+  
+    <table class="req">
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td>claim</td>
+            <td class="code"><pre>u&#39;ISA*00* *00* *ZZ*123456789 *30*41-1674742 *060209*0826*U*00401*000000002*0*P*:~GS*HC*123456789*41-1674742*20060209*0826*2*X*004010X098A1~ST*837*0001~BHT*0019*00*180*20060209*0826*CH~REF*87*004010X098A1~NM1*41*2*Brisbane Schools*****46*567891234~PER*IC*Some Contact*TE*5551231234~NM1*40*2*MN Department of Human Services*****46*41-1674742~HL*1**20*1~NM1*85*2*Brisbane Schools*****24*12-3456789~N3*101 Brisbane Lane~N4*Brisbane*MN*561641234~REF*1D*123456789~HL*2*1*22*0~SBR*S*18*******MC~NM1*IL*1*Student*Some****MI*12345678~N3*109 Plum Street~N4*Somewherein*MN.*56123~DMG*D8*19950505*M~NM1*PR*2*MN Department of Human Services*****PI*41-1674742~CLM*0777-0777-12345678*32.73***03::1*Y*A*Y*Y*C~LX*1~SV1*HC:T1018:U1*10.63*UN*1~DTP*472*D8*20060102~LX*2~SV1*HC:T1018:U8*22.1*UN*10~DTP*472*D8*20060102~SE*26*0001~GE*1*2~IEA*1*000000002~&#39;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>claim_id</td>
+            <td class="code"><pre>u&#39;22559311&#39;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>properties</td>
+            <td class="code"><pre>u&quot;{&#39;BENEFIT&#39;: &#39;CHRC&#39;, &#39;TYPE-OF-SERVICE&#39;: &#39;CI&#39;, &#39;TYPE&#39;: &#39;P&#39;, &#39;LOCATION&#39;: &#39;ALB&#39;, &#39;SECONDARY&#39;: &#39;M&#39;}&quot;</pre></td>
+          </tr>
+        
+          <tr>
+            <td>constraints</td>
+            <td class="code"><pre>u&quot;{&#39;GENDER&#39;: &#39;U&#39;, &#39;AGE-FROM&#39;: &#39;0&#39;, &#39;AGE-TO&#39;: &#39;125&#39;}&quot;</pre></td>
+          </tr>
+        
+      </tbody>
+    </table>
+  
+  <h3 id="files-info">FILES</h3>
+  
+    <p>No FILES data</p>
+  
+
+
+  <h3 id="cookie-info">COOKIES</h3>
+  
+    <p>No cookie data</p>
+  
+
+  <h3 id="meta-info">META</h3>
+  <table class="req">
+    <thead>
+      <tr>
+        <th>Variable</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td>TMP</td>
+          <td class="code"><pre>&#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_AUTHORIZATION</td>
+          <td class="code"><pre>&#39;BASIC YWRtaW46YWRtaW4=&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMPUTERNAME</td>
+          <td class="code"><pre>&#39;1YZ55G1JE&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.multiprocess</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USERDOMAIN</td>
+          <td class="code"><pre>&#39;CTG&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_PROTOCOL</td>
+          <td class="code"><pre>&#39;HTTP/1.1&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_SOFTWARE</td>
+          <td class="code"><pre>&#39;WSGIServer/0.1 Python/2.7.2&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PSMODULEPATH</td>
+          <td class="code"><pre>&#39;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0\\Modules\\&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SCRIPT_NAME</td>
+          <td class="code"><pre>u&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMMONPROGRAMFILES</td>
+          <td class="code"><pre>&#39;C:\\Program Files\\Common Files&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PROCESSOR_IDENTIFIER</td>
+          <td class="code"><pre>&#39;x86 Family 6 Model 23 Stepping 6, GenuineIntel&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REQUEST_METHOD</td>
+          <td class="code"><pre>&#39;POST&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PROGRAMFILES</td>
+          <td class="code"><pre>&#39;C:\\Program Files&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PROCESSOR_REVISION</td>
+          <td class="code"><pre>&#39;1706&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PATH</td>
+          <td class="code"><pre>&#39;C:\\Program Files\\ActiveState Komodo Edit 6\\lib\\mozilla;C:\\Program Files\\ActiveState Komodo Edit 6\\;C:\\Program Files\\Common Files\\Microsoft Shared\\Windows Live;C:\\Program Files\\MiKTeX 2.8\\miktex\\bin;C:\\Program Files\\ActiveState Komodo Edit 5\\;C:\\WINDOWS\\system32;C:\\WINDOWS;C:\\WINDOWS\\System32\\Wbem;C:\\PROGRA~1\\IBM\\CLIENT~1;C:\\PROGRA~1\\IBM\\CLIENT~1\\Shared;C:\\PROGRA~1\\IBM\\CLIENT~1\\Emulator;C:\\Program Files\\Common Files\\Roxio Shared\\DLLShared\\;C:\\Program Files\\SlikSvn\\bin\\;C:\\Python27;C:\\Python27\\Scripts;c:\\Sun\\SDK\\JDK\\bin;C:\\MinGW\\bin;;C:\\WINDOWS\\system32\\WindowsPowerShell\\v1.0;C:\\Program Files\\Windows Imaging\\;C:\\MinGW\\bin;C:\\Program Files\\VMware\\VMware VIX;C:\\Program Files\\SQLite ODBC Driver;C:\\Program Files\\TortoiseSVN\\bin;C:\\Sun\\SDK\\bin&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>QUERY_STRING</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SYSTEMROOT</td>
+          <td class="code"><pre>&#39;C:\\WINDOWS&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ROXIOCENTRAL</td>
+          <td class="code"><pre>&#39;C:\\Program Files\\Common Files\\Roxio Shared\\9.0\\Roxio Central33\\&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.errors</td>
+          <td class="code"><pre>&lt;open file &#39;&lt;stderr&gt;&#39;, mode &#39;w&#39; at 0x00A550D0&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONTENT_LENGTH</td>
+          <td class="code"><pre>&#39;1485&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DJANGO_SETTINGS_MODULE</td>
+          <td class="code"><pre>&#39;web.settings&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMP</td>
+          <td class="code"><pre>&#39;C:\\DOCUME~1\\slott\\LOCALS~1\\Temp&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REMOTE_ADDR</td>
+          <td class="code"><pre>&#39;127.0.0.1&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PROCESSOR_ARCHITECTURE</td>
+          <td class="code"><pre>&#39;x86&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.url_scheme</td>
+          <td class="code"><pre>&#39;http&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ALLUSERSPROFILE</td>
+          <td class="code"><pre>&#39;C:\\Documents and Settings\\All Users&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_PORT</td>
+          <td class="code"><pre>&#39;18000&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSIONNAME</td>
+          <td class="code"><pre>&#39;Console&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HOMEPATH</td>
+          <td class="code"><pre>&#39;\\Documents and Settings\\slott&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>UATDATA</td>
+          <td class="code"><pre>&#39;C:\\WINDOWS\\system32\\CCM\\UATData\\D9F8C395-CAB8-491d-B8AC-179A1FE1BE77&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USERNAME</td>
+          <td class="code"><pre>&#39;slott&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGONSERVER</td>
+          <td class="code"><pre>&#39;\\\\BUF-DC1&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PROMPT</td>
+          <td class="code"><pre>&#39;$P$G&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMSPEC</td>
+          <td class="code"><pre>&#39;C:\\WINDOWS\\system32\\cmd.exe&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PYTHONPATH</td>
+          <td class="code"><pre>&#39;F:\\Tiger&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE</td>
+          <td class="code"><pre>&#39;2cd60e887ecd138260851c1cb3801f46&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.input</td>
+          <td class="code"><pre>&lt;socket._fileobject object at 0x0185C0F0&gt;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USERDNSDOMAIN</td>
+          <td class="code"><pre>&#39;CTG.COM&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_HOST</td>
+          <td class="code"><pre>&#39;localhost:18000&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.multithread</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PATHEXT</td>
+          <td class="code"><pre>&#39;.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.PSC1&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PATH_INFO</td>
+          <td class="code"><pre>u&#39;/claim/load/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FP_NO_HOST_CHECK</td>
+          <td class="code"><pre>&#39;NO&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>WINDIR</td>
+          <td class="code"><pre>&#39;C:\\WINDOWS&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.version</td>
+          <td class="code"><pre>(1, 0)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>APPDATA</td>
+          <td class="code"><pre>&#39;C:\\Documents and Settings\\slott\\Application Data&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HOMEDRIVE</td>
+          <td class="code"><pre>&#39;C:&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_NAME</td>
+          <td class="code"><pre>&#39;localhost&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.run_once</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>REMOTE_HOST</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SYSTEMDRIVE</td>
+          <td class="code"><pre>&#39;C:&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>GATEWAY_INTERFACE</td>
+          <td class="code"><pre>&#39;CGI/1.1&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NUMBER_OF_PROCESSORS</td>
+          <td class="code"><pre>&#39;2&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PROCESSOR_LEVEL</td>
+          <td class="code"><pre>&#39;6&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CONTENT_TYPE</td>
+          <td class="code"><pre>&#39;text/plain&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>wsgi.file_wrapper</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>OS</td>
+          <td class="code"><pre>&#39;Windows_NT&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>HTTP_ACCEPT_ENCODING</td>
+          <td class="code"><pre>&#39;identity&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USERPROFILE</td>
+          <td class="code"><pre>&#39;C:\\Documents and Settings\\slott&#39;</pre></td>
+        </tr>
+      
+    </tbody>
+  </table>
+
+
+  <h3 id="settings-info">Settings</h3>
+  <h4>Using settings module <code>web.settings</code></h4>
+  <table class="req">
+    <thead>
+      <tr>
+        <th>Setting</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      
+        <tr>
+          <td>USE_L10N</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_THOUSAND_SEPARATOR</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_CODE</td>
+          <td class="code"><pre>&#39;en-us&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ROOT_URLCONF</td>
+          <td class="code"><pre>&#39;web.urls&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MANAGERS</td>
+          <td class="code"><pre>((&#39;S.Lott&#39;, &#39;s_lott@yahoo.com&#39;),)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_CHARSET</td>
+          <td class="code"><pre>&#39;utf-8&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATIC_ROOT</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_DATABASE_CHARSET</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MESSAGE_STORAGE</td>
+          <td class="code"><pre>&#39;django.contrib.messages.storage.user_messages.LegacyFallbackStorage&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_HOST</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>IGNORABLE_404_STARTS</td>
+          <td class="code"><pre>(&#39;/cgi-bin/&#39;, &#39;/_vti_bin&#39;, &#39;/_vti_inf&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SEND_BROKEN_LINK_EMAILS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>URL_VALIDATOR_USER_AGENT</td>
+          <td class="code"><pre>&#39;Django/1.3.1 (http://www.djangoproject.com)&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_FINDERS</td>
+          <td class="code"><pre>(&#39;django.contrib.staticfiles.finders.FileSystemFinder&#39;,
+ &#39;django.contrib.staticfiles.finders.AppDirectoriesFinder&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_NAME</td>
+          <td class="code"><pre>&#39;sessionid&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMMENTS_MODERATORS_GROUP</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_INPUT_FORMATS</td>
+          <td class="code"><pre>(&#39;%H:%M:%S&#39;, &#39;%H:%M&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASES</td>
+          <td class="code"><pre>{&#39;default&#39;: {&#39;ENGINE&#39;: &#39;django.db.backends.sqlite3&#39;,
+             &#39;HOST&#39;: &#39;&#39;,
+             &#39;NAME&#39;: &#39;:memory:&#39;,
+             &#39;OPTIONS&#39;: {},
+             &#39;PASSWORD&#39;: &#39;********************&#39;,
+             &#39;PORT&#39;: &#39;&#39;,
+             &#39;TEST_CHARSET&#39;: None,
+             &#39;TEST_COLLATION&#39;: None,
+             &#39;TEST_MIRROR&#39;: None,
+             &#39;TEST_NAME&#39;: None,
+             &#39;TIME_ZONE&#39;: &#39;America/New_York&#39;,
+             &#39;USER&#39;: &#39;&#39;},
+ &#39;wstest&#39;: {&#39;ENGINE&#39;: &#39;django.db.backends.sqlite3&#39;,
+            &#39;HOST&#39;: &#39;&#39;,
+            &#39;NAME&#39;: &#39;:memory:&#39;,
+            &#39;OPTIONS&#39;: {},
+            &#39;PASSWORD&#39;: &#39;********************&#39;,
+            &#39;PORT&#39;: &#39;&#39;,
+            &#39;TEST_CHARSET&#39;: None,
+            &#39;TEST_COLLATION&#39;: None,
+            &#39;TEST_MIRROR&#39;: None,
+            &#39;TEST_NAME&#39;: None,
+            &#39;TIME_ZONE&#39;: &#39;America/New_York&#39;,
+            &#39;USER&#39;: &#39;&#39;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_DATABASE_NAME</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_PERMISSIONS</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_HANDLERS</td>
+          <td class="code"><pre>(&#39;django.core.files.uploadhandler.MemoryFileUploadHandler&#39;,
+ &#39;django.core.files.uploadhandler.TemporaryFileUploadHandler&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_CONTENT_TYPE</td>
+          <td class="code"><pre>&#39;text/html&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>APPEND_SLASH</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FIRST_DAY_OF_WEEK</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_ROUTERS</td>
+          <td class="code"><pre>[]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>YEAR_MONTH_FORMAT</td>
+          <td class="code"><pre>&#39;F Y&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_STORAGE</td>
+          <td class="code"><pre>&#39;django.contrib.staticfiles.storage.StaticFilesStorage&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHES</td>
+          <td class="code"><pre>{&#39;default&#39;: {&#39;BACKEND&#39;: &#39;django.core.cache.backends.locmem.LocMemCache&#39;,
+             &#39;LOCATION&#39;: &#39;&#39;}}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SERVER_EMAIL</td>
+          <td class="code"><pre>&#39;root@localhost&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_PATH</td>
+          <td class="code"><pre>&#39;/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_X_FORWARDED_HOST</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>IGNORABLE_404_ENDS</td>
+          <td class="code"><pre>(&#39;mail.pl&#39;, &#39;mailform.pl&#39;, &#39;mail.cgi&#39;, &#39;mailform.cgi&#39;, &#39;favicon.ico&#39;, &#39;.php&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MIDDLEWARE_CLASSES</td>
+          <td class="code"><pre>(&#39;web.middleware.FlushLog&#39;,
+ &#39;django.middleware.common.CommonMiddleware&#39;,
+ &#39;django.contrib.sessions.middleware.SessionMiddleware&#39;,
+ &#39;django.middleware.csrf.CsrfViewMiddleware&#39;,
+ &#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;,
+ &#39;django.contrib.messages.middleware.MessageMiddleware&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_I18N</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>THOUSAND_SEPARATOR</td>
+          <td class="code"><pre>&#39;,&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SECRET_KEY</td>
+          <td class="code"><pre>&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGE_COOKIE_NAME</td>
+          <td class="code"><pre>&#39;django_language&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_TEMP_DIR</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TRANSACTIONS_MANAGED</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGGING_CONFIG</td>
+          <td class="code"><pre>&#39;django.utils.log.dictConfig&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMPLATE_LOADERS</td>
+          <td class="code"><pre>(&#39;django.template.loaders.filesystem.load_template_source&#39;,
+ &#39;django.template.loaders.app_directories.load_template_source&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMPLATE_DEBUG</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>AUTHENTICATION_BACKENDS</td>
+          <td class="code"><pre>(&#39;django.contrib.auth.backends.ModelBackend&#39;,)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_DATABASE_COLLATION</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORCE_SCRIPT_NAME</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_BACKEND</td>
+          <td class="code"><pre>&#39;locmem://&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_SECURE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_DOMAIN</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_CHARSET</td>
+          <td class="code"><pre>&#39;utf-8&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEBUG</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_FILE_PATH</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_FILE_STORAGE</td>
+          <td class="code"><pre>&#39;django.core.files.storage.FileSystemStorage&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INSTALLED_APPS</td>
+          <td class="code"><pre>[&#39;django.contrib.admin&#39;,
+ &#39;django.contrib.auth&#39;,
+ &#39;django.contrib.contenttypes&#39;,
+ &#39;django.contrib.messages&#39;,
+ &#39;django.contrib.sessions&#39;,
+ &#39;django.contrib.sites&#39;,
+ &#39;web.claims&#39;,
+ &#39;web.claims_837&#39;]</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGES</td>
+          <td class="code"><pre>((&#39;ar&#39;, &#39;Arabic&#39;),
+ (&#39;az&#39;, &#39;Azerbaijani&#39;),
+ (&#39;bg&#39;, &#39;Bulgarian&#39;),
+ (&#39;bn&#39;, &#39;Bengali&#39;),
+ (&#39;bs&#39;, &#39;Bosnian&#39;),
+ (&#39;ca&#39;, &#39;Catalan&#39;),
+ (&#39;cs&#39;, &#39;Czech&#39;),
+ (&#39;cy&#39;, &#39;Welsh&#39;),
+ (&#39;da&#39;, &#39;Danish&#39;),
+ (&#39;de&#39;, &#39;German&#39;),
+ (&#39;el&#39;, &#39;Greek&#39;),
+ (&#39;en&#39;, &#39;English&#39;),
+ (&#39;en-gb&#39;, &#39;British English&#39;),
+ (&#39;es&#39;, &#39;Spanish&#39;),
+ (&#39;es-ar&#39;, &#39;Argentinian Spanish&#39;),
+ (&#39;es-mx&#39;, &#39;Mexican Spanish&#39;),
+ (&#39;es-ni&#39;, &#39;Nicaraguan Spanish&#39;),
+ (&#39;et&#39;, &#39;Estonian&#39;),
+ (&#39;eu&#39;, &#39;Basque&#39;),
+ (&#39;fa&#39;, &#39;Persian&#39;),
+ (&#39;fi&#39;, &#39;Finnish&#39;),
+ (&#39;fr&#39;, &#39;French&#39;),
+ (&#39;fy-nl&#39;, &#39;Frisian&#39;),
+ (&#39;ga&#39;, &#39;Irish&#39;),
+ (&#39;gl&#39;, &#39;Galician&#39;),
+ (&#39;he&#39;, &#39;Hebrew&#39;),
+ (&#39;hi&#39;, &#39;Hindi&#39;),
+ (&#39;hr&#39;, &#39;Croatian&#39;),
+ (&#39;hu&#39;, &#39;Hungarian&#39;),
+ (&#39;id&#39;, &#39;Indonesian&#39;),
+ (&#39;is&#39;, &#39;Icelandic&#39;),
+ (&#39;it&#39;, &#39;Italian&#39;),
+ (&#39;ja&#39;, &#39;Japanese&#39;),
+ (&#39;ka&#39;, &#39;Georgian&#39;),
+ (&#39;km&#39;, &#39;Khmer&#39;),
+ (&#39;kn&#39;, &#39;Kannada&#39;),
+ (&#39;ko&#39;, &#39;Korean&#39;),
+ (&#39;lt&#39;, &#39;Lithuanian&#39;),
+ (&#39;lv&#39;, &#39;Latvian&#39;),
+ (&#39;mk&#39;, &#39;Macedonian&#39;),
+ (&#39;ml&#39;, &#39;Malayalam&#39;),
+ (&#39;mn&#39;, &#39;Mongolian&#39;),
+ (&#39;nl&#39;, &#39;Dutch&#39;),
+ (&#39;no&#39;, &#39;Norwegian&#39;),
+ (&#39;nb&#39;, &#39;Norwegian Bokmal&#39;),
+ (&#39;nn&#39;, &#39;Norwegian Nynorsk&#39;),
+ (&#39;pa&#39;, &#39;Punjabi&#39;),
+ (&#39;pl&#39;, &#39;Polish&#39;),
+ (&#39;pt&#39;, &#39;Portuguese&#39;),
+ (&#39;pt-br&#39;, &#39;Brazilian Portuguese&#39;),
+ (&#39;ro&#39;, &#39;Romanian&#39;),
+ (&#39;ru&#39;, &#39;Russian&#39;),
+ (&#39;sk&#39;, &#39;Slovak&#39;),
+ (&#39;sl&#39;, &#39;Slovenian&#39;),
+ (&#39;sq&#39;, &#39;Albanian&#39;),
+ (&#39;sr&#39;, &#39;Serbian&#39;),
+ (&#39;sr-latn&#39;, &#39;Serbian Latin&#39;),
+ (&#39;sv&#39;, &#39;Swedish&#39;),
+ (&#39;ta&#39;, &#39;Tamil&#39;),
+ (&#39;te&#39;, &#39;Telugu&#39;),
+ (&#39;th&#39;, &#39;Thai&#39;),
+ (&#39;tr&#39;, &#39;Turkish&#39;),
+ (&#39;uk&#39;, &#39;Ukrainian&#39;),
+ (&#39;ur&#39;, &#39;Urdu&#39;),
+ (&#39;vi&#39;, &#39;Vietnamese&#39;),
+ (&#39;zh-cn&#39;, &#39;Simplified Chinese&#39;),
+ (&#39;zh-tw&#39;, &#39;Traditional Chinese&#39;))</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_ENGINE</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_NAME</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMMENTS_FIRST_FEW</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PREPEND_WWW</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_HTTPONLY</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_PORT</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEBUG_PROPAGATE_EXCEPTIONS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MONTH_DAY_FORMAT</td>
+          <td class="code"><pre>&#39;F j&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN_URL</td>
+          <td class="code"><pre>&#39;/accounts/login/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_EXPIRE_AT_BROWSER_CLOSE</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_FORMAT</td>
+          <td class="code"><pre>&#39;P&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATE_INPUT_FORMATS</td>
+          <td class="code"><pre>(&#39;%Y-%m-%d&#39;,
+ &#39;%m/%d/%Y&#39;,
+ &#39;%m/%d/%y&#39;,
+ &#39;%b %d %Y&#39;,
+ &#39;%b %d, %Y&#39;,
+ &#39;%d %b %Y&#39;,
+ &#39;%d %b, %Y&#39;,
+ &#39;%B %d %Y&#39;,
+ &#39;%B %d, %Y&#39;,
+ &#39;%d %B %Y&#39;,
+ &#39;%d %B, %Y&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_COOKIE_NAME</td>
+          <td class="code"><pre>&#39;csrftoken&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST_PASSWORD</td>
+          <td class="code"><pre>&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PASSWORD_RESET_TIMEOUT_DAYS</td>
+          <td class="code"><pre>&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_ALIAS</td>
+          <td class="code"><pre>&#39;default&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_SAVE_EVERY_REQUEST</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ADMIN_MEDIA_PREFIX</td>
+          <td class="code"><pre>&#39;/media/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>NUMBER_GROUPING</td>
+          <td class="code"><pre>0</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_ENGINE</td>
+          <td class="code"><pre>&#39;django.contrib.sessions.backends.db&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CSRF_FAILURE_VIEW</td>
+          <td class="code"><pre>&#39;django.views.csrf.csrf_failure&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMMENTS_SKETCHY_USERS_GROUP</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGIN_REDIRECT_URL</td>
+          <td class="code"><pre>&#39;/accounts/profile/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGGING</td>
+          <td class="code"><pre>{&#39;disable_existing_loggers&#39;: False,
+ &#39;handlers&#39;: {&#39;mail_admins&#39;: {&#39;class&#39;: &#39;django.utils.log.AdminEmailHandler&#39;,
+                              &#39;level&#39;: &#39;ERROR&#39;}},
+ &#39;loggers&#39;: {&#39;django.request&#39;: {&#39;handlers&#39;: [&#39;mail_admins&#39;],
+                                &#39;level&#39;: &#39;ERROR&#39;,
+                                &#39;propagate&#39;: True}},
+ &#39;version&#39;: 1}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_KEY_PREFIX</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOCALE_PATHS</td>
+          <td class="code"><pre>()</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMPLATE_STRING_IF_INVALID</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMMENTS_ALLOW_PROFANITIES</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LOGOUT_URL</td>
+          <td class="code"><pre>&#39;/accounts/logout/&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_USE_TLS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMPLATE_DIRS</td>
+          <td class="code"><pre>(&#39;F:/tiger/web/templates&#39;,
+ &#39;C:/Python27/Lib/site-packages/django-1.3.1-py2.7.egg/django/contrib/admin/templates&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FIXTURE_DIRS</td>
+          <td class="code"><pre>()</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST</td>
+          <td class="code"><pre>&#39;localhost&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATE_FORMAT</td>
+          <td class="code"><pre>&#39;N j, Y&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MEDIA_ROOT</td>
+          <td class="code"><pre>&#39;F:\\Tiger\\web\\media&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ADMINS</td>
+          <td class="code"><pre>((&#39;S.Lott&#39;, &#39;s_lott@yahoo.com&#39;),)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FORMAT_MODULE_PATH</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+    F
+  
+        <tr>
+          <td>DEFAULT_FROM_EMAIL</td>
+          <td class="code"><pre>&#39;webmaster@localhost&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATICFILES_DIRS</td>
+          <td class="code"><pre>()</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MEDIA_URL</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATETIME_FORMAT</td>
+          <td class="code"><pre>&#39;N j, Y, P&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_SUBJECT_PREFIX</td>
+          <td class="code"><pre>&#39;[Django] &#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SITE_ID</td>
+          <td class="code"><pre>1</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DISALLOWED_USER_AGENTS</td>
+          <td class="code"><pre>()</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ALLOWED_INCLUDE_ROOTS</td>
+          <td class="code"><pre>()</pre></td>
+        </tr>
+      
+        <tr>
+          <td>MODEL_DEBUG</td>
+          <td class="code"><pre>True</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DECIMAL_SEPARATOR</td>
+          <td class="code"><pre>&#39;.&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHORT_DATE_FORMAT</td>
+          <td class="code"><pre>&#39;m/d/Y&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_USER</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEST_RUNNER</td>
+          <td class="code"><pre>&#39;django.test.simple.DjangoTestSuiteRunner&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TIME_ZONE</td>
+          <td class="code"><pre>&#39;America/New_York&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>FILE_UPLOAD_MAX_MEMORY_SIZE</td>
+          <td class="code"><pre>2621440</pre></td>
+        </tr>
+FFINFO:F:\Tiger\test\test_wsClaims.pyc:Stopping server
+INFO:F:\Tiger\test\test_wsClaims.pyc:PID 6700, status 1
+      
+        <tr>
+          <td>EMAIL_BACKEND</td>
+          <td class="code"><pre>&#39;django.core.mail.backends.smtp.EmailBackend&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_TABLESPACE</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>TEMPLATE_CONTEXT_PROCESSORS</td>
+          <td class="code"><pre>(&#39;django.contrib.auth.context_processors.auth&#39;,
+ &#39;django.core.context_processors.debug&#39;,
+ &#39;django.core.context_processors.i18n&#39;,
+ &#39;django.core.context_processors.media&#39;,
+ &#39;django.core.context_processors.static&#39;,
+ &#39;django.contrib.messages.context_processors.messages&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SESSION_COOKIE_AGE</td>
+          <td class="code"><pre>1209600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SETTINGS_MODULE</td>
+          <td class="code"><pre>&#39;web.settings&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>USE_ETAGS</td>
+          <td class="code"><pre>False</pre></td>
+        </tr>
+      
+        <tr>
+          <td>LANGUAGES_BIDI</td>
+          <td class="code"><pre>(&#39;he&#39;, &#39;ar&#39;, &#39;fa&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DEFAULT_INDEX_TABLESPACE</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>INTERNAL_IPS</td>
+          <td class="code"><pre>()</pre></td>
+        </tr>
+      
+        <tr>
+          <td>STATIC_URL</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_PORT</td>
+          <td class="code"><pre>25</pre></td>
+        </tr>
+      
+        <tr>
+          <td>SHORT_DATETIME_FORMAT</td>
+          <td class="code"><pre>&#39;m/d/Y P&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ABSOLUTE_URL_OVERRIDES</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_OPTIONS</td>
+          <td class="code"><pre>{}</pre></td>
+        </tr>
+      
+        <tr>
+          <td>CACHE_MIDDLEWARE_SECONDS</td>
+          <td class="code"><pre>600</pre></td>
+        </tr>
+      
+        <tr>
+          <td>BANNED_IPS</td>
+          <td class="code"><pre>()</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATETIME_INPUT_FORMATS</td>
+          <td class="code"><pre>(&#39;%Y-%m-%d %H:%M:%S&#39;,
+ &#39;%Y-%m-%d %H:%M&#39;,
+ &#39;%Y-%m-%d&#39;,
+ &#39;%m/%d/%Y %H:%M:%S&#39;,
+ &#39;%m/%d/%Y %H:%M&#39;,
+ &#39;%m/%d/%Y&#39;,
+ &#39;%m/%d/%y %H:%M:%S&#39;,
+ &#39;%m/%d/%y %H:%M&#39;,
+ &#39;%m/%d/%y&#39;)</pre></td>
+        </tr>
+      
+        <tr>
+          <td>DATABASE_PASSWORD</td>
+          <td class="code"><pre>&#39;********************&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>ADMIN_FOR</td>
+          <td class="code"><pre>()</pre></td>
+        </tr>
+      
+        <tr>
+          <td>COMMENTS_BANNED_USERS_GROUP</td>
+          <td class="code"><pre>None</pre></td>
+        </tr>
+      
+        <tr>
+          <td>EMAIL_HOST_USER</td>
+          <td class="code"><pre>&#39;&#39;</pre></td>
+        </tr>
+      
+        <tr>
+          <td>PROFANITIES_LIST</td>
+          <td class="code"><pre>&#39;********************&#39;</pre></td>
+        </tr>
+      
+    </tbody>
+  </table>
+
+</div>
+
+  <div id="explanation">
+    <p>
+      You're seeing this error because you have <code>DEBUG = True</code> in your
+      Django settings file. Change that to <code>False</code>, and Django will
+      display a standard 500 page.
+    </p>
+  </div>
+
+</body>
+</html>
