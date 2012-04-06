@@ -12,9 +12,10 @@ See :ref:`traversal` for notes on the **Visitor** design pattern.
 ..  autoclass:: SQLTableVisitor
     :members:
 """
-from tigershark import X12
+from tigershark.X12.parse import StructureVisitor
+from tigershark.X12.parse import StopDescent
 
-class SQLDetailsVisitor( X12.parse.StructureVisitor ):
+class SQLDetailsVisitor( StructureVisitor ):
     """Details means, effectively, column definitions, which are X12.parse.Elements.
     However, a Segments are murky.
     A Segment with a repeat of "1" can be expanded inline.
@@ -63,12 +64,12 @@ class SQLDetailsVisitor( X12.parse.StructureVisitor ):
             self.result.append( "    -- In-line Segment %s %s" % (aSegment.name, aSegment.desc,) )
         else:
             self.result.append( "    -- FK reference from X%s_%s_%s -- %s" % (aSegment.message.name, aSegment.parent.name, aSegment.name, aSegment.desc,))
-            raise X12.parse.StopDescent # already in a separate table definition
+            raise StopDescent # already in a separate table definition
     def preLoop( self, aLoop, indent ):
         self.result.append( "    -- FK reference from X%s_%s -- %s" % (aLoop.message.name, aLoop.name, aLoop.desc,))
-        raise X12.parse.StopDescent # already in a separate table definition
+        raise StopDescent # already in a separate table definition
 
-class SQLTableVisitor( X12.parse.StructureVisitor ):
+class SQLTableVisitor( StructureVisitor ):
     def __init__( self, *arg, **kw ):
         super( SQLTableVisitor, self ).__init__( *arg, **kw )
         self.result= []

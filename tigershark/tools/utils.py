@@ -1,4 +1,4 @@
-from X12 import message
+from tigershark.X12 import message
 
 
 def pprint(x12_message, level=0, indent=" "):

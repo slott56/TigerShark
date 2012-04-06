@@ -9,9 +9,10 @@ See :ref:`traversal` for notes on the **Visitor** design pattern.
 ..  autoclass:: DjangoAdminVisitor
     :members:
 """
-from tigershark import X12
+from tigershark.X12.parse import StructureVisitor
+from tigershark.X12.parse import StopDescent
 
-class DjangoModelVisitor( X12.parse.StructureVisitor ):
+class DjangoModelVisitor( StructureVisitor ):
     """Emit Django class definitions for Segments.
     
     Extension to :class:`X12.parse.StructureVisitor`
@@ -23,7 +24,7 @@ class DjangoModelVisitor( X12.parse.StructureVisitor ):
     def preSegment( self, aSegment, indent=0 ):
         """Examine this Segment: is it a new type?"""
         if aSegment.name in self.segTypes:
-            raise X12.parse.StopDescent( "Already seen this Segment Type" )
+            raise StopDescent( "Already seen this Segment Type" )
         self.segTypes.add( aSegment.name )
         self.result.append( 'class Segment_%s(models.Model):' % ( aSegment.name, ) )
         self.result.append( '    """%r"""' % ( aSegment.props,) )
@@ -64,7 +65,7 @@ class DjangoModelVisitor( X12.parse.StructureVisitor ):
     def getSource( self, appname='claims_837' ):
         return "\n".join( self.result )
 
-class DjangoAdminVisitor( X12.parse.StructureVisitor ):
+class DjangoAdminVisitor( StructureVisitor ):
     """Emit Django admin definitions for Segments.
     
     Extension to :class:`X12.parse.StructureVisitor`
@@ -75,7 +76,7 @@ class DjangoAdminVisitor( X12.parse.StructureVisitor ):
         self.segTypes= set()
     def preSegment( self, aSegment, indent ):
         if aSegment.name in self.segTypes:
-            raise X12.parse.StopDescent( "Already seen this Segment Type" )
+            raise StopDescent( "Already seen this Segment Type" )
         self.segTypes.add( aSegment.name )
     def getSource( self, appname='claims_837' ):
         def emitter( segTypes ):

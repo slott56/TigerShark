@@ -30,7 +30,10 @@ This module inherits mappings for the following class definitions.
     :members:
 """
 import sqlalchemy as sa
-from tigershark import X12
+from tigershark.X12.message import Factory
+from tigershark.X12.message import X12Loop
+from tigershark.X12.message import X12Message
+from tigershark.X12.message import X12Segment
 
 # Get some settings to define the SA engine dynamically.
 # This allows us to have Django-like run-time binding to a specific database.
@@ -40,7 +43,7 @@ from tigershark import X12
 # Define the sa.mapper between X12.message structures
 # and database metadata.
 
-class Factory( X12.message.Factory ):
+class Factory( Factory ):
     """A Factory for this module's version of X12Message structures."""
     @staticmethod
     def makeMessage( name, *structure ):

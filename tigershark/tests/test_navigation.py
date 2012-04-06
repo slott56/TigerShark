@@ -6,26 +6,27 @@ in a stand-alone mode.
 """
 import unittest
 import logging, sys
-from tigershark import X12
+from tigershark.X12.message import Factory as MessageFactory
+from tigershark.X12.parse import SegmentToken
 
 
 class TestNavigationX12( unittest.TestCase ):
     """Test XPath-like Navigation methods."""
-    factory= X12.message.Factory
+    factory= MessageFactory
     def setUp( self ):
         factory= self.factory
         self.message= factory.makeMessage( "278" )
         loop_isa= factory.makeLoop( "ISA" )
         self.message.addChild( loop_isa )
-        isaSegToken= X12.parse.SegmentToken( ["ISA", "21", "blah", "blah", "blah"] )
+        isaSegToken= SegmentToken( ["ISA", "21", "blah", "blah", "blah"] )
         loop_isa.addChild( factory.makeSegment( isaSegToken ) )
         loop_gs= factory.makeLoop( "GS" )
         loop_isa.addChild( loop_gs )
-        gsSegToken= X12.parse.SegmentToken( ["GS", "HI", "blah", "blah", "blah"] )
+        gsSegToken= SegmentToken( ["GS", "HI", "blah", "blah", "blah"] )
         loop_gs.addChild( factory.makeSegment( gsSegToken ) )
-        geSegToken= X12.parse.SegmentToken( ["GE", "hi", "there"] )
+        geSegToken= SegmentToken( ["GE", "hi", "there"] )
         loop_gs.addChild( factory.makeSegment( geSegToken ) )
-        ieaSegToken= X12.parse.SegmentToken( ["IEA", "xx", "yy"] )
+        ieaSegToken= SegmentToken( ["IEA", "xx", "yy"] )
         loop_isa.addChild( factory.makeSegment( ieaSegToken ) )
     def testChild( self ):
         loops= self.message.child( "LOOP" )

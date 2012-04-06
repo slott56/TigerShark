@@ -11,7 +11,7 @@ from tigershark.parsers import M835_4010_X091_A1
 class TestParsed835(unittest.TestCase):
     def setUp(self):
         m = M835_4010_X091_A1.parsed_835
-        with open('835-example.edi') as f:
+        with open('835-example.txt') as f:
             parsed = m.unmarshall(f.read().strip())
         self.f = f835.F835_4010(parsed)
 

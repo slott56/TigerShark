@@ -21,9 +21,11 @@ See :ref:`traversal` for notes on the **Visitor** design pattern.
 ..  autoclass:: FlatPythonVisitor
     :members:
 """
-from tigershark import X12
 
-class PythonVisitor( X12.parse.StructureVisitor ):
+from tigershark.X12.parse import StructureVisitor
+from tigershark.X12.parse import StopDescent
+
+class PythonVisitor( StructureVisitor ):
     """Builds a single, huge definition.  Not very practical except
     for TINY messages.  Or if you set :py:data:`skipElement`
     to True, the resulting structure might be useful.
@@ -93,11 +95,11 @@ class FlatPythonDetails( PythonVisitor ):
         pass
     def preLoop( self, loop, indent=0 ):
         self.result.append( "%s_%s," % ( self.varName, loop.name, ) )
-        raise X12.parse.StopDescent # prevent expansion of the Loop we just referenced
+        raise StopDescent # prevent expansion of the Loop we just referenced
     def postLoop( self, loop, indent=0 ):
         pass
 
-class FlatPythonVisitor( X12.parse.StructureVisitor ):
+class FlatPythonVisitor( StructureVisitor ):
     """Decompose ALL Loops into separate definitions which can be referenced.
     This Visitor doesn't process Segments, Composites and Elements.
     It only looks at Messages and Loops.

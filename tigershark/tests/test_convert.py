@@ -11,13 +11,13 @@ Each TestCase is reasonably similar to the following.
 from __future__ import print_function
 import unittest, logging, sys
 import os.path
-from tigershark import tools
-from tigershark import X12
+from tigershark.tools import convertPyX12
 import cStringIO
 import sqlite3.dbapi2 as sqlite
 import zipfile
+from tigershark.X12.map.source import FlatPythonVisitor
+from tigershark.X12.map.SQL import SQLTableVisitor
 from tigershark.X12.parse import Message
-from tigershark.X12.parse import Properties
 
 logger= logging.getLogger( __name__ )
 
@@ -36,13 +36,13 @@ class TestConvertPyx12(unittest.TestCase):
         # a 278-13 - I think this is a referral response
         self.msg1="""ISA*03*gjohnson2 *01*0000000000*ZZ*0000000Eliginet*ZZ*BLUECROSS BLUES*071015*0903*U*00401*000242835*0*P*:~GS*HI*0000000Eliginet*BLUECROSS BLUES*20071015*0903*241935*X*004010X094A1~ST*278*242835~BHT*0078*13*GXEDWLXQYKII*20071015*0903~HL*1**20*1~NM1*X3*2*BLUECROSS BLUESHIELD OF WESTERN NEW*****PI*55204~HL*2*1*21*1~NM1*1P*1*SHEIKH*ZIA****24*161590688~REF*ZH*000524454008~N3*4039 ROUTE 219*SUITE 102~N4*SALAMANCA*NY*14779~HL*3*2*22*1~HI*BF:706.1~NM1*IL*1*burton*amanda****MI*yjw88034076701~DMG*D8*19900815*U~HL*4*3*19*1~NM1*SJ*1*JAREMKO*WILLIAM****24*161482964~REF*ZH*000511127003~N3*2646 WEST STATE STREET*SUITE 405~N4*OLEAN*NY*147600000~HL*5*4*SS*0~TRN*1*1*9999955204~UM*SC*I*******Y~DTP*472*RD8*20071015-20080415~HSD*VS*30~SE*24*242835~GE*1*241935~IEA*1*000242835~"""
 
-        bldParser= tools.convertPyX12.ParserBuilder()
+        bldParser= convertPyX12.ParserBuilder()
 
         baseDir= r"C:\Python25\share\pyx12\map"
         zipSource= os.path.join( "Downloads", "pyx12-1.5.0.zip" )
         zip= zipfile.ZipFile( zipSource )
 
-        xml= tools.convertPyX12.XMLParser()
+        xml= convertPyX12.XMLParser()
         xml.data( zip.open("pyx12-1.5.0/map/dataele.xml") )
         xml.codes( zip.open("pyx12-1.5.0/map/codes.xml") )
         #The 278 definition doesn't have the correct nested LOOP structure to parse
@@ -51,11 +51,11 @@ class TestConvertPyx12(unittest.TestCase):
         xml.read( os.path.join( "test", "278.4010.X094.A1.xml" ) )
         self.x12p= bldParser.build( xml )
 
-        sql= X12.map.SQL.SQLTableVisitor( )
+        sql= SQLTableVisitor( )
         self.x12p.visit( sql )
         self.sqlCode= sql.getSource()
 
-        python= X12.map.source.FlatPythonVisitor( "parse_278" )
+        python= FlatPythonVisitor( "parse_278" )
         self.x12p.visit( python )
         self.pyCode= python.getSource()
     def testPythonOut( self ):

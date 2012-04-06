@@ -125,7 +125,12 @@ import argparse
 from datetime import datetime
 import os.path, logging, sys, fnmatch
 import warnings
-from tigershark import X12
+from tigershark.X12.parse import Composite
+from tigershark.X12.parse import Element
+from tigershark.X12.parse import Loop
+from tigershark.X12.parse import Message
+from tigershark.X12.parse import Properties
+from tigershark.X12.parse import Segment
 from tigershark.X12.map.source import FlatPythonVisitor
 from tigershark.X12.map.source import PythonVisitor
 
@@ -266,9 +271,9 @@ class ParserBuilder( object ):
         refdes= self.getChildTextValue( compositeNode, "refdes" )
         self.log.debug( "%*sComposite name %r usage %r seq %r data_ele %r refdes %r",
                        nesting*2, '', name, usage, seq, data_ele, refdes )
-        theComposite= X12.parse.Composite(
+        theComposite= Composite(
             data_ele,
-            X12.parse.Properties( desc=name, req_sit=usage, seq=seq, refdes=refdes ) )
+            Properties( desc=name, req_sit=usage, seq=seq, refdes=refdes ) )
         for c in compositeNode.childNodes:
             # Want to preserve the original XML order of <element>
             if c.nodeType != DOM.Node.ELEMENT_NODE: continue
@@ -321,9 +326,9 @@ class ParserBuilder( object ):
                 warnings.warn( XMLWarning("Unexpected %r" % (c,) ) )
                 self.log.warning( "*** Unexpected %r", c )
 
-        theElement= X12.parse.Element(
+        theElement= Element(
             eltXid,
-            X12.parse.Properties(desc=name, req_sit=usage, seq=seq, data_ele=data_ele,
+            Properties(desc=name, req_sit=usage, seq=seq, data_ele=data_ele,
                        data_type=data_type_tuple, codes=codes, )
             )
 
@@ -348,9 +353,9 @@ class ParserBuilder( object ):
         syntax= self.getChildTextValue( segmentNode, "syntax" )
         self.log.debug( "%*sSegment xid %r: name %r usage %r pos %r max_use %r syntax %r",
                        nesting*2, '', segXid, name, usage, pos, max_use, syntax )
-        theSegment= X12.parse.Segment(
+        theSegment= Segment(
             segXid,
-            X12.parse.Properties(desc=name,req_sit=usage,pos=pos,repeat=max_use,syntax=syntax),
+            Properties(desc=name,req_sit=usage,pos=pos,repeat=max_use,syntax=syntax),
             )
 
         for c in segmentNode.childNodes:
@@ -383,9 +388,9 @@ class ParserBuilder( object ):
         repeat= self.getChildTextValue( loopNode, "repeat" )
         self.log.debug( "%*sLoop xid %r type %r: name %r usage %r pos %r repear %r",
                        nesting*2, '', loopXid, loopType, name, usage, pos, repeat )
-        theLoop= X12.parse.Loop(
+        theLoop= Loop(
             loopXid,
-            X12.parse.Properties(desc=name,req_sit=usage,pos=pos,repeat=repeat,looptype=loopType),
+            Properties(desc=name,req_sit=usage,pos=pos,repeat=repeat,looptype=loopType),
             )
 
         for c in loopNode.childNodes:
@@ -422,7 +427,7 @@ class ParserBuilder( object ):
         desc= self.getChildTextValue( doc, "name" )
         if name is None: name= xid
         self.log.info( "Message %s: xid=%s desc=%s", name, xid, desc )
-        self.top= X12.parse.Message( name, X12.parse.Properties(desc=desc) )
+        self.top= Message( name, Properties(desc=desc) )
         for c in doc.childNodes:
             # Want to preserve the original XML order of <loop> and <segment>
             if c.nodeType != DOM.Node.ELEMENT_NODE: continue

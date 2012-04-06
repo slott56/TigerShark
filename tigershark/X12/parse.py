@@ -253,7 +253,7 @@ from __future__ import print_function
 import logging
 
 # This is only to give us access a default Factory.
-from tigershark import X12
+from tigershark.X12.message import Factory as MessageFactory
 
 class SegmentToken( object ):
     """A list-like object that gracefully handles a Segment with missing elements.
@@ -800,7 +800,7 @@ class Message( Parser ):
             SegmentToken( seg.split(eltPunct) )
                 for seg in msg.split( segPunct )
                     if len(seg) > 0]
-    def unmarshall( self, message, factory=X12.message.Factory ):
+    def unmarshall( self, message, factory=MessageFactory ):
         """Unmarshall the text version of an X12 message
         into a structure defined by the given factory.
         

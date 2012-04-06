@@ -16,12 +16,16 @@ import unittest
 import logging, sys
 import os.path
 
-from tigershark import X12
 from tigershark.X12.parse import Message
 from tigershark.X12.parse import Loop
 from tigershark.X12.parse import Segment
 from tigershark.X12.parse import Element
 from tigershark.X12.parse import Properties
+from tigershark.X12.parse import StructureError
+from tigershark.X12.map.source import PythonVisitor
+from tigershark.X12.map.source import FlatPythonVisitor
+from tigershark.X12.map.SQL import SQLTableVisitor
+from tigershark.X12.map.dj import DjangoModelVisitor
 
 logger= logging.getLogger( __name__ )
 
@@ -34,7 +38,7 @@ class TestStructure(unittest.TestCase):
     """Test Message Structure."""
     def testBadLoop( self ):
         """Can't include a Message within a Loop."""
-        self.assertRaises( X12.parse.StructureError,
+        self.assertRaises( StructureError,
             Loop, "name", Properties(desc="desc", req_sit="R", repeat="1"), Message("bad",Properties(desc="bad") ) )
     def testMessage( self ):
         self.assertEquals( parse_278, loop2000F.message  )
@@ -87,7 +91,7 @@ class TestParse278_13(unittest.TestCase):
 class TestVisitor1(unittest.TestCase):
     """Test the generic visitor."""
     def testPythonVisitor( self ):
-        python= X12.map.source.PythonVisitor( "parse_278" )
+        python= PythonVisitor( "parse_278" )
         parse_278.visit( python )
         text= python.getSource()
         sample="""from tigershark.X12.parse import Message, Loop, Segment, Composite, Element, Properties
@@ -129,7 +133,7 @@ class TestPythonVisitor(unittest.TestCase):
         # a 278-13 response
         self.msg1="""ISA*03*gjohnson2 *01*0000000000*ZZ*0000000Eliginet*ZZ*BLUECROSS BLUES*071015*0903*U*00401*000242835*0*P*:~GS*HI*0000000Eliginet*BLUECROSS BLUES*20071015*0903*241935*X*004010X094A1~ST*278*242835~BHT*0078*13*GXEDWLXQYKII*20071015*0903~HL*1**20*1~NM1*X3*2*BLUECROSS BLUESHIELD OF WESTERN NEW*****PI*55204~HL*2*1*21*1~NM1*1P*1*SHEIKH*ZIA****24*161590688~REF*ZH*000524454008~N3*4039 ROUTE 219*SUITE 102~N4*SALAMANCA*NY*14779~HL*3*2*22*1~HI*BF:706.1~NM1*IL*1*burton*amanda****MI*yjw88034076701~DMG*D8*19900815*U~HL*4*3*19*1~NM1*SJ*1*JAREMKO*WILLIAM****24*161482964~REF*ZH*000511127003~N3*2646 WEST STATE STREET*SUITE 405~N4*OLEAN*NY*147600000~HL*5*4*SS*0~TRN*1*1*9999955204~UM*SC*I*******Y~DTP*472*RD8*20071015-20080415~HSD*VS*30~SE*24*242835~GE*1*241935~IEA*1*000242835~"""
     def testPythonVisitorCompile( self ):
-        python= X12.map.source.FlatPythonVisitor( "parse_278" )
+        python= FlatPythonVisitor( "parse_278" )
         parse_278.visit( python )
         text= python.getSource()
         #print( "***Manual Inspection" )
@@ -137,11 +141,11 @@ class TestPythonVisitor(unittest.TestCase):
         exec text
 
     def testPythonVisitorWorks( self ):
-        python= X12.map.source.FlatPythonVisitor( "parse_278" )
+        python= FlatPythonVisitor( "parse_278" )
         parse_278.visit( python )
         text= python.getSource()
         exec text
-        self.assertEqual( type(parse_278), X12.parse.Message )
+        self.assertEqual( type(parse_278), Message )
         msg= parse_278.unmarshall( self.msg1 )
         # XXX - check the resulting structure
         self.assertEquals( self.msg1, msg.marshall() )
@@ -149,7 +153,7 @@ class TestPythonVisitor(unittest.TestCase):
 class TestSQLVisitor(unittest.TestCase):
     """Does it compile?"""
     def testSQLVisitor( self ):
-        sql= X12.map.SQL.SQLTableVisitor( )
+        sql= SQLTableVisitor( )
         parse_278.visit( sql )
         text= sql.getSource()
         #print( "***Manual Inspection" )
@@ -191,7 +195,7 @@ CREATE TABLE X278_GS(
 class TestDjangoVisitors(unittest.TestCase):
     """Look at the Django structure emitted"""
     def testDjangoModel( self ):
-        dj= X12.map.dj.DjangoModelVisitor( )
+        dj= DjangoModelVisitor( )
         parse_278.visit( dj )
         text= dj.getSource(appname='claims_837')
         #print( "***Manual Inspection" )
@@ -222,7 +226,7 @@ class Segment_ST(models.Model):
         for i in range(len(sLines)):
             self.assertEqual( tLines[i].rstrip(), sLines[i].rstrip() )
     def testDjangoAdmin( self ):
-        dj= X12.map.dj.DjangoAdminVisitor( )
+        dj= DjangoAdminVisitor( )
         parse_278.visit( dj )
         text= dj.getSource(appname='claims_837')
         #print( "***Manual Inspection" )
