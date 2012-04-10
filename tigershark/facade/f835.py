@@ -238,6 +238,7 @@ class Claim(Facade, X12LoopBridge):
                 qualifier=(1, "PI"), x12type=Money)
         adjustment_patient_responsibility = ElementAccess("CAS", 3,
                 qualifier=(1, "PR"), x12type=Money)
+        adjustment_reason_code = ElementAccess("CAS", 2)
 
         # Identification
         apg_number = ElementAccess("REF", 2, qualifier=(1, "1S"))
