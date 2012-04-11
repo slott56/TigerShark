@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from tigershark.facade import ElementAccess
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import enum
@@ -566,7 +568,7 @@ class ClaimAdjustment(X12LoopBridge):
     quantity_6 = ElementAccess("CAS", 19)
 
     def total_amount(self, reason=None):
-        s = 0.0
+        s = Decimal('0.0')
         for i in range(1, 7):
             val = self.__getattribute__("amount_%s" % i)
             if reason is None or \

@@ -242,6 +242,7 @@ Exceptions
 ..  autoclass:: MissingSegment
 """
 import datetime
+from decimal import Decimal
 
 
 class Facade(object):
@@ -879,10 +880,10 @@ class Money(Conversion):
     @staticmethod
     def x12_to_python(raw):
         if raw == "" or raw is None:
-            return 0.0
+            return Decimal(0.0)
         if "(" in raw:
             raw = raw.replace("(", "-").replace(")", "")
-        return float(raw)
+        return Decimal(raw)
 
     @staticmethod
     def python_to_x12(value):

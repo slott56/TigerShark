@@ -2,6 +2,7 @@ import unittest
 import logging
 import sys
 import datetime
+from decimal import Decimal
 
 
 from tigershark.facade import f835
@@ -20,7 +21,7 @@ class TestParsed835(unittest.TestCase):
         fi = self.f.header.financial_information
         self.assertEqual(fi.transaction_type,
                 ('I', 'Remittance Information Only'))
-        self.assertEqual(fi.amount, 12345.67)
+        self.assertEqual(fi.amount, Decimal('12345.67'))
         self.assertEqual(fi.credit_or_debit, ('C', 'Credit'))
         self.assertEqual(fi.payment_method,
                 ('ACH', 'Automated Clearing House (ACH)'))
@@ -92,8 +93,8 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(co.facility_type_code, '81')
         self.assertEqual(co.fiscal_period_end, datetime.date(2012, 12, 31))
         self.assertEqual(co.claim_count, '2')
-        self.assertEqual(co.total_claim_charge, 23456.78)
-        self.assertEqual(co.total_covered_charge, 12345.67)
+        self.assertEqual(co.total_claim_charge, Decimal('23456.78'))
+        self.assertEqual(co.total_covered_charge, Decimal('12345.67'))
 
     ## Claims ##
     def test_claims(self):
@@ -103,14 +104,14 @@ class TestParsed835(unittest.TestCase):
         pi = c.payment_info
         self.assertEqual(pi.patient_control_number, "001-DDDDDDDDDD")
         self.assertEqual(pi.status_code, ('1', 'Processed as Primary'))
-        self.assertEqual(pi.total_charge, 200.02)
-        self.assertEqual(pi.payment, 200.02)
-        self.assertEqual(pi.patient_responsibility, 0.0)
+        self.assertEqual(pi.total_charge, Decimal('200.02'))
+        self.assertEqual(pi.payment, Decimal('200.02'))
+        self.assertEqual(pi.patient_responsibility, Decimal('0.0'))
         self.assertEqual(pi.claim_type, ('13', 'Point of Service (POS)'))
         self.assertEqual(pi.payer_claim_control_number,
                 '1234567890 0987654321')
         self.assertEqual(pi.facility_type, '81')
-        self.assertEqual(pi.total_covered_charge, 200.02)
+        self.assertEqual(pi.total_covered_charge, Decimal('200.02'))
 
         # Patient
         patient = c.patient
@@ -156,23 +157,23 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.date_statement_period_start,
                 datetime.date(2012, 02, 22))
         self.assertEqual(c.claim_adjustments.patient_responsibility.amount_1,
-                0.0)
+                Decimal('0.0'))
         self.assertEqual(c.claim_adjustments.contractual_obligation.amount_1,
-                0.0)
+                Decimal('0.0'))
 
         # Line item charges
         l = c.line_items[0]
         self.assertEqual(l.hcpcs_code[0], '88888')
-        self.assertEqual(l.charge, 200.02)
-        self.assertEqual(l.payment, 200.02)
+        self.assertEqual(l.charge, Decimal('200.02'))
+        self.assertEqual(l.payment, Decimal('200.02'))
         self.assertEqual(l.quantity, '1')
         self.assertEqual(l.service_date, datetime.date(2012, 02, 22))
         self.assertEqual(l.provider_control_number, '251111111111')
-        self.assertEqual(l.allowed_amount, 200.02)
+        self.assertEqual(l.allowed_amount, Decimal('200.02'))
         self.assertEqual(l.claim_adjustments.patient_responsibility.amount_1,
-                0.0)
+                Decimal('0.0'))
         self.assertEqual(l.claim_adjustments.contractual_obligation.amount_1,
-                0.0)
+                Decimal('0.0'))
 
         # Second claim!
         c = claims[1]
@@ -180,15 +181,15 @@ class TestParsed835(unittest.TestCase):
         pi = c.payment_info
         self.assertEqual(pi.patient_control_number, "001-SSSSSSSSSS")
         self.assertEqual(pi.status_code, ('1', 'Processed as Primary'))
-        self.assertEqual(pi.total_charge, 23276.56)
-        self.assertEqual(pi.payment, 12000.65)
-        self.assertEqual(pi.patient_responsibility, 145.0)
+        self.assertEqual(pi.total_charge, Decimal('23276.56'))
+        self.assertEqual(pi.payment, Decimal('12000.65'))
+        self.assertEqual(pi.patient_responsibility, Decimal('145.0'))
         self.assertEqual(pi.claim_type,
                 ("14", "Exclusive Provider Organization (EPO)"))
         self.assertEqual(pi.payer_claim_control_number,
                 '2234567890 0987654322')
         self.assertEqual(pi.facility_type, '81')
-        self.assertEqual(pi.total_covered_charge, 12145.65)
+        self.assertEqual(pi.total_covered_charge, Decimal('12145.65'))
 
         # Patient
         patient = c.patient
@@ -222,26 +223,27 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.date_statement_period_start,
                 datetime.date(2012, 02, 23))
         self.assertEqual(c.claim_adjustments.patient_responsibility.amount_1,
-                145.0)
+                Decimal('145.0'))
         # Don't look into the child loops for segments
         self.assertEqual(c.claim_adjustments.contractual_obligation.amount_1,
-                0.0)
+                Decimal('0.0'))
 
         # Line item charges
         l = c.line_items[0]
         self.assertEqual(l.hcpcs_code[0], '88888')
-        self.assertEqual(l.charge, 23276.56)
-        self.assertEqual(l.payment, 12145.65)
+        self.assertEqual(l.charge, Decimal('23276.56'))
+        self.assertEqual(l.payment, Decimal('12145.65'))
         self.assertEqual(l.quantity, '1')
         self.assertEqual(l.service_date, datetime.date(2012, 02, 21))
         self.assertEqual(l.provider_control_number, '252222222222')
+        self.assertEqual(l.claim_adjustments.contractual_obligation.amount_1,
+                Decimal('11130.91'))
         self.assertEqual(
-            l.claim_adjustments.contractual_obligation.amount_1, 11130.91)
-        self.assertEqual(
-            l.claim_adjustments.contractual_obligation.total_amount, 11130.91)
+                l.claim_adjustments.contractual_obligation.total_amount(),
+                Decimal('11130.91'))
         self.assertEqual(l.claim_adjustments.patient_responsibility.amount_1,
-                0.0)
-        self.assertEqual(l.allowed_amount, 12145.65)
+                Decimal('0.0'))
+        self.assertEqual(l.allowed_amount, Decimal('12145.65'))
 
 
 if __name__ == "__main__":
