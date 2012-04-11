@@ -155,6 +155,10 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.date_received, datetime.date(2012, 03, 02))
         self.assertEqual(c.date_statement_period_start,
                 datetime.date(2012, 02, 22))
+        self.assertEqual(c.claim_adjustments.patient_responsibility.amount_1,
+                0.0)
+        self.assertEqual(c.claim_adjustments.contractual_obligation.amount_1,
+                0.0)
 
         # Line item charges
         l = c.line_items[0]
@@ -165,6 +169,10 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(l.service_date, datetime.date(2012, 02, 22))
         self.assertEqual(l.provider_control_number, '251111111111')
         self.assertEqual(l.allowed_amount, 200.02)
+        self.assertEqual(l.claim_adjustments.patient_responsibility.amount_1,
+                0.0)
+        self.assertEqual(l.claim_adjustments.contractual_obligation.amount_1,
+                0.0)
 
         # Second claim!
         c = claims[1]
@@ -213,6 +221,11 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.date_received, datetime.date(2012, 03, 03))
         self.assertEqual(c.date_statement_period_start,
                 datetime.date(2012, 02, 23))
+        self.assertEqual(c.claim_adjustments.patient_responsibility.amount_1,
+                145.0)
+        # Don't look into the child loops for segments
+        self.assertEqual(c.claim_adjustments.contractual_obligation.amount_1,
+                0.0)
 
         # Line item charges
         l = c.line_items[0]
@@ -222,7 +235,12 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(l.quantity, '1')
         self.assertEqual(l.service_date, datetime.date(2012, 02, 21))
         self.assertEqual(l.provider_control_number, '252222222222')
-        self.assertEqual(l.adjustment_contractual_obligation, 11130.91)
+        self.assertEqual(
+            l.claim_adjustments.contractual_obligation.amount_1, 11130.91)
+        self.assertEqual(
+            l.claim_adjustments.contractual_obligation.total_amount, 11130.91)
+        self.assertEqual(l.claim_adjustments.patient_responsibility.amount_1,
+                0.0)
         self.assertEqual(l.allowed_amount, 12145.65)
 
 

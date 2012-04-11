@@ -277,7 +277,8 @@ class X12LoopBridge( object ):
     def __str__( self ):
         return str(self.loop)
     def _filteredList( self, name, qualifierPos=None, inList=None, notInList=None ):
-        """Return a all matching X12Segments of the X12Loop.
+        """Return all matching X12Segments that are children of the X12Loop.
+        Do not check descendants, only check immediate children.
         If no qualifier, then all segments with the given name are returned.
         If a qualifier position is provided, then the element at that position in the
         segment is checked for a value in the :meth:`inList` or not in the :meth:`notInList`
@@ -292,7 +293,7 @@ class X12LoopBridge( object ):
         is provided.  This the negatuve list of values segments must not have.
         :returns: list of all :class:`X12.message.X12Segment` instances within this Loop.
         """
-        segList= [ s for s in self.loop.descendant( "segment", name ) ]
+        segList= [ s for s in self.loop.child( "segment", name ) ]
         if qualifierPos:
             if inList:
                 filtered= [ seg for seg in segList if seg.getByPos(qualifierPos) in inList ]
