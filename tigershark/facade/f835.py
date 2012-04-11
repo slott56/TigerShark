@@ -5,6 +5,7 @@ from tigershark.facade import D8
 from tigershark.facade import Money
 from tigershark.facade import Facade
 from tigershark.facade import enum
+from tigershark.facade.common import ClaimAdjustment
 
 
 class Header(X12LoopBridge):
@@ -225,20 +226,6 @@ class Claim(Facade, X12LoopBridge):
                 x12type=D8)
         service_date = ElementAccess("DTM", 2, qualifier=(1, "472"),
                 x12type=D8)
-        # Claim adjustments
-        # WARNING: This should add up all of the amounts in this segment,
-        # but it DOESN'T!
-        adjustment_contractual_obligation = ElementAccess("CAS", 3,
-                qualifier=(1, "CO"), x12type=Money)
-        adjustment_correction_and_reveral = ElementAccess("CAS", 3,
-                qualifier=(1, "CR"), x12type=Money)
-        adjustment_other = ElementAccess("CAS", 3, qualifier=(1, "OA"),
-                x12type=Money)
-        adjustment_payor_initiated_reductions = ElementAccess("CAS", 3,
-                qualifier=(1, "PI"), x12type=Money)
-        adjustment_patient_responsibility = ElementAccess("CAS", 3,
-                qualifier=(1, "PR"), x12type=Money)
-        adjustment_reason_code = ElementAccess("CAS", 2)
 
         # Identification
         apg_number = ElementAccess("REF", 2, qualifier=(1, "1S"))
@@ -268,6 +255,12 @@ class Claim(Facade, X12LoopBridge):
                 qualifier=(1, "T2"), x12type=Money)
 
         not_covered_quantity = ElementAccess("QTY", 2, qualifier=(1, "NE"))
+
+        def __init__(self, anX12Message, *args, **kwargs):
+            super(Claim._ServiceInfo, self).__init__(anX12Message, *args,
+                    **kwargs)
+            # Claim adjustments
+            self.claim_adjustments = Claim._ClaimAdjustments(anX12Message)
 
     class _ClaimPaymentInfo(X12LoopBridge):
         patient_control_number = ElementAccess("CLP", 1)
@@ -364,6 +357,20 @@ class Claim(Facade, X12LoopBridge):
             self.qualifier = qualifier
             super(Claim._NamedEntity, self).__init__(aLoop)
 
+    class _ClaimAdjustments(X12LoopBridge):
+        def __init__(self, aLoop, *args, **kwargs):
+            super(Claim._ClaimAdjustments, self).__init__(aLoop, *args,
+                    **kwargs)
+            self.contractual_obligation = ClaimAdjustment(aLoop,
+                    qualifier=(1, "CO"))
+            self.correction_and_reveral = ClaimAdjustment(aLoop,
+                    qualifier=(1, "CR"))
+            self.other = ClaimAdjustment(aLoop, qualifier=(1, "OA"))
+            self.payor_initiated_reductions = ClaimAdjustment(aLoop,
+                    qualifier=(1, "PI"))
+            self.patient_responsibility = ClaimAdjustment(aLoop,
+                    qualifier=(1, "PR"))
+
     loopName = "2100"
 
     # References
@@ -402,6 +409,8 @@ class Claim(Facade, X12LoopBridge):
     def __init__(self, anX12Message, *args, **kwargs):
         super(Claim, self).__init__(anX12Message, *args,
                 **kwargs)
+        self.claim_adjustments = self._ClaimAdjustments(
+                anX12Message)
         self.line_items = self.loops(self._ServiceInfo, anX12Message)
         # Take advantage of ElementAccess attributes inheriting their parent's
         # qualifier. This needs to be fixed someday.
