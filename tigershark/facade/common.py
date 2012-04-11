@@ -337,7 +337,7 @@ claim_adjustment_reasons = {
     "202": "Non-covered personal comfort or convenience services.",
     "203": "Discontinued or reduced service.",
     "204": "This service/equipment/drug is not covered under the " \
-        "patient’s current benefit plan",
+        "patient's current benefit plan",
     "205": "Pharmacy discount card processing fee",
     "206": "National Provider Identifier - missing.",
     "207": "National Provider identifier - Invalid format",
@@ -426,7 +426,7 @@ claim_adjustment_reasons = {
     "229": "Partial charge amount not considered by Medicare due to " \
         "the initial claim Type of Bill being 12X. Note: This code can only " \
         "be used in the 837 transaction to convey Coordination of Benefits " \
-        "information when the secondary payer’s cost avoidance policy " \
+        "information when the secondary payer's cost avoidance policy " \
         "allows providers to bypass claim submission to a prior payer. Use " \
         "Group Code PR.",
     "230": "No available or correlating CPT/HCPCS code to describe " \
