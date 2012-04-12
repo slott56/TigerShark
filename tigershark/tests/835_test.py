@@ -153,7 +153,8 @@ class TestParsed835(unittest.TestCase):
         # Other stuff
         self.assertEqual(c.group_or_policy_number, '5G5G5G')
         self.assertEqual(c.contract_class, 'CHOYC+')
-        self.assertEqual(c.date_received, datetime.date(2012, 03, 02))
+        # If a received date isn't supplied, don't die just return None!
+        self.assertEqual(c.date_received, None)
         self.assertEqual(c.date_statement_period_start,
                 datetime.date(2012, 02, 22))
         self.assertEqual(c.claim_adjustments.patient_responsibility.amount_1,

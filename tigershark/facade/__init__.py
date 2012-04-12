@@ -848,22 +848,30 @@ class D8( Conversion ):
     """Convert between D8 format dates to proper DateTime objects."""
     @staticmethod
     def x12_to_python( raw ):
+        if raw is None:
+            return raw
         yy,mm,dd = int(raw[0:4]), int(raw[4:6]), int(raw[6:8])
         return datetime.date( yy,mm,dd )
     @staticmethod
     def python_to_x12( value ):
+        if value is None:
+            return ""
         return value.strftime( "%4Y%2m%2d" )
 
 class DR( Conversion ):
     """Convert between DR format dates to proper DateTime objects."""
     @staticmethod
     def x12_to_python( raw ):
+        if raw is None:
+            return raw
         d1, punct, d2 = raw.partition('-')
         yy1,mm1,dd1 = int(d1[0:4]), int(d1[4:6]), int(d1[6:8])
         yy2,mm2,dd2 = int(d2[0:4]), int(d2[4:6]), int(d2[6:8])
         return datetime.date( yy1,mm1,dd1 ), datetime.date( yy2,mm2,dd2 )
     @staticmethod
     def python_to_x12( value ):
+        if value is None:
+            return ""
         d1, d2 = value
         return "%s-%s" % ( d1.strftime( "%4Y%2m%2d" ), d2.strftime( "%4Y%2m%2d" ) )
 
