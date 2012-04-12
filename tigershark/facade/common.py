@@ -571,8 +571,10 @@ class ClaimAdjustment(X12LoopBridge):
         s = Decimal('0.0')
         for i in range(1, 7):
             val = self.__getattribute__("amount_%s" % i)
-            if reason is None or \
-                    self.__getattribute__("reason_%s" % i) == reason:
+            reason_tuple = self.__getattribute__("reason_%s" % i)
+            if reason is None or (reason_tuple is not None and
+                    reason_tuple[0] is not None and
+                    reason_tuple[0] == reason):
                 s += val
         return s
 
