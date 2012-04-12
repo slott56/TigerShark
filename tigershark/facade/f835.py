@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import ElementAccess
 from tigershark.facade import CompositeAccess
@@ -262,6 +264,24 @@ class Claim(Facade, X12LoopBridge):
             # Claim adjustments
             self.claim_adjustments = Claim._ClaimAdjustments(anX12Message)
 
+        def get_actual_allowed_amount(self):
+            if self.allowed_amount == Decimal('0.00'):
+                # Actually means that the allowed amount is the full billed amt
+                return self.charge
+            return self.allowed_amount
+
+        def get_actual_deductible(self):
+            return self.claim_adjustments.patient_responsibility.\
+                    total_amount('1')
+
+        def get_actual_coinsurance(self):
+            return self.claim_adjustments.patient_responsibility.\
+                    total_amount('2')
+
+        def get_actual_copayment(self):
+            return self.claim_adjustments.patient_responsibility.\
+                    total_amount('3')
+
     class _ClaimPaymentInfo(X12LoopBridge):
         patient_control_number = ElementAccess("CLP", 1)
         status_code = ElementAccess("CLP", 2, x12type=enum({
@@ -425,6 +445,30 @@ class Claim(Facade, X12LoopBridge):
         self.corrected_priority_payer = self._NamedEntity(anX12Message,
                 qualifier=(1, "PR"))
         self.payment_info = self._ClaimPaymentInfo(anX12Message)
+
+    def get_actual_allowed_amount(self):
+        s = Decimal('0.00')
+        for li in self.line_items:
+            s += li.get_actual_allowed_amount()
+        return s
+
+    def get_actual_deductible(self):
+        s = Decimal('0.00')
+        for li in self.line_items:
+            s += li.get_actual_deductible()
+        return s
+
+    def get_actual_coinsurance(self):
+        s = Decimal('0.00')
+        for li in self.line_items:
+            s += li.get_actual_coinsurance()
+        return s
+
+    def get_actual_copayment(self):
+        s = Decimal('0.00')
+        for li in self.line_items:
+            s += li.get_actual_copayment()
+        return s
 
 
 class F835_4010(Facade):
