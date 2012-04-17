@@ -104,7 +104,7 @@ class Header(X12LoopBridge):
         """ Production date of the claim.
 
         This *MUST* be supplied when the cutoff date of the adjudication
-        system is difference from the date of the 835."""
+        system is different from the date of the 835."""
         date = ElementAccess("DTM", 2, qualifier=(1, "405"), x12type=D8)
 
     def __init__(self, aLoop, *args, **kwargs):
@@ -383,7 +383,7 @@ class Claim(Facade, X12LoopBridge):
                     **kwargs)
             self.contractual_obligation = ClaimAdjustment(aLoop,
                     qualifier=(1, "CO"))
-            self.correction_and_reveral = ClaimAdjustment(aLoop,
+            self.correction_and_reversal = ClaimAdjustment(aLoop,
                     qualifier=(1, "CR"))
             self.other = ClaimAdjustment(aLoop, qualifier=(1, "OA"))
             self.payor_initiated_reductions = ClaimAdjustment(aLoop,
