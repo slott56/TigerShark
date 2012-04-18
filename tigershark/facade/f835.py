@@ -481,7 +481,7 @@ class F835_4010(Facade):
                 return None
 
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
-        if len(st_loops) > 1:
+        if len(st_loops) > 0:
             self.facades = []
             for loop in st_loops:
                 self.facades.append(F835_4010(loop))

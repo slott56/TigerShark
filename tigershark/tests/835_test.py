@@ -18,7 +18,7 @@ class TestParsed835(unittest.TestCase):
 
     ## Header ##
     def test_financial_information(self):
-        fi = self.f.header.financial_information
+        fi = self.f.facades[0].header.financial_information
         self.assertEqual(fi.transaction_type,
                 ('I', 'Remittance Information Only'))
         self.assertEqual(fi.amount, Decimal('12345.67'))
@@ -42,7 +42,7 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(fi.issue_date, datetime.date(2012, 03, 22))
 
     def test_reassociation_trace_number(self):
-        rtn = self.f.header.reassociation_trace_number
+        rtn = self.f.facades[0].header.reassociation_trace_number
         self.assertEqual(rtn.trace_type,
                 ('1', 'Current Transaction Trace Numbers'))
         self.assertEqual(rtn.check_or_eft_trace_number, '1QG11111111')
@@ -51,12 +51,12 @@ class TestParsed835(unittest.TestCase):
                 '000011111')
 
     def test_production_date(self):
-        pd = self.f.header.production_date
+        pd = self.f.facades[0].header.production_date
         self.assertEqual(pd.date, datetime.date(2012, 03, 19))
 
     ## PAYER ##
     def test_payer(self):
-        p = self.f.payer
+        p = self.f.facades[0].payer
         c = p.contact_details
         self.assertEqual(c.name, 'UNITED HEALTHCARE INSURANCE COMPANY')
         self.assertEqual(c.id_qualifier,
@@ -73,7 +73,7 @@ class TestParsed835(unittest.TestCase):
 
     ## PAYEE ##
     def test_payee(self):
-        p = self.f.payee
+        p = self.f.facades[0].payee
         c = p.contact_details
         self.assertEqual(c.name, 'MY CLINIC')
         self.assertEqual(c.id_qualifier,
@@ -87,7 +87,7 @@ class TestParsed835(unittest.TestCase):
 
     ## Claims Overview ##
     def test_claims_overview(self):
-        co = self.f.claims_overview
+        co = self.f.facades[0].claims_overview
         self.assertEqual(co.number, '1')
         self.assertEqual(co.provider_id, '1333333333')
         self.assertEqual(co.facility_type_code, '81')
@@ -98,7 +98,7 @@ class TestParsed835(unittest.TestCase):
 
     ## Claims ##
     def test_claims(self):
-        claims = self.f.claims
+        claims = self.f.facades[0].claims
         c = claims[0]
         # Claim details
         pi = c.payment_info
