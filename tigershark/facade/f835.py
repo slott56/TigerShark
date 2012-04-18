@@ -479,8 +479,16 @@ class F835_4010(Facade):
                 return l.pop()
             except:
                 return None
-        self.header = first(self.loops(Header, anX12Message))
-        self.payer = first(self.loops(Payer, anX12Message))
-        self.payee = first(self.loops(Payee, anX12Message))
-        self.claims_overview = first(self.loops(ClaimsOverview, anX12Message))
-        self.claims = self.loops(Claim, anX12Message)
+
+        st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
+        if len(st_loops) > 1:
+            self.facades = []
+            for loop in st_loops:
+                self.facades.append(F835_4010(loop))
+        else:
+            self.header = first(self.loops(Header, anX12Message))
+            self.payer = first(self.loops(Payer, anX12Message))
+            self.payee = first(self.loops(Payee, anX12Message))
+            self.claims_overview = first(self.loops(ClaimsOverview,
+                anX12Message))
+            self.claims = self.loops(Claim, anX12Message)
