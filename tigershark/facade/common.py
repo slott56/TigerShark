@@ -589,6 +589,12 @@ class ClaimAdjustment(X12LoopBridge):
                     pass
         return s
 
+    def all_reasons_iter(self):
+        for i in range(1, 7):
+            reason_tuple = self.__getattribute__("reason_%s" % i)
+            if reason_tuple is not None:
+                yield reason_tuple
+
     def __init__(self, aLoop, qualifier, *args, **kwargs):
         self.qualifier = qualifier
         super(ClaimAdjustment, self).__init__(aLoop, *args, **kwargs)
