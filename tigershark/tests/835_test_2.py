@@ -12,7 +12,7 @@ from tigershark.parsers import M835_4010_X091_A1
 class TestParsed835(unittest.TestCase):
     def setUp(self):
         m = M835_4010_X091_A1.parsed_835
-        with open('835-example.txt') as f:
+        with open('835-example-2.txt') as f:
             parsed = m.unmarshall(f.read().strip())
         self.f = f835.F835_4010(parsed)
 
@@ -50,8 +50,18 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(rtn.originating_company_supplemental_code,
                 '000011111')
 
+        rtn = self.f.facades[1].header.reassociation_trace_number
+        self.assertEqual(rtn.trace_type,
+                ('1', 'Current Transaction Trace Numbers'))
+        self.assertEqual(rtn.check_or_eft_trace_number, '1QG11111112')
+        self.assertEqual(rtn.payer_id, '1111111112')
+        self.assertEqual(rtn.originating_company_supplemental_code,
+                '000011112')
+
     def test_production_date(self):
         pd = self.f.facades[0].header.production_date
+        self.assertEqual(pd.date, datetime.date(2012, 03, 19))
+        pd = self.f.facades[1].header.production_date
         self.assertEqual(pd.date, datetime.date(2012, 03, 19))
 
     ## PAYER ##
@@ -71,19 +81,38 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(c.contact_phone_ext, None)
         self.assertEqual(p.payer_id, '87726')
 
+        p = self.f.facades[1].payer
+        c = p.contact_details
+        self.assertEqual(c.name, 'ACME, INC. A WHOLLY OWNED SUBSIDIARY OF '\
+                'UNITED HEALTHCARE INSURANCE COMPANY')
+        self.assertEqual(c.id_qualifier,
+            ('XV', 'Health Care Financing Administration National Plan ID'))
+        self.assertEqual(c.id, '87726')
+        self.assertEqual(c.addr1, '123 MAIN STREET')
+        self.assertEqual(c.city, 'ANYTOWN')
+        self.assertEqual(c.state, 'CA')
+        self.assertEqual(c.zip, '940660000')
+        self.assertEqual(p.payer_id, '87726')
+
     ## PAYEE ##
     def test_payee(self):
+        def _test():
+            self.assertEqual(c.name, 'MY CLINIC')
+            self.assertEqual(c.id_qualifier,
+                    ('XX', 'Health Care Financing Administration National '\
+                            'Provider ID'))
+            self.assertEqual(c.id, '1333333333')
+            self.assertEqual(c.addr1, '123 HEALTHCARE STREET')
+            self.assertEqual(c.city, 'SAN FRANCISCO')
+            self.assertEqual(c.zip, '94109')
+            self.assertEqual(p.tax_id, '777777777')
+
         p = self.f.facades[0].payee
         c = p.contact_details
-        self.assertEqual(c.name, 'MY CLINIC')
-        self.assertEqual(c.id_qualifier,
-                ('XX', 'Health Care Financing Administration National '\
-                        'Provider ID'))
-        self.assertEqual(c.id, '1333333333')
-        self.assertEqual(c.addr1, '123 HEALTHCARE STREET')
-        self.assertEqual(c.city, 'SAN FRANCISCO')
-        self.assertEqual(c.zip, '94109')
-        self.assertEqual(p.tax_id, '777777777')
+        _test()
+        p = self.f.facades[1].payee
+        c = p.contact_details
+        _test()
 
     ## Claims Overview ##
     def test_claims_overview(self):
@@ -92,9 +121,18 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(co.provider_id, '1333333333')
         self.assertEqual(co.facility_type_code, '81')
         self.assertEqual(co.fiscal_period_end, datetime.date(2012, 12, 31))
-        self.assertEqual(co.claim_count, '2')
-        self.assertEqual(co.total_claim_charge, Decimal('23456.78'))
-        self.assertEqual(co.total_covered_charge, Decimal('12345.67'))
+        self.assertEqual(co.claim_count, '1')
+        self.assertEqual(co.total_claim_charge, Decimal('200.02'))
+        self.assertEqual(co.total_covered_charge, Decimal('200.02'))
+
+        co = self.f.facades[1].claims_overview
+        self.assertEqual(co.number, '1')
+        self.assertEqual(co.provider_id, '1333333333')
+        self.assertEqual(co.facility_type_code, '81')
+        self.assertEqual(co.fiscal_period_end, datetime.date(2012, 12, 31))
+        self.assertEqual(co.claim_count, '1')
+        self.assertEqual(co.total_claim_charge, Decimal('23276.56'))
+        self.assertEqual(co.total_covered_charge, Decimal('12000.65'))
 
     ## Claims ##
     def test_claims(self):
@@ -177,10 +215,11 @@ class TestParsed835(unittest.TestCase):
                 Decimal('0.0'))
 
         # Second claim!
-        c = claims[1]
+        claims = self.f.facades[1].claims
+        c = claims[0]
         # Claim details
         pi = c.payment_info
-        self.assertEqual(pi.patient_control_number, "001-SSSSSSSSSS")
+        self.assertEqual(pi.patient_control_number, "001-SSSSSSSSST")
         self.assertEqual(pi.status_code, ('1', 'Processed as Primary'))
         self.assertEqual(pi.total_charge, Decimal('23276.56'))
         self.assertEqual(pi.payment, Decimal('12000.65'))
@@ -188,7 +227,7 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(pi.claim_type,
                 ("14", "Exclusive Provider Organization (EPO)"))
         self.assertEqual(pi.payer_claim_control_number,
-                '2234567890 0987654322')
+                '2234567891 1987654322')
         self.assertEqual(pi.facility_type, '81')
         self.assertEqual(pi.total_covered_charge, Decimal('12145.65'))
 

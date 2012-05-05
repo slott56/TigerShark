@@ -242,6 +242,7 @@ Exceptions
 ..  autoclass:: MissingSegment
 """
 import datetime
+from decimal import Decimal
 
 
 class Facade(object):
@@ -277,7 +278,8 @@ class X12LoopBridge( object ):
     def __str__( self ):
         return str(self.loop)
     def _filteredList( self, name, qualifierPos=None, inList=None, notInList=None ):
-        """Return a all matching X12Segments of the X12Loop.
+        """Return all matching X12Segments that are children of the X12Loop.
+        Do not check descendants, only check immediate children.
         If no qualifier, then all segments with the given name are returned.
         If a qualifier position is provided, then the element at that position in the
         segment is checked for a value in the :meth:`inList` or not in the :meth:`notInList`
@@ -292,7 +294,7 @@ class X12LoopBridge( object ):
         is provided.  This the negatuve list of values segments must not have.
         :returns: list of all :class:`X12.message.X12Segment` instances within this Loop.
         """
-        segList= [ s for s in self.loop.descendant( "segment", name ) ]
+        segList= [ s for s in self.loop.child( "segment", name ) ]
         if qualifierPos:
             if inList:
                 filtered= [ seg for seg in segList if seg.getByPos(qualifierPos) in inList ]
@@ -846,22 +848,30 @@ class D8( Conversion ):
     """Convert between D8 format dates to proper DateTime objects."""
     @staticmethod
     def x12_to_python( raw ):
+        if raw is None:
+            return raw
         yy,mm,dd = int(raw[0:4]), int(raw[4:6]), int(raw[6:8])
         return datetime.date( yy,mm,dd )
     @staticmethod
     def python_to_x12( value ):
+        if value is None:
+            return ""
         return value.strftime( "%4Y%2m%2d" )
 
 class DR( Conversion ):
     """Convert between DR format dates to proper DateTime objects."""
     @staticmethod
     def x12_to_python( raw ):
+        if raw is None:
+            return raw
         d1, punct, d2 = raw.partition('-')
         yy1,mm1,dd1 = int(d1[0:4]), int(d1[4:6]), int(d1[6:8])
         yy2,mm2,dd2 = int(d2[0:4]), int(d2[4:6]), int(d2[6:8])
         return datetime.date( yy1,mm1,dd1 ), datetime.date( yy2,mm2,dd2 )
     @staticmethod
     def python_to_x12( value ):
+        if value is None:
+            return ""
         d1, d2 = value
         return "%s-%s" % ( d1.strftime( "%4Y%2m%2d" ), d2.strftime( "%4Y%2m%2d" ) )
 
@@ -878,10 +888,10 @@ class Money(Conversion):
     @staticmethod
     def x12_to_python(raw):
         if raw == "" or raw is None:
-            return 0.0
+            return Decimal(0.0)
         if "(" in raw:
             raw = raw.replace("(", "-").replace(")", "")
-        return float(raw)
+        return Decimal(raw)
 
     @staticmethod
     def python_to_x12(value):

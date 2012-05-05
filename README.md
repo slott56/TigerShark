@@ -7,6 +7,19 @@ a little bit of claim display and edit.
 State of the Project
 ====================
 
+Version 0.2.1
+-------------
+I realized that a single EOB file can contain multiple EOBs. This means that
+the f835 facade now has a list of all of its individual EOBs as a `facades`
+property.
+
+I also fixed a few typos, added a ClaimAdjustments common X12LoopBridge with
+the corresponding claim adjustment reasons as an enum x12type, and improved
+the tests for 835 files.
+
+This package is now being used in production, and the 835 facade can be
+considered somewhat stable.
+
 Version 0.2
 -----------
 I've added a setup.py script and organized the files a bit more. I'm

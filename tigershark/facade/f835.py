@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import ElementAccess
 from tigershark.facade import CompositeAccess
@@ -5,6 +7,7 @@ from tigershark.facade import D8
 from tigershark.facade import Money
 from tigershark.facade import Facade
 from tigershark.facade import enum
+from tigershark.facade.common import ClaimAdjustment
 
 
 class Header(X12LoopBridge):
@@ -101,7 +104,7 @@ class Header(X12LoopBridge):
         """ Production date of the claim.
 
         This *MUST* be supplied when the cutoff date of the adjudication
-        system is difference from the date of the 835."""
+        system is different from the date of the 835."""
         date = ElementAccess("DTM", 2, qualifier=(1, "405"), x12type=D8)
 
     def __init__(self, aLoop, *args, **kwargs):
@@ -225,19 +228,6 @@ class Claim(Facade, X12LoopBridge):
                 x12type=D8)
         service_date = ElementAccess("DTM", 2, qualifier=(1, "472"),
                 x12type=D8)
-        # Claim adjustments
-        # WARNING: This should add up all of the amounts in this segment,
-        # but it DOESN'T!
-        adjustment_contractual_obligation = ElementAccess("CAS", 3,
-                qualifier=(1, "CO"), x12type=Money)
-        adjustment_correction_and_reveral = ElementAccess("CAS", 3,
-                qualifier=(1, "CR"), x12type=Money)
-        adjustment_other = ElementAccess("CAS", 3, qualifier=(1, "OA"),
-                x12type=Money)
-        adjustment_payor_initiated_reductions = ElementAccess("CAS", 3,
-                qualifier=(1, "PI"), x12type=Money)
-        adjustment_patient_responsibility = ElementAccess("CAS", 3,
-                qualifier=(1, "PR"), x12type=Money)
 
         # Identification
         apg_number = ElementAccess("REF", 2, qualifier=(1, "1S"))
@@ -267,6 +257,30 @@ class Claim(Facade, X12LoopBridge):
                 qualifier=(1, "T2"), x12type=Money)
 
         not_covered_quantity = ElementAccess("QTY", 2, qualifier=(1, "NE"))
+
+        def __init__(self, anX12Message, *args, **kwargs):
+            super(Claim._ServiceInfo, self).__init__(anX12Message, *args,
+                    **kwargs)
+            # Claim adjustments
+            self.claim_adjustments = Claim._ClaimAdjustments(anX12Message)
+
+        def get_actual_allowed_amount(self):
+            if self.allowed_amount == Decimal('0.00'):
+                # Actually means that the allowed amount is the full billed amt
+                return self.charge
+            return self.allowed_amount
+
+        def get_actual_deductible(self):
+            return self.claim_adjustments.patient_responsibility.\
+                    total_amount('1')
+
+        def get_actual_coinsurance(self):
+            return self.claim_adjustments.patient_responsibility.\
+                    total_amount('2')
+
+        def get_actual_copayment(self):
+            return self.claim_adjustments.patient_responsibility.\
+                    total_amount('3')
 
     class _ClaimPaymentInfo(X12LoopBridge):
         patient_control_number = ElementAccess("CLP", 1)
@@ -363,6 +377,20 @@ class Claim(Facade, X12LoopBridge):
             self.qualifier = qualifier
             super(Claim._NamedEntity, self).__init__(aLoop)
 
+    class _ClaimAdjustments(X12LoopBridge):
+        def __init__(self, aLoop, *args, **kwargs):
+            super(Claim._ClaimAdjustments, self).__init__(aLoop, *args,
+                    **kwargs)
+            self.contractual_obligation = ClaimAdjustment(aLoop,
+                    qualifier=(1, "CO"))
+            self.correction_and_reversal = ClaimAdjustment(aLoop,
+                    qualifier=(1, "CR"))
+            self.other = ClaimAdjustment(aLoop, qualifier=(1, "OA"))
+            self.payor_initiated_reductions = ClaimAdjustment(aLoop,
+                    qualifier=(1, "PI"))
+            self.patient_responsibility = ClaimAdjustment(aLoop,
+                    qualifier=(1, "PR"))
+
     loopName = "2100"
 
     # References
@@ -401,6 +429,8 @@ class Claim(Facade, X12LoopBridge):
     def __init__(self, anX12Message, *args, **kwargs):
         super(Claim, self).__init__(anX12Message, *args,
                 **kwargs)
+        self.claim_adjustments = self._ClaimAdjustments(
+                anX12Message)
         self.line_items = self.loops(self._ServiceInfo, anX12Message)
         # Take advantage of ElementAccess attributes inheriting their parent's
         # qualifier. This needs to be fixed someday.
@@ -416,6 +446,30 @@ class Claim(Facade, X12LoopBridge):
                 qualifier=(1, "PR"))
         self.payment_info = self._ClaimPaymentInfo(anX12Message)
 
+    def get_actual_allowed_amount(self):
+        s = Decimal('0.00')
+        for li in self.line_items:
+            s += li.get_actual_allowed_amount()
+        return s
+
+    def get_actual_deductible(self):
+        s = Decimal('0.00')
+        for li in self.line_items:
+            s += li.get_actual_deductible()
+        return s
+
+    def get_actual_coinsurance(self):
+        s = Decimal('0.00')
+        for li in self.line_items:
+            s += li.get_actual_coinsurance()
+        return s
+
+    def get_actual_copayment(self):
+        s = Decimal('0.00')
+        for li in self.line_items:
+            s += li.get_actual_copayment()
+        return s
+
 
 class F835_4010(Facade):
     def __init__(self, anX12Message):
@@ -425,8 +479,16 @@ class F835_4010(Facade):
                 return l.pop()
             except:
                 return None
-        self.header = first(self.loops(Header, anX12Message))
-        self.payer = first(self.loops(Payer, anX12Message))
-        self.payee = first(self.loops(Payee, anX12Message))
-        self.claims_overview = first(self.loops(ClaimsOverview, anX12Message))
-        self.claims = self.loops(Claim, anX12Message)
+
+        st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
+        if len(st_loops) > 0:
+            self.facades = []
+            for loop in st_loops:
+                self.facades.append(F835_4010(loop))
+        else:
+            self.header = first(self.loops(Header, anX12Message))
+            self.payer = first(self.loops(Payer, anX12Message))
+            self.payee = first(self.loops(Payee, anX12Message))
+            self.claims_overview = first(self.loops(ClaimsOverview,
+                anX12Message))
+            self.claims = self.loops(Claim, anX12Message)
