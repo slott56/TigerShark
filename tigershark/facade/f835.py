@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import ElementAccess
+from tigershark.facade import ElementSequenceAccess
 from tigershark.facade import CompositeAccess
 from tigershark.facade import D8
 from tigershark.facade import Money
@@ -258,6 +259,8 @@ class Claim(Facade, X12LoopBridge):
                 qualifier=(1, "T2"), x12type=Money)
 
         not_covered_quantity = ElementAccess("QTY", 2, qualifier=(1, "NE"))
+        notes = ElementSequenceAccess("LQ", 2, qualPos=1, inList=("HE",),
+                x12type=enum(remittance_advice_codes))
 
         def __init__(self, anX12Message, *args, **kwargs):
             super(Claim._ServiceInfo, self).__init__(anX12Message, *args,
