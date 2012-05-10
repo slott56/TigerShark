@@ -8,6 +8,7 @@ from tigershark.facade import Money
 from tigershark.facade import Facade
 from tigershark.facade import enum
 from tigershark.facade.common import ClaimAdjustment
+from tigershark.facade.enums import remittance_advice_codes
 
 
 class Header(X12LoopBridge):
