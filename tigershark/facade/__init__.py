@@ -903,8 +903,16 @@ class Money(Conversion):
             return value
         return "{:.2f}".format(value)
 
-def enum(options):
-    """ Give it a dictionary of options, eg:
+def enum(options, raw_unknowns=False):
+    """Translate abbreviations or codes into descriptions.
+
+    :param options: A dictionary of code:description
+    :type options: dict
+    :param raw_unknowns: Whether or not to return the raw value if it's not
+    in the options dict.
+    :type raw_unknowns: boolean
+
+    For example:
 
     class Header(X12LoopBridge):
         loopName = "HEADER"
@@ -915,7 +923,12 @@ def enum(options):
              "I": "Remittance information only",
              "P": "Prenotification of future transfers",
              "U": "Split payment and remittance",
-             "X": "Handling party's option to split payment and remittance."}))
+             "X": "Handling party's option to split payment and remittance."},
+             raw_unknowns=True))
+    header.type -> ("C", "Payment accompanies remittance advice")
+
+    # Or an unknown type, say "Z":
+    header.type -> "Z"
     """
     class Enum(Conversion):
         @staticmethod
@@ -924,6 +937,8 @@ def enum(options):
                 return None
             elif raw in options:
                 return (raw, options[raw])
+            elif raw_unknowns:
+                return raw
             return None
 
         @staticmethod
@@ -936,6 +951,8 @@ def enum(options):
                 for (k,v) in options.iteritems():
                     if value == v:
                         return k
+            if raw_unknowns:
+                return value
             return ""
     return Enum
 

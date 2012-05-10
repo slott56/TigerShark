@@ -260,7 +260,7 @@ class Claim(Facade, X12LoopBridge):
 
         not_covered_quantity = ElementAccess("QTY", 2, qualifier=(1, "NE"))
         notes = ElementSequenceAccess("LQ", 2, qualPos=1, inList=("HE",),
-                x12type=enum(remittance_advice_codes))
+                x12type=enum(remittance_advice_codes, raw_unknowns=True))
 
         def __init__(self, anX12Message, *args, **kwargs):
             super(Claim._ServiceInfo, self).__init__(anX12Message, *args,

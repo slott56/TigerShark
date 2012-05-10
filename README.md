@@ -7,10 +7,13 @@ a little bit of claim display and edit.
 State of the Project
 ====================
 
-Version 0.2.2
+Version 0.2.2a
 -------------
 Nothing big, just a bugfix to ElementSequenceAccess (so it actually works)
 and moved two large enum types to an enums module.
+
+Edit: Followup fix to allow unknown values in the enum x12 type, since it's
+possible that an insurance company returns an outdated remark code.
 
 Version 0.2.1
 -------------
