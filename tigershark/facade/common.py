@@ -16,32 +16,32 @@ class ClaimAdjustment(X12LoopBridge):
          "PR": "Patient Responsibility"}))
 
     reason_1 = ElementAccess("CAS", 2,
-            x12type=enum(claim_adjustment_reasons))
+            x12type=enum(claim_adjustment_reasons, raw_unknowns=True))
     amount_1 = ElementAccess("CAS", 3, x12type=Money)
     quantity_1 = ElementAccess("CAS", 4)
 
     reason_2 = ElementAccess("CAS", 5,
-            x12type=enum(claim_adjustment_reasons))
+            x12type=enum(claim_adjustment_reasons, raw_unknowns=True))
     amount_2 = ElementAccess("CAS", 6, x12type=Money)
     quantity_2 = ElementAccess("CAS", 7)
 
     reason_3 = ElementAccess("CAS", 8,
-            x12type=enum(claim_adjustment_reasons))
+            x12type=enum(claim_adjustment_reasons, raw_unknowns=True))
     amount_3 = ElementAccess("CAS", 9, x12type=Money)
     quantity_3 = ElementAccess("CAS", 10)
 
     reason_4 = ElementAccess("CAS", 11,
-            x12type=enum(claim_adjustment_reasons))
+            x12type=enum(claim_adjustment_reasons, raw_unknowns=True))
     amount_4 = ElementAccess("CAS", 12, x12type=Money)
     quantity_4 = ElementAccess("CAS", 13)
 
     reason_5 = ElementAccess("CAS", 14,
-            x12type=enum(claim_adjustment_reasons))
+            x12type=enum(claim_adjustment_reasons, raw_unknowns=True))
     amount_5 = ElementAccess("CAS", 15, x12type=Money)
     quantity_5 = ElementAccess("CAS", 16)
 
     reason_6 = ElementAccess("CAS", 17,
-            x12type=enum(claim_adjustment_reasons))
+            x12type=enum(claim_adjustment_reasons, raw_unknowns=True))
     amount_6 = ElementAccess("CAS", 18, x12type=Money)
     quantity_6 = ElementAccess("CAS", 19)
 

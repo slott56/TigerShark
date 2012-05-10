@@ -245,6 +245,11 @@ class TestParsed835(unittest.TestCase):
         self.assertEqual(l.claim_adjustments.patient_responsibility.amount_1,
                 Decimal('0.0'))
         self.assertEqual(l.allowed_amount, Decimal('12145.65'))
+        self.assertEqual(l.notes[0], ("N220", "Alert: See the payer's web "\
+                "site or contact the payer's Customer Service department to " \
+                "obtain forms and instructions for filing a provider "\
+                "dispute."))
+        self.assertEqual(l.notes[1], "M68")
 
 
 if __name__ == "__main__":
