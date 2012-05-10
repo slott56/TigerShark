@@ -7,6 +7,11 @@ a little bit of claim display and edit.
 State of the Project
 ====================
 
+Version 0.2.2
+-------------
+Nothing big, just a bugfix to ElementSequenceAccess (so it actually works)
+and moved two large enum types to an enums module.
+
 Version 0.2.1
 -------------
 I realized that a single EOB file can contain multiple EOBs. This means that

@@ -692,7 +692,11 @@ class ElementSequenceAccess( ElementAccess ):
         return "ElementSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
     def __get__( self, instance, owner ):
         segs= instance.segList( self.segment, self.qualPos, self.inList, self.notInList )
-        return [ s.getByPos(self.position) for s in segs ]
+        raw_list = [ s.segment.getByPos(self.position) for s in segs ]
+        if self.x12type is not None:
+            return [self.x12type.x12_to_python( raw ) for raw in raw_list]
+        else:
+            return raw_list
     def __set__( self, instance, valueList ):
         segs= instance.segList( self.segment, self.qualPos, self.inList, self.notInList )
         for seg,val in zip(segs, valueList):
