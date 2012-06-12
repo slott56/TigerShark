@@ -9,6 +9,8 @@ from tigershark.facade import Money
 from tigershark.facade import Facade
 from tigershark.facade import enum
 from tigershark.facade.common import ClaimAdjustment
+from tigershark.facade.common import ContactDetails
+from tigershark.facade.common import NamedEntity
 from tigershark.facade.enums import remittance_advice_codes
 
 
@@ -120,28 +122,6 @@ class Header(X12LoopBridge):
         self.receiver = Header._Receiver(aLoop, *args, **kwargs)
         self.version = Header._Version(aLoop, *args, **kwargs)
         self.production_date = Header._ProductionDate(aLoop, *args, **kwargs)
-
-
-class ContactDetails(X12LoopBridge):
-    name = ElementAccess("N1", 2)
-    id_qualifier = ElementAccess("N1", 3, x12type=enum({
-            "XV": "Health Care Financing Administration National Plan ID",
-            "FI": "Federal Taxpayer Identification Number",
-            "XX": "Health Care Financing Administration National Provider ID"
-            }))
-    id = ElementAccess("N1", 4)
-    addr1 = ElementAccess("N3", 1)
-    addr2 = ElementAccess("N3", 2)
-    city = ElementAccess("N4", 1)
-    state = ElementAccess("N4", 2)
-    zip = ElementAccess("N4", 3)
-    contact_code = ElementAccess("PER", 1)
-    contact_name = ElementAccess("PER", 2)
-    contact_email = ElementAccess("PER", oneOf=("EM", (3, 4), (5, 6), (7, 8)))
-    contact_fax = ElementAccess("PER", oneOf=("FX", (3, 4), (5, 6), (7, 8)))
-    contact_phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
-    contact_phone_ext = ElementAccess("PER",
-            oneOf=("EX", (3, 4), (5, 6), (7, 8)))
 
 
 class Payer(X12LoopBridge):
@@ -344,42 +324,6 @@ class Claim(Facade, X12LoopBridge):
         total_claim_before_taxes = ElementAccess("AMT", 2,
                 qualifier=(1, "T2"), x12type=Money)
 
-    class _NamedEntity(X12LoopBridge):
-        entity_type = ElementAccess("NM1", 2, x12type=enum({
-                "1": "Person",
-                "2": "Non-Person Entity"}))
-        id_code_qual = ElementAccess("NM1", 8, x12type=enum({
-                "34": "Social Security Number",
-                "HN": "HN Health Insurance Claim (HIC) Number",
-                "II": "United States National Individual Identifier",
-                "MI": "Member Identification Number",
-                "MR": "Medicaid Recipient Identification Number",
-                "BD": "Blue Cross Provider Number",
-                "BS": "Blue Shield Provider Number",
-                "FI": "Federal Taxpayer's Identification Number",
-                "MC": "Medicaid Provider Number",
-                "PC": "Provider Commercial Number",
-                "SL": "State License Number",
-                "UP": "Unique Physician Identification Number (UPIN)",
-                "XX": "Health Care Financing Administration National "\
-                        "Provider Identifier"}))
-        id_code = ElementAccess("NM1", 9)
-        last_name = ElementAccess("NM1", 3)
-        org_name = ElementAccess("NM1", 3)
-        first_name = ElementAccess("NM1", 4)
-        middle_initial = ElementAccess("NM1", 5)
-        suffix = ElementAccess("NM1", 7)
-
-        def is_person(self):
-            return self.entity_type[0] == "1"
-
-        def is_organization(self):
-            return self.entity_type[0] == "2"
-
-        def __init__(self, aLoop, qualifier):
-            self.qualifier = qualifier
-            super(Claim._NamedEntity, self).__init__(aLoop)
-
     class _ClaimAdjustments(X12LoopBridge):
         def __init__(self, aLoop, *args, **kwargs):
             super(Claim._ClaimAdjustments, self).__init__(aLoop, *args,
@@ -437,15 +381,15 @@ class Claim(Facade, X12LoopBridge):
         self.line_items = self.loops(self._ServiceInfo, anX12Message)
         # Take advantage of ElementAccess attributes inheriting their parent's
         # qualifier. This needs to be fixed someday.
-        self.patient = self._NamedEntity(anX12Message, qualifier=(1, "QC"))
-        self.insured = self._NamedEntity(anX12Message, qualifier=(1, "IL"))
-        self.corrected_insured = self._NamedEntity(anX12Message,
+        self.patient = NamedEntity(anX12Message, qualifier=(1, "QC"))
+        self.insured = NamedEntity(anX12Message, qualifier=(1, "IL"))
+        self.corrected_insured = NamedEntity(anX12Message,
                 qualifier=(1, "74"))
-        self.service_provider = self._NamedEntity(anX12Message,
+        self.service_provider = NamedEntity(anX12Message,
                 qualifier=(1, "82"))
-        self.crossover_carrier = self._NamedEntity(anX12Message,
+        self.crossover_carrier = NamedEntity(anX12Message,
                 qualifier=(1, "TT"))
-        self.corrected_priority_payer = self._NamedEntity(anX12Message,
+        self.corrected_priority_payer = NamedEntity(anX12Message,
                 qualifier=(1, "PR"))
         self.payment_info = self._ClaimPaymentInfo(anX12Message)
 
