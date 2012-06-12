@@ -357,7 +357,6 @@ class Claim(Facade, X12LoopBridge):
                 "BD": "Blue Cross Provider Number",
                 "BS": "Blue Shield Provider Number",
                 "FI": "Federal Taxpayer's Identification Number",
-                "to": "represent the Social Security Number.",
                 "MC": "Medicaid Provider Number",
                 "PC": "Provider Commercial Number",
                 "SL": "State License Number",
