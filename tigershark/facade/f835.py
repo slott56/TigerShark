@@ -12,6 +12,7 @@ from tigershark.facade.common import ClaimAdjustment
 from tigershark.facade.common import ContactDetails
 from tigershark.facade.common import NamedEntity
 from tigershark.facade.enums import remittance_advice_codes
+from tigershark.facade.utils import first
 
 
 class Header(X12LoopBridge):
@@ -421,12 +422,6 @@ class Claim(Facade, X12LoopBridge):
 class F835_4010(Facade):
     def __init__(self, anX12Message):
         """Examine the message and extract the relevant Loops."""
-        def first(l):
-            try:
-                return l.pop()
-            except:
-                return None
-
         st_loops = anX12Message.descendant('LOOP', name='ST_LOOP')
         if len(st_loops) > 0:
             self.facades = []
