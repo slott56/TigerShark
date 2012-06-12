@@ -848,6 +848,35 @@ class Conversion( object ):
     def python_to_x12( value ):
         return NotImplemented
 
+
+class TM(Conversion):
+    """Convert between TM format time to proper datetime.time objects."""
+    @staticmethod
+    def x12_to_python(raw):
+        if raw is None or raw == "":
+            return raw
+        if len(raw) < 4:
+            return ""
+        hh, mm = int(raw[0:2]), int(raw[2:4])
+        ss = 0
+        dd = 0  # hundredths of a second / centiseconds
+        if len(raw) >= 6:
+            ss = int(raw[4:6])
+        if len(raw) >= 7:
+            dd = int(raw[6:])
+        dd = dd * 10  # milliseconds
+        dd = dd * 100  # microseconds
+        return datetime.time(hh, mm, ss, dd, None)
+
+    @staticmethod
+    def python_to_x12(value):
+        if value is None:
+            return ""
+        return "{time}{centiseconds}".format(
+                time=value.strftime("%H%M%S"),
+                centiseconds=int(value.microsecond / 10000))
+
+
 class D8( Conversion ):
     """Convert between D8 format dates to proper DateTime objects."""
     @staticmethod

@@ -158,3 +158,26 @@ class NamedEntity(X12LoopBridge):
             self.qualifier = qualifier
         super(NamedEntity, self).__init__(aLoop)
         self.contact_details = ContactDetails(aLoop, *args, **kwargs)
+
+
+class ReferenceID(Facade, X12LoopBridge):
+    reference_id_qualifier = ElementAccess("REF", 1, x12type=enum({
+        "0B": "State license Number",
+        "1C": "Medicare Provider Number",
+        "1D": "Medicaid Provider Number",
+        "1J": "Facility ID Number",
+        "4A": "Personal Identification Number (PIN)",
+        "CT": "Contract Number",
+        "EL": "Electronic device pin number",
+        "EO": "Submitter Identification Number",
+        "HPI": "Health Care Financing Administration National Provider "
+                "Identifier",
+        "JD": "User Identification",
+        "N5": "Provider Plan Network Identification Number",
+        "N7": "Facility Network Identification Number",
+        "Q4": "Prior Identifier Number",
+        "SY": "Social Security Number",
+        "TJ": "Federal Taxpayer's Identification Number"}))
+
+    reference_id = ElementAccess("REF", 2)
+    description = ElementAccess("REF", 3)
