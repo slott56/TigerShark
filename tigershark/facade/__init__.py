@@ -374,6 +374,55 @@ class X12SegmentBridge( object ):
         if len(compList) > 0: return compList[0]
         return None # technically redundant to do this.
 
+
+class SegmentAccess( object ):
+    """Used to get a single segment.
+
+    Best used in Conjunction with X12SegmentBridge, eg:
+        class NamedEntity(X12SegmentBridge):
+            last_name = ElementAccess("NM1", 3)
+
+        class InformationSource(X12LoopBridge):
+            loopName = "1000"
+            entity_details = SegmentAccess("NM1",
+                x12type=SegmentConversion(NamedEntity))
+
+        class InformationReceiver(X12LoopBridge):
+            loopName = "2000"
+            entity_details = SegmentAccess("NM1",
+                x12type=SegmentConversion(NamedEntity))
+
+    """
+    def __init__( self, segment, qualifier=None, x12type=None ):
+        self.segment= segment
+        if qualifier is None:
+            self.qualifier= None
+        elif isinstance(qualifier, (list,tuple)):
+            self.qualifier= qualifier
+        else:
+            self.qualifier= ( qualifier, )
+        self.x12type= x12type
+
+    def __repr__( self ):
+        """Provide Documentation for epydoc."""
+        typeName = "None" if self.x12type is None else self.x12type.__name__
+        return "SegmentSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
+
+    def __get__( self, instance, owner ):
+        """Get the requested Segment and convert it, if applicable.
+
+        :param instance: An X12LoopBridge object.
+        """
+        if self.qualifier is None:
+            segBridge = instance.segment( self.segment, )
+        else:
+            segBridge = instance.segment( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
+        return self.x12type.x12_to_python(segBridge.segment)
+
+    def __set__( self, instance, value ):
+        raise UnimplementedError( "Can't set segment sequences, yet")
+
+
 class SegmentSequenceAccess( object ):
     """Define access to sequence of Segments with a user-friendly attribute name.
     This appears as a sequence of individual object instances.
