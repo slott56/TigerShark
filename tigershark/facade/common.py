@@ -94,12 +94,22 @@ class ContactDetails(X12LoopBridge):
     city = ElementAccess("N4", 1)
     state = ElementAccess("N4", 2)
     zip = ElementAccess("N4", 3)
+    country_code = ElementAccess("N4", 4)
+    location_type = ElementAccess("N4", 5, x12type=enum({
+        "CY": "County/Parish",
+        "FI": "Federal Information Processing Standards (FIPS) 55 (Named "
+                "Populated Places)"}, raw_unknowns=True))
+    location_id = ElementAccess("N4", 6)
     contact_code = ElementAccess("PER", 1, x12type=enum({
         "IC": "Information Contact"}, raw_unknowns=True))
     contact_name = ElementAccess("PER", 2)
     contact_edi = ElementAccess("PER", oneOf=("ED", (3, 4), (5, 6), (7, 8)))
     contact_email = ElementAccess("PER", oneOf=("EM", (3, 4), (5, 6), (7, 8)))
     contact_fax = ElementAccess("PER", oneOf=("FX", (3, 4), (5, 6), (7, 8)))
+    contact_home_phone = ElementAccess("PER",
+            oneOf=("HP", (3, 4), (5, 6), (7, 8)))
+    contact_work_phone = ElementAccess("PER",
+            oneOf=("WP", (3, 4), (5, 6), (7, 8)))
     contact_phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
     contact_phone_ext = ElementAccess("PER",
             oneOf=("EX", (3, 4), (5, 6), (7, 8)))
@@ -107,9 +117,12 @@ class ContactDetails(X12LoopBridge):
 
 class NamedEntity(X12LoopBridge):
     entity_identifier = ElementAccess("NM1", 1, x12type=enum({
+            "03": "Dependent",
+            "1P": "Provider",
             "2B": "Third-Party Administrator",
             "36": "Employer",
-            "03": "Dependent",
+            "80": "Hospital",
+            "FA": "Facility",
             "GP": "Gateway Provider",
             "IL": "Insured",
             "P5": "Plan Sponsor",
