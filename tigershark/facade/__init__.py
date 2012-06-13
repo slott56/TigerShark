@@ -433,7 +433,7 @@ class SegmentSequenceAccess( object ):
             segBridgeList= instance.segList( self.segment, )
         else:
             segBridgeList= instance.segList( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
-        return [ self.x12type.x12_to_python(segBridge.segment.segmentToken) for segBridge in segBridgeList ]
+        return [ self.x12type.x12_to_python(segBridge.segment) for segBridge in segBridgeList ]
     def __set__( self, instance, value ):
         raise UnimplementedError( "Can't set segment sequences, yet")
 
@@ -637,7 +637,10 @@ class ElementAccess( object ):
 
     def __get__( self, instance, owner ):
         qualifier = self.get_qualifier(instance, owner)
-        segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
+        if isinstance(instance, X12LoopBridge):
+            segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
+        else:
+            segBridge = instance
         if segBridge is None:
             raw = None
         else:
