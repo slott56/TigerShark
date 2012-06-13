@@ -6,6 +6,8 @@ from tigershark.facade import X12LoopBridge
 from tigershark.facade import enum
 from tigershark.facade import Money
 from tigershark.facade.enums import claim_adjustment_reasons
+from tigershark.facade.enums import id_code_qualifier
+from tigershark.facade.enums import reference_id_qualifier
 
 
 class ClaimAdjustment(X12LoopBridge):
@@ -124,30 +126,7 @@ class NamedEntity(X12LoopBridge):
     suffix = ElementAccess("NM1", 7)
 
     id_code = ElementAccess("NM1", 9)
-    id_code_qual = ElementAccess("NM1", 8, x12type=enum({
-            "24": "Employer's Identification Number",
-            "34": "Social Security Number",
-            "46": "Electronic Transmitter Identification Number (ETIN)",
-            "BD": "Blue Cross Provider Number",
-            "BS": "Blue Shield Provider Number",
-            "FI": "Federal Taxpayer's Identification Number",
-            "HN": "HN Health Insurance Claim (HIC) Number",
-            "II": "United States National Individual Identifier",
-            "MC": "Medicaid Provider Number",
-            "MI": "Member Identification Number",
-            "MR": "Medicaid Recipient Identification Number",
-            "NI": "National Association of Insurance Commmissioners (NAIC) "
-                    "Identification",
-            "PI": "Payor Identification",
-            "PP": "Pharmacy Processor Number",
-            "PC": "Provider Commercial Number",
-            "SL": "State License Number",
-            "SV": "Service Provider Number",
-            "UP": "Unique Physician Identification Number (UPIN)",
-            "XV": "Health Care Financing Administration National Plan ID",
-            "XX": "Health Care Financing Administration National "\
-                    "Provider Identifier",
-            "ZZ": "Mutually Defined"}))
+    id_code_qual = ElementAccess("NM1", 8, x12type=enum(id_code_qualifier))
 
     def is_person(self):
         return self.entity_type[0] == "1"
@@ -159,43 +138,12 @@ class NamedEntity(X12LoopBridge):
         if qualifier:
             self.qualifier = qualifier
         super(NamedEntity, self).__init__(aLoop)
+        #NOTE: Sometimes this can be multiple Elements...
         self.contact_details = ContactDetails(aLoop, *args, **kwargs)
 
 
 class ReferenceID(Facade, X12LoopBridge):
-    reference_id_qualifier = ElementAccess("REF", 1, x12type=enum({
-        "0B": "State license Number",
-        "18": "Plan Number",
-        "1C": "Medicare Provider Number",
-        "1D": "Medicaid Provider Number",
-        "1L": "Group of Policy Number",
-        "1J": "Facility ID Number",
-        "1W": "Member Identification Number",
-        "49": "Family Unit Number",
-        "4A": "Personal Identification Number (PIN)",
-        "6P": "Group Number",
-        "9F": "Referral Number",
-        "A6": "Employee Identification Number",
-        "CT": "Contract Number",
-        "EA": "Medical Record Identification Number",
-        "EJ": "Patient Account Number",
-        "EL": "Electronic device pin number",
-        "EO": "Submitter Identification Number",
-        "F6": "Health Insurance Claim (HIC) Number",
-        "G1": "Prior Authorization Number",
-        "GH": "Identification Card Serial Number",
-        "HPI": "Health Care Financing Administration National Provider "
-                "Identifier",
-        "HJ": "Identity Card Number",
-        "IG": "Insurance Policy Number",
-        "JD": "User Identification",
-        "N6": "Plan Network Identification Number",
-        "N5": "Provider Plan Network Identification Number",
-        "N7": "Facility Network Identification Number",
-        "NQ": "Medicaid Recipient Identification Number",
-        "Q4": "Prior Identifier Number",
-        "SY": "Social Security Number",
-        "TJ": "Federal Taxpayer's Identification Number"}))
-
+    reference_id_qualifier = ElementAccess("REF", 1,
+            x12type=enum(reference_id_qualifier))
     reference_id = ElementAccess("REF", 2)
     description = ElementAccess("REF", 3)
