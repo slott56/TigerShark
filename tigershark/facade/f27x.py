@@ -1,5 +1,6 @@
 from tigershark.facade import ElementAccess
 from tigershark.facade import X12LoopBridge
+from tigershark.facade import X12SegmentBridge
 from tigershark.facade import enum
 from tigershark.facade import D8
 from tigershark.facade import DR
@@ -48,7 +49,7 @@ class HL(object):
     has_children = ElementAccess("HL", 4, x12type=boolean("1"))
 
 
-class TraceNumber(X12LoopBridge):
+class TraceNumber(X12SegmentBridge):
     """ Uniquely identify this transaction set.
 
     Also aid in reassociating payments and remittances that have been
@@ -62,7 +63,7 @@ class TraceNumber(X12LoopBridge):
     entity_additional_id = ElementAccess("TRN", 4)
 
 
-class DemographicInformation(X12LoopBridge):
+class DemographicInformation(X12SegmentBridge):
     birth_date = ElementAccess("DMG", 2, x12type=D8, qualifier=(1, "D8"))
     gender = ElementAccess("DMB", 3, x12type=enum({
         "F": "Female",
@@ -70,7 +71,7 @@ class DemographicInformation(X12LoopBridge):
         "U": "Unknown"}))
 
 
-class Relationship(X12LoopBridge):
+class Relationship(X12SegmentBridge):
     is_insured = ElementAccess("INS", 1, x12type=boolean('Y'))
     relationship = ElementAccess("INS", 2, x12type=enum({
         "01": "Spouse",
@@ -89,7 +90,7 @@ class Relationship(X12LoopBridge):
     birth_sequence_number = ElementAccess("INS", 17)
 
 
-class DateOrTimePeriod(X12LoopBridge):
+class DateOrTimePeriod(X12SegmentBridge):
     type = ElementAccess("DTP", 1, x12type=enum(date_or_time_qualifier))
     time = ElementAccess("DTP", 3, x12type=D8, qualifier=(2, "D8"))
     time_range = ElementAccess("DTP", 3, x12type=DR, qualifier=(2, "RD8"))
@@ -99,7 +100,7 @@ class MonetaryAmounts(X12LoopBridge):
     spend_down = ElementAccess("AMT", 2, qualifier=(1, "R"))
 
 
-class Diagnosis(X12LoopBridge):
+class Diagnosis(X12SegmentBridge):
     principal_diagnosis_icd9_code = ElementAccess("III", 2,
             qualifier=(1, "BK"))
     diagnosis_icd9_code = ElementAccess("III", 2, qualifier=(1, "BF"))

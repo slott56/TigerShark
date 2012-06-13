@@ -1,6 +1,8 @@
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import X12SegmentBridge
 from tigershark.facade import ElementAccess
+from tigershark.facade import SegmentAccess
+from tigershark.facade import ElementSequenceAccess
 from tigershark.facade import SegmentSequenceAccess
 from tigershark.facade import SegmentConversion
 from tigershark.facade import CompositeAccess
@@ -12,8 +14,8 @@ from tigershark.facade import Facade
 from tigershark.facade import enum
 from tigershark.facade import boolean
 from tigershark.facade import Money
-from tigershark.facade.common import NamedEntity
-from tigershark.facade.common import ReferenceID
+#from tigershark.facade.common import NamedEntity
+#from tigershark.facade.common import ReferenceID
 #from tigershark.facade.enums import service_type_codes
 from tigershark.facade.utils import first
 from tigershark.facade.f27x import DateOrTimePeriod
@@ -21,7 +23,6 @@ from tigershark.facade.f27x import DemographicInformation
 from tigershark.facade.f27x import Diagnosis
 from tigershark.facade.f27x import Header
 from tigershark.facade.f27x import HL
-from tigershark.facade.f27x import MonetaryAmounts
 from tigershark.facade.f27x import TraceNumber
 from tigershark.facade.f27x import Relationship
 from tigershark.facade.enums import delivery_or_calendar_pattern_code
@@ -31,6 +32,8 @@ from tigershark.facade.enums import eligibility_insurance_type
 from tigershark.facade.enums import eligibility_reject_reason_code
 from tigershark.facade.enums import eligibility_service_type_codes
 from tigershark.facade.enums import quantity_qualifier
+from tigershark.facade.enums import reference_id_qualifier
+from tigershark.facade.enums import id_code_qualifier
 from tigershark.facade.enums import time_period_qualifier
 
 
@@ -50,26 +53,103 @@ class RequestValidation(X12SegmentBridge):
                 "Shortly"}))
 
 
+class NamedEntity(X12SegmentBridge):
+    entity_identifier = ElementAccess("NM1", 1, x12type=enum({
+            "03": "Dependent",
+            "1P": "Provider",
+            "2B": "Third-Party Administrator",
+            "36": "Employer",
+            "80": "Hospital",
+            "FA": "Facility",
+            "GP": "Gateway Provider",
+            "IL": "Insured",
+            "P5": "Plan Sponsor",
+            "PR": "Payer",
+            "QC": "Patient"}))
+    entity_type = ElementAccess("NM1", 2, x12type=enum({
+            "1": "Person",
+            "2": "Non-Person Entity"}))
+
+    last_name = ElementAccess("NM1", 3)
+    org_name = ElementAccess("NM1", 3)
+    first_name = ElementAccess("NM1", 4)
+    middle_initial = ElementAccess("NM1", 5)
+    suffix = ElementAccess("NM1", 7)
+
+    id_code = ElementAccess("NM1", 9)
+    id_code_qual = ElementAccess("NM1", 8, x12type=enum(id_code_qualifier))
+
+    @property
+    def is_person(self):
+        return self.entity_type[0] == "1"
+
+    @property
+    def is_organization(self):
+        return self.entity_type[0] == "2"
+
+
+class ReferenceID(X12SegmentBridge):
+    reference_id_qualifier = ElementAccess("REF", 1,
+            x12type=enum(reference_id_qualifier))
+    reference_id = ElementAccess("REF", 2)
+    description = ElementAccess("REF", 3)
+
+
+class ContactInformation(X12SegmentBridge):
+    contact_code = ElementAccess("PER", 1, x12type=enum({
+        "IC": "Information Contact"}, raw_unknowns=True))
+    contact_name = ElementAccess("PER", 2)
+    contact_edi = ElementAccess("PER", oneOf=("ED", (3, 4), (5, 6), (7, 8)))
+    contact_email = ElementAccess("PER", oneOf=("EM", (3, 4), (5, 6), (7, 8)))
+    contact_fax = ElementAccess("PER", oneOf=("FX", (3, 4), (5, 6), (7, 8)))
+    contact_home_phone = ElementAccess("PER",
+            oneOf=("HP", (3, 4), (5, 6), (7, 8)))
+    contact_work_phone = ElementAccess("PER",
+            oneOf=("WP", (3, 4), (5, 6), (7, 8)))
+    contact_phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
+    contact_phone_ext = ElementAccess("PER",
+            oneOf=("EX", (3, 4), (5, 6), (7, 8)))
+
+
+class Address(X12SegmentBridge):
+    addr1 = ElementAccess("N3", 1)
+    addr2 = ElementAccess("N3", 2)
+
+
+class Location(X12SegmentBridge):
+    city = ElementAccess("N4", 1)
+    state = ElementAccess("N4", 2)
+    zip = ElementAccess("N4", 3)
+    country_code = ElementAccess("N4", 4)
+    location_type = ElementAccess("N4", 5, x12type=enum({
+        "CY": "County/Parish",
+        "FI": "Federal Information Processing Standards (FIPS) 55 (Named "
+                "Populated Places)"}, raw_unknowns=True))
+    location_id = ElementAccess("N4", 6)
+
+
 class Source(Facade, X12LoopBridge, HL):
     """The information source is the entity with the eligibility answers"""
     loopName = "2000A"
 
-    class _NamedEntity(NamedEntity):
-        loopName = "2100A"
+    request_validations = SegmentSequenceAccess("AAA",
+            x12type=SegmentConversion(RequestValidation))
 
-    class _ReferenceID(ReferenceID):
+    class _Information(X12LoopBridge):
         loopName = "2100A"
-
-    class _RequestValidation(RequestValidation):
-        loopName = "2100A"
+        entity_details = SegmentAccess("NM1",
+                x12type=SegmentConversion(NamedEntity))
+        contact_information = SegmentSequenceAccess("PER",
+                x12type=SegmentConversion(ContactInformation))
+        reference_ids = SegmentSequenceAccess("REF",
+                x12type=SegmentConversion(ReferenceID))
+        request_validations = SegmentSequenceAccess("AAA",
+                x12type=SegmentConversion(RequestValidation))
 
     def __init__(self, anX12Message, *args, **kwargs):
         super(Source, self).__init__(anX12Message, *args, **kwargs)
-        self.entity_details = first(self.loops(self._NamedEntity,
-            anX12Message))
-        self.reference_ids = self.loops(self._ReferenceID, anX12Message)
-        self.request_validations = self.loops(self._RequestValidation,
-                anX12Message)
+        self.source_information = first(self.loops(
+            self._Information, anX12Message))
         self.receivers = self.loops(Receiver, anX12Message)
 
 
@@ -77,26 +157,25 @@ class Receiver(Facade, X12LoopBridge, HL):
     """The entity asking the questions"""
     loopName = "2000B"
 
-    class _NamedEntity(NamedEntity):
+    class _Information(X12LoopBridge):
         loopName = "2100B"
-
-    class _ReferenceID(ReferenceID):
-        loopName = "2100B"
-
-    class _RequestValidation(RequestValidation):
-        loopName = "2100B"
+        entity_details = SegmentAccess("NM1",
+                x12type=SegmentConversion(NamedEntity))
+        contact_information = SegmentSequenceAccess("PER",
+                x12type=SegmentConversion(ContactInformation))
+        reference_ids = SegmentSequenceAccess("REF",
+                x12type=SegmentConversion(ReferenceID))
+        request_validations = SegmentSequenceAccess("AAA",
+                x12type=SegmentConversion(RequestValidation))
 
     def __init__(self, anX12Message, *args, **kwargs):
         super(Receiver, self).__init__(anX12Message, *args, **kwargs)
-        self.entity_details = first(self.loops(self._NamedEntity,
-            anX12Message))
-        self.reference_ids = self.loops(self._ReferenceID, anX12Message)
-        self.request_validations = self.loops(self._RequestValidation,
-                anX12Message)
+        self.receiver_information = first(self.loops(
+            self._Information, anX12Message))
         self.subscribers = self.loops(Subscriber, anX12Message)
 
 
-class EligibilityOrBenefitInformation(X12LoopBridge):
+class EligibilityOrBenefitInformation(X12SegmentBridge):
     """Eligibility Information."""
     information_type = ElementAccess("EB", 1, x12type=enum({
         "1": "Active Coverage",
@@ -205,87 +284,65 @@ class Subscriber(Facade, X12LoopBridge, HL):
     """
     loopName = "2000C"
 
-    class _TraceNumber(TraceNumber):
-        loopName = "2000C"
+    trace_numbers = SegmentSequenceAccess("TRN",
+            x12type=SegmentConversion(TraceNumber))
 
-    class _NamedEntity(NamedEntity):
+    class _Information(X12LoopBridge):
         loopName = "2100C"
+        entity_details = SegmentAccess("NM1",
+                x12type=SegmentConversion(NamedEntity))
+        address_street = SegmentAccess("N3",
+                x12type=SegmentConversion(Address))
+        address_location = SegmentAccess("N4",
+                x12type=SegmentConversion(Location))
+        reference_ids = SegmentSequenceAccess("REF",
+                x12type=SegmentConversion(ReferenceID))
+        contact_information = SegmentSequenceAccess("PER",
+                x12type=SegmentConversion(ContactInformation))
 
-    class _ReferenceID(ReferenceID):
-        loopName = "2100C"
-
-    class _RequestValidation(X12LoopBridge):
-        loopName = "2100C"
-        seq = SegmentSequenceAccess("AAA",
+        request_validations = SegmentSequenceAccess("AAA",
                 x12type=SegmentConversion(RequestValidation))
+        demographic_information = SegmentAccess("DMG",
+                x12type=SegmentConversion(DemographicInformation))
+        relationship = SegmentAccess("INS",
+                x12type=SegmentConversion(Relationship))
+        dates = SegmentSequenceAccess("DTP",
+                x12type=SegmentConversion(DateOrTimePeriod))
 
-    class _DemographicInformation(DemographicInformation):
-        loopName = "2100C"
-
-    class _Relationship(Relationship):
-        loopName = "2100C"
-
-    class _DateOrTimePeriod(DateOrTimePeriod):
-        loopName = "2100C"
-
-    class _AdditionalInformation(Facade, X12LoopBridge):
+    class _EligibilityOrBenefitInformation(Facade, X12LoopBridge):
         loopName = "2110C"
 
-        class _EligibilityOrBenefitInformation(
-                EligibilityOrBenefitInformation):
-            loopName = "2110C"
+        coverage_information = SegmentAccess("EB",
+                x12type=SegmentConversion(EligibilityOrBenefitInformation))
+        services_deliveries = SegmentSequenceAccess("HSD",
+                x12type=SegmentConversion(HealthCareServicesDelivery))
+        reference_ids = SegmentSequenceAccess("REF",
+                x12type=SegmentConversion(ReferenceID))
+        dates = SegmentSequenceAccess("DTP",
+                x12type=SegmentConversion(DateOrTimePeriod))
+        request_validations = SegmentSequenceAccess("AAA",
+                x12type=SegmentConversion(RequestValidation))
+        messages = ElementSequenceAccess("MSG", 1)
 
-        class _HealthcareServicesDelivery(HealthCareServicesDelivery):
-            loopName = "2110C"
-
-        class _ReferenceID(ReferenceID):
-            loopName = "2110C"
-
-        class _DateOrTimePeriod(DateOrTimePeriod):
-            loopName = "2110C"
-
-        class _RequestValidation(RequestValidation):
-            loopName = "2110C"
-
-        class _Message(Message):
-            loopName = "2110C"
-
-        class _Diagnosis(Diagnosis):
+        class _AdditionalInformation(X12LoopBridge):
             loopName = "2115C"
 
-        def __init__(self, anX12Message, *args, **kwargs):
-            super(Subscriber._AdditionalInformation, self).__init__(
-                    anX12Message, *args, **kwargs)
-            self.eligibility_or_benefit_information = \
-                    self._EligibilityOrBenefitInformation(anX12Message)
-            self.healthcare_services_deliveries = \
-                    self.loops(self._HealthCareServicesDelivery,
-                            anX12Message)
-            self.reference_ids = self.loops(self._ReferenceID, anX12Message)
-            self.request_validations = self.loops(self._RequestValidation,
-                    anX12Message)
-            self.messages = self.loops(self._Message, anX12Message)
-            self.diagnosis = self._Diagnosis(anX12Message)
+            diagnosis = SegmentAccess("III",
+                x12type=SegmentConversion(Diagnosis))
 
-            self.spend_amounts = self.loops(MonetaryAmounts,
-                    anX12Message)
-            self.prior_authorization = ReferenceID(anX12Message)
-            self.dates = self.loops(self._DateOrTimePeriod, anX12Message)
+        def __init__(self, anX12Message, *args, **kwargs):
+            super(Subscriber._EligibilityOrBenefitInformation, self).__init__(
+                    anX12Message, *args, **kwargs)
+
+            self.additional_information = self.loops(
+                    self._AdditionalInformation, anX12Message)
 
     def __init__(self, anX12Message, *args, **kwargs):
         super(Subscriber, self).__init__(anX12Message, *args, **kwargs)
-        self.trace_numbers = self.loops(self._TraceNumber, anX12Message)
-        self.entity_details = first(self.loops(self._NamedEntity,
-            anX12Message))
-        self.reference_ids = self.loops(self._ReferenceID, anX12Message)
-        self.request_validations = self.loops(self._RequestValidation,
-                anX12Message)
-        self.demographic_information = self._DemographicInformation(
-                anX12Message)
-        self.relationship = self._Relationship(anX12Message)
-        self.dates = self.loops(self._DateOrTimePeriod, anX12Message)
-        self.additional_information = self.loops(self._AdditionalInformation,
-                anX12Message)
+        self.subscriber_information = first(self.loops(
+            self._Information, anX12Message))
+        self.eligibility_or_benefit_information = \
+                self.loops(self._EligibilityOrBenefitInformation, anX12Message)
         self.dependents = self.loops(Dependent, anX12Message)
 
 
