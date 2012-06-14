@@ -6,10 +6,6 @@ from tigershark.facade import ElementSequenceAccess
 from tigershark.facade import SegmentSequenceAccess
 from tigershark.facade import SegmentConversion
 from tigershark.facade import CompositeAccess
-#from tigershark.facade import D8
-#from tigershark.facade import DR
-#from tigershark.facade import TM
-#from tigershark.facade import Money
 from tigershark.facade import Facade
 from tigershark.facade import enum
 from tigershark.facade import boolean
@@ -271,7 +267,74 @@ class Subscriber(Facade, X12LoopBridge, HL):
         self.dependents = self.loops(Dependent, anX12Message)
 
 
-class Dependent():
+class Dependent(Facade, X12LoopBridge, HL):
+    """The Dependent.
+
+    This person was *NOT* identified as a member of the Source. If this is
+    populated, then this is the patient.
+    """
+    loopName = "2000D"
+
+    trace_numbers = SegmentSequenceAccess("TRN",
+            x12type=SegmentConversion(TraceNumber))
+
+    class _Information(X12LoopBridge):
+        loopName = "2100D"
+        name = SegmentAccess("NM1",
+                x12type=SegmentConversion(NamedEntity))
+        address_street = SegmentAccess("N3",
+                x12type=SegmentConversion(Address))
+        address_location = SegmentAccess("N4",
+                x12type=SegmentConversion(Location))
+        reference_ids = SegmentSequenceAccess("REF",
+                x12type=SegmentConversion(ReferenceID))
+        contact_information = SegmentSequenceAccess("PER",
+                x12type=SegmentConversion(ContactInformation))
+
+        request_validations = SegmentSequenceAccess("AAA",
+                x12type=SegmentConversion(RequestValidation))
+        demographic_information = SegmentAccess("DMG",
+                x12type=SegmentConversion(DemographicInformation))
+        relationship = SegmentAccess("INS",
+                x12type=SegmentConversion(Relationship))
+        dates = SegmentSequenceAccess("DTP",
+                x12type=SegmentConversion(DateOrTimePeriod))
+
+    class _EligibilityOrBenefitInformation(Facade, X12LoopBridge):
+        loopName = "2110D"
+
+        coverage_information = SegmentAccess("EB",
+                x12type=SegmentConversion(EligibilityOrBenefitInformation))
+        services_deliveries = SegmentSequenceAccess("HSD",
+                x12type=SegmentConversion(HealthCareServicesDelivery))
+        reference_ids = SegmentSequenceAccess("REF",
+                x12type=SegmentConversion(ReferenceID))
+        dates = SegmentSequenceAccess("DTP",
+                x12type=SegmentConversion(DateOrTimePeriod))
+        request_validations = SegmentSequenceAccess("AAA",
+                x12type=SegmentConversion(RequestValidation))
+        messages = ElementSequenceAccess("MSG", 1)
+
+        class _AdditionalInformation(X12LoopBridge):
+            loopName = "2115C"
+
+            diagnosis = SegmentAccess("III",
+                x12type=SegmentConversion(Diagnosis))
+
+        def __init__(self, anX12Message, *args, **kwargs):
+            super(Subscriber._EligibilityOrBenefitInformation, self).__init__(
+                    anX12Message, *args, **kwargs)
+
+            self.additional_information = self.loops(
+                    self._AdditionalInformation, anX12Message)
+
+    def __init__(self, anX12Message, *args, **kwargs):
+        super(Subscriber, self).__init__(anX12Message, *args, **kwargs)
+        self.subscriber_information = first(self.loops(
+            self._Information, anX12Message))
+        self.eligibility_or_benefit_information = \
+                self.loops(self._EligibilityOrBenefitInformation, anX12Message)
+        self.dependents = self.loops(Dependent, anX12Message)
     loopName = "2000D"
     pass
 
