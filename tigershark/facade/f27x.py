@@ -6,9 +6,9 @@ from tigershark.facade import X12LoopBridge
 from tigershark.facade import X12SegmentBridge
 from tigershark.facade import boolean
 from tigershark.facade import enum
-from tigershark.facade.enum.common import date_or_time_qualifier
-from tigershark.facade.enum.common import id_code_qualifier
-from tigershark.facade.enum.common import reference_id_qualifier
+from tigershark.facade.enums.common import date_or_time_qualifier
+from tigershark.facade.enums.common import id_code_qualifier
+from tigershark.facade.enums.common import reference_id_qualifier
 
 
 class Header(X12LoopBridge):

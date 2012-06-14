@@ -26,7 +26,7 @@ setup(
         'tigershark',
         'tigershark.extras',
         'tigershark.facade',
-        'tigershark.facade.enum',
+        'tigershark.facade.enums',
         'tigershark.parsers',
         'tigershark.tests',
         'tigershark.tools',

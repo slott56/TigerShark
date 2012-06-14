@@ -5,9 +5,9 @@ from tigershark.facade import Facade
 from tigershark.facade import Money
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import enum
-from tigershark.facade.enum.common import id_code_qualifier
-from tigershark.facade.enum.common import reference_id_qualifier
-from tigershark.facade.enum.remittance import claim_adjustment_reasons
+from tigershark.facade.enums.common import id_code_qualifier
+from tigershark.facade.enums.common import reference_id_qualifier
+from tigershark.facade.enums.remittance import claim_adjustment_reasons
 
 
 class ClaimAdjustment(X12LoopBridge):

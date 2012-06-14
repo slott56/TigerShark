@@ -7,9 +7,9 @@ from tigershark.facade import SegmentSequenceAccess
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import X12SegmentBridge
 from tigershark.facade import enum
-from tigershark.facade.enum.eligibility import coverage_level
-from tigershark.facade.enum.eligibility import insurance_type
-from tigershark.facade.enum.eligibility import service_type_codes
+from tigershark.facade.enums.eligibility import coverage_level
+from tigershark.facade.enums.eligibility import insurance_type
+from tigershark.facade.enums.eligibility import service_type_codes
 from tigershark.facade.f27x import Address
 from tigershark.facade.f27x import ContactInformation
 from tigershark.facade.f27x import DateOrTimePeriod
