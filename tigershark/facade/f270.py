@@ -7,8 +7,6 @@ from tigershark.facade import SegmentConversion
 from tigershark.facade import SegmentSequenceAccess
 from tigershark.facade import Facade
 from tigershark.facade import enum
-from tigershark.facade.common import NamedEntity
-from tigershark.facade.common import ReferenceID
 from tigershark.facade.utils import first
 from tigershark.facade.f27x import ContactInformation
 from tigershark.facade.f27x import Address
@@ -20,6 +18,8 @@ from tigershark.facade.f27x import Header
 from tigershark.facade.f27x import HL
 from tigershark.facade.f27x import TraceNumber
 from tigershark.facade.f27x import Relationship
+from tigershark.facade.f27x import NamedEntity
+from tigershark.facade.f27x import ReferenceID
 from tigershark.facade.enum.eligibility import coverage_level
 from tigershark.facade.enum.eligibility import insurance_type
 from tigershark.facade.enum.eligibility import service_type_codes

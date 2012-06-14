@@ -14,9 +14,6 @@ from tigershark.facade import Facade
 from tigershark.facade import enum
 from tigershark.facade import boolean
 from tigershark.facade import Money
-#from tigershark.facade.common import NamedEntity
-#from tigershark.facade.common import ReferenceID
-#from tigershark.facade.enums import service_type_codes
 from tigershark.facade.utils import first
 from tigershark.facade.f27x import ContactInformation
 from tigershark.facade.f27x import Address
@@ -28,6 +25,8 @@ from tigershark.facade.f27x import Header
 from tigershark.facade.f27x import HL
 from tigershark.facade.f27x import TraceNumber
 from tigershark.facade.f27x import Relationship
+from tigershark.facade.f27x import NamedEntity
+from tigershark.facade.f27x import ReferenceID
 from tigershark.facade.enum.common import delivery_or_calendar_pattern_code
 from tigershark.facade.enum.common import delivery_time_pattern_code
 from tigershark.facade.enum.common import quantity_qualifier
@@ -52,48 +51,6 @@ class RequestValidation(X12SegmentBridge):
         "X": "Please Wait 10 Days and Resubmit",
         "Y": "Do Not Resubmit; We Will Hold Your Request and Respond Again "
                 "Shortly"}))
-
-
-class NamedEntity(X12SegmentBridge):
-    entity_identifier = ElementAccess("NM1", 1, x12type=enum({
-            "03": "Dependent",
-            "1P": "Provider",
-            "2B": "Third-Party Administrator",
-            "36": "Employer",
-            "80": "Hospital",
-            "FA": "Facility",
-            "GP": "Gateway Provider",
-            "IL": "Insured",
-            "P5": "Plan Sponsor",
-            "PR": "Payer",
-            "QC": "Patient"}))
-    entity_type = ElementAccess("NM1", 2, x12type=enum({
-            "1": "Person",
-            "2": "Non-Person Entity"}))
-
-    last_name = ElementAccess("NM1", 3)
-    org_name = ElementAccess("NM1", 3)
-    first_name = ElementAccess("NM1", 4)
-    middle_initial = ElementAccess("NM1", 5)
-    suffix = ElementAccess("NM1", 7)
-
-    id_code = ElementAccess("NM1", 9)
-    id_code_qual = ElementAccess("NM1", 8, x12type=enum(id_code_qualifier))
-
-    @property
-    def is_person(self):
-        return self.entity_type[0] == "1"
-
-    @property
-    def is_organization(self):
-        return self.entity_type[0] == "2"
-
-
-class ReferenceID(X12SegmentBridge):
-    reference_id_qualifier = ElementAccess("REF", 1,
-            x12type=enum(reference_id_qualifier))
-    reference_id = ElementAccess("REF", 2)
-    description = ElementAccess("REF", 3)
 
 
 class Source(Facade, X12LoopBridge, HL):
