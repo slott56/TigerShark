@@ -4,6 +4,8 @@ from tigershark.facade import ElementAccess
 from tigershark.facade import TM
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import X12SegmentBridge
+from tigershark.facade import SegmentAccess
+from tigershark.facade import SegmentConversion
 from tigershark.facade import boolean
 from tigershark.facade import enum
 from tigershark.facade.enums.common import date_or_time_qualifier
@@ -14,7 +16,7 @@ from tigershark.facade.enums.common import reference_id_qualifier
 class Header(X12LoopBridge):
     loopName = "HEADER"
 
-    class _HierarchicalTransaction(X12LoopBridge):
+    class _HierarchicalTransaction(X12SegmentBridge):
         """Use this to start the transaction set.
 
         This also indicates the sequence of hierarchical levels of information
@@ -34,10 +36,8 @@ class Header(X12LoopBridge):
             "RT": "Spend Down",
             "RU": "Medical Services Reservation"}, raw_unknowns=True))
 
-    def __init__(self, aLoop, *args, **kwargs):
-        super(Header, self).__init__(aLoop, *args, **kwargs)
-        self.hierarchical_transaction_info = self._HierarchicalTransaction(
-                aLoop)
+    hierarchical_transaction_info = SegmentAccess("BHT",
+            x12type=SegmentConversion(_HierarchicalTransaction))
 
 
 class HL(object):
