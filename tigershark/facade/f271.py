@@ -15,6 +15,7 @@ from tigershark.facade.enum.common import delivery_time_pattern_code
 from tigershark.facade.enum.common import quantity_qualifier
 from tigershark.facade.enum.common import time_period_qualifier
 from tigershark.facade.enum.eligibility import coverage_level
+from tigershark.facade.enum.eligibility import eligibility_or_benefit_code
 from tigershark.facade.enum.eligibility import insurance_type
 from tigershark.facade.enum.eligibility import reject_reason_code
 from tigershark.facade.enum.eligibility import service_type_codes
@@ -99,42 +100,8 @@ class Receiver(Facade, X12LoopBridge, HL):
 
 class EligibilityOrBenefitInformation(X12SegmentBridge):
     """Eligibility Information."""
-    information_type = ElementAccess("EB", 1, x12type=enum({
-        "1": "Active Coverage",
-        "2": "Active - Full Risk Capitation",
-        "3": "Active - Services Capitated",
-        "4": "Active - Services Capitated to Primary Care Physician",
-        "5": "Active - Pending Investigation",
-        "6": "Inactive",
-        "7": "Inactive - Pending Eligibility Update",
-        "8": "Inactive - Pending Investigation",
-        "A": "Co-Insurance",
-        "B": "Co-Payment",
-        "C": "Deductible",
-        "CB": "Coverage Basis",
-        "D": "Benefit Description",
-        "E": "Exclusions",
-        "F": "Limitations",
-        "G": "Out of Pocket (Stop Loss)",
-        "H": "Unlimited",
-        "I": "Non-Covered",
-        "J": "Cost Containment",
-        "K": "Reserve",
-        "L": "Primary Care Provider",
-        "M": "Pre-existing Condition",
-        "MC": "Managed Care Coordinator",
-        "N": "Services Restricted to Following Provider",
-        "O": "Not Deemed a Medical Necessity",
-        "P": "Benefit Disclaimer",
-        "Q": "Second Surgical Opinion Required",
-        "R": "Other or Additional Payor",
-        "S": "Prior Year(s) History",
-        "T": "Card(s) Reported Lost/Stolen",
-        "U": "Contact Following Entity for Eligibility or Benefit Information",
-        "V": "Cannot Process",
-        "W": "Other Source of Data",
-        "X": "Health Care Facility",
-        "Y": "Spend Down"}))
+    information_type = ElementAccess("EB", 1, x12type=enum(
+        eligibility_or_benefit_code))
     coverage_level = ElementAccess("EB", 2, x12type=enum(
         coverage_level))
     service_type = ElementAccess("EB", 3, x12type=enum(
