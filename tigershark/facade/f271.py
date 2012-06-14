@@ -107,7 +107,7 @@ class Source(Facade, X12LoopBridge, HL):
 
     class _Information(X12LoopBridge):
         loopName = "2100A"
-        entity_details = SegmentAccess("NM1",
+        name = SegmentAccess("NM1",
                 x12type=SegmentConversion(NamedEntity))
         contact_information = SegmentSequenceAccess("PER",
                 x12type=SegmentConversion(ContactInformation))
@@ -129,7 +129,7 @@ class Receiver(Facade, X12LoopBridge, HL):
 
     class _Information(X12LoopBridge):
         loopName = "2100B"
-        entity_details = SegmentAccess("NM1",
+        name = SegmentAccess("NM1",
                 x12type=SegmentConversion(NamedEntity))
         contact_information = SegmentSequenceAccess("PER",
                 x12type=SegmentConversion(ContactInformation))
@@ -259,7 +259,7 @@ class Subscriber(Facade, X12LoopBridge, HL):
 
     class _Information(X12LoopBridge):
         loopName = "2100C"
-        entity_details = SegmentAccess("NM1",
+        name = SegmentAccess("NM1",
                 x12type=SegmentConversion(NamedEntity))
         address_street = SegmentAccess("N3",
                 x12type=SegmentConversion(Address))
