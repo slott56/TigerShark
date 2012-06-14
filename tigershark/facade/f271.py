@@ -351,8 +351,6 @@ class Dependent(Facade, X12LoopBridge, HL):
         self.dependent_related_entity_information = first(self.loops(
             self._RelatedEntityInformation, anX12Message))
         self.dependents = self.loops(Dependent, anX12Message)
-    loopName = "2000D"
-    pass
 
 
 class F271_4010(Facade):
