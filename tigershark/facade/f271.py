@@ -363,7 +363,3 @@ class F271_4010(Facade):
         else:
             self.header = first(self.loops(Header, anX12Message))
             self.source = first(self.loops(Source, anX12Message))
-            #self.receiver = first(self.loops(Receiver, anX12Message))
-            #self.claims_overview = first(self.loops(ClaimsOverview,
-            #    anX12Message))
-            #self.claims = self.loops(Claim, anX12Message)
