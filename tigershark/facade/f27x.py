@@ -63,6 +63,39 @@ class TraceNumber(X12SegmentBridge):
     entity_additional_id = ElementAccess("TRN", 4)
 
 
+class ContactInformation(X12SegmentBridge):
+    contact_code = ElementAccess("PER", 1, x12type=enum({
+        "IC": "Information Contact"}, raw_unknowns=True))
+    contact_name = ElementAccess("PER", 2)
+    contact_edi = ElementAccess("PER", oneOf=("ED", (3, 4), (5, 6), (7, 8)))
+    contact_email = ElementAccess("PER", oneOf=("EM", (3, 4), (5, 6), (7, 8)))
+    contact_fax = ElementAccess("PER", oneOf=("FX", (3, 4), (5, 6), (7, 8)))
+    contact_home_phone = ElementAccess("PER",
+            oneOf=("HP", (3, 4), (5, 6), (7, 8)))
+    contact_work_phone = ElementAccess("PER",
+            oneOf=("WP", (3, 4), (5, 6), (7, 8)))
+    contact_phone = ElementAccess("PER", oneOf=("TE", (3, 4), (5, 6), (7, 8)))
+    contact_phone_ext = ElementAccess("PER",
+            oneOf=("EX", (3, 4), (5, 6), (7, 8)))
+
+
+class Address(X12SegmentBridge):
+    addr1 = ElementAccess("N3", 1)
+    addr2 = ElementAccess("N3", 2)
+
+
+class Location(X12SegmentBridge):
+    city = ElementAccess("N4", 1)
+    state = ElementAccess("N4", 2)
+    zip = ElementAccess("N4", 3)
+    country_code = ElementAccess("N4", 4)
+    location_type = ElementAccess("N4", 5, x12type=enum({
+        "CY": "County/Parish",
+        "FI": "Federal Information Processing Standards (FIPS) 55 (Named "
+                "Populated Places)"}, raw_unknowns=True))
+    location_id = ElementAccess("N4", 6)
+
+
 class DemographicInformation(X12SegmentBridge):
     birth_date = ElementAccess("DMG", 2, x12type=D8, qualifier=(1, "D8"))
     gender = ElementAccess("DMB", 3, x12type=enum({
@@ -94,10 +127,6 @@ class DateOrTimePeriod(X12SegmentBridge):
     type = ElementAccess("DTP", 1, x12type=enum(date_or_time_qualifier))
     time = ElementAccess("DTP", 3, x12type=D8, qualifier=(2, "D8"))
     time_range = ElementAccess("DTP", 3, x12type=DR, qualifier=(2, "RD8"))
-
-
-class MonetaryAmounts(X12LoopBridge):
-    spend_down = ElementAccess("AMT", 2, qualifier=(1, "R"))
 
 
 class Diagnosis(X12SegmentBridge):
