@@ -28,22 +28,20 @@ from tigershark.facade.f27x import Header
 from tigershark.facade.f27x import HL
 from tigershark.facade.f27x import TraceNumber
 from tigershark.facade.f27x import Relationship
-from tigershark.facade.enums import delivery_or_calendar_pattern_code
-from tigershark.facade.enums import delivery_time_pattern_code
-from tigershark.facade.enums import eligibility_coverage_level
-from tigershark.facade.enums import eligibility_insurance_type
-from tigershark.facade.enums import eligibility_reject_reason_code
-from tigershark.facade.enums import eligibility_service_type_codes
-from tigershark.facade.enums import quantity_qualifier
-from tigershark.facade.enums import reference_id_qualifier
-from tigershark.facade.enums import id_code_qualifier
-from tigershark.facade.enums import time_period_qualifier
+from tigershark.facade.enum.common import delivery_or_calendar_pattern_code
+from tigershark.facade.enum.common import delivery_time_pattern_code
+from tigershark.facade.enum.common import quantity_qualifier
+from tigershark.facade.enum.common import time_period_qualifier
+from tigershark.facade.enum.eligibility import coverage_level
+from tigershark.facade.enum.eligibility import insurance_type
+from tigershark.facade.enum.eligibility import reject_reason_code
+from tigershark.facade.enum.eligibility import service_type_codes
 
 
 class RequestValidation(X12SegmentBridge):
     valid_request = ElementAccess("AAA", 1, x12type=boolean("Y"))
     reject_reason = ElementAccess("AAA", 3,
-            x12type=enum(eligibility_reject_reason_code))
+            x12type=enum(reject_reason_code))
     follow_up_action_code = ElementAccess("AAA", 4, x12type=enum({
         "C": "Please Correct and Resubmit",
         "N": "Resubmission Not Allowed",
@@ -184,11 +182,11 @@ class EligibilityOrBenefitInformation(X12SegmentBridge):
         "X": "Health Care Facility",
         "Y": "Spend Down"}))
     coverage_level = ElementAccess("EB", 2, x12type=enum(
-        eligibility_coverage_level))
+        coverage_level))
     service_type = ElementAccess("EB", 3, x12type=enum(
-        eligibility_service_type_codes))
+        service_type_codes))
     insurance_type = ElementAccess("EB", 4, x12type=enum(
-        eligibility_insurance_type))
+        insurance_type))
     description = ElementAccess("EB", 5)
     time_period_type = ElementAccess("EB", 6,
             x12type=enum(time_period_qualifier))

@@ -11,7 +11,7 @@ from tigershark.facade import enum
 from tigershark.facade.common import ClaimAdjustment
 from tigershark.facade.common import ContactDetails
 from tigershark.facade.common import NamedEntity
-from tigershark.facade.enums import remittance_advice_codes
+from tigershark.facade.enum.remittance import remittance_advice_codes
 from tigershark.facade.utils import first
 
 

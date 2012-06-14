@@ -20,9 +20,9 @@ from tigershark.facade.f27x import Header
 from tigershark.facade.f27x import HL
 from tigershark.facade.f27x import TraceNumber
 from tigershark.facade.f27x import Relationship
-from tigershark.facade.enums import eligibility_coverage_level
-from tigershark.facade.enums import eligibility_insurance_type
-from tigershark.facade.enums import eligibility_service_type_codes
+from tigershark.facade.enum.eligibility import coverage_level
+from tigershark.facade.enum.eligibility import insurance_type
+from tigershark.facade.enum.eligibility import service_type_codes
 
 
 class Source(Facade, X12LoopBridge, HL):
@@ -102,7 +102,7 @@ class Receiver(Facade, X12LoopBridge, HL):
 
 class EligibilityOrBenefitInquiry(X12SegmentBridge):
     service_type = ElementAccess("EQ", 1, x12type=enum(
-        eligibility_service_type_codes))
+        service_type_codes))
     ada_code = CompositeAccess("EQ", "AD", 2)
     cpt_code = CompositeAccess("EQ", "CJ", 2)
     hcpcs_code = CompositeAccess("EQ", "HC", 2)
@@ -111,9 +111,9 @@ class EligibilityOrBenefitInquiry(X12SegmentBridge):
     ndc_code = CompositeAccess("EQ", "ND", 2)
     zz_code = CompositeAccess("EQ", "ZZ", 2)
     coverage_level = ElementAccess("EQ", 3, x12type=enum(
-        eligibility_coverage_level))
+        coverage_level))
     insurance_type = ElementAccess("EQ", 4, x12type=enum(
-        eligibility_insurance_type))
+        insurance_type))
 
 
 class MonetaryAmount(X12SegmentBridge):
