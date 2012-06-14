@@ -17,6 +17,7 @@ from tigershark.facade.f27x import Diagnosis
 from tigershark.facade.f27x import Header
 from tigershark.facade.f27x import HL
 from tigershark.facade.f27x import TraceNumber
+from tigershark.facade.f27x import ProviderInformation
 from tigershark.facade.f27x import Relationship
 from tigershark.facade.f27x import NamedEntity
 from tigershark.facade.f27x import ReferenceID
@@ -40,37 +41,6 @@ class Source(Facade, X12LoopBridge, HL):
         self.source_information = first(self.loops(
             self._Information, anX12Message))
         self.receivers = self.loops(Receiver, anX12Message)
-
-
-class ProviderInformation(X12SegmentBridge):
-    provider_code = ElementAccess("PRV", 1, x12type=enum({
-        "AD": "Admitting",
-        "AT": "Attending",
-        "BI": "Billing",
-        "CO": "Consulting",
-        "CV": "Covering",
-        "H": "Hospital",
-        "HH": "Home Health Care",
-        "LA": "Laboratory",
-        "OT": "Other Physician",
-        "P1": "Pharmacist",
-        "P2": "Pharmacy",
-        "PC": "Primary Care Physician",
-        "PE": "Performing",
-        "R": "Rural Health Clinic",
-        "RF": "Referring",
-        "SB": "Submitting",
-        "SK": "Skilled Nursing Facility",
-        "SU": "Supervising"}))
-    reference_id_qualifier = ElementAccess("PRV", 2, x12type=enum({
-        "9K": "Servicer",
-        "D3": "National Association of Boards of Pharmacy Number",
-        "EI": "Employer's Identification Number",
-        "HPI": "Healthcare Financing Administration National Provider ID",
-        "SY": "Social Security Number",
-        "TJ": "Federal Taxpayer's Identification Number",
-        "ZZ": "Mutually Defined"}, raw_unknowns=True))
-    reference_id = ElementAccess("PRV", 3)
 
 
 class Receiver(Facade, X12LoopBridge, HL):

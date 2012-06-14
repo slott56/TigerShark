@@ -208,3 +208,34 @@ class Diagnosis(X12SegmentBridge):
         "72": "Rural Health Clinic",
         "81": "Independent Laboratory 99 Other Unlisted Facility"},
         raw_unknowns=True))
+
+
+class ProviderInformation(X12SegmentBridge):
+    provider_code = ElementAccess("PRV", 1, x12type=enum({
+        "AD": "Admitting",
+        "AT": "Attending",
+        "BI": "Billing",
+        "CO": "Consulting",
+        "CV": "Covering",
+        "H": "Hospital",
+        "HH": "Home Health Care",
+        "LA": "Laboratory",
+        "OT": "Other Physician",
+        "P1": "Pharmacist",
+        "P2": "Pharmacy",
+        "PC": "Primary Care Physician",
+        "PE": "Performing",
+        "R": "Rural Health Clinic",
+        "RF": "Referring",
+        "SB": "Submitting",
+        "SK": "Skilled Nursing Facility",
+        "SU": "Supervising"}))
+    reference_id_qualifier = ElementAccess("PRV", 2, x12type=enum({
+        "9K": "Servicer",
+        "D3": "National Association of Boards of Pharmacy Number",
+        "EI": "Employer's Identification Number",
+        "HPI": "Healthcare Financing Administration National Provider ID",
+        "SY": "Social Security Number",
+        "TJ": "Federal Taxpayer's Identification Number",
+        "ZZ": "Mutually Defined"}, raw_unknowns=True))
+    reference_id = ElementAccess("PRV", 3)
