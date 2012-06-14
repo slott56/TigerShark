@@ -154,7 +154,8 @@ class Relationship(X12SegmentBridge):
         "01": "Spouse",
         "18": "Self",
         "19": "Child",
-        "34": "Other Adult"}))
+        "21": "Unknown",
+        "34": "Other Adult"}, raw_unknowns=True))
     maintenance_type = ElementAccess("INS", 3, x12type=enum({
         "001": "Change"}, raw_unknowns=True))
     maintenance_reason = ElementAccess("INS", 4, x12type=enum({
