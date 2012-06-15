@@ -125,7 +125,7 @@ class TestParsed271(unittest.TestCase):
             date = subscriber.subscriber_information.dates[0]
             self.assertEqual(date.type, ("291", "Plan"))
             self.assertEqual(date.time, datetime.date(2012, 4, 8))
-            self.assertEqual(date.time_range, "")
+            self.assertEqual(date.time_range, None)
 
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
         name = subscriber.subscriber_information.name

@@ -947,9 +947,11 @@ class DR( Conversion ):
     """Convert between DR format dates to proper DateTime objects."""
     @staticmethod
     def x12_to_python( raw ):
-        if raw is None:
-            return raw
+        if raw is None or raw == "":
+            return None
         d1, punct, d2 = raw.partition('-')
+        if d1 is None or d2 is None or d1 == "" or d2 == "":
+            return None
         yy1,mm1,dd1 = int(d1[0:4]), int(d1[4:6]), int(d1[6:8])
         yy2,mm2,dd2 = int(d2[0:4]), int(d2[4:6]), int(d2[6:8])
         return datetime.date( yy1,mm1,dd1 ), datetime.date( yy2,mm2,dd2 )
