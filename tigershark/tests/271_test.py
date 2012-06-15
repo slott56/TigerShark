@@ -102,6 +102,31 @@ class TestParsed271(unittest.TestCase):
             _test(2, ("1", "Current Transaction Trace Numbers"),
                     "4444444444", "9MEDDATACO", "")
 
+        def test_validations():
+            self.assertEqual(
+                    len(subscriber.subscriber_information.request_validations),
+                    4)
+            validations = subscriber.subscriber_information.request_validations
+            for validation in validations:
+                self.assertFalse(validation.valid_request)
+                self.assertEqual(validation.follow_up_action_code,
+                        ("C", "Please Correct and Resubmit"))
+            self.assertEqual(validations[0].reject_reason,
+                    ("72", "Invalid/Missing Subscriber/Insured ID"))
+            self.assertEqual(validations[1].reject_reason,
+                    ("73", "Invalid/Missing Subscriber/Insured Name"))
+            self.assertEqual(validations[2].reject_reason,
+                    ("73", "Invalid/Missing Subscriber/Insured Name"))
+            self.assertEqual(validations[3].reject_reason,
+                    ("58", "Invalid/Missing Date-of-Birth"))
+
+        def test_dates():
+            self.assertEqual(len(subscriber.subscriber_information.dates), 1)
+            date = subscriber.subscriber_information.dates[0]
+            self.assertEqual(date.type, ("291", "Plan"))
+            self.assertEqual(date.time, datetime.date(2012, 4, 8))
+            self.assertEqual(date.time_range, "")
+
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
         name = subscriber.subscriber_information.name
         self.assertEqual(name.entity_identifier,
@@ -114,6 +139,8 @@ class TestParsed271(unittest.TestCase):
         self.assertTrue(name.is_person)
         self.assertFalse(name.is_organization)
         test_trace_numbers()
+        test_validations()
+        test_dates()
 
 
 if __name__ == "__main__":
