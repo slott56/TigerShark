@@ -52,6 +52,69 @@ class TestParsed271(unittest.TestCase):
         self.assertEqual(subscriber.level, ("22", "Subscriber"))
         self.assertFalse(subscriber.has_children)
 
+    def test_source(self):
+        source = self.f.facades[0].source
+        name = source.source_information.name
+        self.assertEqual(name.entity_identifier,
+                ("PR", "Payer"))
+        self.assertEqual(name.entity_type,
+                ("2", "Non-Person Entity"))
+        self.assertEqual(name.org_name, "Health Net Inc")
+        self.assertEqual(name.id_code, "10385")
+        self.assertEqual(name.id_code_qual,
+                ("PI", "Payor Identification"))
+        self.assertFalse(name.is_person)
+        self.assertTrue(name.is_organization)
+
+    def test_receiver(self):
+        receiver = self.f.facades[0].source.receivers[0]
+        name = receiver.receiver_information.name
+        self.assertEqual(name.entity_identifier,
+                ("1P", "Provider"))
+        self.assertEqual(name.entity_type,
+                ("2", "Non-Person Entity"))
+        self.assertEqual(name.org_name, "DR. ACULA")
+        self.assertEqual(name.id_code, "1111111111")
+        self.assertEqual(name.id_code_qual,
+                ("XX", "Health Care Financing Administration National "\
+                        "Provider Identifier"))
+        self.assertFalse(name.is_person)
+        self.assertTrue(name.is_organization)
+
+    def test_subscriber(self):
+        def test_trace_numbers():
+            def _test(i, trace_type, trace_number, entity_id, entity_addl_id):
+                self.assertEqual(subscriber.trace_numbers[i].trace_type,
+                        trace_type)
+                self.assertEqual(subscriber.trace_numbers[i].trace_number,
+                        trace_number)
+                self.assertEqual(subscriber.trace_numbers[i].entity_id,
+                        entity_id)
+                self.assertEqual(
+                        subscriber.trace_numbers[i].entity_additional_id,
+                        entity_addl_id)
+            self.assertEqual(len(subscriber.trace_numbers), 3)
+            _test(0, ("1", "Current Transaction Trace Numbers"),
+                    "222222222", "9ZIRMEDCOM", "ELR ID")
+            _test(1, ("2",
+                    "Referenced Transaction Trace Numbers (Value from 270)"),
+                    "333333333", "9ZIRMEDCOM", "ELI ID")
+            _test(2, ("1", "Current Transaction Trace Numbers"),
+                    "4444444444", "9MEDDATACO", "")
+
+        subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
+        name = subscriber.subscriber_information.name
+        self.assertEqual(name.entity_identifier,
+                ("IL", "Insured"))
+        self.assertEqual(name.entity_type,
+                ("1", "Person"))
+        self.assertEqual(name.id_code, "R11111111")
+        self.assertEqual(name.id_code_qual,
+                ("MI", "Member Identification Number"))
+        self.assertTrue(name.is_person)
+        self.assertFalse(name.is_organization)
+        test_trace_numbers()
+
 
 if __name__ == "__main__":
     logging.basicConfig(
