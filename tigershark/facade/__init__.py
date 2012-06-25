@@ -689,7 +689,13 @@ class ElementAccess( object ):
         if isinstance(instance, X12LoopBridge):
             segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
         else:
-            segBridge = instance
+            # ElementAccess works on a Segment which doesn't include qualifier
+            # info, so make sure the current Segment has the qualifier 
+            if qualifier[0] is None or \
+                    instance.segment.getByPos(qualifier[0]) == qualifier[1]:
+                segBridge = instance
+            else:
+                segBridge = None
         if segBridge is None:
             raw = None
         else:
