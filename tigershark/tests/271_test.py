@@ -35,22 +35,25 @@ class TestParsed271(unittest.TestCase):
 
     def test_hierarchy(self):
         source = self.f.facades[0].source
-        self.assertEqual(source.id, "1")
-        self.assertEqual(source.parent_id, '')
-        self.assertEqual(source.level, ("20", "Information Source"))
-        self.assertTrue(source.has_children)
+        h = source.hierarchy
+        self.assertEqual(h.id, "1")
+        self.assertEqual(h.parent_id, '')
+        self.assertEqual(h.level, ("20", "Information Source"))
+        self.assertTrue(h.has_children)
 
         receiver = source.receivers[0]
-        self.assertEqual(receiver.id, "2")
-        self.assertEqual(receiver.parent_id, '1')
-        self.assertEqual(receiver.level, ("21", "Information Receiver"))
-        self.assertTrue(receiver.has_children)
+        h = receiver.hierarchy
+        self.assertEqual(h.id, "2")
+        self.assertEqual(h.parent_id, '1')
+        self.assertEqual(h.level, ("21", "Information Receiver"))
+        self.assertTrue(h.has_children)
 
         subscriber = receiver.subscribers[0]
-        self.assertEqual(subscriber.id, "3")
-        self.assertEqual(subscriber.parent_id, '2')
-        self.assertEqual(subscriber.level, ("22", "Subscriber"))
-        self.assertFalse(subscriber.has_children)
+        h = subscriber.hierarchy
+        self.assertEqual(h.id, "3")
+        self.assertEqual(h.parent_id, '2')
+        self.assertEqual(h.level, ("22", "Subscriber"))
+        self.assertFalse(h.has_children)
 
     def test_source(self):
         source = self.f.facades[0].source

@@ -40,7 +40,7 @@ class Header(X12LoopBridge):
             x12type=SegmentConversion(_HierarchicalTransaction))
 
 
-class HL(object):
+class Hierarchy(X12SegmentBridge):
     id = ElementAccess("HL", 1)
     parent_id = ElementAccess("HL", 2)
     level = ElementAccess("HL", 3, x12type=enum(

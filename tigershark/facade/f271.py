@@ -24,7 +24,7 @@ from tigershark.facade.f27x import ContactInformation
 from tigershark.facade.f27x import DateOrTimePeriod
 from tigershark.facade.f27x import DemographicInformation
 from tigershark.facade.f27x import Diagnosis
-from tigershark.facade.f27x import HL
+from tigershark.facade.f27x import Hierarchy
 from tigershark.facade.f27x import Header
 from tigershark.facade.f27x import Location
 from tigershark.facade.f27x import NamedEntity
@@ -51,10 +51,11 @@ class RequestValidation(X12SegmentBridge):
                 "Shortly"}))
 
 
-class Source(Facade, X12LoopBridge, HL):
+class Source(Facade, X12LoopBridge):
     """The information source is the entity with the eligibility answers"""
     loopName = "2000A"
 
+    hierarchy = SegmentAccess("HL", x12type=SegmentConversion(Hierarchy))
     request_validations = SegmentSequenceAccess("AAA",
             x12type=SegmentConversion(RequestValidation))
 
@@ -76,9 +77,11 @@ class Source(Facade, X12LoopBridge, HL):
         self.receivers = self.loops(Receiver, anX12Message)
 
 
-class Receiver(Facade, X12LoopBridge, HL):
+class Receiver(Facade, X12LoopBridge):
     """The entity asking the questions"""
     loopName = "2000B"
+
+    hierarchy = SegmentAccess("HL", x12type=SegmentConversion(Hierarchy))
 
     class _Information(X12LoopBridge):
         loopName = "2100B"
@@ -150,7 +153,7 @@ class Message(X12LoopBridge):
     message_text = ElementAccess("MSG", 1)
 
 
-class Subscriber(Facade, X12LoopBridge, HL):
+class Subscriber(Facade, X12LoopBridge):
     """The person uniquely identified by the Source.
 
     This person was identified as a member of the Source. Subscriber may or
@@ -173,6 +176,7 @@ class Subscriber(Facade, X12LoopBridge, HL):
     """
     loopName = "2000C"
 
+    hierarchy = SegmentAccess("HL", x12type=SegmentConversion(Hierarchy))
     trace_numbers = SegmentSequenceAccess("TRN",
             x12type=SegmentConversion(TraceNumber))
 
@@ -235,7 +239,7 @@ class Subscriber(Facade, X12LoopBridge, HL):
         self.dependents = self.loops(Dependent, anX12Message)
 
 
-class Dependent(Facade, X12LoopBridge, HL):
+class Dependent(Facade, X12LoopBridge):
     """The Dependent.
 
     This person was *NOT* identified as a member of the Source. If this is
@@ -243,8 +247,10 @@ class Dependent(Facade, X12LoopBridge, HL):
     """
     loopName = "2000D"
 
+    hierarchy = SegmentAccess("HL", x12type=SegmentConversion(Hierarchy))
     trace_numbers = SegmentSequenceAccess("TRN",
             x12type=SegmentConversion(TraceNumber))
+
 
     class _Information(X12LoopBridge):
         loopName = "2100D"
