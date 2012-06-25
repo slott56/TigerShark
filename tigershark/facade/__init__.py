@@ -417,6 +417,8 @@ class SegmentAccess( object ):
             segBridge = instance.segment( self.segment, )
         else:
             segBridge = instance.segment( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
+        if segBridge is None:
+            return None
         return self.x12type.x12_to_python(segBridge.segment)
 
     def __set__( self, instance, value ):
