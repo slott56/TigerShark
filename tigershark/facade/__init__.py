@@ -374,6 +374,57 @@ class X12SegmentBridge( object ):
         if len(compList) > 0: return compList[0]
         return None # technically redundant to do this.
 
+
+class SegmentAccess( object ):
+    """Used to get a single segment.
+
+    Best used in Conjunction with X12SegmentBridge, eg:
+        class NamedEntity(X12SegmentBridge):
+            last_name = ElementAccess("NM1", 3)
+
+        class InformationSource(X12LoopBridge):
+            loopName = "1000"
+            entity_details = SegmentAccess("NM1",
+                x12type=SegmentConversion(NamedEntity))
+
+        class InformationReceiver(X12LoopBridge):
+            loopName = "2000"
+            entity_details = SegmentAccess("NM1",
+                x12type=SegmentConversion(NamedEntity))
+
+    """
+    def __init__( self, segment, qualifier=None, x12type=None ):
+        self.segment= segment
+        if qualifier is None:
+            self.qualifier= None
+        elif isinstance(qualifier, (list,tuple)):
+            self.qualifier= qualifier
+        else:
+            self.qualifier= ( qualifier, )
+        self.x12type= x12type
+
+    def __repr__( self ):
+        """Provide Documentation for epydoc."""
+        typeName = "None" if self.x12type is None else self.x12type.__name__
+        return "SegmentSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
+
+    def __get__( self, instance, owner ):
+        """Get the requested Segment and convert it, if applicable.
+
+        :param instance: An X12LoopBridge object.
+        """
+        if self.qualifier is None:
+            segBridge = instance.segment( self.segment, )
+        else:
+            segBridge = instance.segment( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
+        if segBridge is None:
+            return None
+        return self.x12type.x12_to_python(segBridge.segment)
+
+    def __set__( self, instance, value ):
+        raise UnimplementedError( "Can't set segment sequences, yet")
+
+
 class SegmentSequenceAccess( object ):
     """Define access to sequence of Segments with a user-friendly attribute name.
     This appears as a sequence of individual object instances.
@@ -433,7 +484,7 @@ class SegmentSequenceAccess( object ):
             segBridgeList= instance.segList( self.segment, )
         else:
             segBridgeList= instance.segList( self.segment, self.qualifier[0], inList=self.qualifier[1:] )
-        return [ self.x12type.x12_to_python(segBridge.segment.segmentToken) for segBridge in segBridgeList ]
+        return [ self.x12type.x12_to_python(segBridge.segment) for segBridge in segBridgeList ]
     def __set__( self, instance, value ):
         raise UnimplementedError( "Can't set segment sequences, yet")
 
@@ -637,7 +688,16 @@ class ElementAccess( object ):
 
     def __get__( self, instance, owner ):
         qualifier = self.get_qualifier(instance, owner)
-        segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
+        if isinstance(instance, X12LoopBridge):
+            segBridge= instance.segment( self.segment, qualifier[0], inList=qualifier[1:] )
+        else:
+            # ElementAccess works on a Segment which doesn't include qualifier
+            # info, so make sure the current Segment has the qualifier 
+            if qualifier[0] is None or \
+                    instance.segment.getByPos(qualifier[0]) == qualifier[1]:
+                segBridge = instance
+            else:
+                segBridge = None
         if segBridge is None:
             raw = None
         else:
@@ -848,6 +908,35 @@ class Conversion( object ):
     def python_to_x12( value ):
         return NotImplemented
 
+
+class TM(Conversion):
+    """Convert between TM format time to proper datetime.time objects."""
+    @staticmethod
+    def x12_to_python(raw):
+        if raw is None or raw == "":
+            return raw
+        if len(raw) < 4:
+            return ""
+        hh, mm = int(raw[0:2]), int(raw[2:4])
+        ss = 0
+        dd = 0  # hundredths of a second / centiseconds
+        if len(raw) >= 6:
+            ss = int(raw[4:6])
+        if len(raw) >= 7:
+            dd = int(raw[6:])
+        dd = dd * 10  # milliseconds
+        dd = dd * 100  # microseconds
+        return datetime.time(hh, mm, ss, dd, None)
+
+    @staticmethod
+    def python_to_x12(value):
+        if value is None:
+            return ""
+        return "{time}{centiseconds}".format(
+                time=value.strftime("%H%M%S"),
+                centiseconds=int(value.microsecond / 10000))
+
+
 class D8( Conversion ):
     """Convert between D8 format dates to proper DateTime objects."""
     @staticmethod
@@ -866,9 +955,11 @@ class DR( Conversion ):
     """Convert between DR format dates to proper DateTime objects."""
     @staticmethod
     def x12_to_python( raw ):
-        if raw is None:
-            return raw
+        if raw is None or raw == "":
+            return None
         d1, punct, d2 = raw.partition('-')
+        if d1 is None or d2 is None or d1 == "" or d2 == "":
+            return None
         yy1,mm1,dd1 = int(d1[0:4]), int(d1[4:6]), int(d1[6:8])
         yy2,mm2,dd2 = int(d2[0:4]), int(d2[4:6]), int(d2[6:8])
         return datetime.date( yy1,mm1,dd1 ), datetime.date( yy2,mm2,dd2 )

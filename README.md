@@ -1,11 +1,35 @@
 TigerShark is an X12 EDI message parser that can be tailored to
 a specific partner in the health care payment ecosystem.
 
-It contains a test directory, tools and a demo web application that does
-a little bit of claim display and edit.
-
 State of the Project
 ====================
+
+Version 0.2.3
+-------------
+Initial support for reading 270/271 files. I'm not sure when I'll add support
+for creating X12 files, since I have yet to need to do so. I haven't even
+tested creating them.
+
+SegmentAccess, SegmentSequenceAccess, and X12SegmentBridge now all work pretty
+well. I didn't really like how the 835 facade was implemented so I spent more
+time trying to figure out nicer ways of structuring the 270/271 facades. This
+meant understanding and fixing the Segment[Sequence]Access classes. I was able
+to avoid a bunch of ugly multiple inheritance tricks and mostly freed myself
+from setting properties in __init__ (though not entirely, and I'm not sure
+if I even want to totally remove this). I may clean up the 835 facade later,
+but I didn't want to introduce any breaking changes in this version.
+
+I am understanding TigerShark more and more as I continue implementing
+things that S. Lott didn't get to, however this also means that I'm being
+bitten by the complexity of the project more often. There are a lot of good
+ideas in this project, and I keep encountering things I didn't expect
+(non-sequential hierarchical level grouping in 271 files, wtf??). TigerShark
+can handle most of these weird cases with minor bugfixes (which makes me more
+confident that this design was right from the start), but I don't think
+TigerShark can fully support 270/271 files due to their weird structuring.
+I intend to re-write a good portion of TigerShark after implementing several
+more formats, since I'll have a clear idea of the kind of requirements have
+to be met.
 
 Version 0.2.2a
 -------------
