@@ -20,12 +20,15 @@ def convert_from_zip(zip_file_path, dest_path, structure):
     zipf = zipfile.ZipFile(zip_file_path)
 
     filenames = [f for f in zipf.namelist() if "map" in f and "xml" in f]
+    pyx12_version_str = filenames[0].split("/", 1)[0]
     for filename in filenames:
         if fnmatch.fnmatch(filename.rsplit('/', 1)[1],
                 "[0-9][0-9][0-9]*.4010.X*.xml"):
             try:
-                data_ele_file = zipf.open("pyx12-1.5.0/map/dataele.xml")
-                codes_file = zipf.open("pyx12-1.5.0/map/codes.xml")
+                data_ele_file = zipf.open("{pyx12}/map/dataele.xml".format(
+                    pyx12=pyx12_version_str))
+                codes_file = zipf.open("{pyx12}/map/codes.xml".format(
+                    pyx12=pyx12_version_str))
                 spec_file = zipf.open(filename)
                 dest_fname = os.path.join(dest_path, "M%s.py") % \
                         filename.rsplit('/', 1)[1].rsplit('.', 1)[0].\

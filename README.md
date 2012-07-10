@@ -114,7 +114,9 @@ for providing the xml files in his package [pyX12](https://github.com/azoner/pyx
 Installation
 ============
 
-    python setup.py install
+```sh
+python setup.py install
+```
 
 Manually Generating the Parsers
 -------------------------------
@@ -129,19 +131,25 @@ or convert a file individually (which gives you more control over the result).
 If you just want to generate all of the parsers, you can use the
 `generate_all_parsers` script:
 
-    python tools/generate_all_parsers.py ../Downloads/pyx12-1.5.0.zip -p parsers
+```sh
+git clone https://github.com/azoner/pyx12.git
+cd pyx12
+python setup.py sdist --formats=gztar,zip
+cd ../
+python tools/generate_all_parsers.py pyx12/dist/pyx12-2.0.a1.zip -d parsers
+```
 
 This will generate all parsers in a directory called `parsers`.
 
 ### Generating A Single Parser ###
 
-After extracting the xml files, you can create the related parser objects
-using the tools:
+You can also just create a single parser from an unzipped pyx12 source:
 
-    cd Downloads/
-    unzip pyx12-1.5.0.zip
-    cd ../tigershark/parsers
-    python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../../Downloads/pyx12-1.5.0/map/ -n parsed_835
+```sh
+git clone https://github.com/azoner/pyx12.git
+cd parsers
+python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../pyx12/map/ -n parsed_835
+```
 
 This will generate a `M835_4010_X091_A1.py` parser in your current directory.
 
@@ -151,24 +159,30 @@ Usage
 Using a Parser
 --------------
 
-    from tigershark.parsers import M835_4010_X091_A1
-    m = M835_4010_X091_A1.parsed_835
-    with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
-        parsed = m.unmarshall(f.read().strip())
+```python
+from tigershark.parsers import M835_4010_X091_A1
+m = M835_4010_X091_A1.parsed_835
+with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
+    parsed = m.unmarshall(f.read().strip())
+```
 
 Using a Facade
 -----------------
 
 Once you have parsed an X12 file, you can build a Facade around it:
 
-    from tigershark.facade.f835 import f835_4010
-    f = F835_4010(parsed)
+```python
+from tigershark.facade.f835 import f835_4010
+f = F835_4010(parsed)
+```
 
 Now you can access the segments of the X12 file in an easy and pythonic way
 
-    >>> print(f.payee.zip)
-    94066
-    >>> print(f.payer.name)
-    United Healthcare
-    >>> print(len(f.claims))
-    150
+```python
+>>> print(f.payee.zip)
+94066
+>>> print(f.payer.name)
+United Healthcare
+>>> print(len(f.claims))
+150
+```
