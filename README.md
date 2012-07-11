@@ -186,3 +186,16 @@ United Healthcare
 >>> print(len(f.claims))
 150
 ```
+
+Tests
+-----
+
+If you are kind enough to create a facade, *please* add unit tests. To run
+the tests that currently exist, run the following in the current directory.
+
+```sh
+python -m unittest discover
+```
+
+Note that if you first `cd tests` and then run the unit tests, they will fail
+because the tests expect certain files to be in certain paths.
