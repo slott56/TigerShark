@@ -10,7 +10,7 @@ from tigershark.parsers import M271_4010_X092_A1
 class TestParsed271(unittest.TestCase):
     def setUp(self):
         m = M271_4010_X092_A1.parsed_271
-        with open('271-example.txt') as f:
+        with open('tests/271-example.txt') as f:
             parsed = m.unmarshall(f.read().strip())
         self.f = f271.F271_4010(parsed)
 

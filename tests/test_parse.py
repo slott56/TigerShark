@@ -30,9 +30,9 @@ from tigershark.X12.map.dj import DjangoModelVisitor
 logger= logging.getLogger( __name__ )
 
 # THE MANUALLY-BUILT PARSER:
-from tigershark.tests.example_278 import parse_278
-from tigershark.tests.example_278 import loop2000F
-from tigershark.tests.example_278 import loop2000A
+from tests.example_278 import parse_278
+from tests.example_278 import loop2000F
+from tests.example_278 import loop2000A
 
 class TestStructure(unittest.TestCase):
     """Test Message Structure."""
