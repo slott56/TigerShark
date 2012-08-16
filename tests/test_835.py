@@ -178,6 +178,8 @@ class TestParsed835(unittest.TestCase):
 
         # Second claim!
         c = claims[1]
+        self.assertEqual(c.get_actual_deductible(), Decimal('145.0'))
+        self.assertEqual(c.get_actual_coinsurance(), Decimal('0.0'))
         # Claim details
         pi = c.payment_info
         self.assertEqual(pi.patient_control_number, "001-SSSSSSSSSS")
