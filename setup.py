@@ -28,7 +28,6 @@ setup(
         'tigershark.facade',
         'tigershark.facade.enums',
         'tigershark.parsers',
-        'tigershark.tests',
         'tigershark.tools',
         'tigershark.X12',
         'tigershark.X12.map',
