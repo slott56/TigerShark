@@ -401,19 +401,19 @@ class Claim(Facade, X12LoopBridge):
         return s
 
     def get_actual_deductible(self):
-        s = Decimal('0.00')
+        s = self.claim_adjustments.patient_responsibility.total_amount('1')
         for li in self.line_items:
             s += li.get_actual_deductible()
         return s
 
     def get_actual_coinsurance(self):
-        s = Decimal('0.00')
+        s = self.claim_adjustments.patient_responsibility.total_amount('2')
         for li in self.line_items:
             s += li.get_actual_coinsurance()
         return s
 
     def get_actual_copayment(self):
-        s = Decimal('0.00')
+        s = self.claim_adjustments.patient_responsibility.total_amount('3')
         for li in self.line_items:
             s += li.get_actual_copayment()
         return s

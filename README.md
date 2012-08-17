@@ -4,6 +4,18 @@ a specific partner in the health care payment ecosystem.
 State of the Project
 ====================
 
+Version 0.2.4
+-------------
+I discovered a bug that caused deductible/co-insurance/co-payments from being
+summed if they occurred at the claims-level rather than the adjustments level.
+This resulted in underreporting the *actual* amounts. This has been fixed and
+unit tests have been added for this case.
+
+I also made adjustments to the directory structure. Tests have been moved up
+and the latest version of PyX12 was used to generate the parsers. An old PyX12
+tarball is no longer included in this distribution, so instructions were
+added to get PyX12 and set it up for parser generation.
+
 Version 0.2.3
 -------------
 Initial support for reading 270/271 files. I'm not sure when I'll add support
@@ -114,7 +126,9 @@ for providing the xml files in his package [pyX12](https://github.com/azoner/pyx
 Installation
 ============
 
-    python setup.py install
+```sh
+python setup.py install
+```
 
 Manually Generating the Parsers
 -------------------------------
@@ -129,19 +143,25 @@ or convert a file individually (which gives you more control over the result).
 If you just want to generate all of the parsers, you can use the
 `generate_all_parsers` script:
 
-    python tools/generate_all_parsers.py ../Downloads/pyx12-1.5.0.zip -p parsers
+```sh
+git clone https://github.com/azoner/pyx12.git
+cd pyx12
+python setup.py sdist --formats=gztar,zip
+cd ../
+python tools/generate_all_parsers.py pyx12/dist/pyx12-2.0.a1.zip -d parsers
+```
 
 This will generate all parsers in a directory called `parsers`.
 
 ### Generating A Single Parser ###
 
-After extracting the xml files, you can create the related parser objects
-using the tools:
+You can also just create a single parser from an unzipped pyx12 source:
 
-    cd Downloads/
-    unzip pyx12-1.5.0.zip
-    cd ../tigershark/parsers
-    python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../../Downloads/pyx12-1.5.0/map/ -n parsed_835
+```sh
+git clone https://github.com/azoner/pyx12.git
+cd parsers
+python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../pyx12/map/ -n parsed_835
+```
 
 This will generate a `M835_4010_X091_A1.py` parser in your current directory.
 
@@ -151,24 +171,43 @@ Usage
 Using a Parser
 --------------
 
-    from tigershark.parsers import M835_4010_X091_A1
-    m = M835_4010_X091_A1.parsed_835
-    with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
-        parsed = m.unmarshall(f.read().strip())
+```python
+from tigershark.parsers import M835_4010_X091_A1
+m = M835_4010_X091_A1.parsed_835
+with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
+    parsed = m.unmarshall(f.read().strip())
+```
 
 Using a Facade
 -----------------
 
 Once you have parsed an X12 file, you can build a Facade around it:
 
-    from tigershark.facade.f835 import f835_4010
-    f = F835_4010(parsed)
+```python
+from tigershark.facade.f835 import f835_4010
+f = F835_4010(parsed)
+```
 
 Now you can access the segments of the X12 file in an easy and pythonic way
 
-    >>> print(f.payee.zip)
-    94066
-    >>> print(f.payer.name)
-    United Healthcare
-    >>> print(len(f.claims))
-    150
+```python
+>>> print(f.payee.zip)
+94066
+>>> print(f.payer.name)
+United Healthcare
+>>> print(len(f.claims))
+150
+```
+
+Tests
+-----
+
+If you are kind enough to create a facade, *please* add unit tests. To run
+the tests that currently exist, run the following in the current directory.
+
+```sh
+python -m unittest discover
+```
+
+Note that if you first `cd tests` and then run the unit tests, they will fail
+because the tests expect certain files to be in certain paths.

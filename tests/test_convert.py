@@ -38,17 +38,13 @@ class TestConvertPyx12(unittest.TestCase):
 
         bldParser= convertPyX12.ParserBuilder()
 
-        baseDir= r"C:\Python25\share\pyx12\map"
-        zipSource= os.path.join( "Downloads", "pyx12-1.5.0.zip" )
-        zip= zipfile.ZipFile( zipSource )
-
         xml= convertPyX12.XMLParser()
-        xml.data( zip.open("pyx12-1.5.0/map/dataele.xml") )
-        xml.codes( zip.open("pyx12-1.5.0/map/codes.xml") )
+        xml.data( open("tests/map/dataele.xml") )
+        xml.codes( open("tests/map/codes.xml") )
         #The 278 definition doesn't have the correct nested LOOP structure to parse
-        #xml.read( zip.open("pyx12-1.5.0/map/278.4010.X094.A1.xml") )
+        xml.read( open("tests/map/278.4010.X094.A1.xml") )
         #This 278 definition seems to parse better.
-        xml.read( os.path.join( "test", "278.4010.X094.A1.xml" ) )
+        #xml.read( os.path.join( "test", "278.4010.X094.A1.xml" ) )
         self.x12p= bldParser.build( xml )
 
         sql= SQLTableVisitor( )
