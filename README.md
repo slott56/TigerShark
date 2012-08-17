@@ -4,6 +4,18 @@ a specific partner in the health care payment ecosystem.
 State of the Project
 ====================
 
+Version 0.2.4
+-------------
+I discovered a bug that caused deductible/co-insurance/co-payments from being
+summed if they occurred at the claims-level rather than the adjustments level.
+This resulted in underreporting the *actual* amounts. This has been fixed and
+unit tests have been added for this case.
+
+I also made adjustments to the directory structure. Tests have been moved up
+and the latest version of PyX12 was used to generate the parsers. An old PyX12
+tarball is no longer included in this distribution, so instructions were
+added to get PyX12 and set it up for parser generation.
+
 Version 0.2.3
 -------------
 Initial support for reading 270/271 files. I'm not sure when I'll add support
