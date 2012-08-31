@@ -282,9 +282,57 @@ class TestParsed271(unittest.TestCase):
                 ('AE', 'Physical Medicine'))
         self.assertEqual(eb[30].coverage_information.time_period_type,
                 ('27', 'Visit'))
+        self.assertEqual(eb[30].coverage_information.benefit_amount,
+                Decimal('0'))
         self.assertEqual(eb[30].coverage_information.benefit_percent,
                 Decimal('0.2'))
         self.assertTrue(eb[30].coverage_information.in_plan_network)
+
+    def test_subscriber_eligibility_group_8(self):
+        subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
+        eb = subscriber.eligibility_or_benefit_information
+        self.assertEqual(eb[56].coverage_information.information_type,
+                ('1', 'Active Coverage'))
+        self.assertEqual(eb[56].coverage_information.service_type,
+                ('5', 'Diagnostic Lab'))
+        self.assertEqual(eb[57].coverage_information.information_type,
+                ('A', 'Co-Insurance'))
+        self.assertEqual(eb[57].coverage_information.service_type,
+                ('5', 'Diagnostic Lab'))
+        self.assertEqual(eb[57].coverage_information.time_period_type,
+                ('27', 'Visit'))
+        self.assertEqual(eb[57].coverage_information.benefit_amount,
+                Decimal('0'))
+        self.assertEqual(eb[57].coverage_information.benefit_percent,
+                Decimal('0.1'))
+        self.assertTrue(eb[57].coverage_information.in_plan_network)
+
+    def test_subscriber_eligibility_group_9(self):
+        subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
+        eb = subscriber.eligibility_or_benefit_information
+        self.assertEqual(eb[101].coverage_information.information_type,
+                ('1', 'Active Coverage'))
+        self.assertEqual(eb[101].coverage_information.service_type,
+                ('98', 'Professional (Physician) Visit - Office'))
+        self.assertEqual(len(eb[101].messages), 1)
+        self.assertEqual(eb[101].messages[0], 'OFFICE VISIT')
+
+    def test_subscriber_eligibility_group_10(self):
+        subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
+        eb = subscriber.eligibility_or_benefit_information
+        self.assertEqual(eb[107].coverage_information.information_type,
+                ('R', 'Other or Additional Payor'))
+        self.assertEqual(eb[107].benefit_related_entity.name.org_name,
+                'MEDICARE')
+        self.assertEqual(eb[108].coverage_information.information_type,
+                ('X', 'Health Care Facility'))
+        self.assertEqual(eb[108].benefit_related_entity.name.entity_identifier,
+                ('1P', 'Provider'))
+        self.assertEqual(eb[108].benefit_related_entity.name.id_code_qual,
+                ('XX', 'Health Care Financing Administration National '
+                    'Provider Identifier'))
+        self.assertEqual(eb[108].benefit_related_entity.name.id_code,
+                '1234567890')
 
 
 if __name__ == "__main__":
