@@ -331,7 +331,7 @@ class Dependent(Facade, X12LoopBridge):
                 x12type=SegmentConversion(ProviderInformation))
 
     def __init__(self, anX12Message, *args, **kwargs):
-        super(Subscriber, self).__init__(anX12Message, *args, **kwargs)
+        super(Dependent, self).__init__(anX12Message, *args, **kwargs)
         self.dependent_information = first(self.loops(
             self._Information, anX12Message))
         self.eligibility_or_benefit_information = \

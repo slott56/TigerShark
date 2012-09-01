@@ -47,6 +47,7 @@ class Hierarchy(X12SegmentBridge):
         {"20": "Information Source",
          "21": "Information Receiver",
          "22": "Subscriber",
+         "23": "Dependent",
             }))
     has_children = ElementAccess("HL", 4, x12type=boolean("1"))
 
