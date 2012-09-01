@@ -148,7 +148,7 @@ git clone https://github.com/azoner/pyx12.git
 cd pyx12
 python setup.py sdist --formats=gztar,zip
 cd ../
-python tools/generate_all_parsers.py pyx12/dist/pyx12-2.0.a1.zip -d parsers
+python tools/generate_all_parsers.py pyx12/dist/pyx12-*.zip -d parsers
 ```
 
 This will generate all parsers in a directory called `parsers`.
@@ -160,7 +160,7 @@ You can also just create a single parser from an unzipped pyx12 source:
 ```sh
 git clone https://github.com/azoner/pyx12.git
 cd parsers
-python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../pyx12/map/ -n parsed_835
+python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../pyx12/pyx12/map/ -n parsed_835
 ```
 
 This will generate a `M835_4010_X091_A1.py` parser in your current directory.
