@@ -248,7 +248,7 @@ class Subscriber(Facade, X12LoopBridge):
 
     def __init__(self, anX12Message, *args, **kwargs):
         super(Subscriber, self).__init__(anX12Message, *args, **kwargs)
-        self.subscriber_information = first(self.loops(
+        self.personal_information = first(self.loops(
             self._Information, anX12Message))
         self.eligibility_or_benefit_information = \
                 self.loops(self._EligibilityOrBenefitInformation, anX12Message)
@@ -332,13 +332,12 @@ class Dependent(Facade, X12LoopBridge):
 
     def __init__(self, anX12Message, *args, **kwargs):
         super(Dependent, self).__init__(anX12Message, *args, **kwargs)
-        self.dependent_information = first(self.loops(
+        self.personal_information = first(self.loops(
             self._Information, anX12Message))
         self.eligibility_or_benefit_information = \
                 self.loops(self._EligibilityOrBenefitInformation, anX12Message)
-        self.dependent_related_entity_information = first(self.loops(
+        self.related_entity_information = first(self.loops(
             self._RelatedEntityInformation, anX12Message))
-        self.dependents = self.loops(Dependent, anX12Message)
 
 
 class F271_4010(Facade):

@@ -112,7 +112,7 @@ class TestParsed271(unittest.TestCase):
 
     def test_subscriber_name(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        name = subscriber.subscriber_information.name
+        name = subscriber.personal_information.name
         self.assertEqual(name.entity_identifier,
                 ("IL", "Insured"))
         self.assertEqual(name.entity_type,
@@ -125,7 +125,7 @@ class TestParsed271(unittest.TestCase):
 
     def test_subscriber_address(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        info = subscriber.subscriber_information
+        info = subscriber.personal_information
         self.assertEqual(info.address_street.addr1, "3333 SOMEWHERE ST")
         self.assertEqual(info.address_location.city, "ANYWHERE")
         self.assertEqual(info.address_location.state, "LA")
@@ -133,15 +133,15 @@ class TestParsed271(unittest.TestCase):
 
     def test_subscriber_dates(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        self.assertEqual(len(subscriber.subscriber_information.dates), 1)
-        date = subscriber.subscriber_information.dates[0]
+        self.assertEqual(len(subscriber.personal_information.dates), 1)
+        date = subscriber.personal_information.dates[0]
         self.assertEqual(date.type, ("307", "Eligibility"))
         self.assertEqual(date.time, datetime.date(2005, 2, 1))
         self.assertEqual(date.time_range, None)
 
     def test_subscriber_demographic_information(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        demo = subscriber.subscriber_information.demographic_information
+        demo = subscriber.personal_information.demographic_information
         self.assertEqual(demo.gender, ('F', 'Female'))
         self.assertEqual(demo.birth_date, datetime.date(1937, 3, 5))
 

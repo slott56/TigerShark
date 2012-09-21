@@ -102,9 +102,9 @@ class TestParsed271(unittest.TestCase):
     def test_subscriber_rejection(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
         self.assertEqual(
-                len(subscriber.subscriber_information.request_validations),
+                len(subscriber.personal_information.request_validations),
                 1)
-        rejection = subscriber.subscriber_information.request_validations[0]
+        rejection = subscriber.personal_information.request_validations[0]
         self.assertEqual(rejection.valid_request, True)
         self.assertEqual(rejection.reject_reason,
                 ('72', 'Invalid/Missing Subscriber/Insured ID'))
@@ -144,7 +144,7 @@ class TestParsed271(unittest.TestCase):
 
     def test_subscriber_name(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        name = subscriber.subscriber_information.name
+        name = subscriber.personal_information.name
         self.assertEqual(name.entity_identifier,
                 ("IL", "Insured"))
         self.assertEqual(name.entity_type,
@@ -157,7 +157,7 @@ class TestParsed271(unittest.TestCase):
 
     def test_dependent_name(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        name = subscriber.dependents[0].dependent_information.name
+        name = subscriber.dependents[0].personal_information.name
         self.assertEqual(name.entity_identifier,
                 ("03", "Dependent"))
         self.assertEqual(name.entity_type,
@@ -170,23 +170,23 @@ class TestParsed271(unittest.TestCase):
 
     def test_subscriber_dates(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        self.assertEqual(len(subscriber.subscriber_information.dates), 0)
+        self.assertEqual(len(subscriber.personal_information.dates), 0)
 
     def test_dependent_dates(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
         dependent = subscriber.dependents[0]
-        self.assertEqual(len(dependent.dependent_information.dates), 0)
+        self.assertEqual(len(dependent.personal_information.dates), 0)
 
     def test_subscriber_demographic_information(self):
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        demo = subscriber.subscriber_information.demographic_information
+        demo = subscriber.personal_information.demographic_information
         self.assertEqual(demo, None)
 
     def test_dependent_demographic_information(self):
         dependents = self.f.facades[0].source.receivers[0].subscribers[0].\
                 dependents
         self.assertEqual(len(dependents), 1)
-        demo = dependents[0].dependent_information.demographic_information
+        demo = dependents[0].personal_information.demographic_information
         self.assertEqual(demo.birth_date, datetime.date(1981, 8, 10))
 
     def test_subscriber_eligibility_information(self):
