@@ -122,6 +122,7 @@ class EligibilityOrBenefitInformation(X12SegmentBridge):
     authorization_or_certification = ElementAccess("EB", 11,
             x12type=boolean("Y"))
     in_plan_network = ElementAccess("EB", 12, x12type=boolean("Y"))
+    both_in_out_network = ElementAccess("EB", 12, x12type=boolean("W"))
     ada_code = CompositeAccess("EB", "AD", 13)
     cpt_code = CompositeAccess("EB", "CJ", 13)
     hcpcs_code = CompositeAccess("EB", "HC", 13)
