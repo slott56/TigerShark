@@ -680,7 +680,8 @@ class Segment( Parser ):
                 raise StopIteration
             else:
                 error= ParseError(
-                    "Could not unmarshall %s Segment" % ( self.name, ),
+                    "Could not unmarshall %s Segment, %s Element" % (
+                        self.name, segments[0][0]),
                     description=self.message.desc, parser=self, segments=segments )
                 raise error
     def preVisit( self, visitor, indent ):
