@@ -742,7 +742,8 @@ class Loop( Parser ):
                 theLoop = self.theFactory.makeLoop(self.name)
                 self.getParts(segments, theLoop)
                 yield theLoop
-            elif self.structure[i].situational:
+            elif self.structure[i].situational and \
+                    segments[0][0] in [s.name for s in self.structure]:
                 # Absence of a situational segment shouldn't exit
                 # Can't pop because it destroys the structures before they
                 # get used
