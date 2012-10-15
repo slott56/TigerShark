@@ -547,8 +547,10 @@ class Element( Parser ):
     def match( self, candidate ):
         """Does this Element match the candidate SegmentToken's element?"""
         if self.req_sit in ( 'S', 'N' ): return True
-        if len(self.codes) == 0: return True
-        return candidate[self.position] in self.codes
+        if len(self.codes) == 1:
+            return candidate[self.position] in self.codes
+        # Respecting valid_codes causes me nothign but headaches!
+        return True
     def logMatch( self, candidate ):
         return "%s in %r" % ( candidate[self.position], self.codes )
     def preVisit( self, visitor, indent ):
