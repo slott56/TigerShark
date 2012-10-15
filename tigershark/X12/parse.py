@@ -723,15 +723,29 @@ class Loop( Parser ):
         :param segments: list of SegmentToken instances
         :returns: Yields the next X12.message.X12Loop structure or raises StopIteration
         """
-        # Confirm match between this loop and the initial segment of the structure
-        self.log.debug( "Check %s: %s %s", self.path, self.structure[0].name, segments[0] )
-        while len(segments)>0 and self.structure[0].match( segments[0] ):
-            self.log.debug(
-                "Consume %s: %s", self.path, [s.name for s in self.structure]
-                )
-            theLoop= self.theFactory.makeLoop( self.name )
-            self.getParts( segments, theLoop )
-            yield theLoop
+        # Confirm match between this loop and a segment of the structure
+        i = 0
+        while len(segments) > 0 and i < len(self.structure):
+            self.log.debug("Check {path}: {structure} {segments}".format(
+                path=self.path,
+                structure=self.structure[i].name,
+                segments=segments[0]))
+            if self.structure[i].match(segments[0]):
+                self.log.debug("Consume {path}: {structure}".format(
+                    path=self.path,
+                    structure=[s.name for s in self.structure]))
+                theLoop = self.theFactory.makeLoop(self.name)
+                self.getParts(segments, theLoop)
+                yield theLoop
+            elif self.structure[i].situational:
+                # Absence of a situational segment shouldn't exit
+                # Can't pop because it destroys the structures before they
+                # get used
+                i += 1
+            else:
+                # Nothing left to check, so stop the iteration
+                raise StopIteration
+
     def match( self, candidate ):
         return self.structure[0].match( candidate )
     def preVisit( self, visitor, indent ):

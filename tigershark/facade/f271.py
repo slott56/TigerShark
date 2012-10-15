@@ -311,25 +311,27 @@ class Dependent(Facade, X12LoopBridge):
             diagnosis = SegmentAccess("III",
                 x12type=SegmentConversion(Diagnosis))
 
+        class _RelatedEntityInformation(X12LoopBridge):
+            loopName = "2120D"
+            name = SegmentAccess("NM1",
+                    x12type=SegmentConversion(NamedEntity))
+            address_street = SegmentAccess("N3",
+                    x12type=SegmentConversion(Address))
+            address_location = SegmentAccess("N4",
+                    x12type=SegmentConversion(Location))
+            contact_information = SegmentSequenceAccess("PER",
+                    x12type=SegmentConversion(ContactInformation))
+            provider_information = SegmentAccess("PRV",
+                    x12type=SegmentConversion(ProviderInformation))
+
         def __init__(self, anX12Message, *args, **kwargs):
             super(Dependent._EligibilityOrBenefitInformation, self).__init__(
                     anX12Message, *args, **kwargs)
 
             self.additional_information = self.loops(
                     self._AdditionalInformation, anX12Message)
-
-    class _RelatedEntityInformation(X12LoopBridge):
-        loopName = "2120D"
-        name = SegmentAccess("NM1",
-                x12type=SegmentConversion(NamedEntity))
-        address_street = SegmentAccess("N3",
-                x12type=SegmentConversion(Address))
-        address_location = SegmentAccess("N4",
-                x12type=SegmentConversion(Location))
-        contact_information = SegmentSequenceAccess("PER",
-                x12type=SegmentConversion(ContactInformation))
-        provider_information = SegmentAccess("PRV",
-                x12type=SegmentConversion(ProviderInformation))
+            self.benefit_related_entity = first(self.loops(
+                    self._RelatedEntityInformation, anX12Message))
 
     def __init__(self, anX12Message, *args, **kwargs):
         super(Dependent, self).__init__(anX12Message, *args, **kwargs)
@@ -337,8 +339,6 @@ class Dependent(Facade, X12LoopBridge):
             self._Information, anX12Message))
         self.eligibility_or_benefit_information = \
                 self.loops(self._EligibilityOrBenefitInformation, anX12Message)
-        self.related_entity_information = first(self.loops(
-            self._RelatedEntityInformation, anX12Message))
 
 
 class F271_4010(Facade):
