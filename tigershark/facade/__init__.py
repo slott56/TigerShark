@@ -406,7 +406,7 @@ class SegmentAccess( object ):
     def __repr__( self ):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "SegmentSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
+        return "SegmentAccess( %r, %r, %s )" % ( self.segment, self.qualifier, typeName )
 
     def __get__( self, instance, owner ):
         """Get the requested Segment and convert it, if applicable.
@@ -477,7 +477,7 @@ class SegmentSequenceAccess( object ):
     def __repr__( self ):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "SegmentSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
+        return "SegmentSequenceAccess( %r, %r, %s )" % ( self.segment, self.qualifier, typeName )
     def __get__( self, instance, owner ):
         # XXX - Some are unfiltered...
         if self.qualifier is None:
@@ -749,7 +749,7 @@ class ElementSequenceAccess( ElementAccess ):
     def __repr__( self ):
         """Provide Documentation for epydoc."""
         typeName = "None" if self.x12type is None else self.x12type.__name__
-        return "ElementSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualifier, typeName )
+        return "ElementSequenceAccess( %r, %r, %r, %s )" % ( self.segment, self.position, self.qualPos, typeName )
     def __get__( self, instance, owner ):
         segs= instance.segList( self.segment, self.qualPos, self.inList, self.notInList )
         raw_list = [ s.segment.getByPos(self.position) for s in segs ]
@@ -951,6 +951,7 @@ class D8( Conversion ):
             return ""
         return value.strftime( "%4Y%2m%2d" )
 
+
 class DR( Conversion ):
     """Convert between DR format dates to proper DateTime objects."""
     @staticmethod
@@ -970,16 +971,21 @@ class DR( Conversion ):
         d1, d2 = value
         return "%s-%s" % ( d1.strftime( "%4Y%2m%2d" ), d2.strftime( "%4Y%2m%2d" ) )
 
+
 class SegmentConversion( Conversion ):
+    __name__ = "SegmentConversion"
     """Convert between an X12Segment and a proper Python object."""
     def __init__( self, someClass ):
         self.someClass= someClass
+
     def x12_to_python( self, raw ):
         return self.someClass( raw )
+
     def python_to_x12( self, value ):
         return value.segment
 
-class Money(Conversion):
+
+class XDecimal(Conversion):
     @staticmethod
     def x12_to_python(raw):
         if raw == "" or raw is None:
@@ -992,7 +998,16 @@ class Money(Conversion):
     def python_to_x12(value):
         if isinstance(value, str):
             return value
+        return "{}".format(value)
+
+
+class Money(XDecimal):
+    @staticmethod
+    def python_to_x12(value):
+        if isinstance(value, str):
+            return value
         return "{:.2f}".format(value)
+
 
 def enum(options, raw_unknowns=False):
     """Translate abbreviations or codes into descriptions.
@@ -1046,6 +1061,7 @@ def enum(options, raw_unknowns=False):
                 return value
             return ""
     return Enum
+
 
 def boolean(match):
     """ True if the field matches match. Match must be a string. """

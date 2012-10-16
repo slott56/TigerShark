@@ -8,6 +8,7 @@ from tigershark.facade import SegmentConversion
 from tigershark.facade import SegmentSequenceAccess
 from tigershark.facade import X12LoopBridge
 from tigershark.facade import X12SegmentBridge
+from tigershark.facade import XDecimal
 from tigershark.facade import boolean
 from tigershark.facade import enum
 from tigershark.facade.enums.common import delivery_or_calendar_pattern_code
@@ -115,12 +116,13 @@ class EligibilityOrBenefitInformation(X12SegmentBridge):
     time_period_type = ElementAccess("EB", 6,
             x12type=enum(time_period_qualifier))
     benefit_amount = ElementAccess("EB", 7, x12type=Money)
-    benefit_percent = ElementAccess("EB", 8)
+    benefit_percent = ElementAccess("EB", 8, x12type=XDecimal)
     quantity_type = ElementAccess("EB", 9, x12type=enum(quantity_qualifier))
     quantity = ElementAccess("EB", 10)
     authorization_or_certification = ElementAccess("EB", 11,
             x12type=boolean("Y"))
     in_plan_network = ElementAccess("EB", 12, x12type=boolean("Y"))
+    both_in_out_network = ElementAccess("EB", 12, x12type=boolean("W"))
     ada_code = CompositeAccess("EB", "AD", 13)
     cpt_code = CompositeAccess("EB", "CJ", 13)
     hcpcs_code = CompositeAccess("EB", "HC", 13)
@@ -223,16 +225,31 @@ class Subscriber(Facade, X12LoopBridge):
             diagnosis = SegmentAccess("III",
                 x12type=SegmentConversion(Diagnosis))
 
+        class _RelatedEntityInformation(X12LoopBridge):
+            loopName = "2120C"
+            name = SegmentAccess("NM1",
+                    x12type=SegmentConversion(NamedEntity))
+            address_street = SegmentAccess("N3",
+                    x12type=SegmentConversion(Address))
+            address_location = SegmentAccess("N4",
+                    x12type=SegmentConversion(Location))
+            contact_information = SegmentSequenceAccess("PER",
+                    x12type=SegmentConversion(ContactInformation))
+            provider_information = SegmentAccess("PRV",
+                    x12type=SegmentConversion(ProviderInformation))
+
         def __init__(self, anX12Message, *args, **kwargs):
             super(Subscriber._EligibilityOrBenefitInformation, self).__init__(
                     anX12Message, *args, **kwargs)
 
             self.additional_information = self.loops(
                     self._AdditionalInformation, anX12Message)
+            self.benefit_related_entity = first(self.loops(
+                    self._RelatedEntityInformation, anX12Message))
 
     def __init__(self, anX12Message, *args, **kwargs):
         super(Subscriber, self).__init__(anX12Message, *args, **kwargs)
-        self.subscriber_information = first(self.loops(
+        self.personal_information = first(self.loops(
             self._Information, anX12Message))
         self.eligibility_or_benefit_information = \
                 self.loops(self._EligibilityOrBenefitInformation, anX12Message)
@@ -250,7 +267,6 @@ class Dependent(Facade, X12LoopBridge):
     hierarchy = SegmentAccess("HL", x12type=SegmentConversion(Hierarchy))
     trace_numbers = SegmentSequenceAccess("TRN",
             x12type=SegmentConversion(TraceNumber))
-
 
     class _Information(X12LoopBridge):
         loopName = "2100D"
@@ -295,35 +311,34 @@ class Dependent(Facade, X12LoopBridge):
             diagnosis = SegmentAccess("III",
                 x12type=SegmentConversion(Diagnosis))
 
+        class _RelatedEntityInformation(X12LoopBridge):
+            loopName = "2120D"
+            name = SegmentAccess("NM1",
+                    x12type=SegmentConversion(NamedEntity))
+            address_street = SegmentAccess("N3",
+                    x12type=SegmentConversion(Address))
+            address_location = SegmentAccess("N4",
+                    x12type=SegmentConversion(Location))
+            contact_information = SegmentSequenceAccess("PER",
+                    x12type=SegmentConversion(ContactInformation))
+            provider_information = SegmentAccess("PRV",
+                    x12type=SegmentConversion(ProviderInformation))
+
         def __init__(self, anX12Message, *args, **kwargs):
-            super(Subscriber._EligibilityOrBenefitInformation, self).__init__(
+            super(Dependent._EligibilityOrBenefitInformation, self).__init__(
                     anX12Message, *args, **kwargs)
 
             self.additional_information = self.loops(
                     self._AdditionalInformation, anX12Message)
-
-    class _RelatedEntityInformation(X12LoopBridge):
-        loopName = "2120D"
-        name = SegmentAccess("NM1",
-                x12type=SegmentConversion(NamedEntity))
-        address_street = SegmentAccess("N3",
-                x12type=SegmentConversion(Address))
-        address_location = SegmentAccess("N4",
-                x12type=SegmentConversion(Location))
-        contact_information = SegmentSequenceAccess("PER",
-                x12type=SegmentConversion(ContactInformation))
-        provider_information = SegmentAccess("PRV",
-                x12type=SegmentConversion(ProviderInformation))
+            self.benefit_related_entity = first(self.loops(
+                    self._RelatedEntityInformation, anX12Message))
 
     def __init__(self, anX12Message, *args, **kwargs):
-        super(Subscriber, self).__init__(anX12Message, *args, **kwargs)
-        self.dependent_information = first(self.loops(
+        super(Dependent, self).__init__(anX12Message, *args, **kwargs)
+        self.personal_information = first(self.loops(
             self._Information, anX12Message))
         self.eligibility_or_benefit_information = \
                 self.loops(self._EligibilityOrBenefitInformation, anX12Message)
-        self.dependent_related_entity_information = first(self.loops(
-            self._RelatedEntityInformation, anX12Message))
-        self.dependents = self.loops(Dependent, anX12Message)
 
 
 class F271_4010(Facade):

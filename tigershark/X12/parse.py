@@ -547,8 +547,10 @@ class Element( Parser ):
     def match( self, candidate ):
         """Does this Element match the candidate SegmentToken's element?"""
         if self.req_sit in ( 'S', 'N' ): return True
-        if len(self.codes) == 0: return True
-        return candidate[self.position] in self.codes
+        if len(self.codes) == 1:
+            return candidate[self.position] in self.codes
+        # Respecting valid_codes causes me nothign but headaches!
+        return True
     def logMatch( self, candidate ):
         return "%s in %r" % ( candidate[self.position], self.codes )
     def preVisit( self, visitor, indent ):
@@ -680,7 +682,11 @@ class Segment( Parser ):
                 raise StopIteration
             else:
                 error= ParseError(
-                    "Could not unmarshall %s Segment" % ( self.name, ),
+                    "Could not unmarshall {seg_name} Segment, "\
+                        "{ele_name} Element. Got {segment}".format(
+                            seg_name=self.name,
+                            ele_name=segments[0][0],
+                            segment=segments[0]),
                     description=self.message.desc, parser=self, segments=segments )
                 raise error
     def preVisit( self, visitor, indent ):
@@ -722,15 +728,30 @@ class Loop( Parser ):
         :param segments: list of SegmentToken instances
         :returns: Yields the next X12.message.X12Loop structure or raises StopIteration
         """
-        # Confirm match between this loop and the initial segment of the structure
-        self.log.debug( "Check %s: %s %s", self.path, self.structure[0].name, segments[0] )
-        while len(segments)>0 and self.structure[0].match( segments[0] ):
-            self.log.debug(
-                "Consume %s: %s", self.path, [s.name for s in self.structure]
-                )
-            theLoop= self.theFactory.makeLoop( self.name )
-            self.getParts( segments, theLoop )
-            yield theLoop
+        # Confirm match between this loop and a segment of the structure
+        i = 0
+        while len(segments) > 0 and i < len(self.structure):
+            self.log.debug("Check {path}: {structure} {segments}".format(
+                path=self.path,
+                structure=self.structure[i].name,
+                segments=segments[0]))
+            if self.structure[i].match(segments[0]):
+                self.log.debug("Consume {path}: {structure}".format(
+                    path=self.path,
+                    structure=[s.name for s in self.structure]))
+                theLoop = self.theFactory.makeLoop(self.name)
+                self.getParts(segments, theLoop)
+                yield theLoop
+            elif self.structure[i].situational and \
+                    segments[0][0] in [s.name for s in self.structure]:
+                # Absence of a situational segment shouldn't exit
+                # Can't pop because it destroys the structures before they
+                # get used
+                i += 1
+            else:
+                # Nothing left to check, so stop the iteration
+                raise StopIteration
+
     def match( self, candidate ):
         return self.structure[0].match( candidate )
     def preVisit( self, visitor, indent ):

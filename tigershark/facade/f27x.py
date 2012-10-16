@@ -47,6 +47,7 @@ class Hierarchy(X12SegmentBridge):
         {"20": "Information Source",
          "21": "Information Receiver",
          "22": "Subscriber",
+         "23": "Dependent",
             }))
     has_children = ElementAccess("HL", 4, x12type=boolean("1"))
 
@@ -159,7 +160,7 @@ class Relationship(X12SegmentBridge):
     maintenance_type = ElementAccess("INS", 3, x12type=enum({
         "001": "Change"}, raw_unknowns=True))
     maintenance_reason = ElementAccess("INS", 4, x12type=enum({
-        "25": "Cahnge in Identifying Data Elements"}, raw_unknowns=True))
+        "25": "Change in Identifying Data Elements"}, raw_unknowns=True))
     student_status = ElementAccess("INS", 9, x12type=enum({
         "F": "Full-time",
         "N": "Not a Student",

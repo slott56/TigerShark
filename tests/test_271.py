@@ -107,9 +107,9 @@ class TestParsed271(unittest.TestCase):
 
         def test_validations():
             self.assertEqual(
-                    len(subscriber.subscriber_information.request_validations),
+                    len(subscriber.personal_information.request_validations),
                     4)
-            validations = subscriber.subscriber_information.request_validations
+            validations = subscriber.personal_information.request_validations
             for validation in validations:
                 self.assertFalse(validation.valid_request)
                 self.assertEqual(validation.follow_up_action_code,
@@ -124,14 +124,14 @@ class TestParsed271(unittest.TestCase):
                     ("58", "Invalid/Missing Date-of-Birth"))
 
         def test_dates():
-            self.assertEqual(len(subscriber.subscriber_information.dates), 1)
-            date = subscriber.subscriber_information.dates[0]
+            self.assertEqual(len(subscriber.personal_information.dates), 1)
+            date = subscriber.personal_information.dates[0]
             self.assertEqual(date.type, ("291", "Plan"))
             self.assertEqual(date.time, datetime.date(2012, 4, 8))
             self.assertEqual(date.time_range, None)
 
         subscriber = self.f.facades[0].source.receivers[0].subscribers[0]
-        name = subscriber.subscriber_information.name
+        name = subscriber.personal_information.name
         self.assertEqual(name.entity_identifier,
                 ("IL", "Insured"))
         self.assertEqual(name.entity_type,

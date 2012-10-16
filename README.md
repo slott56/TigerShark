@@ -4,6 +4,26 @@ a specific partner in the health care payment ecosystem.
 State of the Project
 ====================
 
+Version 0.2.5
+-------------
+**Lots** of 271 bugfixes! Several tests for 271 files have been added. A few
+parsing bugs have been fixed.
+
+A nice change is that the parser no longer crashes if there is an invalid code
+in an X12 element. This was causing me nothing but grief so I disabled it.
+Valid codes are only checked when there is a single valid code for a segment,
+since this is important in determining loop boundaries for 271 files.
+
+ParseErrors return a more helpful error message so tracking down a bad line
+is much easier.
+
+Important bugfix that prevents an early parser exit if an optional segment
+isn't found, but later optional segments are present.
+
+PyX12, which this project depends on, changed its project layout (in version
+2.0.0), so the parser generation scripts have been updated to look in the new
+directory.
+
 Version 0.2.4
 -------------
 I discovered a bug that caused deductible/co-insurance/co-payments from being
@@ -109,7 +129,7 @@ S. Lott made, especially as compared to everything else I had seen. If you
 want to contribute to this project, I highly encourage you to go read those
 posts first.
 
-What you see in verion 0.1 is a series of hacks to get TigerShark working.
+What you see in version 0.1 is a series of hacks to get TigerShark working.
 I fixed a few bugs, added a facade for 835 files, and added setup instructions
 to the readme. The facade code is a mess (I didn't have enough time to fully
 understand the descriptor pattern and all of the underlying data structures
@@ -148,7 +168,7 @@ git clone https://github.com/azoner/pyx12.git
 cd pyx12
 python setup.py sdist --formats=gztar,zip
 cd ../
-python tools/generate_all_parsers.py pyx12/dist/pyx12-2.0.a1.zip -d parsers
+python tools/generate_all_parsers.py pyx12/dist/pyx12-*.zip -d parsers
 ```
 
 This will generate all parsers in a directory called `parsers`.
@@ -160,7 +180,7 @@ You can also just create a single parser from an unzipped pyx12 source:
 ```sh
 git clone https://github.com/azoner/pyx12.git
 cd parsers
-python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../pyx12/map/ -n parsed_835
+python ../tools/convertPyX12.py 835.4010.X091.A1.xml M835_4010_X091_A1.py -b ../pyx12/pyx12/map/ -n parsed_835
 ```
 
 This will generate a `M835_4010_X091_A1.py` parser in your current directory.
