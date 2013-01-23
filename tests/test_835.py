@@ -253,6 +253,14 @@ class TestParsed835(unittest.TestCase):
                 "dispute."))
         self.assertEqual(l.notes[1], "M68")
 
+    def test_footer(self):
+        footer = self.f.facades[0].footer
+        self.assertEqual(len(footer.provider_adjustments), 1)
+        adj = footer.provider_adjustments[0]
+        self.assertEqual(adj.provider_id, '743238060')
+        self.assertEqual(adj.date, datetime.date(2012,12,31))
+        self.assertEqual(adj.amount_1, Decimal('-361.19'))
+
 
 if __name__ == "__main__":
     logging.basicConfig(

@@ -1,9 +1,12 @@
 from decimal import Decimal
 
 from tigershark.facade import X12LoopBridge
+from tigershark.facade import X12SegmentBridge
 from tigershark.facade import ElementAccess
 from tigershark.facade import ElementSequenceAccess
 from tigershark.facade import CompositeAccess
+from tigershark.facade import SegmentSequenceAccess
+from tigershark.facade import SegmentConversion
 from tigershark.facade import D8
 from tigershark.facade import Money
 from tigershark.facade import Facade
@@ -123,6 +126,30 @@ class Header(X12LoopBridge):
         self.receiver = Header._Receiver(aLoop, *args, **kwargs)
         self.version = Header._Version(aLoop, *args, **kwargs)
         self.production_date = Header._ProductionDate(aLoop, *args, **kwargs)
+
+
+class ProviderAdjustments(X12SegmentBridge):
+    provider_id = ElementAccess("PLB", 1)
+    date = ElementAccess("PLB", 2, x12type=D8)
+    reason_1 = ElementAccess("PLB", 3)
+    amount_1 = ElementAccess("PLB", 4, x12type=Money)
+    reason_2 = ElementAccess("PLB", 5)
+    amount_2 = ElementAccess("PLB", 6, x12type=Money)
+    reason_3 = ElementAccess("PLB", 7)
+    amount_3 = ElementAccess("PLB", 8, x12type=Money)
+    reason_4 = ElementAccess("PLB", 9)
+    amount_4 = ElementAccess("PLB", 10, x12type=Money)
+    reason_5 = ElementAccess("PLB", 11)
+    amount_5 = ElementAccess("PLB", 12, x12type=Money)
+    reason_6 = ElementAccess("PLB", 13)
+    amount_6 = ElementAccess("PLB", 14, x12type=Money)
+
+
+class Footer(Facade, X12LoopBridge):
+    loopName = "FOOTER"
+
+    provider_adjustments = SegmentSequenceAccess("PLB",
+            x12type=SegmentConversion(ProviderAdjustments))
 
 
 class Payer(X12LoopBridge):
@@ -434,3 +461,4 @@ class F835_4010(Facade):
             self.claims_overview = first(self.loops(ClaimsOverview,
                 anX12Message))
             self.claims = self.loops(Claim, anX12Message)
+            self.footer = first(self.loops(Footer, anX12Message))
