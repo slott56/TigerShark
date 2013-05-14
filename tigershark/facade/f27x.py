@@ -88,7 +88,7 @@ class NamedEntity(X12SegmentBridge):
             "SEP": "Secondary Payer",
             "TTP": "Tertiary Payer",
             "VN": "Vendor",
-            "X3": "Utilization Management Organization"},raw_unknowns=True))
+            "X3": "Utilization Management Organization"}, raw_unknowns=True))
     entity_type = ElementAccess("NM1", 2, x12type=enum({
             "1": "Person",
             "2": "Non-Person Entity"}))
