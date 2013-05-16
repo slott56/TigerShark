@@ -77,7 +77,7 @@ class NamedEntity(X12SegmentBridge):
             "80": "Hospital",
             "FA": "Facility",
             "GP": "Gateway Provider",
-            "IL": "Insured or Subscriber",
+            "IL": "Insured",
             "LR": "Legal Representative",
             "P3": "Primary Care Provider",
             "P4": "Prior Insurance Carrier",
