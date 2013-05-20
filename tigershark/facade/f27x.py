@@ -69,16 +69,26 @@ class TraceNumber(X12SegmentBridge):
 class NamedEntity(X12SegmentBridge):
     entity_identifier = ElementAccess("NM1", 1, x12type=enum({
             "03": "Dependent",
+            "13": "Contracted Service Provider",
             "1P": "Provider",
             "2B": "Third-Party Administrator",
             "36": "Employer",
+            "73": "Other Physician",
             "80": "Hospital",
             "FA": "Facility",
             "GP": "Gateway Provider",
             "IL": "Insured",
+            "LR": "Legal Representative",
+            "P3": "Primary Care Provider",
+            "P4": "Prior Insurance Carrier",
             "P5": "Plan Sponsor",
             "PR": "Payer",
-            "QC": "Patient"}))
+            "PRP": "Primary Payer",
+            "QC": "Patient",
+            "SEP": "Secondary Payer",
+            "TTP": "Tertiary Payer",
+            "VN": "Vendor",
+            "X3": "Utilization Management Organization"}, raw_unknowns=True))
     entity_type = ElementAccess("NM1", 2, x12type=enum({
             "1": "Person",
             "2": "Non-Person Entity"}))
