@@ -43,3 +43,4 @@ web/claims/*.pyc
 web/claims_837/*.pyc
 
 build/*
+.idea/*
