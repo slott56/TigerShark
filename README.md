@@ -1,8 +1,45 @@
 TigerShark is an X12 EDI message parser that can be tailored to
 a specific partner in the health care payment ecosystem.
 
+About Tiger Shark
+=================
+
+TigerShark is used to transform the X12 schema definitions into Plain old Python class definitions.
+The class definitions are used by an application to process an X12 data stream.
+
+TigerShark's generated code can parse X12 messages, providing Python objects that
+can be used in a variety of ways. A web application can be built using any Python
+framework. A Juypter Lab notebook can be built to do analysis work on claim data.
+Python-based middleware can be written to process claim files.
+
+Because the code is built from X12 schema definitions, it depends on X12 "CF"
+files. See https://metacpan.org/dist/X12 for the files currently in use.
+
+This project vendors in the X12-0.08 code base to provide the CF files 
+that define the medical X12 messages for health insurance claim processing.
+
+About X12 EDI
+=============
+
+See https://x12.org/products. 
+
+The X12 syntax defines a complex more-or-less hierarchical structure
+of files that have messages. Messages have Loops (that can repeat), Segments,
+and individual Data Elements.
+
+The core idea is that a Segment is a group of related Data Elements. A segment
+has an identifier, making it possible to identify repeating loops 
+and any omitted segments.
+
+The segments are terminated with a `~` and data elements terminated with `*`.
+A complete schema is required, including details of fields that are optional.
+
+See https://docs.informatica.com/data-integration/b2b-data-transformation/10-1/libraries-guide/descriptions-of-the-libraries/hipaa-library/hipaa-message-structure.html
+
 State of the Project
 ====================
+
+TODO: Add type hints.
 
 Version 0.2.5
 -------------
