@@ -1,0 +1,387 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Type Hints &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Implementation" href="../implementation/index.html" />
+    <link rel="prev" title="Parsing An Exchange-Format Message" href="parsing.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="type-hints">
+<span id="design-annotations"></span><h1>Type Hints<a class="headerlink" href="#type-hints" title="Permalink to this heading">¶</a></h1>
+<p>The message/loop/segment/composite structure is defined with type hints.
+Individual elements don’t rely on type annotations, but instead rely on JSON Schema details provided separately.</p>
+<p>We’ll explore this with a series of examples.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#messages">Messages</a>. These are collections of Loops.</p></li>
+<li><p><a class="reference internal" href="#loops">Loops</a>. These are collections of Segments and Sub-Loops.</p></li>
+<li><p><a class="reference internal" href="#segments">Segments</a>. These are collections of Elements and Composites.</p></li>
+<li><p><a class="reference internal" href="#elements">Elements</a>. These are atomic.</p></li>
+<li><p><a class="reference internal" href="#composites">Composites</a>. These are collections of Elements.</p></li>
+</ul>
+<p>The objective is to provide a pure-Python definition of the X12 EDI structure.
+This can make it easier to examine and analyze messages.
+It can also make it somewhat easier to define alternative syntax for messages
+to further facilitate analysis and processing.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The JSON Schema is a work in progress</p>
+<p>The JSON Schema seems reasonable, but has not really been implemented fully.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The IG compliance is indirect</p>
+<p>These definitions are based on the PyX12 project and may have introduced
+additional bugs or complications.</p>
+</div>
+<p>The JSON Schema <strong>should</strong> be more tightly integrated into the Python definitions.
+An explicit <code class="docutils literal notranslate"><span class="pre">Schema</span></code> internal class should be removed.</p>
+<section id="messages">
+<h2>Messages<a class="headerlink" href="#messages" title="Permalink to this heading">¶</a></h2>
+<p>Here’s an example of a Message definition.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MSG270</span><span class="p">(</span><span class="n">Message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HIPAA Health Care Eligibility Inquiry X092A1-270&quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Schema</span><span class="p">:</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;HIPAA Health Care Eligibility Inquiry X092A1-270&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=270 name=HIPAA Health Care Eligibility Inquiry X092A1-270&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;isa_loop&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$loops/ISA_LOOP&#39;</span><span class="p">}},</span>
+         <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;isa_loop&#39;</span><span class="p">]}</span>
+    <span class="n">isa_loop</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ISA_LOOP</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The message contains a single attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">isa_loop<span class="colon">:</span></dt>
+<dd class="field-odd"><p>This is defined by the <code class="docutils literal notranslate"><span class="pre">list[ISA_LOOP]</span></code> type annotation to be a list of <code class="docutils literal notranslate"><span class="pre">ISA_LOOP</span></code> instances.
+A parsed message will always have an <code class="docutils literal notranslate"><span class="pre">isa_loop</span></code> attribute, and it will be a list.
+An application will use <code class="docutils literal notranslate"><span class="pre">msg.isa_loop[0]</span></code> to refer to the first ISA loop of a given message.</p>
+</dd>
+</dl>
+<p>Additional information is provided in an internal class definition, always named <code class="docutils literal notranslate"><span class="pre">Schema</span></code>, providing JSON Schema
+details. These come from the source XML (and the original IG) and represent aspects of a defintion that
+aren’t <strong>easily</strong> incorporated into a class definition.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The JSON Schema values should be deduced from pure Python.</p>
+<p>Here are schema attributes and how they could be defined.</p>
+<dl class="field-list simple">
+<dt class="field-odd">title<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Should be first line of the docstring</p>
+</dd>
+<dt class="field-even">description<span class="colon">:</span></dt>
+<dd class="field-even"><p>Should be the docstring with the first line removed</p>
+</dd>
+<dt class="field-odd">type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Is always <code class="docutils literal notranslate"><span class="pre">object</span></code> for Messages, Loops, Segments, and Composites.</p>
+</dd>
+<dt class="field-even">properties<span class="colon">:</span></dt>
+<dd class="field-even"><p>Is a template that can be built from the attribute type annotations.</p>
+</dd>
+<dt class="field-odd">required<span class="colon">:</span></dt>
+<dd class="field-odd"><p>This isn’t obvious from Python, but can be deduced from the <code class="docutils literal notranslate"><span class="pre">|</span> <span class="pre">None</span></code> annotations used for the attributes.</p>
+</dd>
+</dl>
+</div>
+</section>
+<section id="loops">
+<h2>Loops<a class="headerlink" href="#loops" title="Permalink to this heading">¶</a></h2>
+<p>A Loop a collection of segments (and sub-loops). It is also a namespace to distinguish reused references
+to a common segment definition. See <a class="reference internal" href="loopmodel.html#design-loop-namespace"><span class="std std-ref">Loops as Namespaces</span></a>.</p>
+<p>The loop-as-namespace is implemented by using the loop name as a qualifier for segments that are part of the loop.</p>
+<p>Here’s an example of a Loop definition.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ISA_LOOP</span><span class="p">(</span><span class="n">Loop</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Schema</span><span class="p">:</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;array&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;items&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Interchange Control Header&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=ISA_LOOP name=Interchange Control Header &#39;</span>
+                                  <span class="s1">&#39;type=explicit&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                   <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;isa&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$segments/ISA_LOOP_ISA&#39;</span><span class="p">},</span>
+                                  <span class="s1">&#39;gs_loop&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$segments/GS_LOOP&#39;</span><span class="p">},</span>
+                                  <span class="s1">&#39;ta1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$segments/ISA_LOOP_TA1&#39;</span><span class="p">},</span>
+                                  <span class="s1">&#39;iea&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$segments/ISA_LOOP_IEA&#39;</span><span class="p">}},</span>
+                   <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;isa&#39;</span><span class="p">,</span> <span class="s1">&#39;gs_loop&#39;</span><span class="p">,</span> <span class="s1">&#39;iea&#39;</span><span class="p">]}}</span>
+    <span class="n">isa</span><span class="p">:</span> <span class="n">ISA_LOOP_ISA</span>
+    <span class="n">gs_loop</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">GS_LOOP</span><span class="p">]</span>
+    <span class="n">ta1</span><span class="p">:</span> <span class="n">ISA_LOOP_TA1</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">iea</span><span class="p">:</span> <span class="n">ISA_LOOP_IEA</span>
+</pre></div>
+</div>
+<p>This Loop has four attributes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">isa<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the ISA_LOOP’s <code class="docutils literal notranslate"><span class="pre">ISA</span></code> segment.</p>
+</dd>
+<dt class="field-even">gs_loop<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sequence of GS_LOOP instances.</p>
+</dd>
+<dt class="field-odd">ta1<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An optional instance of the  ISA_LOOP’s <code class="docutils literal notranslate"><span class="pre">TA1</span></code> segment.</p>
+</dd>
+<dt class="field-even">iea<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of the ISA_LOOP’s <code class="docutils literal notranslate"><span class="pre">IEA</span></code> segment.</p>
+</dd>
+</dl>
+<p>Additional information is provided in an internal class definition, always named <code class="docutils literal notranslate"><span class="pre">Schema</span></code>, providing JSON Schema
+details. These come from the source XML (and the original IG) and represent aspects of a defintion that
+aren’t <strong>easily</strong> incorporated into a class definition.
+For example, the <code class="docutils literal notranslate"><span class="pre">'usage':</span> <span class="pre">'R'</span></code> means this loop is required; this is properly an aspect of the parent message.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The JSON Schema values should be deduced from pure Python.</p>
+<p>Note that the description includes values taken from the XML schema (and the IG) that don’t seem to be useful,
+but are sill preserved here.</p>
+</div>
+</section>
+<section id="segments">
+<h2>Segments<a class="headerlink" href="#segments" title="Permalink to this heading">¶</a></h2>
+<p>Here’s an example of a Segment definition.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ISA_LOOP_IEA</span><span class="p">(</span><span class="n">Segment</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Interchange Control Trailer&quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Schema</span><span class="p">:</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Interchange Control Trailer&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=IEA name=Interchange Control Trailer&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;position&#39;</span><span class="p">:</span> <span class="mi">30</span><span class="p">,</span>
+         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;xid&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;literal&#39;</span><span class="p">:</span> <span class="s1">&#39;IEA&#39;</span><span class="p">},</span>
+                        <span class="s1">&#39;iea01&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$elements/ISA_LOOP_IEA01&#39;</span><span class="p">},</span>
+                        <span class="s1">&#39;iea02&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$elements/ISA_LOOP_IEA02&#39;</span><span class="p">}},</span>
+         <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;iea01&#39;</span><span class="p">,</span> <span class="s1">&#39;iea02&#39;</span><span class="p">]}</span>
+        <span class="n">segment_name</span> <span class="o">=</span> <span class="s1">&#39;IEA&#39;</span>
+    <span class="n">iea01</span><span class="p">:</span> <span class="n">ISA_LOOP_IEA01</span>
+    <span class="n">iea02</span><span class="p">:</span> <span class="n">ISA_LOOP_IEA02</span>
+</pre></div>
+</div>
+<p>This Segment has two attributes and a segment <code class="docutils literal notranslate"><span class="pre">xid</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">xid<span class="colon">:</span></dt>
+<dd class="field-odd"><p></p></dd>
+<dt class="field-even">segment_name<span class="colon">:</span></dt>
+<dd class="field-even"><p>The literal <code class="docutils literal notranslate"><span class="pre">&quot;IEA&quot;</span></code> to identify this segment. This is defined in the <code class="docutils literal notranslate"><span class="pre">Schema</span></code> object.
+It – perhaps – could be a <code class="docutils literal notranslate"><span class="pre">Literal[&quot;IEA&quot;]</span></code> type annotation.
+However, the name is an immutable feature of the segment, not a mutable attribute value.</p>
+</dd>
+<dt class="field-odd">iea01<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of the ISA_LOOP’s <code class="docutils literal notranslate"><span class="pre">IEA01</span></code> element.</p>
+</dd>
+<dt class="field-even">iea02<span class="colon">:</span></dt>
+<dd class="field-even"><p>An instance of the ISA_LOOP’s <code class="docutils literal notranslate"><span class="pre">IEA02</span></code> element</p>
+</dd>
+</dl>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The JSON Schema values should be deduced from pure Python.</p>
+<p>Note that the description includes values taken from the XML schema (and the IG) that don’t seem to be useful,
+but are sill preserved here.</p>
+<p>The position attribute seems to be used to sort the definitions into a proper ordering within a loop definition.</p>
+</div>
+</section>
+<section id="elements">
+<h2>Elements<a class="headerlink" href="#elements" title="Permalink to this heading">¶</a></h2>
+<p>Here’s an example of an Element definition.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ISA_LOOP_IEA01</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Number of Included Functional Groups&quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Schema</span><span class="p">:</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Number of Included Functional Groups&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=IEA01 data_ele=I16&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$common/I16&#39;</span><span class="p">}}</span>
+        <span class="n">datatype</span> <span class="o">=</span> <span class="n">common</span><span class="o">.</span><span class="n">I16</span>
+        <span class="n">min_len</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">max_len</span> <span class="o">=</span> <span class="mi">5</span>
+</pre></div>
+</div>
+<p>There are no attributes of an Element.  (If there were, it wouldn’t be atomic, would it?)</p>
+<p>The details of the value’s type are provided in the XML schema definition.
+They can also be provided via a set of common type definitions that are widely reused, as well as being part of the element.</p>
+<p>In this case, the I16 definition looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">I16</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;number&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;I16&#39;</span><span class="p">,</span> <span class="s1">&#39;data_type_code&#39;</span><span class="p">:</span> <span class="s1">&#39;N0&#39;</span><span class="p">,</span> <span class="s1">&#39;minLength&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;maxLength&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>These details were used to build the <code class="docutils literal notranslate"><span class="pre">min_len</span></code> and <code class="docutils literal notranslate"><span class="pre">max_len</span></code> attributes of the <code class="docutils literal notranslate"><span class="pre">Schema</span></code> object.
+These features are very important when parsing the ISA segment. The remaining details are helpful for converting source text to a Python value,
+and are used by the element’s <a class="reference internal" href="../implementation/x12.html#x12.base.Element.value" title="x12.base.Element.value"><code class="xref py py-meth docutils literal notranslate"><span class="pre">x12.base.Element.value()</span></code></a> method.</p>
+<p>It’s not perfectly clear whether or not Element details require a separate class.
+See <a class="reference internal" href="element.html#design-element"><span class="std std-ref">Element Class Design</span></a>.</p>
+</section>
+<section id="composites">
+<h2>Composites<a class="headerlink" href="#composites" title="Permalink to this heading">¶</a></h2>
+<p>Here’s the definition of a Composite.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">L2110D_C003</span><span class="p">(</span><span class="n">Composite</span><span class="p">):</span>
+    <span class="k">class</span> <span class="nc">Schema</span><span class="p">:</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Composite Medical Procedure Identifier&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=None name=Composite Medical Procedure Identifier refdes= &#39;</span>
+                        <span class="s1">&#39;data_ele=C003&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+         <span class="s1">&#39;syntax&#39;</span><span class="p">:</span> <span class="p">[],</span>
+         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;eq02_01&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Product or Service ID Qualifier&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=EQ02-01 data_ele=235&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;allOf&#39;</span><span class="p">:</span> <span class="p">[{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$common/235&#39;</span><span class="p">},</span>
+                                                       <span class="p">{</span><span class="s1">&#39;enum&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;AD&#39;</span><span class="p">,</span> <span class="s1">&#39;CJ&#39;</span><span class="p">,</span> <span class="s1">&#39;HC&#39;</span><span class="p">,</span> <span class="s1">&#39;ID&#39;</span><span class="p">,</span>
+                                                                 <span class="s1">&#39;IV&#39;</span><span class="p">,</span> <span class="s1">&#39;N4&#39;</span><span class="p">,</span> <span class="s1">&#39;ZZ&#39;</span><span class="p">]}]}},</span>
+                        <span class="s1">&#39;eq02_02&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Procedure Code&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;R&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=EQ02-02 data_ele=234&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$common/234&#39;</span><span class="p">}},</span>
+                        <span class="s1">&#39;eq02_03&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Procedure Modifier&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=EQ02-03 data_ele=1339&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$common/1339&#39;</span><span class="p">}},</span>
+                        <span class="s1">&#39;eq02_04&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Procedure Modifier&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=EQ02-04 data_ele=1339&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$common/1339&#39;</span><span class="p">}},</span>
+                        <span class="s1">&#39;eq02_05&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Procedure Modifier&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=EQ02-05 data_ele=1339&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$common/1339&#39;</span><span class="p">}},</span>
+                        <span class="s1">&#39;eq02_06&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Procedure Modifier&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;S&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=EQ02-06 data_ele=1339&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$common/1339&#39;</span><span class="p">}},</span>
+                        <span class="s1">&#39;eq02_07&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;Description&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;usage&#39;</span><span class="p">:</span> <span class="s1">&#39;N&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=EQ02-07 data_ele=352&#39;</span><span class="p">,</span>
+                                    <span class="s1">&#39;sequence&#39;</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+                                    <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$common/352&#39;</span><span class="p">}}},</span>
+         <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;eq02_01&#39;</span><span class="p">,</span> <span class="s1">&#39;eq02_02&#39;</span><span class="p">]}</span>
+    <span class="n">eq02_01</span><span class="p">:</span> <span class="n">L2110D_EQ02_01</span>
+    <span class="n">eq02_02</span><span class="p">:</span> <span class="n">L2110D_EQ02_02</span>
+    <span class="n">eq02_03</span><span class="p">:</span> <span class="n">L2110D_EQ02_03</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">eq02_04</span><span class="p">:</span> <span class="n">L2110D_EQ02_04</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">eq02_05</span><span class="p">:</span> <span class="n">L2110D_EQ02_05</span> <span class="o">|</span> <span class="kc">None</span>
+    <span class="n">eq02_06</span><span class="p">:</span> <span class="n">L2110D_EQ02_06</span> <span class="o">|</span> <span class="kc">None</span>
+</pre></div>
+</div>
+<p>This defines six attributes; the first two are required, four are “situational”, one (with <code class="docutils literal notranslate"><span class="pre">'usage':</span> <span class="pre">'N',</span></code>) is not used.</p>
+<p>The name, <code class="docutils literal notranslate"><span class="pre">L2110D_C003</span></code>, uses the loop <code class="docutils literal notranslate"><span class="pre">2210D</span></code> as a namespace for composite <code class="docutils literal notranslate"><span class="pre">C003</span></code>.
+The composite name seems to haVe been generated as part of the XML, and may not be formally defined in the IG.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="classmodel.html">Message Schema as Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="element.html">Element Definitions as Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loopmodel.html">Loops as Namespace</a></li>
+<li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Algorithm</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Type Annotations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Design Notes</a><ul>
+      <li>Previous: <a href="parsing.html" title="previous chapter">Parsing An Exchange-Format Message</a></li>
+      <li>Next: <a href="../implementation/index.html" title="next chapter">Implementation</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/design/annotations.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

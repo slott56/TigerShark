@@ -36,6 +36,17 @@ A complete schema is required, including details of fields that are optional.
 
 See https://docs.informatica.com/data-integration/b2b-data-transformation/10-1/libraries-guide/descriptions-of-the-libraries/hipaa-library/hipaa-message-structure.html
 
+Dependencies
+============
+
+We rely on two sources for the base definitions of messages.
+
+1. https://github.com/azoner/pyx12
+2. https://metacpan.org/dist/X12
+
+(Ideally, we'd go to the source documents, including
+the X12 standard and Implementation Guides.)
+
 State of the Project
 ====================
 

@@ -1,70 +1,49 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Design Note: Reconciling “Bare” Python Classes with Django &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
-    <link rel="up" title="Design Notes" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Design Note: Reconciling “Bare” Python Classes with Django &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Design Note: Recursive Structures in SQL" href="recursiveStructures.html" />
-    <link rel="prev" title="Design Note: Message Structure Traversal" href="traversal.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="recursiveStructures.html" title="Design Note: Recursive Structures in SQL"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="traversal.html" title="Design Note: Message Structure Traversal"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Design Notes</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Design Note: Message Structure Traversal" href="traversal.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          
+
+          <div class="body" role="main">
             
-  <div class="section" id="design-note-reconciling-bare-python-classes-with-django">
-<h1>Design Note: Reconciling &#8220;Bare&#8221; Python Classes with Django<a class="headerlink" href="#design-note-reconciling-bare-python-classes-with-django" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="../architecture.html#architecture"><em>Architecture and Design</em></a></p>
-<div class="section" id="problem">
-<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
-<p>Django&#8217;s <tt class="docutils literal"><span class="pre">django.db.models.Model</span></tt> class must be root class of all persistent
+  <section id="design-note-reconciling-bare-python-classes-with-django">
+<h1>Design Note: Reconciling “Bare” Python Classes with Django<a class="headerlink" href="#design-note-reconciling-bare-python-classes-with-django" title="Permalink to this heading">¶</a></h1>
+<p><a class="reference internal" href="../architecture.html#architecture"><span class="std std-ref">Architecture and Design</span></a></p>
+<section id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this heading">¶</a></h2>
+<p>Django’s <code class="docutils literal notranslate"><span class="pre">django.db.models.Model</span></code> class must be root class of all persistent
 objects.  This imposes certain implicit structure rules, and the associated methods
 and attribiutes.  It also defeats ordinary Python class definition
 techniques, specifically limiting inheritance.</p>
-<p>See <a class="reference internal" href="recursiveStructures.html#recursive-structures"><em>Design Note: Recursive Structures in SQL</em></a> for the root-cause issue.  When we define the Python
+<p>See <a class="reference internal" href="recursiveStructures.html#recursive-structures"><span class="std std-ref">Design Note: Recursive Structures in SQL</span></a> for the root-cause issue.  When we define the Python
 objects, we can use ordinary containers which are part of a simple inheritance
 hierarchy to represent the hierarchical message structures in a strongly-typed
 object structure.</p>
@@ -72,118 +51,130 @@ object structure.</p>
 kind of strongly typed record definition.</p>
 <p>We have to consider how best to define structures that permit us to
 have arbitrary Python class definitions as well as the more-constrained Django ORM.</p>
-<p>Also, see <a class="reference internal" href="keygen.html#key-generation"><em>Design Note: Key Generation for X12Messages</em></a> for the consequent issue of how best to generate
-keys in the Django implementation so that it doesn&#8217;t depend on database saves.</p>
-</div>
-<div class="section" id="forces">
-<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
+<p>Also, see <a class="reference internal" href="keygen.html#key-generation"><span class="std std-ref">Design Note: Key Generation for X12Messages</span></a> for the consequent issue of how best to generate
+keys in the Django implementation so that it doesn’t depend on database saves.</p>
+</section>
+<section id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this heading">¶</a></h2>
 <p>There are a number of alternatives.</p>
 <ul class="simple">
-<li>Use SQLAlchemy instead of Django&#8217;s built-in models.  Since the Django
+<li><p>Use SQLAlchemy instead of Django’s built-in models.  Since the Django
 views and templates are not tightly bound to the model, this certainly will
 work.  SQLAlchemy mappings can be used to bridge between the original
 Python classes and the database model, minimizing the impact on existing
-code.  However, Django&#8217;s built-in Admin interface won&#8217;t work with this external
-model definition.</li>
-<li>Rewrite <tt class="docutils literal"><span class="pre">X12.parse</span></tt> to use the Django model.  This is relatively small, since
-<tt class="docutils literal"><span class="pre">X12.parse</span></tt> makes limited references to the <tt class="docutils literal"><span class="pre">X12.message</span></tt> package.  This
-tends to bind X12 parse to Django persistence even if we&#8217;re doing other
-kinds of X12 message processing.</li>
-<li>Rewrite <tt class="docutils literal"><span class="pre">X12.parse</span></tt> to use the formal
+code.  However, Django’s built-in Admin interface won’t work with this external
+model definition.</p></li>
+<li><p>Rewrite <code class="docutils literal notranslate"><span class="pre">X12.parse</span></code> to use the Django model.  This is relatively small, since
+<code class="docutils literal notranslate"><span class="pre">X12.parse</span></code> makes limited references to the <code class="docutils literal notranslate"><span class="pre">X12.message</span></code> package.  This
+tends to bind X12 parse to Django persistence even if we’re doing other
+kinds of X12 message processing.</p></li>
+<li><p>Rewrite <code class="docutils literal notranslate"><span class="pre">X12.parse</span></code> to use the formal
 <strong>Factory</strong> design pattern.  The Django application model module
-and the <tt class="docutils literal"><span class="pre">X12.message</span></tt> modules would all provide the necessary factory function
-to emit proper objects for use by <tt class="docutils literal"><span class="pre">X12.parse</span></tt>.  Since there are relatively
-few distinct classes in <tt class="docutils literal"><span class="pre">X12.message</span></tt>, this <strong>Factory</strong> is not terribly
-complex.</li>
-<li>Assure that the various modules have precisely the same API, eliminating
+and the <code class="docutils literal notranslate"><span class="pre">X12.message</span></code> modules would all provide the necessary factory function
+to emit proper objects for use by <code class="docutils literal notranslate"><span class="pre">X12.parse</span></code>.  Since there are relatively
+few distinct classes in <code class="docutils literal notranslate"><span class="pre">X12.message</span></code>, this <strong>Factory</strong> is not terribly
+complex.</p></li>
+<li><p>Assure that the various modules have precisely the same API, eliminating
 the need for a formal <strong>Factory</strong> object.  Since Django provides the most
-built-in functionality, <tt class="docutils literal"><span class="pre">X12.message</span></tt> modules would have to emulate
-the Django model API.</li>
+built-in functionality, <code class="docutils literal notranslate"><span class="pre">X12.message</span></code> modules would have to emulate
+the Django model API.</p></li>
 </ul>
-</div>
-<div class="section" id="solution">
-<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this heading">¶</a></h2>
 <p>Use a formal <strong>Factory</strong> design pattern for utilities outside the Django application
 framework.</p>
-</div>
-<div class="section" id="consequences">
-<h2>Consequences<a class="headerlink" href="#consequences" title="Permalink to this headline">¶</a></h2>
-<p>Some minor complex with the indirect creation of message objects in <tt class="docutils literal"><span class="pre">X12.parse</span></tt>.
+</section>
+<section id="consequences">
+<h2>Consequences<a class="headerlink" href="#consequences" title="Permalink to this heading">¶</a></h2>
+<p>Some minor complex with the indirect creation of message objects in <code class="docutils literal notranslate"><span class="pre">X12.parse</span></code>.
 However, this is the only place where the indirection occurs.  All other
-modules either use <tt class="docutils literal"><span class="pre">X12.parse</span></tt> or the Django web app.</p>
-</div>
-</div>
+modules either use <code class="docutils literal notranslate"><span class="pre">X12.parse</span></code> or the Django web app.</p>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Design Note: Reconciling &#8220;Bare&#8221; Python Classes with Django</a><ul>
-<li><a class="reference internal" href="#problem">Problem</a></li>
-<li><a class="reference internal" href="#forces">Forces</a></li>
-<li><a class="reference internal" href="#solution">Solution</a></li>
-<li><a class="reference internal" href="#consequences">Consequences</a></li>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="traversal.html">Traversing the complex hierarchical message definitions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Ways to map generic messages to a specific ORM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recursiveStructures.html">Persistence of recursive structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html">Segment-type customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="claimsmodel.html">The Facade-based design pattern for claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batchScript.html">Considerations in writing batch programs and scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webservice.html">Considerations for implementing web services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html">The design for keys for X12Messages, X12Loops and X12Segments</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="traversal.html"
-                        title="previous chapter">Design Note: Message Structure Traversal</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="recursiveStructures.html"
-                        title="next chapter">Design Note: Recursive Structures in SQL</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/design/ORMPlanning.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Design Notes</a><ul>
+      <li>Previous: <a href="traversal.html" title="previous chapter">Design Note: Message Structure Traversal</a></li>
+      <li>Next: <a href="recursiveStructures.html" title="next chapter">Design Note: Recursive Structures in SQL</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="recursiveStructures.html" title="Design Note: Recursive Structures in SQL"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="traversal.html" title="Design Note: Message Structure Traversal"
-             >previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Design Notes</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/design/ORMPlanning.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

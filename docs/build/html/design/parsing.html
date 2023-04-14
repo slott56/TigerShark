@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Parsing An Exchange-Format Message &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Type Annotations" href="annotations.html" />
+    <link rel="prev" title="Loops as Namespaces" href="loopmodel.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="parsing-an-exchange-format-message">
+<span id="design-parsing"></span><h1>Parsing An Exchange-Format Message<a class="headerlink" href="#parsing-an-exchange-format-message" title="Permalink to this heading">¶</a></h1>
+<p>An exchange-format X12 EDI message is a sequence of segments.
+Each segment has an identifier of 2 or 3 characters, and a sequence of element values.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-170d3e13e98e6fb611a5669b9f46e07d2c760b68.png" alt="class MessageText
+
+class SegmentText
+
+class Identifier
+
+class Value
+
+MessageText *--&gt; &quot;n&quot; SegmentText
+
+SegmentText *--&gt; &quot;1&quot; Identifier
+
+SegmentText *--&gt; &quot;v&quot; Value"/>
+</p>
+<p>For example, the following segment uses “|” as an element separator and “~” as a segment separator.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ST</span><span class="o">|</span><span class="mi">271</span><span class="o">|</span><span class="mi">0001</span><span class="o">~</span>
+</pre></div>
+</div>
+<p>This segment can be viewed as three string values, “ST”, “271”, and “0001”.
+The first string value is the segment identifier.</p>
+<p>Alternatively, this segment can be viewed as an identifier and separator, “ST|”,
+followed by two string values, “271” and “0001”.</p>
+<p>We generally choose the former view, which permits simple use of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">string.split()</span></code> method
+to split the segment into fields.
+The first field is the identifier, used for parsing the structure of a message and the loops.
+The remaining values are assigned to elements and composites of the segment.</p>
+<p>Conceptually, the parsing uses approach similar to the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">identifier</span><span class="p">,</span> <span class="o">*</span><span class="n">fields</span> <span class="o">=</span> <span class="n">segment_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+<span class="n">segment_class</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span><span class="o">.</span><span class="n">build_attrs</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Pragmatically, it’s a bit more complicated for two reasons:</p>
+<ol class="arabic simple">
+<li><p>Loops are not present in the text representation.
+A loop contains one or more segments, defining an expected sequence of segments.</p></li>
+<li><p>Composites are not present in the text representation.
+A composite contains a number of elements; it’s a kind of sub-segment.</p></li>
+</ol>
+<p>This means we have the following relationships.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-c03ce03d54950efd482f32ab56c8cbfc0a366771.png" alt="class Message
+
+class MessageText
+
+Message -- MessageText : Represented By &gt;
+
+class Loop
+
+Message *--&gt; &quot;n&quot; Loop
+
+class Segment
+
+Loop *--&gt; &quot;n&quot; Segment
+Loop *--&gt; &quot;n&quot; Loop
+
+class SegmentText
+
+Segment -- SegmentText : Represented By &gt;
+
+MessageText *--&gt; &quot;n&quot; SegmentText
+
+class Composite
+class Element
+
+Segment *--&gt; Composite
+Segment *--&gt; Element
+Composite *--&gt; Element
+
+class Value
+
+SegmentText *--&gt; Value
+Element -- Value : Represented By &gt;"/>
+</p>
+<p>The essential algorithm works by consuming the segments to locate the loops within a message.
+A source lexical scanner can “peek” at the heading of the next segment.
+The loop parser can use the heading to decide if it should consume the next segment or if it is finished consuming segments.</p>
+<p>Consuming a segment means locating the elements and composites (sequences of elements) within the segment, and assigning text
+values to those elements and composites. This is slightly different from consuming segments because there are fewer choices
+to be made. The process has two layers: each element consumes one value; each composite consumes a sequence of values.</p>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="classmodel.html">Message Schema as Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loopmodel.html">Loops as Namespace</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Parsing Algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotations.html">Type Annotations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Design Notes</a><ul>
+      <li>Previous: <a href="loopmodel.html" title="previous chapter">Loops as Namespaces</a></li>
+      <li>Next: <a href="annotations.html" title="next chapter">Type Annotations</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/design/parsing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

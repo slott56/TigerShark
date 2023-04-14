@@ -1,1468 +1,182 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>X12 Package &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
-    <link rel="up" title="Implementation" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>X12 Package &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="tools Package" href="tools.html" />
-    <link rel="prev" title="Implementation" href="index.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="tools.html" title="tools Package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Implementation"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Implementation</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Implementation" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          
+
+          <div class="body" role="main">
             
-  <div class="section" id="module-X12">
-<span id="x12-package"></span><h1><tt class="docutils literal"><span class="pre">X12</span></tt> Package<a class="headerlink" href="#module-X12" title="Permalink to this headline">¶</a></h1>
-<p>Defines several modules with classes for X12 message processing.</p>
-<p>We have to disentangle two separate concepts.</p>
-<blockquote>
-<div><ul class="simple">
-<li><strong>Message Type</strong>.  This is the structure of the message.
-The structure is defined by an <a class="reference internal" href="#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Message</span></tt></a> object.  In addition
-to defining the structure, a parser can also unmarshall a block of text.
-It can also be used for meta-level processing like emitting DB designs.</li>
-<li><strong>Message Instance</strong>.  This a specific message&#8217;s data; a collection of
-Segments which can be interpreted as a Message with Loops.  (The Loops
-are not stated, only the Segments.)  A message instance can be built
-by unmarshalling a block of text, or it can be built &#8220;manually&#8221; using
-object constructors.  A message instance can unmarshall itself, returning
-a block of text.</li>
-</ul>
-</div></blockquote>
-<p>The <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> package defines the classes which are used to build an X12 message
-parser (or &#8220;unmarshaller&#8221;).  The classes are generic, and don&#8217;t recognize any
-specific X12 message structure.</p>
-<p>A parser for a given message type can be built from the <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> classes manually or
-by a conversion tool.
-The manual construction involves writing a bunch of object constructors to build parsers
-for the Message, the Loops within the Message, the Segments within the Loops,
-and the Composites and Elements within the Segments.</p>
-<p>A conversion tool usually reads some other meta-data version of the message structure,
-and builds an <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> structure.  There is a conversion tool for <tt class="file docutils literal"><span class="pre">.xml</span></tt> files.  Both of these conversion tools
-build the complete <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> object, which can either be used to parse messages,
-or can be used for other meta-level processing.</p>
-<p>The <a class="reference internal" href="#module-X12.map" title="X12.map"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map</span></tt></a> package supports meta-level processing.  This includes subclasses
-of <a class="reference internal" href="#X12.parse.StructureVisitor" title="X12.parse.StructureVisitor"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.StructureVisitor</span></tt></a> that can traverse an <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> object to
-report on its structure.
-This is used by the conversion tools to traverse the definitions
-and emit the source code, Django class definitions or raw SQL definitions
-for the message that the parser recognizes.</p>
-<p>The <a class="reference internal" href="#module-X12.message" title="X12.message"><tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt></a> package defines a message instance.</p>
-<div class="section" id="module-X12.map">
-<span id="map-sub-package"></span><h2><tt class="docutils literal"><span class="pre">map</span></tt> sub-package<a class="headerlink" href="#module-X12.map" title="Permalink to this headline">¶</a></h2>
-<p>The X12.map package contains <strong>Visitors</strong> that can traverse the <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a>
-structure to transform it from Python objects to some other form.</p>
-<p>Often, a parser is built from some non-Python metadata.  There are a number of
-conversion tools in <a class="reference internal" href="tools.html#module-tools" title="tools"><tt class="xref py py-mod docutils literal"><span class="pre">tools</span></tt></a> that produce an <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> structure from other
-source data.</p>
-<p>The <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> structure defines the structure of a message type.  It can also
-unmarshall text to create a message instance.</p>
-<p>Additionally the parser structure can be used for meta-level processing.
-Generally this examines the structure of the message, rather than work with
-a specific message instance.  The are several meta-level transformations:</p>
-<blockquote>
-<div><ul class="simple">
-<li>Emit Source (in Python, usually)</li>
-<li>Emit a Data Model (in SQL, as well as the Django ORM)</li>
-</ul>
-</div></blockquote>
-<p>The <a class="reference internal" href="#module-X12.map.source" title="X12.map.source"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map.source</span></tt></a> package emits Python source in one of two forms.</p>
-<blockquote>
-<div><ul class="simple">
-<li>A single, big constuctor expression for the parser.  This will rarely
-compile.</li>
-<li>A flattened definition made up of a number of Loop-level constructors.</li>
-</ul>
-</div></blockquote>
-<p>The <a class="reference internal" href="#module-X12.map.SQL" title="X12.map.SQL"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map.SQL</span></tt></a> package emits SQL DDL for the Message structure.  This isn&#8217;t
-terribly useful, but it does build a minimal database design that
-is specific to a message type.</p>
-<p>The <a class="reference internal" href="#module-X12.map.dj" title="X12.map.dj"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map.dj</span></tt></a> package emits Django ORM class definitions for the
-various kinds of Segments found within message structure definitions.</p>
-<p>XXX - Future Expansion: <tt class="xref py py-mod docutils literal"><span class="pre">X12.map.sa</span></tt> package can emit SQLAlchemy definitions
-for the various kinds of Segments found within message structure definitions.</p>
-<div class="section" id="module-X12.map.dj">
-<span id="django"></span><h3>Django<a class="headerlink" href="#module-X12.map.dj" title="Permalink to this headline">¶</a></h3>
-<p>The <tt class="docutils literal"><span class="pre">X12.map.dj</span></tt> package emits Django class definitions for Segment definitions.</p>
-<p>See <a class="reference internal" href="../design/traversal.html#traversal"><em>Design Note: Message Structure Traversal</em></a> for notes on the <strong>Visitor</strong> design pattern.</p>
-<dl class="class">
-<dt id="X12.map.dj.DjangoModelVisitor">
-<em class="property">class </em><tt class="descclassname">X12.map.dj.</tt><tt class="descname">DjangoModelVisitor</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#X12.map.dj.DjangoModelVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Emit Django class definitions for Segments.</p>
-<p>Extension to <a class="reference internal" href="#X12.parse.StructureVisitor" title="X12.parse.StructureVisitor"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.StructureVisitor</span></tt></a></p>
-<dl class="method">
-<dt id="X12.map.dj.DjangoModelVisitor.postElement">
-<tt class="descname">postElement</tt><big>(</big><em>anElement</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.dj.DjangoModelVisitor.postElement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report this Element.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.map.dj.DjangoModelVisitor.preComposite">
-<tt class="descname">preComposite</tt><big>(</big><em>aComposite</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.dj.DjangoModelVisitor.preComposite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report this Composite.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.map.dj.DjangoModelVisitor.preSegment">
-<tt class="descname">preSegment</tt><big>(</big><em>aSegment</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.dj.DjangoModelVisitor.preSegment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Examine this Segment: is it a new type?</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.map.dj.DjangoAdminVisitor">
-<em class="property">class </em><tt class="descclassname">X12.map.dj.</tt><tt class="descname">DjangoAdminVisitor</tt><big>(</big><em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#X12.map.dj.DjangoAdminVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Emit Django admin definitions for Segments.</p>
-<p>Extension to <a class="reference internal" href="#X12.parse.StructureVisitor" title="X12.parse.StructureVisitor"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.StructureVisitor</span></tt></a></p>
-</dd></dl>
-
-</div>
-<div class="section" id="module-X12.map.source">
-<span id="source"></span><h3>Source<a class="headerlink" href="#module-X12.map.source" title="Permalink to this headline">¶</a></h3>
-<p>The X12.map.source module emits Python source definitions from an <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> structure.</p>
-<p>There are two flavors of Python source that can be produced:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="#X12.map.source.PythonVisitor" title="X12.map.source.PythonVisitor"><tt class="xref py py-class docutils literal"><span class="pre">PythonVisitor</span></tt></a> creates a single definition.
-A single Python constructor defines the entire message.</li>
-<li><a class="reference internal" href="#X12.map.source.FlatPythonVisitor" title="X12.map.source.FlatPythonVisitor"><tt class="xref py py-class docutils literal"><span class="pre">FlatPythonVisitor</span></tt></a> builds a flat definition.
-A number of individual constructors are assembled
-into a workable parser.</li>
-</ul>
-</div></blockquote>
-<p>See <a class="reference internal" href="../design/traversal.html#traversal"><em>Design Note: Message Structure Traversal</em></a> for notes on the <strong>Visitor</strong> design pattern.</p>
-<dl class="class">
-<dt id="X12.map.source.PythonVisitor">
-<em class="property">class </em><tt class="descclassname">X12.map.source.</tt><tt class="descname">PythonVisitor</tt><big>(</big><em>varName</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#X12.map.source.PythonVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Builds a single, huge definition.  Not very practical except
-for TINY messages.  Or if you set <tt class="xref py py-data docutils literal"><span class="pre">skipElement</span></tt>
-to True, the resulting structure might be useful.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><strong>skipElement</strong> &#8211; normally False, you can set this to True
-to produce a Segment-level message summary.</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="X12.map.source.PythonVisitor.postComposite">
-<tt class="descname">postComposite</tt><big>(</big><em>aComposite</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.source.PythonVisitor.postComposite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report this Composite.  Configured by the <tt class="xref py py-data docutils literal"><span class="pre">skipElement</span></tt> variable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.map.source.PythonVisitor.postElement">
-<tt class="descname">postElement</tt><big>(</big><em>anElement</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.source.PythonVisitor.postElement" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report this Element.  Configured by the <tt class="xref py py-data docutils literal"><span class="pre">skipElement</span></tt> variable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.map.source.PythonVisitor.preComposite">
-<tt class="descname">preComposite</tt><big>(</big><em>aComposite</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.source.PythonVisitor.preComposite" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report this Composite.  Configured by the <tt class="xref py py-data docutils literal"><span class="pre">skipElement</span></tt> variable.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.map.source.PythonVisitor.preLoop">
-<tt class="descname">preLoop</tt><big>(</big><em>aLoop</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.source.PythonVisitor.preLoop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report this Loop.
-:param aLoop: a <a class="reference internal" href="#X12.parse.Loop" title="X12.parse.Loop"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Loop</span></tt></a> structure.
-:param indent: the indentation level.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.map.source.PythonVisitor.preSegment">
-<tt class="descname">preSegment</tt><big>(</big><em>aSegment</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.source.PythonVisitor.preSegment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Report this Segment.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.map.source.FlatPythonDetails">
-<em class="property">class </em><tt class="descclassname">X12.map.source.</tt><tt class="descname">FlatPythonDetails</tt><big>(</big><em>varName</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#X12.map.source.FlatPythonDetails" title="Permalink to this definition">¶</a></dt>
-<dd><p>Definitions, of Segment, Composite and Element.
-Messages and Loops are silently ignored.  They&#8217;re handled by
-another visitor that scans the &#8220;top&#8221; of the structure.
-This Visitor is only used within a Loop or Message.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.map.source.FlatPythonVisitor">
-<em class="property">class </em><tt class="descclassname">X12.map.source.</tt><tt class="descname">FlatPythonVisitor</tt><big>(</big><em>varName</em>, <em>*args</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#X12.map.source.FlatPythonVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decompose ALL Loops into separate definitions which can be referenced.
-This Visitor doesn&#8217;t process Segments, Composites and Elements.
-It only looks at Messages and Loops.</p>
-<dl class="method">
-<dt id="X12.map.source.FlatPythonVisitor.postLoop">
-<tt class="descname">postLoop</tt><big>(</big><em>aLoop</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.map.source.FlatPythonVisitor.postLoop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Loop with References to stuff defined during pre-processing.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-X12.map.SQL">
-<span id="sql"></span><h3>SQL<a class="headerlink" href="#module-X12.map.SQL" title="Permalink to this headline">¶</a></h3>
-<p>The X12.map.SQL module emits SQL table definitions from an <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> structure.</p>
-<p>These table definitions are minimized by flattening Segments into their
-parent Loop structures.</p>
-<p>See <a class="reference internal" href="../design/traversal.html#traversal"><em>Design Note: Message Structure Traversal</em></a> for notes on the <strong>Visitor</strong> design pattern.</p>
-<dl class="class">
-<dt id="X12.map.SQL.SQLDetailsVisitor">
-<em class="property">class </em><tt class="descclassname">X12.map.SQL.</tt><tt class="descname">SQLDetailsVisitor</tt><big>(</big><em>*arg</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#X12.map.SQL.SQLDetailsVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Details means, effectively, column definitions, which are X12.parse.Elements.
-However, a Segments are murky.
-A Segment with a repeat of &#8220;1&#8221; can be expanded inline.
-A Segment with a repeat of &#8220;&gt;1&#8221; or some specific number, has to be a separate
-table (or we have to generate a design not in 1NF).</p>
-<p>Similarly, a Loop which repeats exactly once can be expanded in-line.
-Loops which repeat, on the other hand, require distinct tables.  This is
-not as interesting, so we trust the other Visitor to allocate all Loops
-to separate tables.</p>
-<p>This visitor merely emits the in-line Segments, in-line Loops and Elements.
-Composites are little more than a comment, effectively an in-line sub-Segment.</p>
-<dl class="method">
-<dt id="X12.map.SQL.SQLDetailsVisitor.preSegment">
-<tt class="descname">preSegment</tt><big>(</big><em>aSegment</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.map.SQL.SQLDetailsVisitor.preSegment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Repeats?  If so, we need a separate table.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.map.SQL.SQLTableVisitor">
-<em class="property">class </em><tt class="descclassname">X12.map.SQL.</tt><tt class="descname">SQLTableVisitor</tt><big>(</big><em>*arg</em>, <em>**kw</em><big>)</big><a class="headerlink" href="#X12.map.SQL.SQLTableVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
-<dt id="X12.map.SQL.SQLTableVisitor.preLoop">
-<tt class="descname">preLoop</tt><big>(</big><em>aLoop</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.map.SQL.SQLTableVisitor.preLoop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Table definitions of a Loop.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.map.SQL.SQLTableVisitor.preMessage">
-<tt class="descname">preMessage</tt><big>(</big><em>aMessage</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.map.SQL.SQLTableVisitor.preMessage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Table definitions of a Message.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="module-X12.message">
-<span id="message-sub-package"></span><h2><tt class="docutils literal"><span class="pre">message</span></tt> sub-package<a class="headerlink" href="#module-X12.message" title="Permalink to this headline">¶</a></h2>
-<p>X12.message contains classes that are the default definitions of parts of
-an X12 message instance.</p>
-<p>An X12 message instance is a recursive construction of Loops, sub-Loops and Segments.
-The leaf elements are always Segments.  For transmission, the Segment
-leaves are flattened out; the loop structure is lost.</p>
-<p>An X12 message instance is built by <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a>.</p>
-<div class="section" id="navigation">
-<h3>Navigation<a class="headerlink" href="#navigation" title="Permalink to this headline">¶</a></h3>
-<p>The X12 message structure is a deeply nested collection of Loops and Segments.
-Consquently, XPath-like functionality is helpful.  Literal XPath is a pain to
-parse and process. However, a Pythonic set of methods and keyword arguments
-can provide XPath-like features.</p>
-<p>Each class, therefore has the following methods that correspond to XPath
-axes: parent, child, ancestor, descendant.  [Optional: methods like following, preceding,
-following_sibling, preceding_sibling, self, ancestor_or_self, descendent_or_self.]</p>
-<p>Each method accepts a &#8220;node test&#8221; as a positional parameter.  Values are
-simply the node type name, either Loop or Segment.</p>
-<p>Each method has optional keywords which contains basically one expression.
-the name=&#8221;X&#8221; keyword is like <tt class="samp docutils literal"><span class="pre">[&#64;name=X]</span></tt> in XPath.  The pos=n keyword is like <tt class="samp docutils literal"><span class="pre">[n]</span></tt>
-in XPath.</p>
-</div>
-<div class="section" id="implementations">
-<h3>Implementations<a class="headerlink" href="#implementations" title="Permalink to this headline">¶</a></h3>
-<p>Note that there are several alternative implementations:</p>
+  <section id="module-x12">
+<span id="x12-package"></span><h1><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package<a class="headerlink" href="#module-x12" title="Permalink to this heading">¶</a></h1>
+<section id="x12">
+<h2>x12<a class="headerlink" href="#x12" title="Permalink to this heading">¶</a></h2>
+<p>The bulk of this package is defined by extraction from other sources.
+Specifically the <a class="reference internal" href="tools.html#module-tools.pyx12_extract" title="tools.pyx12_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.pyx12_extract</span></code></a> module.</p>
+<p>The only part written by hans is the <a class="reference internal" href="#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a> module.</p>
+<section id="module-x12.base">
+<span id="x12-base"></span><h3>x12.base<a class="headerlink" href="#module-x12.base" title="Permalink to this heading">¶</a></h3>
+<p>Base definitions for X12 message constructs:</p>
 <ul class="simple">
-<li>This module, <a class="reference internal" href="#module-X12.message" title="X12.message"><tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt></a>, which is pure Python.</li>
-<li>The <a class="reference internal" href="web.html#module-web.claims.models" title="web.claims.models"><tt class="xref py py-mod docutils literal"><span class="pre">web.claims.models</span></tt></a> implementation, which is built using the
-Django ORM.</li>
-<li>The <a class="reference internal" href="web.html#module-web.claims_837.models" title="web.claims_837.models"><tt class="xref py py-mod docutils literal"><span class="pre">web.claims_837.models</span></tt></a> implementation which has a
-complete set of X12Segments
-that reflect the various actual segment types used in <tt class="samp docutils literal"><span class="pre">837</span></tt>.</li>
+<li><p>Element</p></li>
+<li><p>Composite</p></li>
+<li><p>Segment</p></li>
+<li><p>Loop</p></li>
+<li><p>Message</p></li>
 </ul>
-<p>An <a class="reference internal" href="#module-X12.message.sa" title="X12.message.sa"><tt class="xref py py-mod docutils literal"><span class="pre">X12.message.sa</span></tt></a> module could provde SQLAlchemy
-mappings for the pure Python class definitions.</p>
-<p>Consequently, a <a class="reference internal" href="#X12.message.Factory" title="X12.message.Factory"><tt class="xref py py-class docutils literal"><span class="pre">Factory</span></tt></a> object is essential for building the correct
-objects each alternative implementation.</p>
-</div>
-<div class="section" id="module-content">
-<h3>Module Content<a class="headerlink" href="#module-content" title="Permalink to this headline">¶</a></h3>
-<p>This module contains the following class definitions.</p>
-<blockquote>
-<div><ul>
-<li><p class="first"><a class="reference internal" href="#X12.message.Factory" title="X12.message.Factory"><tt class="xref py py-class docutils literal"><span class="pre">Factory</span></tt></a>.  Factory which builds object instances.</p>
-</li>
-<li><p class="first"><a class="reference internal" href="#X12.message.X12Structure" title="X12.message.X12Structure"><tt class="xref py py-class docutils literal"><span class="pre">X12Structure</span></tt></a>. Superclass for the resulting X12 message structure.</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="#X12.message.X12Message" title="X12.message.X12Message"><tt class="xref py py-class docutils literal"><span class="pre">X12Message</span></tt></a>.  The overall message &#8211; a collection of Loops.</li>
-<li><a class="reference internal" href="#X12.message.X12Loop" title="X12.message.X12Loop"><tt class="xref py py-class docutils literal"><span class="pre">X12Loop</span></tt></a>. A Loop is a collection of Segments and sub-Loops.</li>
-<li><a class="reference internal" href="#X12.message.X12Segment" title="X12.message.X12Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12Segment</span></tt></a>. A Segment is a collection of Elements and Composites.
-Segments names are essentially a type name; segments can be reused
-in a single Loop with different semantics.</li>
-<li>X12Composite.  A Composite is a collection of Elements.  This is
-not actually implemented.</li>
-<li>X12Element.  An atomic piece of data.  These are identified
-positionally within a segment&#8217;s source text.</li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-</div></blockquote>
-<p>The generic definition of <a class="reference internal" href="#X12.message.X12Segment" title="X12.message.X12Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12Segment</span></tt></a> depends on having the <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a>
-definitions of the Segment,
-Composite and Element available to interpret the strings of data associated
-with each X12Segment.</p>
-<p>If we want a more sophisticated, admin-friendly implementation, we have
-to subclass <a class="reference internal" href="#X12.message.X12Segment" title="X12.message.X12Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12Segment</span></tt></a> for each unique kind of segment found in the X12
-message definitions.  This is done in the Django and SQLAlchemy versions.</p>
-<p>Since a Loop is just a kind of PK and sequence number
-used to marshall a Message (and interpret the meaning of Segments), we
-don&#8217;t need to subclass Loop.</p>
-<p>It&#8217;s simplest to persist at the Segment level, with enough FK&#8217;s and Occurance
-identifiers to reconstruct a Loop from a sequence of Segments.</p>
-</div>
-<div class="section" id="details">
-<h3>Details<a class="headerlink" href="#details" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="X12.message.Factory">
-<em class="property">class </em><tt class="descclassname">X12.message.</tt><tt class="descname">Factory</tt><a class="headerlink" href="#X12.message.Factory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create the generic X12Message structures.</p>
-<p>This object is used by an <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> to unmarshall message
-text and create generic Python objects.</p>
-<p>Subclasses include</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="#module-X12.message.sa" title="X12.message.sa"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.sa</span></tt></a> creates SQLAlchemy objects; these have endless
-subclasses for X12Segment.</li>
-<li><a class="reference internal" href="web.html#module-web.claims.models" title="web.claims.models"><tt class="xref py py-mod docutils literal"><span class="pre">web.claims.models</span></tt></a> creates Django objects.  The generic
-claims application uses a generic X12Segment implementation.</li>
-<li>XXX future: <a class="reference internal" href="web.html#module-web.claims_837.models" title="web.claims_837.models"><tt class="xref py py-mod docutils literal"><span class="pre">web.claims_837.models</span></tt></a> will create Django objects;
-this version will have endless peer classes for X12Segment that
-carry the detailed element definitions.</li>
-</ul>
-</div></blockquote>
-<p>The &#8220;subclasses&#8221; are entirely a theoretical construct.  We don&#8217;t <em>need</em>
-a properly polymorphic class hierarchy.</p>
-<dl class="staticmethod">
-<dt id="X12.message.Factory.makeLoop">
-<em class="property">static </em><tt class="descname">makeLoop</tt><big>(</big><em>name</em>, <em>*structure</em><big>)</big><a class="headerlink" href="#X12.message.Factory.makeLoop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new X12Loop object.
-:param name: name of this Loop
-:param structure: the various sub-Loops and Segments of this Loop
-:returns: X12Loop instance</p>
+<p>Each of these has an internal structure
+defined in a <code class="docutils literal notranslate"><span class="pre">Schema</span></code> class definition.
+This definition often has only a single value, <code class="docutils literal notranslate"><span class="pre">schema</span></code>, with the JSONSchema object.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="x12.base.Composite">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Composite</span></span><a class="headerlink" href="#x12.base.Composite" title="Permalink to this definition">¶</a></dt>
+<dd><p>A composite of atomic elements.</p>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="X12.message.Factory.makeMessage">
-<em class="property">static </em><tt class="descname">makeMessage</tt><big>(</big><em>name</em>, <em>*structure</em><big>)</big><a class="headerlink" href="#X12.message.Factory.makeMessage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new X12Message object.
-:param name: name of this Message
-:param structure: the various Loops of this Message
-:returns: X12Message instance</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="x12.base.Element">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Element</span></span><a class="headerlink" href="#x12.base.Element" title="Permalink to this definition">¶</a></dt>
+<dd><p>An atomic element.</p>
+<p>This has a value attribute and a schema attribute.</p>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="X12.message.Factory.makeSegment">
-<em class="property">static </em><tt class="descname">makeSegment</tt><big>(</big><em>segmentToken</em>, <em>compositeSep=':'</em>, <em>segmentType=None</em><big>)</big><a class="headerlink" href="#X12.message.Factory.makeSegment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new X12Segment object.
-:param segmentToken: the <a class="reference internal" href="#X12.parse.SegmentToken" title="X12.parse.SegmentToken"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.SegmentToken</span></tt></a> created by the parser.
-:param compositeSep: Composite internal separator from the ISA segment.
-:param segmentType: an instance of <a class="reference internal" href="#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> which defines
-the Elements and Composites of this Segment.
-:returns: X12Segment instance</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="x12.base.Loop">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Loop</span></span><a class="headerlink" href="#x12.base.Loop" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Segment that repeats.</p>
 </dd></dl>
 
+<dl class="py class">
+<dt class="sig sig-object py" id="x12.base.Segment">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Segment</span></span><a class="headerlink" href="#x12.base.Segment" title="Permalink to this definition">¶</a></dt>
+<dd><p>A collection of Elements or Composites.</p>
+<p>TODO: How are composite values distributed? A composite isn’t a named segment, really.</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="X12.message.X12Structure">
-<em class="property">class </em><tt class="descclassname">X12.message.</tt><tt class="descname">X12Structure</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#X12.message.X12Structure" title="Permalink to this definition">¶</a></dt>
-<dd><p>A piece of an X12 message structure.  This is the common superclass
-for X12Loop and X12Segment, allowing a recursive structure.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>name</strong> &#8211; name of this structure.</li>
-<li><strong>thePosition</strong> &#8211; relative position within the parent.</li>
-<li><strong>theParent</strong> &#8211; parent structure.</li>
-<li><strong>occurrence</strong> &#8211; occurrence number for Loops or Segments which repeat.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="X12.message.X12Structure.ancestor">
-<tt class="descname">ancestor</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#X12.message.X12Structure.ancestor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Examine nay ancestor of this node.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="x12.base.Source">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.Source" title="Permalink to this definition">¶</a></dt>
+<dd><p>State invariant: text[pos] is the start of a segment.
+For the initial ISA segment; there’s no defined element_sep.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="x12.base.Source.elements">
+<span class="sig-name descname"><span class="pre">elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="headerlink" href="#x12.base.Source.elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Unpack a Segment or Loop’s text into a list of potential Element values.</p>
+<p>Note the initial ISA segment is fixed length, not compressed. Separators aren’t defined yet.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="X12.message.X12Structure.matches">
-<tt class="descname">matches</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#X12.message.X12Structure.matches" title="Permalink to this definition">¶</a></dt>
-<dd><p>The Xpath <tt class="samp docutils literal"><span class="pre">self</span></tt> axis</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="X12.message.X12Structure.parent">
-<tt class="descname">parent</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#X12.message.X12Structure.parent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Examine the immediate parent of this node.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Structure.segs">
-<tt class="descname">segs</tt><big>(</big><big>)</big><a class="headerlink" href="#X12.message.X12Structure.segs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a flat list of Segments under this structure.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.message.X12Loop">
-<em class="property">class </em><tt class="descclassname">X12.message.</tt><tt class="descname">X12Loop</tt><big>(</big><em>name</em>, <em>*parts</em><big>)</big><a class="headerlink" href="#X12.message.X12Loop" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Loop in an X12 message; it contains subloops and segments.
-This also the superclass for a Message, which includes Loops
-(but no Segments.)
-:ivar parts: sequence of component parts (subLoops or Segments)</p>
-<dl class="method">
-<dt id="X12.message.X12Loop.addChild">
-<tt class="descname">addChild</tt><big>(</big><em>aPart</em><big>)</big><a class="headerlink" href="#X12.message.X12Loop.addChild" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add a child Loop or Segment to this Loop.
-Under some circumstances, we may need to propagate the message
-definition down into the lower levels of this structure.</p>
-<p>Note that this sets the message of the parts to the message
-associated with this Loop.  The message setting is recursive
-and assures that all subloops are also correctly associated with
-this message.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Loop.child">
-<tt class="descname">child</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#X12.message.X12Loop.child" title="Permalink to this definition">¶</a></dt>
-<dd><p>Examine immediate children of this node.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Loop.descendant">
-<tt class="descname">descendant</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#X12.message.X12Loop.descendant" title="Permalink to this definition">¶</a></dt>
-<dd><p>Examine descendents of this node.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Loop.segs">
-<tt class="descname">segs</tt><big>(</big><big>)</big><a class="headerlink" href="#X12.message.X12Loop.segs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a flat list of Segments under this Loop.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.message.X12Segment">
-<em class="property">class </em><tt class="descclassname">X12.message.</tt><tt class="descname">X12Segment</tt><big>(</big><em>segmentToken</em>, <em>segmentType=None</em><big>)</big><a class="headerlink" href="#X12.message.X12Segment" title="Permalink to this definition">¶</a></dt>
-<dd><p>A segment in an X12 message, created by a parser from a segmentToken.
-:ivar elements: an instance of <a class="reference internal" href="#X12.parse.SegmentToken" title="X12.parse.SegmentToken"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.SegmentToken</span></tt></a> which contains
-the individual Element values.
-:ivar segType: An optional instance of <a class="reference internal" href="#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> that provides
-names, data type properties for each Element of the Segment.</p>
-<dl class="method">
-<dt id="X12.message.X12Segment.bind">
-<tt class="descname">bind</tt><big>(</big><em>segment</em><big>)</big><a class="headerlink" href="#X12.message.X12Segment.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bind an <a class="reference internal" href="#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> to this data.
-:param segment: An <a class="reference internal" href="#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> instance</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Segment.child">
-<tt class="descname">child</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#X12.message.X12Segment.child" title="Permalink to this definition">¶</a></dt>
-<dd><p>Examine immediate children of this node;
-segments have no children; the result is an empty list.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Segment.descendant">
-<tt class="descname">descendant</tt><big>(</big><em>test</em>, <em>name=None</em>, <em>pos=None</em><big>)</big><a class="headerlink" href="#X12.message.X12Segment.descendant" title="Permalink to this definition">¶</a></dt>
-<dd><p>Examine all descendants of this node;
-segments have no children; the result is an empty list.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Segment.getByName">
-<tt class="descname">getByName</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#X12.message.X12Segment.getByName" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get an element from this segment, by name.
-:param name: the name of the element.
-:returns: string value in the element&#8217;s position.  No type conversion is done.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Segment.getByPos">
-<tt class="descname">getByPos</tt><big>(</big><em>position</em><big>)</big><a class="headerlink" href="#X12.message.X12Segment.getByPos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get an element from this segment, by position.
-Positions appear to be numbered from 1.  Position 0 is
-the segment&#8217;s name.
-:param position: the position of the element.
-:returns: string value in this position.  No type conversion is done.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Segment.positionOf">
-<tt class="descname">positionOf</tt><big>(</big><em>name</em><big>)</big><a class="headerlink" href="#X12.message.X12Segment.positionOf" title="Permalink to this definition">¶</a></dt>
-<dd><p>Locate the position of an element by name.
-:param name: name of the element.
-:returns: numberic position.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Segment.segs">
-<tt class="descname">segs</tt><big>(</big><big>)</big><a class="headerlink" href="#X12.message.X12Segment.segs" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return this segment as a flat list of segments.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Segment.setByPos">
-<tt class="descname">setByPos</tt><big>(</big><em>position</em>, <em>value</em><big>)</big><a class="headerlink" href="#X12.message.X12Segment.setByPos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set an element of this segment, by position.
-Positions appear to be numbered from 1.  Position 0 is
-the segment&#8217;s name.
-:param position: the position of the element.
-:param value: String value to assign.  No type conversion is done.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.message.X12Message">
-<em class="property">class </em><tt class="descclassname">X12.message.</tt><tt class="descname">X12Message</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#X12.message.X12Message" title="Permalink to this definition">¶</a></dt>
-<dd><p>An overall X12 Message: essentially a collection of Loops.</p>
-<dl class="method">
-<dt id="X12.message.X12Message.getCompositeSeparator">
-<tt class="descname">getCompositeSeparator</tt><big>(</big><big>)</big><a class="headerlink" href="#X12.message.X12Message.getCompositeSeparator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the composite separator in <tt class="samp docutils literal"><span class="pre">ISA16</span></tt>.
-:returns: string value of the composite separator, often a <tt class="samp docutils literal"><span class="pre">:</span></tt>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.message.X12Message.marshall">
-<tt class="descname">marshall</tt><big>(</big><em>segSep='~'</em>, <em>eltSep='*'</em><big>)</big><a class="headerlink" href="#X12.message.X12Message.marshall" title="Permalink to this definition">¶</a></dt>
-<dd><p>Marshall this message into an X12 string.
-:param segSep: (optional) Segment Terminator, usually <tt class="samp docutils literal"><span class="pre">~</span></tt>
-:param eltSep: (optional) Element Separator, usually <tt class="samp docutils literal"><span class="pre">*</span></tt>
-:returns: String with this X12 message marshalled</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-<div class="section" id="module-X12.message.sa">
-<span id="sql-alchemy-module"></span><h3>SQL Alchemy module<a class="headerlink" href="#module-X12.message.sa" title="Permalink to this headline">¶</a></h3>
-<p>X12.message.sa contains a SQLAlchemy mapping for <a class="reference internal" href="#module-X12.message" title="X12.message"><tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt></a>
-classes.</p>
-<p>An X12 message instance is a recursive construction of Loops, sub-Loops and Segments.
-The leaf elements are always Segments.  For transmission, the segment
-leaves are flattened out; the loop structure is lost.</p>
-<p>An X12 message instance is built by <a class="reference internal" href="#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a>.</p>
-<p>This module inherits mappings for the following class definitions.</p>
-<blockquote>
-<div><ul>
-<li><p class="first"><tt class="xref py py-class docutils literal"><span class="pre">X12Structure</span></tt>. Superclass for the resulting X12 message structure.</p>
-<blockquote>
-<div><ul class="simple">
-<li><tt class="xref py py-class docutils literal"><span class="pre">X12Message</span></tt>.  The overall message &#8211; a collection of Loops.</li>
-<li><tt class="xref py py-class docutils literal"><span class="pre">X12Loop</span></tt>. A Loop is a collection of Segments and sub-Loops.</li>
-<li><tt class="xref py py-class docutils literal"><span class="pre">X12Segment</span></tt>. A Segment is a collection of Elements and Composites.
-Segments names are essentially a type name; segments can be reused
-in a single Loop with different semantics.</li>
-<li>X12Composite.  A Composite is a collection of Elements.  This is
-not actually implemented.</li>
-<li>X12Element.  An atomic piece of data.  These are identified
-positionally within a segment&#8217;s source text.</li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-</div></blockquote>
-<dl class="class">
-<dt id="X12.message.sa.Factory">
-<em class="property">class </em><tt class="descclassname">X12.message.sa.</tt><tt class="descname">Factory</tt><a class="headerlink" href="#X12.message.sa.Factory" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Factory for this module&#8217;s version of X12Message structures.</p>
-<dl class="staticmethod">
-<dt id="X12.message.sa.Factory.makeLoop">
-<em class="property">static </em><tt class="descname">makeLoop</tt><big>(</big><em>name</em>, <em>*structure</em><big>)</big><a class="headerlink" href="#X12.message.sa.Factory.makeLoop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new X12Loop object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> &#8211; name of this Loop</li>
-<li><strong>structure</strong> &#8211; the various sub-Loops and Segments of this Loop</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">X12Loop instance</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="X12.message.sa.Factory.makeMessage">
-<em class="property">static </em><tt class="descname">makeMessage</tt><big>(</big><em>name</em>, <em>*structure</em><big>)</big><a class="headerlink" href="#X12.message.sa.Factory.makeMessage" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new X12Message object.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> &#8211; name of this Message</li>
-<li><strong>structure</strong> &#8211; the various Loops of this Message</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">X12Message instance</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="X12.message.sa.Factory.makeSegment">
-<em class="property">static </em><tt class="descname">makeSegment</tt><big>(</big><em>segmentToken</em>, <em>compositeSep=':'</em>, <em>segmentType=None</em><big>)</big><a class="headerlink" href="#X12.message.sa.Factory.makeSegment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new X12Segment object.
-Ideally, all Segments exist as classes, defined in a module
-that imports this one, and is built by some conversion utility.
-However, we may be parsing some oddball message, or we may
-have specifically elected to ignore some segments and treat
-them as &#8220;generic&#8221;.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>segmentToken</strong> &#8211; the <a class="reference internal" href="#X12.parse.SegmentToken" title="X12.parse.SegmentToken"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.SegmentToken</span></tt></a> created by the parser.</li>
-<li><strong>compositeSep</strong> &#8211; Composite internal separator from the ISA segment.</li>
-<li><strong>segmentType</strong> &#8211; an instance of <a class="reference internal" href="#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> which defines
-the Elements and Composites of this Segment.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">X12Segment instance</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-</div>
-</div>
-<div class="section" id="module-X12.file">
-<span id="file-module"></span><h2><tt class="docutils literal"><span class="pre">file</span></tt> module<a class="headerlink" href="#module-X12.file" title="Permalink to this headline">¶</a></h2>
-<p>Claim File Processing Utilities.</p>
-<p>There are a number of convenience functions in this module.</p>
-<dl class="function">
-<dt id="X12.file.genClaims">
-<tt class="descclassname">X12.file.</tt><tt class="descname">genClaims</tt><big>(</big><em>aFile</em>, <em>segSep='~'</em>, <em>eltSep='*'</em><big>)</big><a class="headerlink" href="#X12.file.genClaims" title="Permalink to this definition">¶</a></dt>
-<dd><p>Generator for individual claims from a file.
-This will gracefully read either &#8220;Expanded&#8221; claims or &#8220;Compact&#8221; claims,
-and generate &#8220;Compact&#8221; format messages.
-An expanded claim has <tt class="samp docutils literal"><span class="pre">n</span></tt> after each segment separator.
-A claim always begins with <tt class="samp docutils literal"><span class="pre">ISA</span></tt> followed by the element separator character,
-usually <tt class="samp docutils literal"><span class="pre">*</span></tt>.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>aFile</strong> &#8211; the name of the file to open, read and close.</li>
-<li><strong>segSep</strong> &#8211; the expected segment separator, by default <tt class="samp docutils literal"><span class="pre">~</span></tt>.</li>
-<li><strong>eltSep</strong> &#8211; the expected element separator, by default <tt class="samp docutils literal"><span class="pre">*</span></tt>.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</div>
-<div class="section" id="module-X12.parse">
-<span id="parse-module"></span><h2><tt class="docutils literal"><span class="pre">parse</span></tt> module<a class="headerlink" href="#module-X12.parse" title="Permalink to this headline">¶</a></h2>
-<p>X12.parse defines classes to build an X12 message parser.</p>
-<p>An <a class="reference internal" href="#X12.parse.Parser" title="X12.parse.Parser"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Parser</span></tt></a> object participates in several use cases.</p>
-<blockquote>
-<div><ol class="arabic simple">
-<li>It is used to unmarshall X12 message text and create a message
-instance, <a class="reference internal" href="#X12.message.X12Message" title="X12.message.X12Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Message</span></tt></a> structures, from that text.</li>
-<li>It can help marshall an X12 message, since it
-contains some important structural information.  As a
-practical matter, the <a class="reference internal" href="#module-X12.message" title="X12.message"><tt class="xref py py-mod docutils literal"><span class="pre">X12.message</span></tt></a> module does
-this by itself, since marshalling is a relatively simple
-matter of assembling the <a class="reference internal" href="#X12.message.X12Segment" title="X12.message.X12Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Segment</span></tt></a> data
-in the right order.</li>
-<li>It also describes a message&#8217;s structure.  It can
-describe the message structure in a variety of notations.
-All of these are essentially metadata about the message.
-Not the message instance itself.</li>
-</ol>
-</div></blockquote>
-<p>The <a class="reference internal" href="#module-X12.map" title="X12.map"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map</span></tt></a> package provides a number of mappings
-that convert a <a class="reference internal" href="#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">Message</span></tt></a> structure definition to other notations.  These
-include Python source, SQL, SQLAlchemy and Django definitions.</p>
-<div class="section" id="unmarshall-parsing">
-<h3>Unmarshall/Parsing<a class="headerlink" href="#unmarshall-parsing" title="Permalink to this headline">¶</a></h3>
-<p>The typical usage is something like the following:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">x12.message</span>
-<span class="kn">import</span> <span class="nn">x278</span>
-
-<span class="o">...</span> <span class="n">read</span> <span class="n">some</span> <span class="n">text</span> <span class="n">into</span> <span class="n">txt</span> <span class="o">...</span>
-<span class="n">x12Msg</span><span class="o">=</span> <span class="n">x278</span><span class="o">.</span><span class="n">x278_message</span><span class="o">.</span><span class="n">unmarshall</span><span class="p">(</span> <span class="n">txt</span> <span class="p">)</span>
-<span class="o">...</span> <span class="n">process</span> <span class="n">the</span> <span class="n">resulting</span> <span class="n">x12Msg</span> <span class="n">structure</span><span class="o">.</span>
-</pre></div>
-</div>
-<p>In unusual cases, you may have a stream of messages of multiple types.
-In this case, you&#8217;ll might want to scan the message&#8217;s headers before
-attempting to parse.  The <a class="reference internal" href="#X12.parse.preParse" title="X12.parse.preParse"><tt class="xref py py-func docutils literal"><span class="pre">preParse()</span></tt></a> function helps do this.</p>
-<p>The alternative is to attempt parsing with various
-message definitions.  Since each contains a built-in compliance check,
-a failure to parse means that the input is not a match fot the given
-message structure.  This is relatively slow.</p>
-</div>
-<div class="section" id="marshalling">
-<h3>Marshalling<a class="headerlink" href="#marshalling" title="Permalink to this headline">¶</a></h3>
-<p>An <a class="reference internal" href="#X12.message.X12Message" title="X12.message.X12Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Message</span></tt></a> has a marshall method that emits the X12
-text.</p>
-</div>
-<div class="section" id="structure-description">
-<h3>Structure Description<a class="headerlink" href="#structure-description" title="Permalink to this headline">¶</a></h3>
-<p>There are several languages used to emit message structure.  Each of these
-is module in <a class="reference internal" href="#module-X12.map" title="X12.map"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map</span></tt></a>.  These are based on a subclass of
-<a class="reference internal" href="#X12.parse.StructureVisitor" title="X12.parse.StructureVisitor"><tt class="xref py py-class docutils literal"><span class="pre">StructureVisitor</span></tt></a> that does the dirty work of emitting
-proper text for each piece of the overall message structure.</p>
-<blockquote>
-<div><ul class="simple">
-<li>Python, <a class="reference internal" href="#module-X12.map.source" title="X12.map.source"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map.source</span></tt></a></li>
-<li>Django ORM, <a class="reference internal" href="#module-X12.map.dj" title="X12.map.dj"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map.dj</span></tt></a></li>
-<li>SQL DDL, <a class="reference internal" href="#module-X12.map.SQL" title="X12.map.SQL"><tt class="xref py py-mod docutils literal"><span class="pre">X12.map.SQL</span></tt></a></li>
-<li>SQLAlchemy ORM, XXX - Future</li>
-</ul>
-</div></blockquote>
-<p>These are all prepared by a number of <strong>Visitor</strong> pattern class definitions.
-Each subclass of <a class="reference internal" href="#X12.parse.StructureVisitor" title="X12.parse.StructureVisitor"><tt class="xref py py-class docutils literal"><span class="pre">StructureVisitor</span></tt></a> emits a different representation of the
-parser.</p>
-</div>
-<div class="section" id="definitions-in-this-module">
-<h3>Definitions In This Module<a class="headerlink" href="#definitions-in-this-module" title="Permalink to this headline">¶</a></h3>
-<p>An X12 Parser is built as a collection of parsers for each part of a message. It
-includes an overall Message parser, plus a Loop parser and a Segment parser.
-These components are structured to reflect the message they are designed to
-parse.</p>
-<p>The following classes define the structure of an X12 message. A Message object
-is a parser for a given structure.</p>
-<blockquote>
-<div><ul>
-<li><p class="first"><a class="reference internal" href="#X12.parse.Parser" title="X12.parse.Parser"><tt class="xref py py-class docutils literal"><span class="pre">Parser</span></tt></a>. Superclass for elements of an X12 Parser.</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">Segment</span></tt></a>. Definition of a segment, builds an <a class="reference internal" href="#X12.message.X12Segment" title="X12.message.X12Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Segment</span></tt></a>
-object when parsing input.  Segments consist of Elements and Composites.</li>
-<li><a class="reference internal" href="#X12.parse.Loop" title="X12.parse.Loop"><tt class="xref py py-class docutils literal"><span class="pre">Loop</span></tt></a>. Parse a Loop, builds an <a class="reference internal" href="#X12.message.X12Loop" title="X12.message.X12Loop"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Loop</span></tt></a> object.
-Loops consist of Segments and Loops.</li>
-<li><a class="reference internal" href="#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">Message</span></tt></a>. Parse a complete message, building an <a class="reference internal" href="#X12.message.X12Message" title="X12.message.X12Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Message</span></tt></a>
-for the overall message.  A Message consists of Loops.</li>
-<li><a class="reference internal" href="#X12.parse.Element" title="X12.parse.Element"><tt class="xref py py-class docutils literal"><span class="pre">Element</span></tt></a>. A bottom-level, atomic, leaf data element. The individual
-Elements aren&#8217;t parsed &#8211; they&#8217;re available within the
-<a class="reference internal" href="#X12.message.X12Segment" title="X12.message.X12Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Segment</span></tt></a> based on their positions.</li>
-<li><a class="reference internal" href="#X12.parse.Composite" title="X12.parse.Composite"><tt class="xref py py-class docutils literal"><span class="pre">Composite</span></tt></a>.  A composite of two or more Elements.  Composites
-are broken down with further parsing rules.  The ISA16 field
-(Subelement Separator) defines the punctuation that separates
-subelements of a Composite.</li>
-</ul>
-</div></blockquote>
-</li>
-<li><p class="first"><a class="reference internal" href="#X12.parse.Properties" title="X12.parse.Properties"><tt class="xref py py-class docutils literal"><span class="pre">Properties</span></tt></a>.  A flexible container for properties of any
-of the above structures.</p>
-</li>
-<li><p class="first"><a class="reference internal" href="#X12.parse.SegmentToken" title="X12.parse.SegmentToken"><tt class="xref py py-class docutils literal"><span class="pre">SegmentToken</span></tt></a>.  A list-like object that extends the built-in
-list type so that it returns <tt class="samp docutils literal"><span class="pre">None</span></tt> past the end of the list,
-rather than an exception.</p>
-</li>
-</ul>
-</div></blockquote>
-<p>Each sub-structure of a Loop (Segment and Loop) is effectively a type (the Loop name
-or Segment name) and requires an instance number, as well as a sequential position
-in the original message.</p>
-<p>We must use at least the lead-off Segment to recognize the beginning of each
-kind of Loop. This is a &#8220;look-ahead&#8221; match. For the match to be true,
-a Loop has to delegate matching to the Segments or subLoops it contains.
-Eventually any nested subLoops would bottom-out at a Segment that could actually
-perform the match.  [Apparently, the X12 standard begins each Loop with one or
-more Segments, so the recursive matching doesn&#8217;t actually occur.]</p>
-<p>A convenience function, <a class="reference internal" href="#X12.parse.scan" title="X12.parse.scan"><tt class="xref py py-func docutils literal"><span class="pre">scan()</span></tt></a>, examines the message to get some basic
-identification.  This can save matching the message against each possible
-alternative definition to see what parses.</p>
-<p>Exceptions defined in this module.</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="#X12.parse.ParseError" title="X12.parse.ParseError"><tt class="xref py py-class docutils literal"><span class="pre">ParseError</span></tt></a>. The input message doesn&#8217;t have the expected structure.</li>
-<li><a class="reference internal" href="#X12.parse.StructureError" title="X12.parse.StructureError"><tt class="xref py py-class docutils literal"><span class="pre">StructureError</span></tt></a>.  You&#8217;re attempting to build a parser with an illegal
-structure.  Usually, you&#8217;re trying to put something inside
-an Element.</li>
-</ul>
-</div></blockquote>
-<p>The object definition syntax in Python enfoces some style conventions
-on how we want our message structure declaration to look.</p>
-</div>
-<div class="section" id="the-x12-parsing-algorithm">
-<h3>The X12 Parsing Algorithm<a class="headerlink" href="#the-x12-parsing-algorithm" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div><ol class="arabic">
-<li><p class="first">Examine the ISA segment.</p>
-<p>ISA is followed by the field-level punctuation mark.
-Pick apart the ISA record to find a number of fields, including the
-definitions of the other punctuation marks which are used.
-Last characters in this segment (<tt class="samp docutils literal"><span class="pre">~</span></tt> or <tt class="samp docutils literal"><span class="pre">~n</span></tt>) define the segment punct.</p>
-</li>
-<li><p class="first">Examine the GS, ST segments, also.  This completes the header.</p>
-</li>
-<li><p class="first">A message is a sequence of LOOPS, defined by the
-transaction type in the ST header.</p>
-<p>In some cases, there may be an
-additional segment along with ST that defines a transaction subtype.</p>
-<blockquote>
-<div><ul>
-<li><p class="first">Each Loop will have a series of Segments and SubLoops.</p>
-<blockquote>
-<div><ul class="simple">
-<li>Each Segment will have a fixed sequence of Elements
-and Composites.
-Composites have SubElements.</li>
-</ul>
-</div></blockquote>
-</li>
-</ul>
-</div></blockquote>
-</li>
-<li><p class="first">End with SE, GE and IEA segments which bracket the ST, GS and ISA.</p>
-</li>
-</ol>
-</div></blockquote>
-</div>
-<div class="section" id="building-a-parser">
-<h3>Building a Parser<a class="headerlink" href="#building-a-parser" title="Permalink to this headline">¶</a></h3>
-<p>Here&#8217;s a top-level Message declaration:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">nameParser</span><span class="o">=</span> <span class="n">Message</span><span class="p">(</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="n">Properties</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s">&quot;description&quot;</span><span class="p">),</span> <span class="o">...</span> <span class="p">)</span>
-</pre></div>
-</div>
-<p>Where <em>name</em> is the X12N name, and <em>description</em> is the descriptive text.</p>
-<p>The remaining argument values must be Loop instances.  For small messages
-these can be right in the constructor.  For most messages, however, these
-must be separate sub-parser constructors.</p>
-<p>They look like this:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">loop_2010A</span><span class="o">=</span> <span class="n">Loop</span><span class="p">(</span> <span class="s">&quot;name&quot;</span><span class="p">,</span> <span class="n">Properties</span><span class="p">(</span><span class="o">...</span><span class="p">),</span> <span class="o">...</span> <span class="p">)</span>
-</pre></div>
-</div>
-<p>Where <em>name</em> is the X12N name. The remaining argument values must be Segment and Loop instances.</p>
-<p>Simple, obvious indentation is very helpful.</p>
-</div>
-<div class="section" id="x12-codes">
-<h3>X12 Codes<a class="headerlink" href="#x12-codes" title="Permalink to this headline">¶</a></h3>
-<p>X12 is filled with odd codes.  Here are some.</p>
-<p>Formatting:</p>
-<blockquote>
-<div><ul class="simple">
-<li>&#8220;D8&#8221;  Date CCYYMMDD</li>
-<li>&#8220;D6&#8221;  Date YYMMDD</li>
-<li>&#8220;RD8&#8221;  Date Range CCYYMMDD-CCYYMMDD</li>
-<li>&#8220;TM&#8221;  Time HHMM</li>
-</ul>
-</div></blockquote>
-<p>Syntax:</p>
-<blockquote>
-<div><ul class="simple">
-<li>pattern built from (E|L|P|C|R)([0-9]{2}){2,20}  Example L040203.</li>
-</ul>
-</div></blockquote>
-<p>Data Types:</p>
-<blockquote>
-<div><ul class="simple">
-<li>&#8220;N&#8221;, &#8220;N0&#8221;, &#8220;N1&#8221;, &#8220;N2&#8221;, &#8220;N3&#8221;, &#8220;N4&#8221;, &#8220;N5&#8221;, &#8220;N6&#8221;, &#8220;N7&#8221;, &#8220;N8&#8221;, &#8220;N9&#8221; - Numeric</li>
-<li>&#8220;R&#8221; - Decimal</li>
-<li>&#8220;ID&#8221; - An ID</li>
-<li>&#8220;AN&#8221; - Alphanumeric</li>
-<li>&#8220;DT&#8221; - Date</li>
-<li>&#8220;TM&#8221; - Time</li>
-<li>&#8220;B&#8221; - Binary?</li>
-</ul>
-</div></blockquote>
-</div>
-<div class="section" id="class-definitions">
-<h3>Class Definitions<a class="headerlink" href="#class-definitions" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="X12.parse.SegmentToken">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">SegmentToken</tt><big>(</big><em>*values</em><big>)</big><a class="headerlink" href="#X12.parse.SegmentToken" title="Permalink to this definition">¶</a></dt>
-<dd><p>A list-like object that gracefully handles a Segment with missing elements.</p>
-<p>When parsing an X12 message, each Segment is a discrete token.</p>
-<p>The X12 standard (apparently) permits eliding all empty Elements at the
-end of a Segment.  This eliminates a lot of trailing punctuation.
-It also means that we either need to know the defined length of the Segment,
-or we have to be tolerant of asking for the value of an Element that was
-not explicitly provided.</p>
-<dl class="method">
-<dt id="X12.parse.SegmentToken.elt">
-<tt class="descname">elt</tt><big>(</big><em>position</em><big>)</big><a class="headerlink" href="#X12.parse.SegmentToken.elt" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the requested item or &#8216;&#8217;.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.StopDescent">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">StopDescent</tt><a class="headerlink" href="#X12.parse.StopDescent" title="Permalink to this definition">¶</a></dt>
-<dd><p>Not an error &#8211; like Stop Iteration, it interrupts visiting.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.StructureVisitor">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">StructureVisitor</tt><a class="headerlink" href="#X12.parse.StructureVisitor" title="Permalink to this definition">¶</a></dt>
-<dd><p>A <strong>Visitor</strong> which can traverse the Message structure,
-and emit appropriate messages with each piece of the structure.
-Subclasses produce python source, SQL DDL, SQLAlchemy ORM,
-and Django ORM from the message structure.</p>
-<p>We have the following combinations.</p>
-<blockquote>
-<div><ul class="simple">
-<li>pre<em>class</em> methods are lead-ins to definitions.
-In some cases, this can iterate through children producing
-child definitions which this object will reference.</li>
-<li>post<em>class</em> methods are completion of definitions.
-In some cases, these are references to previous definitions.</li>
-</ul>
-</div></blockquote>
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.ParseError">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">ParseError</tt><big>(</big><em>text</em>, <em>**details</em><big>)</big><a class="headerlink" href="#X12.parse.ParseError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Error found while unmarshalling a message instance.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.StructureError">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">StructureError</tt><a class="headerlink" href="#X12.parse.StructureError" title="Permalink to this definition">¶</a></dt>
-<dd><p>Error found while attempting to define a Parser.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.Properties">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">Properties</tt><big>(</big><em>**kw</em><big>)</big><a class="headerlink" href="#X12.parse.Properties" title="Permalink to this definition">¶</a></dt>
-<dd><p>A flexible dictionary-like collection of property values.
-Each property becomes an attibute of the resulting object.</p>
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.Parser">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">Parser</tt><big>(</big><em>name</em>, <em>properties=None</em>, <em>*parts</em><big>)</big><a class="headerlink" href="#X12.parse.Parser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Superclass for definition of X12 Structure-Driven Parsers.</p>
-<p>There are several subclasses to parse elements of the X12 message structure:</p>
-<blockquote>
-<div><ul class="simple">
-<li><a class="reference internal" href="#X12.parse.Element" title="X12.parse.Element"><tt class="xref py py-class docutils literal"><span class="pre">Element</span></tt></a> matches an element&#8217;s value to support recognition of the
-Segment.</li>
-<li><a class="reference internal" href="#X12.parse.Composite" title="X12.parse.Composite"><tt class="xref py py-class docutils literal"><span class="pre">Composite</span></tt></a> contains sub-Element&#8217;s; matches a collection of
-sub-Element values to support recognition of the Segment.</li>
-<li><a class="reference internal" href="#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">Segment</span></tt></a> contains Elements and Composites; is matched; creates
-an <a class="reference internal" href="#X12.message.X12Segment" title="X12.message.X12Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Segment</span></tt></a> in the resulting message structure.</li>
-<li><a class="reference internal" href="#X12.parse.Loop" title="X12.parse.Loop"><tt class="xref py py-class docutils literal"><span class="pre">Loop</span></tt></a> contains Segments and sub-Loops; relies in Segment matching
-to recognize which Loop is being parsed; creates an <a class="reference internal" href="#X12.message.X12Loop" title="X12.message.X12Loop"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Loop</span></tt></a>
-in the resulting message structure.</li>
-<li><a class="reference internal" href="#X12.parse.Message" title="X12.parse.Message"><tt class="xref py py-class docutils literal"><span class="pre">Message</span></tt></a> contains Loops; relies on Loop parsing (which relies
-Segment match); creates an <a class="reference internal" href="#X12.message.X12Message" title="X12.message.X12Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Message</span></tt></a> structure.</li>
-</ul>
-</div></blockquote>
-<p>Message parsing breaks the source message down into
-a flat list of segment tokens.  Then the structure defined
-by Segment, Element and Loop is imposed on those segment tokens.
-to build the X12Message from X12Loop and X12Segment.</p>
-<p>There are several properties:</p>
-<blockquote>
-<div><ul class="simple">
-<li>path - the Path to this structure within the Message</li>
-<li>message - the top-most Message</li>
-<li>factory - the Factory used to generate X12Message instances</li>
-</ul>
-</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>valid_types</strong> &#8211; the list of valid types for the sub-structure
-within this structure.  For example a Message has valid types
-of Loop.  Loop has valid types of Loop and Segment.</li>
-<li><strong>name</strong> &#8211; X12 ID for this structure.</li>
-<li><strong>props</strong> &#8211; Properties.  Varies with the type.  Usually contains
-description, required/situational/not used, repeat count, etc.</li>
-<li><strong>structure</strong> &#8211; Structure.  A sequence of sub-structure declarations.</li>
-<li><strong>occurance</strong> &#8211; An occurance count within the parent of segments with
-the same type.  Some Segment types are reused.</li>
-<li><strong>parent</strong> &#8211; The parent structure.  For Messages, this is None.</li>
-<li><strong>position</strong> &#8211; the position within the parent.  Generally, this is inferred
-from the structure of loops and segments.  However, it can be forced in when
-we are missing Element definitions and just need one to identify a Segment.</li>
-<li><strong>theFactory</strong> &#8211; the Factory used to generate X12Message instances.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="X12.parse.Parser.append">
-<tt class="descname">append</tt><big>(</big><em>aChild</em><big>)</big><a class="headerlink" href="#X12.parse.Parser.append" title="Permalink to this definition">¶</a></dt>
-<dd><p>Append a child to this Parser&#8217;s structure.
-:param aChild: a sub-structure parser.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="X12.parse.Parser.factory">
-<tt class="descname">factory</tt><a class="headerlink" href="#X12.parse.Parser.factory" title="Permalink to this definition">¶</a></dt>
-<dd><p>Factory to create message instances</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Parser.getParts">
-<tt class="descname">getParts</tt><big>(</big><em>segments</em>, <em>theLoop</em><big>)</big><a class="headerlink" href="#X12.parse.Parser.getParts" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get the parts of the current structure we&#8217;re parsing.
-For each piece of our structure, evalute the <tt class="xref py py-meth docutils literal"><span class="pre">parse()</span></tt> method to see if
-it can be parsed.  If so, append the part.</p>
-<p>This is inherited by Loop, Message and Segment.
-It is overridden by Element, since it has no parts.</p>
-<p>To handle repeating Loops, we must repeatedly call the parser until it fails, and
-keep track of the sequence of Loops.</p>
-<p>This repeat factor also applies
-to Segments which can repeat within a Loop.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>segments</strong> &#8211; list of SegmentToken instances</li>
-<li><strong>theLoop</strong> &#8211; X12.message.X12Loop structure we&#8217;re building.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="X12.parse.Parser.message">
-<tt class="descname">message</tt><a class="headerlink" href="#X12.parse.Parser.message" title="Permalink to this definition">¶</a></dt>
-<dd><p>The top-most Message</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="X12.parse.Parser.path">
-<tt class="descname">path</tt><a class="headerlink" href="#X12.parse.Parser.path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Path from message to this structure</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Parser.postVisit">
-<tt class="descname">postVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Parser.postVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Parser.preVisit">
-<tt class="descname">preVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Parser.preVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Parser.visit">
-<tt class="descname">visit</tt><big>(</big><em>visitor</em>, <em>indent=0</em><big>)</big><a class="headerlink" href="#X12.parse.Parser.visit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterate through the components.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.Element">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">Element</tt><big>(</big><em>name</em>, <em>properties</em><big>)</big><a class="headerlink" href="#X12.parse.Element" title="Permalink to this definition">¶</a></dt>
-<dd><p>An Element within a Segment.
-There&#8217;s no internal structure, just a name and Properties.</p>
-<dl class="method">
-<dt id="X12.parse.Element.getParts">
-<tt class="descname">getParts</tt><big>(</big><em>segments</em>, <em>theLoop</em><big>)</big><a class="headerlink" href="#X12.parse.Element.getParts" title="Permalink to this definition">¶</a></dt>
-<dd><p>When asked to get parts of an Element, nothing happens.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Element.match">
-<tt class="descname">match</tt><big>(</big><em>candidate</em><big>)</big><a class="headerlink" href="#X12.parse.Element.match" title="Permalink to this definition">¶</a></dt>
-<dd><p>Does this Element match the candidate SegmentToken&#8217;s element?</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Element.postVisit">
-<tt class="descname">postVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Element.postVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Element.preVisit">
-<tt class="descname">preVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Element.preVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.Composite">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">Composite</tt><big>(</big><em>name</em>, <em>properties</em>, <em>*elements</em><big>)</big><a class="headerlink" href="#X12.parse.Composite" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Composite contains one or more sub-Elements.
-Composites require a punctuation mark to further decompose the data
-for their consituent Elements.
-The extra punctuation comes from the Messaage&#8217;s ISA Segment, Element
-ISA16.  We can be allocated this tidbit by a parser (or manual construction),
-or search back up through the Message structure to find it.</p>
-<dl class="attribute">
-<dt id="X12.parse.Composite.codes">
-<tt class="descname">codes</tt><a class="headerlink" href="#X12.parse.Composite.codes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Union of all codes in all subelements</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Composite.match">
-<tt class="descname">match</tt><big>(</big><em>candidate</em><big>)</big><a class="headerlink" href="#X12.parse.Composite.match" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check the individual Elements that make up this Composite.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Composite.postVisit">
-<tt class="descname">postVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Composite.postVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Composite.preVisit">
-<tt class="descname">preVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Composite.preVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.Segment">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">Segment</tt><big>(</big><em>name</em>, <em>properties</em>, <em>*elements</em><big>)</big><a class="headerlink" href="#X12.parse.Segment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Structure of an individual Segment of a message.</p>
-<dl class="method">
-<dt id="X12.parse.Segment.match">
-<tt class="descname">match</tt><big>(</big><em>candidate</em><big>)</big><a class="headerlink" href="#X12.parse.Segment.match" title="Permalink to this definition">¶</a></dt>
-<dd><p>Does this segment match the candidate segment in the input?
-Two parts: does the name match and do the data elements match?</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Segment.parse">
-<tt class="descname">parse</tt><big>(</big><em>segments</em><big>)</big><a class="headerlink" href="#X12.parse.Segment.parse" title="Permalink to this definition">¶</a></dt>
-<dd><p>If this segment matches the next segment token in the input,
-create the X12Segment object.
-:param segments: list of SegmentTokens for the current message.
-:returns: yields a single parsed Segment or raises StopIteration</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Segment.postVisit">
-<tt class="descname">postVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Segment.postVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Segment.preVisit">
-<tt class="descname">preVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Segment.preVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.Loop">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">Loop</tt><big>(</big><em>name</em>, <em>properties</em>, <em>*segments</em><big>)</big><a class="headerlink" href="#X12.parse.Loop" title="Permalink to this definition">¶</a></dt>
-<dd><p>Structure of a Loop: a sequence of Segments and sub-Loops.</p>
-<dl class="method">
-<dt id="X12.parse.Loop.parse">
-<tt class="descname">parse</tt><big>(</big><em>segments</em><big>)</big><a class="headerlink" href="#X12.parse.Loop.parse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse the current Loop.
-Append each part.  Return the parsed Loop.
-Note that loops may repeat (the property will have a &#8220;usage&#8221; of &#8220;R&#8221;
-and a repeat count &gt; 1).</p>
-<p>To handle repeating Loops:
-This is a generator that yields multiple values; it will keep yielding
-loops until a segment no longer matches.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>segments</strong> &#8211; list of SegmentToken instances</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Yields the next X12.message.X12Loop structure or raises StopIteration</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Loop.postVisit">
-<tt class="descname">postVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Loop.postVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Loop.preVisit">
-<tt class="descname">preVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Loop.preVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="X12.parse.Message">
-<em class="property">class </em><tt class="descclassname">X12.parse.</tt><tt class="descname">Message</tt><big>(</big><em>name</em>, <em>properties</em>, <em>*loops</em><big>)</big><a class="headerlink" href="#X12.parse.Message" title="Permalink to this definition">¶</a></dt>
-<dd><p>Structure of an entire message.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Variables:</th><td class="field-body"><ul class="first last simple">
-<li><strong>desc</strong> &#8211; descriptions</li>
-<li><strong>eltPunct</strong> &#8211; Found Element punctuation, usually <tt class="samp docutils literal"><span class="pre">*</span></tt>
-This is found after the &#8220;ISA&#8221; in the first segment of the message.</li>
-<li><strong>segPunct</strong> &#8211; Found Segment punctuation, usually <tt class="samp docutils literal"><span class="pre">~</span></tt>
-This is found at the end of element 16 of the first, ISA, segment of
-the message.</li>
-<li><strong>compPunc</strong> &#8211; Defined Composite punctuation, usually <tt class="samp docutils literal"><span class="pre">:</span></tt>.
-This is defined in field 16 (ISA16) in the first, ISA, segment of
-the message.</li>
-<li><strong>segments</strong> &#8211; Working list of SegmentTokens for this message.
-When we&#8217;re done parsing, this is an empty list.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-<dl class="method">
-<dt id="X12.parse.Message.postVisit">
-<tt class="descname">postVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Message.postVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Message.preVisit">
-<tt class="descname">preVisit</tt><big>(</big><em>visitor</em>, <em>indent</em><big>)</big><a class="headerlink" href="#X12.parse.Message.preVisit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call class-specific method of visitor.</p>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="X12.parse.Message.tokenize">
-<em class="property">static </em><tt class="descname">tokenize</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#X12.parse.Message.tokenize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Decompose the message into a flat list of segment tokens.
-Note that most ISA&#8217;s are 105 characters long; effectively
-a fixed-length header.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="X12.parse.Message.unmarshall">
-<tt class="descname">unmarshall</tt><big>(</big><em>message</em>, <em>factory=&lt;class 'X12.message.Factory'&gt;</em><big>)</big><a class="headerlink" href="#X12.parse.Message.unmarshall" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unmarshall the text version of an X12 message
-into a structure defined by the given factory.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>message</strong> &#8211; X12 source text</li>
-<li><strong>factory</strong> &#8211; A message instance Factory, by default <a class="reference internal" href="#X12.message.Factory" title="X12.message.Factory"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.Factory</span></tt></a>.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><a class="reference internal" href="#X12.message.X12Message" title="X12.message.X12Message"><tt class="xref py py-class docutils literal"><span class="pre">X12.message.X12Message</span></tt></a> structure</p>
-</td>
-</tr>
-<tr class="field-odd field"><th class="field-name" colspan="2">Raises ParseError:</th></tr>
-<tr><td>&nbsp;</td><td class="field-body"><p class="first last">if the message does not fit this parser&#8217;s structure.</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="function">
-<dt id="X12.parse.scan">
-<tt class="descclassname">X12.parse.</tt><tt class="descname">scan</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#X12.parse.scan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overview of a message.
-returns a dict with the wrapper fields,
-plus a list of all segments as flat lists of stings.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="X12.parse.preParse">
-<tt class="descclassname">X12.parse.</tt><tt class="descname">preParse</tt><big>(</big><em>msg</em><big>)</big><a class="headerlink" href="#X12.parse.preParse" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</div>
-</div>
-</div>
+</section>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
             </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#"><tt class="docutils literal"><span class="pre">X12</span></tt> Package</a><ul>
-<li><a class="reference internal" href="#module-X12.map"><tt class="docutils literal"><span class="pre">map</span></tt> sub-package</a><ul>
-<li><a class="reference internal" href="#module-X12.map.dj">Django</a></li>
-<li><a class="reference internal" href="#module-X12.map.source">Source</a></li>
-<li><a class="reference internal" href="#module-X12.map.SQL">SQL</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-X12.message"><tt class="docutils literal"><span class="pre">message</span></tt> sub-package</a><ul>
-<li><a class="reference internal" href="#navigation">Navigation</a></li>
-<li><a class="reference internal" href="#implementations">Implementations</a></li>
-<li><a class="reference internal" href="#module-content">Module Content</a></li>
-<li><a class="reference internal" href="#details">Details</a></li>
-<li><a class="reference internal" href="#module-X12.message.sa">SQL Alchemy module</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-X12.file"><tt class="docutils literal"><span class="pre">file</span></tt> module</a></li>
-<li><a class="reference internal" href="#module-X12.parse"><tt class="docutils literal"><span class="pre">parse</span></tt> module</a><ul>
-<li><a class="reference internal" href="#unmarshall-parsing">Unmarshall/Parsing</a></li>
-<li><a class="reference internal" href="#marshalling">Marshalling</a></li>
-<li><a class="reference internal" href="#structure-description">Structure Description</a></li>
-<li><a class="reference internal" href="#definitions-in-this-module">Definitions In This Module</a></li>
-<li><a class="reference internal" href="#the-x12-parsing-algorithm">The X12 Parsing Algorithm</a></li>
-<li><a class="reference internal" href="#building-a-parser">Building a Parser</a></li>
-<li><a class="reference internal" href="#x12-codes">X12 Codes</a></li>
-<li><a class="reference internal" href="#class-definitions">Class Definitions</a></li>
-</ul>
-</li>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design/index.html">Design Notes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Implementation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a></li>
 </ul>
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Implementation</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="tools.html"
-                        title="next chapter"><tt class="docutils literal docutils literal docutils literal"><span class="pre">tools</span></tt> Package</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/implementation/x12.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Implementation</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Implementation</a></li>
+      <li>Next: <a href="tools.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="tools.html" title="tools Package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="index.html" title="Implementation"
-             >previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Implementation</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/implementation/x12.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

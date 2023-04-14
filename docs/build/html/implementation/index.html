@@ -1,156 +1,133 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Implementation &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Implementation &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="X12 Package" href="x12.html" />
-    <link rel="prev" title="Design Note: Key Generation for X12Messages" href="../design/keygen.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="x12.html" title="X12 Package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="../design/keygen.html" title="Design Note: Key Generation for X12Messages"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Loops as Namespaces" href="../design/loopmodel.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          
+
+          <div class="body" role="main">
             
-  <div class="section" id="implementation">
-<h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h1>
+  <section id="implementation">
+<h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">¶</a></h1>
 <p>The API documentation defines the implementation.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="x12.html"><tt class="docutils literal"><span class="pre">X12</span></tt> Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="x12.html#module-X12.map"><tt class="docutils literal"><span class="pre">map</span></tt> sub-package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="x12.html#module-X12.message"><tt class="docutils literal"><span class="pre">message</span></tt> sub-package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="x12.html#module-X12.file"><tt class="docutils literal"><span class="pre">file</span></tt> module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="x12.html#module-X12.parse"><tt class="docutils literal"><span class="pre">parse</span></tt> module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="x12.html"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="x12.html#x12">x12</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html"><tt class="docutils literal"><span class="pre">tools</span></tt> Package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#module-tools.convertPyX12">tools.convertPyX12</a></li>
-<li class="toctree-l2"><a class="reference internal" href="tools.html#module-tools.surveyPyX12">tools.surveyPyX12</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="claims.html"><tt class="docutils literal"><span class="pre">claims</span></tt> Module</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="claims.html#facade-use-cases">Facade Use Cases</a></li>
-<li class="toctree-l2"><a class="reference internal" href="claims.html#facade-implementation">Facade Implementation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="claims.html#claim-mapping">Claim Mapping</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="extras.html"><tt class="docutils literal"><span class="pre">extras.standardSegment</span></tt> Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="test.html"><tt class="docutils literal"><span class="pre">test</span></tt> Package</a></li>
-</ul>
-</div>
-<p>The following is an example Django application.</p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="web.html"><tt class="docutils literal"><span class="pre">web</span></tt> Django Project</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="web.html#web-claims">web.claims</a></li>
-<li class="toctree-l2"><a class="reference internal" href="web.html#web-claims-837">web.claims_837</a></li>
-<li class="toctree-l2"><a class="reference internal" href="web.html#web-make837">web.make837</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#tools">Tools</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../index.html">
               <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
             </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../design/keygen.html"
-                        title="previous chapter">Design Note: Key Generation for X12Messages</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="x12.html"
-                        title="next chapter"><tt class="docutils literal"><span class="pre">X12</span></tt> Package</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/implementation/index.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design/index.html">Design Notes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Implementation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="x12.html"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../design/loopmodel.html" title="previous chapter">Loops as Namespaces</a></li>
+      <li>Next: <a href="x12.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="x12.html" title="X12 Package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="../design/keygen.html" title="Design Note: Key Generation for X12Messages"
-             >previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/implementation/index.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

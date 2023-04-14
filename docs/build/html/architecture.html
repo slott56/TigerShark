@@ -1,812 +1,558 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Architecture and Design &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Architecture and Design &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Design Notes" href="design/index.html" />
-    <link rel="prev" title="Use Cases" href="usecase.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="design/index.html" title="Design Notes"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="usecase.html" title="Use Cases"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Context: Use Cases" href="usecase.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          
+
+          <div class="body" role="main">
             
-  <div class="section" id="architecture-and-design">
-<span id="architecture"></span><h1>Architecture and Design<a class="headerlink" href="#architecture-and-design" title="Permalink to this headline">¶</a></h1>
-<p>This document provides an <a class="reference internal" href="#architecture-summary">Architecture Summary</a> with an overview of the
+  <section id="architecture-and-design">
+<span id="architecture"></span><h1>Architecture and Design<a class="headerlink" href="#architecture-and-design" title="Permalink to this heading">¶</a></h1>
+<p>C4 suggests we look at Context, Container, Component, Code.
+For more information on the Context, see <a class="reference internal" href="usecase.html#context"><span class="std std-ref">Context: Use Cases</span></a>.</p>
+<p>This chapter provides an <a class="reference internal" href="#architecture-summary">Architecture Summary</a> with an overview of the
 architectural principles.</p>
-<p>The <a class="reference internal" href="#database-design-alternatives">Database Design Alternatives</a> chapter describes alternative database design
-strategies.</p>
-<p>The <a class="reference internal" href="#component-model">Component Model</a> chapter provides an overview of the package structure
+<p>The <a class="reference internal" href="#container-view">Container View</a> is pretty small. This is a simple set of applications to run on a desktop computer.</p>
+<p>The <a class="reference internal" href="#component-view">Component View</a> section provides an overview of the package structure
 underlying the application software.</p>
-<p>The <a class="reference internal" href="#processing-model">Processing Model</a> chapter provides an overview of the various kinds of processing that occur.</p>
+<p>The <a class="reference internal" href="#processing-model">Processing Model</a> section provides an overview of the various kinds of processing that occur.</p>
 <p><a class="reference internal" href="#appendix-i">Appendix I</a> contains the 57 distinct segment types.</p>
-<p>Requirements: <a class="reference internal" href="usecase.html#usecase"><em>Use Cases</em></a>.</p>
-<div class="section" id="architecture-summary">
-<h2>Architecture Summary<a class="headerlink" href="#architecture-summary" title="Permalink to this headline">¶</a></h2>
-<p>There are two distinct &#8220;levels&#8221; or &#8220;views&#8221;.</p>
+<p>The details of Code are covered in <a class="reference internal" href="design/index.html#design"><span class="std std-ref">Design Notes</span></a>.</p>
+<section id="architecture-summary">
+<h2>Architecture Summary<a class="headerlink" href="#architecture-summary" title="Permalink to this heading">¶</a></h2>
+<p>There are two distinct “levels” or “views” to this application.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Developer<span class="colon">:</span></dt>
+<dd class="field-odd"><p>These are the tools to create and test the message class definitions.
+This defines X12 message types as Plain Old Python Object (POPO) classes.</p>
+</dd>
+<dt class="field-even">Application<span class="colon">:</span></dt>
+<dd class="field-even"><p>A message is implemented as class in a module.
+The class is used to unmarshall and marshall the text of messages in a variety of formats.
+Often, this is “exchange” format to Python and Python to JSON conversions to parse a message and persist an easy-to-use copy.
+It can also be JSON to Python and Python back to “exchange” format to create messages usable by other EDI applications.</p>
+</dd>
+</dl>
+<section id="developer-s-perspective">
+<h3>Developer’s Perspective<a class="headerlink" href="#developer-s-perspective" title="Permalink to this heading">¶</a></h3>
+<p>The X12 standard is defined via <code class="file docutils literal notranslate"><span class="pre">.SEF</span></code> files; additional
+meta-definitions are used to manage the complexity.
+These files are proprietary, and not freely available.</p>
+<p>The PyX12 project has XML versions of these message definitions.</p>
+<p>An X12 message can have a complicated structure of loops, segments, composites and elements.
+This makes it difficult to define a message type, and parse text that serializes an instance
+of a message type.</p>
+<p>See <a class="reference internal" href="design/classmodel.html#design-class"><span class="std std-ref">Class Model</span></a> and <a class="reference internal" href="design/parsing.html#design-parsing"><span class="std std-ref">Parsing An Exchange-Format Message</span></a> for more on solutions.</p>
+<p>There are several steps in the interpretation of a message:</p>
+<ol class="arabic simple">
+<li><p>The exchange format representation of a message. This is a big block of text.</p></li>
+<li><p>X12 Segments. It’s relatively easy to decompose an X12 message into
+a sequence of segments and elements.</p></li>
+<li><p>The application’s view of a Message that may be a Claim or Eligibility Request.
+This is a Python object definition that reflects the
+loops, segments, composites, and elements of the message.</p></li>
+</ol>
+<section id="x12-message-definitions">
+<h4>X12 Message Definitions<a class="headerlink" href="#x12-message-definitions" title="Permalink to this heading">¶</a></h4>
+<p>There are two sources for X12 message definitions, in addition to the
+customer’s Implementation Guide.</p>
 <ul class="simple">
-<li>Meta-Level processing. This is the developer&#8217;s view.  It is used to
-generate the message class definitions. This is a preliminary step
-to transform X12
-message format definitions into Plain Old Python
-Object (POPO) class definitions.</li>
-<li>Application-Level processing. This is an application&#8217;s view.  A message
-is implemented as a
-module that can be imported.  The module is used to unmarshall and marshall
-X12 messages.</li>
-</ul>
-<div class="section" id="meta-level-processing">
-<h3>Meta-Level Processing<a class="headerlink" href="#meta-level-processing" title="Permalink to this headline">¶</a></h3>
-<p>The simplest, standard format for claims is the X12 (&#8220;EDI&#8221; or &#8220;HIPAA&#8221;) message
-format. EDI applications will have an X12 interchange or
-&#8220;gateway&#8221; for handling messages in X12 format.</p>
-<div class="section" id="x12-background">
-<h4>X12 Background<a class="headerlink" href="#x12-background" title="Permalink to this headline">¶</a></h4>
-<p>An X12 message can have a tremendous number of individual loops, segments,
-and elements, making it difficult to create meaningful data definitions
-manually. Generally, the X12 standard is defined via <tt class="file docutils literal"><span class="pre">.SEF</span></tt> files; additional
-meta-definitions are used to manage the complexity.</p>
-<p>There are several layers of interpretation of a message.</p>
-<blockquote>
-<div><ul class="simple">
-<li>X12 Message in exchange format, a big block of text.
-This is rather difficult to manipulate since it must be
-unmarshalled for processing.</li>
-<li>X12 Segments. It&#8217;s relatively easy to decompose an X12 message into
-a sequence of segments of known types. This is a purely lexical analysis,
-so we can call this tokenizing a message into
-segment tokens. This is also a convenient form for persisting a message,
-since it is generally fixed by the X12 standard. See <a class="reference internal" href="#database-design-alternatives">Database Design
-Alternatives</a>.</li>
-<li>X12 Loops. Loops are closer to the &#8220;meaning&#8221; of a message. Loops
-are not present in the source text; a semantic analysis of the content
-of individual segment tokens is required to determine the loops present
-in a given message. This is somewhat more flexibly defined, since an X12
-Implementation Guide may alter the &#8220;Required&#8221;, &#8220;Situational&#8221; and &#8220;Not
-Used&#8221; status of a loop or segment.</li>
-<li>Claim or Eligibility Request. A Claim or Eligibility Request
-is an interpretation of the loops and segments in an X12
-message. This is most convenient for application processing.</li>
-</ul>
-</div></blockquote>
-</div>
-<div class="section" id="x12-message-definitions">
-<h4>X12 Message Definitions<a class="headerlink" href="#x12-message-definitions" title="Permalink to this headline">¶</a></h4>
-<p>X12N message definitions are rather complex, and defining a the necessary
-class definitions and message unmarshaller
-by hand is challenging. X12N messages are defined by Standards as well as a
-vendor&#8217;s unique Implementation Guide. This means that message unmarshalling
-and compliance checking has to be performed using customized code for each
-vendor (payer or provider).</p>
-<p>Rather than write unmarshallers by hand, TigerShark includes tools for
-generating a parser (&#8220;unmarshaller&#8221;) and a set of class definitions.
-These tools don&#8217;t generate a complete, working application or complete
-application components. They generate 80% of the needed code; some manual
-tweaking is usually required to completely integrate the generated code into a
-working application.</p>
-<p>The unmarshaller parses an X12 message and locates Segments and Loops within
-that message. This is used to build Plain Old Python Objects (POPO)
-from the message.  Given a message as a POPO, processing is quite simple.</p>
-<p>Also, the Segments can be persisted.  This requires that the message class
-definitions must be part of an Object-Relational Mapping (ORM).</p>
-<p>There are three sources for X12 message definitions, in addition to the
-customer&#8217;s Implementation Guide.</p>
-<blockquote>
-<div><ul class="simple">
-<li>The Python-based <a class="reference external" href="http://pyx12.sourceforge.net">PyX12</a> package. This package defines X12N messages using
-.xml files that are reasonably complete.</li>
+<li><p>The Python-based <a class="reference external" href="https://github.com/azoner/pyx12">PyX12</a> package. This package defines X12 messages using
+<code class="docutils literal notranslate"><span class="pre">.xml</span></code> files that seem to be reasonably complete.</p></li>
 </ul>
 <ul class="simple">
-<li>A Perl-based <a class="reference external" href="http://search.cpan.org/~prasad/X12-0.08/">X12-0.08</a> package. This package defines X12N messages
-using <tt class="file docutils literal"><span class="pre">.cf</span></tt> files, which have a format similar to <tt class="file docutils literal"><span class="pre">.ini</span></tt>
-files. These files provide just enough information to minimally parse a message.</li>
+<li><p>The SEF files. These seem to be a proprietary product of TIBCO.</p></li>
 </ul>
+<p>The TigerShark tools can transform the <code class="docutils literal notranslate"><span class="pre">.xml</span></code> files
+into JSON Schema and Python class definitions.</p>
+</section>
+</section>
+<section id="application-perspective">
+<h3>Application Perspective<a class="headerlink" href="#application-perspective" title="Permalink to this heading">¶</a></h3>
+<p>An X12 Message is what the application uses.
+It’s a collection of X12 Segments.
+The segment names are often reused, meaning
+that a segment only has meaning in the context
+of a specific Loop.</p>
+<p>This leads to fairly complex navigation through the Loop/Segment/Composite hierarchy
+within a message.</p>
+<p>This navigation can lead to creation of properties to access specific attributes deeply nested within a message.
+Because the message class definition is built from the XML (or SEF) source files, any
+a property definitions added to the class could be lost.</p>
+<p>A sensible solution is to make the class definitions “mixin-aware”.</p>
+<p>The <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool should rely on a configuration file to look for messages that have additional
+definitions, and include these definitions as mixins to the class.</p>
+<p>This could lead to</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MSG270</span><span class="p">(</span><span class="n">M270_Nav</span><span class="p">,</span> <span class="n">Message</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;HIPAA Health Care Eligibility Inquiry X092A1-270&quot;&quot;&quot;</span>
+    <span class="k">class</span> <span class="nc">Schema</span><span class="p">:</span>
+        <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;HIPAA Health Care Eligibility Inquiry X092A1-270&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=270 name=HIPAA Health Care Eligibility Inquiry X092A1-270&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
+         <span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;isa_loop&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$loops/ISA_LOOP&#39;</span><span class="p">}},</span>
+         <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;isa_loop&#39;</span><span class="p">]}</span>
+    <span class="n">isa_loop</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ISA_LOOP</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Where the <code class="docutils literal notranslate"><span class="pre">M270_Nav</span></code> mixin provides properties for navigation into the “2000” loops buried in the body of the message.</p>
+</section>
+</section>
+<section id="container-view">
+<h2>Container View<a class="headerlink" href="#container-view" title="Permalink to this heading">¶</a></h2>
+<p>This is more-or-less a single container application. It parses messages and builds messages.</p>
+</section>
+<section id="component-view">
+<h2>Component View<a class="headerlink" href="#component-view" title="Permalink to this heading">¶</a></h2>
+<p>The component packaging breaks into two major areas.</p>
+<p class="plantuml">
+<img src="_images/plantuml-a8f67ce262317a8a4acbe445d143829b105290f1.png" alt="package x12 {
+    component base {
+        component Source
+        component Element
+        component Composite
+        component Segment
+        component Loop
+        component Message
+    }
+    [common]
+    [msg_xxx_yyyy_zzz]
+
+    msg_xxx_yyyy_zzz --&gt; base
+    msg_xxx_yyyy_zzz --&gt; common
+}
+
+package your_app {
+    [some_app]
+}
+
+some_app --&gt; msg_xxx_yyyy_zzz"/>
+</p>
+<p>Here are some more details on the Python packages and modules.</p>
 <ul class="simple">
-<li>The SEF files, published by DISA. These files are the
-operating standard. However, they&#8217;re hard to make direct use of.</li>
-</ul>
-</div></blockquote>
-</div>
-</div>
-<div class="section" id="application-level-processing">
-<h3>Application-Level Processing<a class="headerlink" href="#application-level-processing" title="Permalink to this headline">¶</a></h3>
-<p>An X12 Message is what the application uses.  It&#8217;s a collection
-of X12 Segments.  The X12 Segments are
-defined by the X12 standard and truly universal.</p>
-<p>This leads to the following kind of architecture layers within the data model.</p>
-<ul class="simple">
-<li>Application classes: these rely on access to X12Message objects.</li>
-<li>X12Message classes: A message is a collection of Segment tokens;
-it can also be a container for loops, segments, composites and elements.</li>
-<li>Segment Token: tokenized X12 text; this will contain composites and
-elements.</li>
-</ul>
-</div>
-</div>
-<div class="section" id="database-design-alternatives">
-<span id="id1"></span><h2>Database Design Alternatives<a class="headerlink" href="#database-design-alternatives" title="Permalink to this headline">¶</a></h2>
-<p>The database model should reflect a relatively complete view
-of an X12 message.</p>
-<div class="section" id="persistence-choices">
-<h3>Persistence Choices<a class="headerlink" href="#persistence-choices" title="Permalink to this headline">¶</a></h3>
-<p>There are a number of choices for ways to create the relational database model.
-These are based on the level of intepretation imposed by the database. The least
-interpretation is persisting messages as Flat Text. A mid-level of
-intepretation imposed by Segment-type Persistence. The most user-oriented design is
-some kind of Application-based Persistence (i.e. Claim, Elgibility Request, etc.)</p>
-<div class="section" id="flat-text-persistence">
-<span id="metadata-based-design"></span><h4>Flat-Text Persistence<a class="headerlink" href="#flat-text-persistence" title="Permalink to this headline">¶</a></h4>
-<p>One view is a flat list of the segements &#8211; as text. The flat view
-permits very easy unmarshalling, persistence and marshalling of messages.
-However, a &#8220;flat list of segments&#8221; limits the changes that can be made
-to a message. A flat structure means that the Loops are unknown; this means that
-segments can&#8217;t easily be added or removed.</p>
-<p>The flat-text persistence requires extensive metadata to interpret
-the text. That design stores Message identification and a flat list of
-Segments in a single message table.</p>
-<p>A metadata-based design, has a relatively simple data model with a few tables
-that are heavily reused.</p>
-<blockquote>
-<div><ul class="simple">
-<li>Data Tables include <tt class="docutils literal"><span class="pre">X12Message</span></tt>, <tt class="docutils literal"><span class="pre">X12Loop</span></tt>, <tt class="docutils literal"><span class="pre">X12Segment</span></tt> which contain an
-instance of a message, and tie to the proper metadata elements to
-interpret the data.</li>
-<li>Metadata includes <tt class="docutils literal"><span class="pre">Message</span></tt>, <tt class="docutils literal"><span class="pre">Loop</span></tt>, <tt class="docutils literal"><span class="pre">Segment</span></tt>, <tt class="docutils literal"><span class="pre">Composite</span></tt> and <tt class="docutils literal"><span class="pre">Element</span></tt>
-definitions. These definitions allow us to unmarshall messages into
-database objects and unmarshall database objects into a working message.</li>
-</ul>
-</div></blockquote>
-<p>A message Unmarshall and Load requires a message parser to unmarshall the source
-message into a structure. The unmarshalled structure is then persisted with FK
-references to the message definition.</p>
-<p>All access and manipulation require that the <tt class="docutils literal"><span class="pre">Segment</span></tt>, <tt class="docutils literal"><span class="pre">Composite</span></tt> and <tt class="docutils literal"><span class="pre">Element</span></tt>
-metadata be present to understand the content of a particular <tt class="docutils literal"><span class="pre">X12Element</span></tt>. For
-exammple finding the <tt class="docutils literal"><span class="pre">Element</span></tt> position from an element name requires the list of
-<tt class="docutils literal"><span class="pre">Elements</span></tt> in a <tt class="docutils literal"><span class="pre">Segment</span></tt> definition.</p>
-<p>Marshalling a message requires the metadata definition &#8211; to determine the order
-of the <tt class="docutils literal"><span class="pre">Loop</span></tt>s and <tt class="docutils literal"><span class="pre">Segment</span></tt>s &#8211; and then retrieving all of the related <tt class="docutils literal"><span class="pre">X12Message</span></tt>,
-<tt class="docutils literal"><span class="pre">X12Loop</span></tt> and <tt class="docutils literal"><span class="pre">X12Segment</span></tt> objects. The objects can then be marshalled into a final
-X12 output string.</p>
-<p>The upside is that this is trivial to implement. It is independent of any
-specific message or segment definition.</p>
-<p>The downside of this is that the automatic Django Admin pages won&#8217;t work. They
-won&#8217;t have field-by-field definitions of the Segments. It won&#8217;t be possible to
-provide interactive &#8220;touch-up&#8221; of an object (i.e. a Claim) without dynamically building pages
-from the Segment definitions.</p>
-</div>
-<div class="section" id="segment-type-persistence">
-<span id="segment-type-design"></span><h4>Segment-type Persistence<a class="headerlink" href="#segment-type-persistence" title="Permalink to this headline">¶</a></h4>
-<p>A Segment-type design has a somewhat more complex data model with a larger
-number of tables that are specific to each type of Segment.</p>
-<blockquote>
-<div><ul class="simple">
-<li>Generic Tables include <tt class="docutils literal"><span class="pre">X12Message</span></tt>, <tt class="docutils literal"><span class="pre">X12Loop</span></tt>, <tt class="docutils literal"><span class="pre">X12Segment</span></tt> will contain an
-instance of a message, and tie to the proper metadata elements to
-interpret the data. The <tt class="docutils literal"><span class="pre">X12Segment</span></tt> contains the original segment token,
-not the interpreted elements.</li>
-<li>Segment-type tables for all 57 types of segments. These type-specific
-segments are linked to the generic segment information, and provide the
-standard interpretation of the segment data.</li>
-</ul>
-</div></blockquote>
-<p>The downside is that this is more complex to implement. It is requires
-generating a large number of class definitions that match the segment-type
-definitions. Howsever, these segment type definitions are standardized, and easy
-to create with metadata tools.</p>
-<p>The upside of this is that the automatic Django Admin pages work. They will have
-field-by-field definitions of the Segments. However, the definitions will be
-standards-based and not specific to a given customer.</p>
-<p>Further, this design allows us to some flexibility customize the X12N messages
-based on a customer&#8217;s Implementation Guide.</p>
-</div>
-<div class="section" id="application-based-persistence">
-<h4>Application-Based Persistence<a class="headerlink" href="#application-based-persistence" title="Permalink to this headline">¶</a></h4>
-<p>An Application-Based design has tables with directly reflect the definition
-of a application objects (e.g., Claim or Eligibility Request).</p>
-<p>For example, this could include the following structures present on a Claim.</p>
-<ul class="simple">
-<li>Billing Provider Name</li>
-<li>Pay-To Provider Name</li>
-<li>Subscriber Name</li>
-<li>Patient Name</li>
-<li>Patient Claim</li>
-<li>Referring Provider Name</li>
-<li>Rendering Provider Name</li>
-<li>Submitter Name</li>
-<li>Service Line</li>
-<li>Service Line Adj</li>
-<li>Service Provider Name</li>
-<li>Attending Physician Provider</li>
-<li>Operating Physician Provider</li>
-</ul>
-<p>This is highly specific to Claim processing. While handy for
-end-users, it requires a fair amount of care to translate between these
-structures, <tt class="docutils literal"><span class="pre">X12Loops</span></tt> and the final, marshalled X12 message.</p>
-</div>
-</div>
-<div class="section" id="general-persistence-design">
-<h3>General Persistence Design<a class="headerlink" href="#general-persistence-design" title="Permalink to this headline">¶</a></h3>
-<p>The best approach is the mid-level <a class="reference internal" href="#segment-type-design">Segment-type Design</a>. This allows simple
-presentation of details of claims. We have a few implementation decisions as a
-consequence of chosing a Segment-type design.</p>
-<p>In all cases, each &#8220;part&#8221; of the X12 message (Segment, Loop, etc.) is mapped to
-a SQL table. Additionally, we must provide appropriate keys and occurance values
-above and beyond the X12 Segment text.</p>
-</div>
-<div class="section" id="orm-details">
-<h3>ORM Details<a class="headerlink" href="#orm-details" title="Permalink to this headline">¶</a></h3>
-<p>There are several variations on ORM&#8217;s, each of which has slightly different
-implementation consequences.</p>
-<blockquote>
-<div><ul class="simple">
-<li><strong>Subclassing with Descriptors</strong>. Django ORM is based directly on the Python classes; however,
-Django ORM requires that each persistent Segment-type-specific class be a
-subclass of <tt class="docutils literal"><span class="pre">django.db.models.Model</span></tt>. This precludes other class
-hierarchies being part of the design.</li>
-<li><strong>Explicit Mappings</strong>.  The SQLAlchemy ORM can have a
-Segment-type Python class hierarchy plus explicit mappings to SQL tables.</li>
-<li><strong>Decorators</strong>.  An ORM may also have Python classes with some decorations
-to handle ORM mapping.</li>
-</ul>
-</div></blockquote>
-<p>A consequence of using Segment-type design is that we have to persist a large
-number of different segment types. (See Appendix I for a list of all 57 Segment
-types used by <tt class="docutils literal"><span class="pre">837</span></tt> messages.) This exhaustive list of segment types is difficult
-to produce by hand.</p>
-<p>The conversion tools, then, must generate two features of an X12 message
-processing module.</p>
-<blockquote>
-<div><ul class="simple">
-<li>Class definitions for the X12 message, segment, loop.</li>
-<li>Create a generic unmarshall class (and default object) for the given X12 message
-that handles the implied loop structure</li>
-<li>Create a template for each customer-specific <strong>Factory</strong> that plugs into
-the generic unmarshall class.</li>
-</ul>
-</div></blockquote>
-<p>An additional feature is ORM support.  This can be one of the following:</p>
-<blockquote>
-<div><ul class="simple">
-<li>Particular Python class definition style (either subclassing with
-descriptors or decorators).</li>
-<li>Additional explicit mapping information.</li>
-</ul>
-</div></blockquote>
-</div>
-</div>
-<div class="section" id="component-model">
-<h2>Component Model<a class="headerlink" href="#component-model" title="Permalink to this headline">¶</a></h2>
-<p>The component packaging is intended to follow a kind of
-Model-Access-Presentation design pattern.
-Most of these layers are outside TigerShark and are here to illustrate
-the relationships.</p>
-<blockquote>
-<div><ul class="simple">
-<li><strong>User Interface</strong>.  A Web-based GUI, using Django templates, CSS, etc.  To
-an extent, the static content (&#8220;media&#8221;) served by Apache is part of this package, also.</li>
-<li><strong>Web Navigation</strong>.  This is built from the Django URL and View components.
-The view functions makes use of the <strong>Web Services</strong> services
-to manipulate the <strong>Domain Model</strong> data.</li>
-<li><strong>Web Services</strong>.  Web Services, callable from client-site installed code.  This is built
-on the <strong>Model</strong>.  This is a kind of View of the underlying model.  These
-services are simple WSGI-enabled XML-RPC services.</li>
-<li><strong>Access</strong>.  This includes the ORM and RDBMS components that are outside
-a Django application.</li>
-<li><strong>Domain Model</strong>. The core objects: X12 structures and any
-application-specific structures
-that interpret those X12 structures.</li>
-</ul>
-</div></blockquote>
-<p>The <strong>Domain Model</strong> decomposes into a number of packages. Both package trees must be
-placed on the PYTHONPATH.</p>
-<blockquote>
-<div><ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">X12</span></tt>. This is a library package for handling the marshalling and
+<li><p><a class="reference internal" href="implementation/x12.html#module-x12" title="x12"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12</span></code></a>. This is a package for handling the marshalling and
 unmarshalling of X12 messages.</p>
 <ul>
-<li><p class="first"><tt class="docutils literal"><span class="pre">X12.parse</span></tt> This is the essential X12 parser. It depends on an X12
-message definition module
-which provides definitions of X12 message components.</p>
-<p>This requires a customer-specific <strong>Factory</strong>
-object that handles details of
-emitting proper objects.</p>
+<li><p><a class="reference internal" href="implementation/x12.html#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a>. This has the abstract base class definitions for all messages.</p></li>
+<li><p><a class="reference internal" href="implementation/x12.html#module-x12.common" title="x12.common"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code></a>. This has common data element and code definitions. This is built by the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching this is unwise.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">msg_mmm_vvvv_Xxxx...py</span></code> modules with message definitions. These are built by the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching these is unwise.</p></li>
+</ul>
 </li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">X12.map</span></tt> This is a package of utilities for mapping X12 message
-definitions to other structures like SQL tables.</p>
-</li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">X12.message</span></tt> This package defines classes for X12 messages.</p>
-<p>This can be extended to
-include Object-Relational Mapping (ORM) definitions for SQLAlchemy
-or other ORM&#8217;s, depending on what seems important.</p>
-</li>
-<li><p class="first"><tt class="docutils literal"><span class="pre">X12.tools</span></tt> This is a package of handy applications. This includes the
-following.</p>
-<ul class="simple">
-<li><tt class="docutils literal"><span class="pre">convertPyX12</span></tt> Converts the XML definitions to <tt class="docutils literal"><span class="pre">X12.parse</span></tt> structures.</li>
-<li><tt class="docutils literal"><span class="pre">surveyPyX12</span></tt> Parses all of the XML definitions to get a complete list
-of Segment types used by the various <tt class="docutils literal"><span class="pre">837</span></tt> messages.</li>
+<li><p><a class="reference internal" href="implementation/tools.html#module-tools" title="tools"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools</span></code></a>. This package has applications to help define the message classes.</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">xml_extract</span></code> Converts the XML definitions to <code class="docutils literal notranslate"><span class="pre">x12/msg_mmm_vvvv_Xxxx...py</span></code> files.</p></li>
 </ul>
 </li>
 </ul>
-</li>
-</ul>
-</div></blockquote>
-<p>When integrating this into a Django project, there will be
-a number of applications.
-Each application would have a <tt class="docutils literal"><span class="pre">models</span></tt> module with the Django version of
-<tt class="docutils literal"><span class="pre">X12.message</span></tt>.
-This would define the persistent DB structures for messages.</p>
-</div>
-<div class="section" id="processing-model">
-<h2>Processing Model<a class="headerlink" href="#processing-model" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="processing-model">
+<h2>Processing Model<a class="headerlink" href="#processing-model" title="Permalink to this heading">¶</a></h2>
 <p>There are several kinds of processing that are part of TigerShark.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#manipulations">Manipulations</a> describes the application processing that is the end-user&#8217;s view
-of the data.</li>
-<li><a class="reference internal" href="#meta-data">Meta-data</a> describes the developer&#8217;s view; this is how messages are customized
-for each undividual customer.</li>
+<li><p>The application processing includes multiple conversions between Exchange (the X12 text format),
+JSON and Python notation.</p>
+<ul>
+<li><p><a class="reference internal" href="#unmarshalling">Unmarshalling</a> extracts useful Python objects from messages in Exchange or JSON format.</p></li>
+<li><p>An application can modify the Python or JSON message. An application can persist the JSON or Python notation, also.</p></li>
+<li><p><a class="reference internal" href="#marshalling">Marshalling</a> builds a message in Exchange format or JSON from Python objects.</p></li>
 </ul>
-<div class="section" id="manipulations">
-<h3>Manipulations<a class="headerlink" href="#manipulations" title="Permalink to this headline">¶</a></h3>
-<p>A number of use cases involve loading X12 messages, modifying X12 messages, and downloading
-messages for further processing.</p>
-<ul class="simple">
-<li><strong>Loading</strong> decomposes into <a class="reference internal" href="#unmarshalling">Unmarshalling</a> the details from a text
-file, and then <a class="reference internal" href="#persisting">Persisting</a> each segment of the message.</li>
-<li><strong>Modifying</strong> decomposes into <a class="reference internal" href="#presenting">Presenting</a> a message, and
-<a class="reference internal" href="#persisting">Persisting</a> those GUI changes into the database.</li>
-<li><strong>Downloading</strong> decomposes into <a class="reference internal" href="#querying">Querying</a> messages from the database,
-and then <a class="reference internal" href="#marshalling">Marshalling</a> those messages into a text file for the actual
-further processing.</li>
+</li>
+<li><p><a class="reference internal" href="#json-schema">JSON Schema</a> describes the JSON Schema formalization of the structure.
+This is how messages are described.</p></li>
 </ul>
-<div class="section" id="unmarshalling">
-<h4>Unmarshalling<a class="headerlink" href="#unmarshalling" title="Permalink to this headline">¶</a></h4>
-<p>See <a class="reference internal" href="usecase.html#unmarshall"><em>Unmarshall A Message</em></a>.</p>
-<p>An <tt class="docutils literal"><span class="pre">X12.parse.Message</span></tt> object handles unmarshalling text. The object is built from a Python
-declaration.</p>
-<p>The Python declaration itself can be persisted one of two ways:</p>
-<blockquote>
-<div><ul class="simple">
-<li>Stored in a Python module that imports <tt class="docutils literal"><span class="pre">X12.parse</span></tt> and builds the
-<tt class="docutils literal"><span class="pre">X12.parse.Message</span></tt> object.</li>
-<li>Stored in the database, by providing ORM definitions for <tt class="docutils literal"><span class="pre">X12.parse</span></tt>
-objects.</li>
-</ul>
-</div></blockquote>
+<section id="unmarshalling">
+<h3>Unmarshalling<a class="headerlink" href="#unmarshalling" title="Permalink to this heading">¶</a></h3>
+<p>See <a class="reference internal" href="usecase.html#unmarshall"><span class="std std-ref">Unmarshall A Message</span></a>.</p>
+<p>An message class has a <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> method for unmarshalling text to create Plain Old Python Objects.</p>
+</section>
+<section id="marshalling">
+<h3>Marshalling<a class="headerlink" href="#marshalling" title="Permalink to this heading">¶</a></h3>
+<p>See <a class="reference internal" href="usecase.html#marshall"><span class="std std-ref">Marshall A Message</span></a>.</p>
+<p>Each Message object handles marshalling into X12 text
+or JSON.
+A <code class="xref py py-meth docutils literal notranslate"><span class="pre">dump()</span></code> method handles X12 “exchange format”.
+A <code class="xref py py-meth docutils literal notranslate"><span class="pre">json()</span></code> method handles JSON.</p>
+</section>
+<section id="json-schema">
+<h3>JSON Schema<a class="headerlink" href="#json-schema" title="Permalink to this heading">¶</a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">tools/xml_extract.py</span></code> application, specifically,
+reads XML files from the PyX12 project and creates modules with Python class definitions.
+The Python can be used to build JSON Schema definitions.</p>
+<p>The JSON Schema description of a message can be defined as</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>some_message:
+    type: object
+    properties:
+        loop1:
+            $ref: #/$loops/loop1
+        loop2:
+            $ref: #/$loops/loop2
+</pre></div>
 </div>
-<div class="section" id="persisting">
-<h4>Persisting<a class="headerlink" href="#persisting" title="Permalink to this headline">¶</a></h4>
-<p>See <a class="reference internal" href="#database-design-alternatives">Database Design Alternatives</a> for the global choices.</p>
-<p>Having type-specific segments permits completely automatic generation of forms
-for presentation.</p>
-<p>Some bookkeeping is required to identify each instance of a message, and the
-Segment instances which belong to the message. Since our goal is to leverage the
-ORM layer, we include enough PK and FK information to locate the Message as a
-whole, each Loop&#8217;s position within the message, and each Segment&#8217;s position
-within a Loop.</p>
+<p>A loop can refer to segments using a more complex path</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$loops:
+    loop1:
+        type: object
+        properties:
+            segmentX:
+                $ref: #/$segments/loop1/segmentX
+    loop2:
+        type: object
+        properties:
+            segmentX:
+                $ref: #/$segments/loop2/segmentX
+</pre></div>
 </div>
-<div class="section" id="presenting">
-<h4>Presenting<a class="headerlink" href="#presenting" title="Permalink to this headline">¶</a></h4>
-<p>A complex message (like a claim, <tt class="docutils literal"><span class="pre">837</span></tt>) can&#8217;t easily be presented.
-Rather than attempt to present all Loops and Segments within a message, it might
-be slightly simpler to present an indented outline of the Loop structure, with
-each Segment containing an <tt class="docutils literal"><span class="pre">[Edit]</span></tt> and <tt class="docutils literal"><span class="pre">[Remove]</span></tt> button to alter the message
-structure. Similarly, optional or repeating segments can have a <tt class="docutils literal"><span class="pre">[Add]</span></tt>
-placeholder inserted to permit adding segments.</p>
-<div class="highlight-python"><pre>MSG ``837`` - Unique ID# - Test Case Id
-ISA LOOP
-    ISA Segment           [edit]
-    GS LOOP
-        GS Segment        [edit]
-        ST LOOP
-            ST Segment    [edit]
-            BHT Segment   [edit]
-            Header
-            Detail
-                LOOP 2000A
-                    NM1   [edit]
-                    N3    [edit]
-                    N4    [edit]
-                    HI    [add]
-            Trailer
-            SE Segment    [edit]
-        GE Segment        [edit]
-    IEA Segment           [edit]</pre>
+<p>The ordinary nesting of referenced elements assures
+the distinct definitions of a reused segment.</p>
+<p>The JSON Schema representation of the message
+definitions is handled via a large number of “$ref” references
+from the overall structure to the definitions of loops, segements,
+composites, elements, codes, and data element definitions.</p>
+<p>The idea is that an overall message is generally
+defined as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">title</span><span class="p">:</span> <span class="mi">227</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">details</span> <span class="n">of</span> <span class="n">the</span> <span class="mi">227</span> <span class="n">message</span>
+<span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+<span class="n">properties</span><span class="p">:</span>
+    <span class="n">isa_loop</span><span class="p">:</span>
+        <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/$loops/isa_loop&quot;</span>
+
+<span class="s2">&quot;$loops&quot;</span><span class="p">:</span>
+    <span class="n">isa_loop</span><span class="p">:</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+        <span class="n">properties</span><span class="p">:</span>
+            <span class="n">ISA</span><span class="p">:</span>
+                <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/$segments/isa_loop/ISA&quot;</span>
+            <span class="n">gs_loop</span><span class="p">:</span>
+                <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/$loops/gs_loop&quot;</span>
+            <span class="n">IEA</span><span class="p">:</span>
+                <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/$segments/isa_loop/IEA&quot;</span>
+
+<span class="s2">&quot;$segments&quot;</span><span class="p">:</span>
+    <span class="n">isa_loop</span><span class="p">:</span>
+        <span class="n">ISA</span><span class="p">:</span>
+            <span class="nb">type</span><span class="p">:</span> <span class="nb">object</span>
+            <span class="n">properties</span><span class="p">:</span>
+                <span class="n">ISA01</span><span class="p">:</span>
+                    <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/$elements/isa_loop/ISA01&quot;</span>
+
+<span class="s2">&quot;$elements&quot;</span><span class="p">:</span>
+    <span class="n">isa_loop</span><span class="p">:</span>
+        <span class="n">ISA01</span><span class="p">:</span>
+            <span class="n">description</span><span class="p">:</span> <span class="n">Authorization</span> <span class="n">Information</span> <span class="n">Qualifier</span>
+            <span class="nb">type</span><span class="p">:</span>
+                <span class="s2">&quot;$ref&quot;</span><span class="p">:</span> <span class="s2">&quot;#/$datatype/I01&quot;</span>
+
+<span class="s2">&quot;$datatype&quot;</span><span class="p">:</span>
+    <span class="n">I01</span><span class="p">:</span>
+        <span class="n">x12_type</span><span class="p">:</span> <span class="s2">&quot;ID&quot;</span>
+        <span class="nb">type</span><span class="p">:</span> <span class="n">string</span>
+        <span class="n">minLength</span><span class="p">:</span> <span class="mi">2</span>
+        <span class="n">maxLength</span><span class="p">:</span> <span class="mi">2</span>
+</pre></div>
 </div>
-<p>The individual segments, on the other hand, are simple presentations of the
-Elements in the segment mapped to HTML forms in the most direct manner.</p>
-</div>
-<div class="section" id="querying">
-<h4>Querying<a class="headerlink" href="#querying" title="Permalink to this headline">¶</a></h4>
-<p>Generally, the common queries will be for collections of Messages based on test
-cases, scenarios, versions, etc. Other use cases define a number of ways of
-organizing messages.</p>
-<p>Once a message collection has been identified, what remains is to find all
-messages in that collection. Each message, in turn, is a collection of Loops and
-Segments, based on the <tt class="docutils literal"><span class="pre">X12.message</span></tt> structures.</p>
-</div>
-<div class="section" id="marshalling">
-<h4>Marshalling<a class="headerlink" href="#marshalling" title="Permalink to this headline">¶</a></h4>
-<p>See <a class="reference internal" href="usecase.html#marshall"><em>Marshall A Message</em></a>.</p>
-<p>An <tt class="docutils literal"><span class="pre">X12.message.X12Message</span></tt> object handles marshalling. The structure is managed as
-Message-Loop-Segment, with lower levels of detail collapsed into the Segment.
-Each of these classes cooperates to produce a flat list of Segments in the
-proper order. The Message&#8217;s marshall method uses a simple recursive descent to
-assemble a flat list of Segments which are encoded and emitted.</p>
-</div>
-</div>
-<div class="section" id="meta-data">
-<h3>Meta-data<a class="headerlink" href="#meta-data" title="Permalink to this headline">¶</a></h3>
-<p>There are two layers to the structure of an <tt class="docutils literal"><span class="pre">X12.parse</span></tt> object.</p>
-<blockquote>
-<div><ul class="simple">
-<li>The Message-Loop layer which shows the Message-Loop-Segment
-relationships. This is generic meta-data and applies to all messages of
-a given type. The top-level X12Message and X12Loop class definitions are
-adequate to persist this information.</li>
-<li>The Segment-Composite-Element layer which provides the data for each
-Segment of a message. There are a large number of subclasses of
-X12Segment, each of which has a unique combination of Elements.</li>
-</ul>
-</div></blockquote>
-<p>A message parser object is created by a three-step process.</p>
-<p>Parsing the XML version of the message definition to create a Python <tt class="docutils literal"><span class="pre">X12.parse</span></tt>
-object. This is done by a a <tt class="docutils literal"><span class="pre">ParserBuilder</span></tt> object which transforms the XML
-message definition into the Python objects to parse an X12 message.</p>
-<blockquote>
-<div><p>1. Using the <tt class="docutils literal"><span class="pre">X12.map.source</span></tt> module to construct source for the message
-parser object. This is a object constructor for the <tt class="docutils literal"><span class="pre">X12.parse</span></tt> object. It is
-created by a kind of introspection of the message parser built in step (1),
-above.</p>
-<p>2. Using the <tt class="docutils literal"><span class="pre">X12.map.sa</span></tt> or <tt class="docutils literal"><span class="pre">X12.map.django</span></tt> module to construct the <tt class="docutils literal"><span class="pre">X12Segment</span></tt>
-subclasses used by this message definition. This is a series of class
-definitions which extend <tt class="docutils literal"><span class="pre">X12.message.X12Segment</span></tt> and provide specific Element
-definitions. These are created by a kind of introspection of the message
-parser built in step (1), above.</p>
-<p>3. This message parser source built in step 2 becomes live code used to
-unmarshall X12 input files to create an <tt class="docutils literal"><span class="pre">X12.message</span></tt> object that can be
-persisted, modified, queried and unmarshalled.</p>
-</div></blockquote>
-<p>The various <tt class="docutils literal"><span class="pre">X12Segment</span></tt> subclass definitions built in step 3 must be merged into
-a composite data model to allow appropriate levels of reuse. Each of the 57
-subclasses of <tt class="docutils literal"><span class="pre">X12Segment</span></tt> is simply a subclass of Segment, with a number of FK
-relationships to Loop and some common attributes.</p>
-</div>
-</div>
-<div class="section" id="appendix-i">
-<h2>Appendix I<a class="headerlink" href="#appendix-i" title="Permalink to this headline">¶</a></h2>
-<p>The following table identifies the 57 distinct segment types and how they are
-used. While this table is rather large, the entire set of Segment types can be
-generated automatically as subtypes of <tt class="docutils literal"><span class="pre">X12.message.X12Segment</span></tt>.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="0%" />
-<col width="100%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">ID</th>
-<th class="head">Segment Types</th>
+<p>This structure avoids deeply-nested constructs.
+It permits reuse of the data types and codes.
+It provides a loop namespace to disambiguate segments,
+and their composites and elements.</p>
+</section>
+</section>
+<section id="appendix-i">
+<h2>Appendix I<a class="headerlink" href="#appendix-i" title="Permalink to this heading">¶</a></h2>
+<p>The following table identifies the 57 distinct segment ID’s and how they are
+used. When a segment ID has a list of segment types that indicates that the
+segment appears in a number of distinct loops, often within a single message.</p>
+<p>The worst case is the <code class="docutils literal notranslate"><span class="pre">REF</span></code> segment, which is used in a vast number of distinct loops and messages.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>ID</p></th>
+<th class="head"><p>Segment Types</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td>AMT</td>
-<td>Patient Estimated Amount Due , Patient Paid Amount , Sales Tax Amount , Coordination of Benefits (COB) Patient Responsibility Amount , Coordination of Benefits (COB) Total Medicare Paid Amount , Coordination of Benefits (COB) Total Denied Amount , Coordination of Benefits (COB) Total Submitted Charges , Coordination of Benefits (COB) Total Allowed Amount , Facility Tax Amount , Coordination of Benefits (COB) Discount Amount , Coordination of Benefits (COB) Medicare B Trust Fund Paid Amount , Postage Claimed Amount , Service Tax Amount , Diagnostic Related Group (DRG) Outlier Amount , Coordination of Benefits (COB) Allowed Amount , Coordination of Benefits (COB) Covered Amount , Payer Prior Payment , Patient Amount Paid , Coordination of Benefits (COB) Medicare A Trust Fund Paid Amount , Coordination of Benefits (COB) Total Non-Covered Amount , Coordination of Benefits (COB) Tax Amount , Coordination of Benefits (COB) Approved Amount , Coordination of Benefits (COB) Patient Paid Amount , Coordination of Benefits (COB) Payer Paid Amount , Coordination of Benefits (COB) Per Day Limit Amount , Payer Estimated Amount Due , Coordination of Benefits (COB) Total Claim Before Taxes Amount , Credit/Debit Card - Maximum Amount , Medicare Paid Amount - 100% , Medicare Paid Amount - 80% , Total Purchased Service Amount , Approved Amount , Credit/Debit Card Maximum Amount</td>
+<tbody>
+<tr class="row-even"><td><p>AMT</p></td>
+<td><p>Patient Estimated Amount Due , Patient Paid Amount , Sales Tax Amount , Coordination of Benefits (COB) Patient Responsibility Amount , Coordination of Benefits (COB) Total Medicare Paid Amount , Coordination of Benefits (COB) Total Denied Amount , Coordination of Benefits (COB) Total Submitted Charges , Coordination of Benefits (COB) Total Allowed Amount , Facility Tax Amount , Coordination of Benefits (COB) Discount Amount , Coordination of Benefits (COB) Medicare B Trust Fund Paid Amount , Postage Claimed Amount , Service Tax Amount , Diagnostic Related Group (DRG) Outlier Amount , Coordination of Benefits (COB) Allowed Amount , Coordination of Benefits (COB) Covered Amount , Payer Prior Payment , Patient Amount Paid , Coordination of Benefits (COB) Medicare A Trust Fund Paid Amount , Coordination of Benefits (COB) Total Non-Covered Amount , Coordination of Benefits (COB) Tax Amount , Coordination of Benefits (COB) Approved Amount , Coordination of Benefits (COB) Patient Paid Amount , Coordination of Benefits (COB) Payer Paid Amount , Coordination of Benefits (COB) Per Day Limit Amount , Payer Estimated Amount Due , Coordination of Benefits (COB) Total Claim Before Taxes Amount , Credit/Debit Card - Maximum Amount , Medicare Paid Amount - 100% , Medicare Paid Amount - 80% , Total Purchased Service Amount , Approved Amount , Credit/Debit Card Maximum Amount</p></td>
 </tr>
-<tr class="row-odd"><td>BHT</td>
-<td>Beginning of Hierarchical Transaction</td>
+<tr class="row-odd"><td><p>BHT</p></td>
+<td><p>Beginning of Hierarchical Transaction</p></td>
 </tr>
-<tr class="row-even"><td>CAS</td>
-<td>Claim Adjustment , Claim Level Adjustment , Line Adjustment , Service Line Adjustment , Claim Level Adjustments , Service Adjustment</td>
+<tr class="row-even"><td><p>CAS</p></td>
+<td><p>Claim Adjustment , Claim Level Adjustment , Line Adjustment , Service Line Adjustment , Claim Level Adjustments , Service Adjustment</p></td>
 </tr>
-<tr class="row-odd"><td>CL1</td>
-<td>Institutional Claim Code</td>
+<tr class="row-odd"><td><p>CL1</p></td>
+<td><p>Institutional Claim Code</p></td>
 </tr>
-<tr class="row-even"><td>CLM</td>
-<td>Claim Information</td>
+<tr class="row-even"><td><p>CLM</p></td>
+<td><p>Claim Information</p></td>
 </tr>
-<tr class="row-odd"><td>CN1</td>
-<td>Contract Information</td>
+<tr class="row-odd"><td><p>CN1</p></td>
+<td><p>Contract Information</p></td>
 </tr>
-<tr class="row-even"><td>CR1</td>
-<td>Ambulance Transport Information</td>
+<tr class="row-even"><td><p>CR1</p></td>
+<td><p>Ambulance Transport Information</p></td>
 </tr>
-<tr class="row-odd"><td>CR2</td>
-<td>Spinal Manipulation Service Information</td>
+<tr class="row-odd"><td><p>CR2</p></td>
+<td><p>Spinal Manipulation Service Information</p></td>
 </tr>
-<tr class="row-even"><td>CR3</td>
-<td>Durable Medical Equipment Certification</td>
+<tr class="row-even"><td><p>CR3</p></td>
+<td><p>Durable Medical Equipment Certification</p></td>
 </tr>
-<tr class="row-odd"><td>CR5</td>
-<td>Home Oxygen Therapy Information</td>
+<tr class="row-odd"><td><p>CR5</p></td>
+<td><p>Home Oxygen Therapy Information</p></td>
 </tr>
-<tr class="row-even"><td>CR6</td>
-<td>Home Health Care Information</td>
+<tr class="row-even"><td><p>CR6</p></td>
+<td><p>Home Health Care Information</p></td>
 </tr>
-<tr class="row-odd"><td>CR7</td>
-<td>Home Health Care Plan Information</td>
+<tr class="row-odd"><td><p>CR7</p></td>
+<td><p>Home Health Care Plan Information</p></td>
 </tr>
-<tr class="row-even"><td>CRC</td>
-<td>EPSDT Referral , Home Health Activities Permitted , DMERC Condition Indicator , Homebound Indicator , Ambulance Certification , Hospice Employee Indicator , Home Health Functional Limitations , Patient Condition Information: Vision , Home Health Mental Status</td>
+<tr class="row-even"><td><p>CRC</p></td>
+<td><p>EPSDT Referral , Home Health Activities Permitted , DMERC Condition Indicator , Homebound Indicator , Ambulance Certification , Hospice Employee Indicator , Home Health Functional Limitations , Patient Condition Information: Vision , Home Health Mental Status</p></td>
 </tr>
-<tr class="row-odd"><td>CTP</td>
-<td>Drug Pricing</td>
+<tr class="row-odd"><td><p>CTP</p></td>
+<td><p>Drug Pricing</p></td>
 </tr>
-<tr class="row-even"><td>CUR</td>
-<td>Foreign Currency Information</td>
+<tr class="row-even"><td><p>CUR</p></td>
+<td><p>Foreign Currency Information</p></td>
 </tr>
-<tr class="row-odd"><td>DMG</td>
-<td>Subscriber Demographic Information , Patient Demographic Information , Other Insured Demographic Information , Other Subscriber Demographic Information</td>
+<tr class="row-odd"><td><p>DMG</p></td>
+<td><p>Subscriber Demographic Information , Patient Demographic Information , Other Insured Demographic Information , Other Subscriber Demographic Information</p></td>
 </tr>
-<tr class="row-even"><td>DN1</td>
-<td>Orthodontic Total Months of Treatment</td>
+<tr class="row-even"><td><p>DN1</p></td>
+<td><p>Orthodontic Total Months of Treatment</p></td>
 </tr>
-<tr class="row-odd"><td>DN2</td>
-<td>Tooth Status</td>
+<tr class="row-odd"><td><p>DN2</p></td>
+<td><p>Tooth Status</p></td>
 </tr>
-<tr class="row-even"><td>DTP</td>
-<td>Service Line Date , Date - Onset of Current Symptom/Illness , Assessment Date , Claim Adjudication Date , Date - Last X-Ray , Date - Initial Treatment , Date - Acute Manifestation , Date - Last Certification Date , Date - Last Menstrual Period , Date - Date Last Seen , Date - Disability Begin , Date - Appliance Placement , Date - Test , Date - Assumed and Relinquished Care Dates , Line Adjudication Date , Claim Paid Date , Date - Authorized Return to Work , Date - Last Worked , Date - Oxygen Saturation/Arterial Blood Gas Test , Date - Shipped , Date - Similar Illness/Symptom Onset , Service Adjudication Date , Date - Referral , Date - Service , Date - Service Date , Date - Prior Placement , Date - Disability End , Date - Begin Therapy Date , Date - Replacement , Date - Accident , Date - Discharge , Date - Certification Revision Date , Date - Last X-ray , Statement Dates , Admission Date/Hour , Date - Admission , Date - Hearing and Vision Prescription Date , Date - Onset of Current Illness/Symptom , Discharge Hour</td>
+<tr class="row-even"><td><p>DTP</p></td>
+<td><p>Service Line Date , Date - Onset of Current Symptom/Illness , Assessment Date , Claim Adjudication Date , Date - Last X-Ray , Date - Initial Treatment , Date - Acute Manifestation , Date - Last Certification Date , Date - Last Menstrual Period , Date - Date Last Seen , Date - Disability Begin , Date - Appliance Placement , Date - Test , Date - Assumed and Relinquished Care Dates , Line Adjudication Date , Claim Paid Date , Date - Authorized Return to Work , Date - Last Worked , Date - Oxygen Saturation/Arterial Blood Gas Test , Date - Shipped , Date - Similar Illness/Symptom Onset , Service Adjudication Date , Date - Referral , Date - Service , Date - Service Date , Date - Prior Placement , Date - Disability End , Date - Begin Therapy Date , Date - Replacement , Date - Accident , Date - Discharge , Date - Certification Revision Date , Date - Last X-ray , Statement Dates , Admission Date/Hour , Date - Admission , Date - Hearing and Vision Prescription Date , Date - Onset of Current Illness/Symptom , Discharge Hour</p></td>
 </tr>
-<tr class="row-odd"><td>FRM</td>
-<td>Supporting Documentation</td>
+<tr class="row-odd"><td><p>FRM</p></td>
+<td><p>Supporting Documentation</p></td>
 </tr>
-<tr class="row-even"><td>GE</td>
-<td>Functional Group Trailer</td>
+<tr class="row-even"><td><p>GE</p></td>
+<td><p>Functional Group Trailer</p></td>
 </tr>
-<tr class="row-odd"><td>GS</td>
-<td>Functional Group Header</td>
+<tr class="row-odd"><td><p>GS</p></td>
+<td><p>Functional Group Header</p></td>
 </tr>
-<tr class="row-even"><td>HCP</td>
-<td>Claim Pricing/Repricing Information , Line Pricing/Repricing Information</td>
+<tr class="row-even"><td><p>HCP</p></td>
+<td><p>Claim Pricing/Repricing Information , Line Pricing/Repricing Information</p></td>
 </tr>
-<tr class="row-odd"><td>HI</td>
-<td>Other Diagnosis Information , Value Information , Occurrence Span Information , Health Care Diagnosis Code , Condition Information , Principal, Admitting, E-Code and Patient Reason for Visit Diagnosis Information , Principal Procedure Information , Diagnosis Related Group (DRG) Information , Treatment Code Information , Other Procedure Information , Occurrence Information</td>
+<tr class="row-odd"><td><p>HI</p></td>
+<td><p>Other Diagnosis Information , Value Information , Occurrence Span Information , Health Care Diagnosis Code , Condition Information , Principal, Admitting, E-Code and Patient Reason for Visit Diagnosis Information , Principal Procedure Information , Diagnosis Related Group (DRG) Information , Treatment Code Information , Other Procedure Information , Occurrence Information</p></td>
 </tr>
-<tr class="row-even"><td>HL</td>
-<td>Subscriber Hierarchical Level , Patient Hierarchical Level , Billing/Pay-To Provider Hierarchical Level</td>
+<tr class="row-even"><td><p>HL</p></td>
+<td><p>Subscriber Hierarchical Level , Patient Hierarchical Level , Billing/Pay-To Provider Hierarchical Level</p></td>
 </tr>
-<tr class="row-odd"><td>HSD</td>
-<td>Health Care Services Delivery</td>
+<tr class="row-odd"><td><p>HSD</p></td>
+<td><p>Health Care Services Delivery</p></td>
 </tr>
-<tr class="row-even"><td>IEA</td>
-<td>Interchange Control Trailer</td>
+<tr class="row-even"><td><p>IEA</p></td>
+<td><p>Interchange Control Trailer</p></td>
 </tr>
-<tr class="row-odd"><td>ISA</td>
-<td>Interchange Control Header</td>
+<tr class="row-odd"><td><p>ISA</p></td>
+<td><p>Interchange Control Header</p></td>
 </tr>
-<tr class="row-even"><td>K3</td>
-<td>File Information</td>
+<tr class="row-even"><td><p>K3</p></td>
+<td><p>File Information</p></td>
 </tr>
-<tr class="row-odd"><td>LIN</td>
-<td>Drug Identification</td>
+<tr class="row-odd"><td><p>LIN</p></td>
+<td><p>Drug Identification</p></td>
 </tr>
-<tr class="row-even"><td>LQ</td>
-<td>Form Identification Code</td>
+<tr class="row-even"><td><p>LQ</p></td>
+<td><p>Form Identification Code</p></td>
 </tr>
-<tr class="row-odd"><td>LX</td>
-<td>Service Line , Line Counter , Service Line Number</td>
+<tr class="row-odd"><td><p>LX</p></td>
+<td><p>Service Line , Line Counter , Service Line Number</p></td>
 </tr>
-<tr class="row-even"><td>MEA</td>
-<td>Test Result</td>
+<tr class="row-even"><td><p>MEA</p></td>
+<td><p>Test Result</p></td>
 </tr>
-<tr class="row-odd"><td>MIA</td>
-<td>Medicare Inpatient Adjudication Information</td>
+<tr class="row-odd"><td><p>MIA</p></td>
+<td><p>Medicare Inpatient Adjudication Information</p></td>
 </tr>
-<tr class="row-even"><td>MOA</td>
-<td>Medicare Outpatient Adjudication Information</td>
+<tr class="row-even"><td><p>MOA</p></td>
+<td><p>Medicare Outpatient Adjudication Information</p></td>
 </tr>
-<tr class="row-odd"><td>N3</td>
-<td>Other Subscriber Address , Destination Payer Address , Service Facility Address , Responsible Party Address , Ordering Provider Address , Pay-To Provider&#8217;s Address , Pay-To Provider Address , Other Payer Address , Subscriber Address , Billing Provider Address , Service Facility Location Address , Patient Address , Payer Address</td>
+<tr class="row-odd"><td><p>N3</p></td>
+<td><p>Other Subscriber Address , Destination Payer Address , Service Facility Address , Responsible Party Address , Ordering Provider Address , Pay-To Provider’s Address , Pay-To Provider Address , Other Payer Address , Subscriber Address , Billing Provider Address , Service Facility Location Address , Patient Address , Payer Address</p></td>
 </tr>
-<tr class="row-even"><td>N4</td>
-<td>Payer City/State/ZIP Code , Patient City/State/ZIP Code , Billing Provider City/State/ZIP Code , Pay-To Provider City/State/ZIP , Pay-To Provider City/State/ZIP Code , Other Subscriber City/State/ZIP Code , Service Facility Location City/State/ZIP , Service Facility City/State/Zip Code , Responsible Party City/State/ZIP Code , Destination Payer City/State/ZIP Code , Ordering Provider City/State/ZIP Code , Other Payer City/State/ZIP Code , Subscriber City/State/ZIP Code</td>
+<tr class="row-even"><td><p>N4</p></td>
+<td><p>Payer City/State/ZIP Code , Patient City/State/ZIP Code , Billing Provider City/State/ZIP Code , Pay-To Provider City/State/ZIP , Pay-To Provider City/State/ZIP Code , Other Subscriber City/State/ZIP Code , Service Facility Location City/State/ZIP , Service Facility City/State/Zip Code , Responsible Party City/State/ZIP Code , Destination Payer City/State/ZIP Code , Ordering Provider City/State/ZIP Code , Other Payer City/State/ZIP Code , Subscriber City/State/ZIP Code</p></td>
 </tr>
-<tr class="row-odd"><td>NM1</td>
-<td>Credit/Debit Card Holder Name , Submitter Name , Other Payer Service Facility Location , Ordering Provider Name , Other Subscriber Name , Operating Physician Name , Destination Payer Name , Other Payer Attending Provider , Other Payer Service Facility Provider , Attending Physician Name , Responsible Party Name , Receiver Name , Assistant Surgeon Name , Supervising Provider Name , Pay-To Provider&#8217;s Name , Service Facility Location , Purchased Service Provider Name , Referring Provider Name , Service Facility Name , Patient Name , Other Payer Other Provider , Subscriber Name , Other Payer Rendering Provider , Other Payer Referring Provider , Other Payer Prior Authorization or Referral Number , Pay-To Provider Name , Other Payer Name , Rendering Provider Name , Billing Provider Name , Other Provider Name , Payer Name , Credit/Debit Card Account Holder Name , Other Payer Supervising Provider , Other Payer Operating Provider , Other Payer Purchased Service Provider , Other Payer Patient Information</td>
+<tr class="row-odd"><td><p>NM1</p></td>
+<td><p>Credit/Debit Card Holder Name , Submitter Name , Other Payer Service Facility Location , Ordering Provider Name , Other Subscriber Name , Operating Physician Name , Destination Payer Name , Other Payer Attending Provider , Other Payer Service Facility Provider , Attending Physician Name , Responsible Party Name , Receiver Name , Assistant Surgeon Name , Supervising Provider Name , Pay-To Provider’s Name , Service Facility Location , Purchased Service Provider Name , Referring Provider Name , Service Facility Name , Patient Name , Other Payer Other Provider , Subscriber Name , Other Payer Rendering Provider , Other Payer Referring Provider , Other Payer Prior Authorization or Referral Number , Pay-To Provider Name , Other Payer Name , Rendering Provider Name , Billing Provider Name , Other Provider Name , Payer Name , Credit/Debit Card Account Holder Name , Other Payer Supervising Provider , Other Payer Operating Provider , Other Payer Purchased Service Provider , Other Payer Patient Information</p></td>
 </tr>
-<tr class="row-even"><td>NTE</td>
-<td>Claim Note , Line Note , Billing Note</td>
+<tr class="row-even"><td><p>NTE</p></td>
+<td><p>Claim Note , Line Note , Billing Note</p></td>
 </tr>
-<tr class="row-odd"><td>OI</td>
-<td>Other Insurance Coverage Information</td>
+<tr class="row-odd"><td><p>OI</p></td>
+<td><p>Other Insurance Coverage Information</p></td>
 </tr>
-<tr class="row-even"><td>PAT</td>
-<td>Patient Information</td>
+<tr class="row-even"><td><p>PAT</p></td>
+<td><p>Patient Information</p></td>
 </tr>
-<tr class="row-odd"><td>PER</td>
-<td>Ordering Provider Contact Information , Billing Provider Contact Information , Other Payer Contact Information , Submitter Contact Information , Submitter EDI Contact Information</td>
+<tr class="row-odd"><td><p>PER</p></td>
+<td><p>Ordering Provider Contact Information , Billing Provider Contact Information , Other Payer Contact Information , Submitter Contact Information , Submitter EDI Contact Information</p></td>
 </tr>
-<tr class="row-even"><td>PRV</td>
-<td>Billing/Pay-To Provider Specialty Information , Service Facility Specialty Information , Referring Provider Specialty Information , Assistant Surgeon Specialty Information , Rendering Provider Specialty Information , Attending Physician Specialty Information , Other Provider Specialty Information , Operating Physician Specialty Information</td>
+<tr class="row-even"><td><p>PRV</p></td>
+<td><p>Billing/Pay-To Provider Specialty Information , Service Facility Specialty Information , Referring Provider Specialty Information , Assistant Surgeon Specialty Information , Rendering Provider Specialty Information , Attending Physician Specialty Information , Other Provider Specialty Information , Operating Physician Specialty Information</p></td>
 </tr>
-<tr class="row-odd"><td>PS1</td>
-<td>Purchased Service Information</td>
+<tr class="row-odd"><td><p>PS1</p></td>
+<td><p>Purchased Service Information</p></td>
 </tr>
-<tr class="row-even"><td>PWK</td>
-<td>Line Supplemental Information , DMERC CMN Indicator , Claim Supplemental Information</td>
+<tr class="row-even"><td><p>PWK</p></td>
+<td><p>Line Supplemental Information , DMERC CMN Indicator , Claim Supplemental Information</p></td>
 </tr>
-<tr class="row-odd"><td>QTY</td>
-<td>Anesthesia Quantity , Claim Quantity</td>
+<tr class="row-odd"><td><p>QTY</p></td>
+<td><p>Anesthesia Quantity , Claim Quantity</p></td>
 </tr>
-<tr class="row-even"><td>REF</td>
-<td>Repriced Claim Number , Pay-To Provider Secondary Identification Number , Rendering Provider Secondary Identification , Original Reference Number (ICN/DCN) , Service Facility Location Secondary Identification , Repriced Line Item Reference Number , Mammography Certification Number , Ordering Provider Secondary Identification , Assistant Surgeon Secondary Identification , Other Payer Supervising Provider Identification , Prescription Number , Claim Identification Number For Clearinghouses and Other Transmission Intermediaries , Other Provider Secondary Identification , Other Subscriber Secondary Identification , Payer Secondary Identification Number , Prior Authorization or Referral Number , Other Payer Referring Provider Identification , Investigational Device Exemption Number , Document Identification Code , Service Facility Secondary Identification , Immunization Batch Number , Line Item Control Number , Attending Physician Secondary Identification , Other Payer Patient Identification , Destination Payer Secondary Identification , Property and Casualty Claim Number , Purchased Service Provider Secondary Identification , Other Payer Service Facility Location Identification , Demonstration Project Identifier , Claim Identification Number for Clearing Houses and Other Transmission Intermediaries , Clinical Laboratory Improvement Amendment (CLIA) Identification , Medical Record Number , Billing Provider Secondary Identification Number , Pay-To Provider Secondary Identification , Transmission Type Identification , Other Payer Purchased Service Provider Identification , Referring Clinical Laboratory Improvement Amendment (CLIA) Facility Identification , Mandatory Medicare (Section 4081) Crossover Indicator , Other Payer Rendering Provider Secondary Identification , Adjusted Repriced Claim Number , Operating Physician Secondary Identification , Peer Review Organization (PRO) Approval Number , Supervising Provider Secondary Identification , Transaction Type Identification , Other Payer Operating Provider Identification , Other Payer Rendering Provider Identification , Other Payer Claim Adjustment Indicator , Subscriber Secondary Identification , Ambulatory Patient Group (APG) , Oxygen Flow Rate , Other Subscriber Secondary Information , Other Payer Secondary Identifier , Other Payer Prior Authorization or Referral Number , Other Payer Attending Provider Identification , Other Payer Service Facility Provider Identification , Universal Product Number (UPN) , Service Predetermination Identification , Billing Provider Secondary Identification , Other Payer Secondary Identification and Reference Number , Predetermination Identification , Adjusted Repriced Line Item Reference Number , Credit/Debit Card Billing Information , Referring Provider Secondary Identification , Payer Secondary Identification , Patient Secondary Identification , Claim Identification Number for Clearinghouses and Other Transmission Intermediaries , Other Payer Other Provider Identification , Claim Submitter Credit/Debit Card Information , Other Payer identification Number , Service Authorization Exception Code , Patient Secondary Identification Number , Credit/Debit Card Information , Clinical Laboratory Improvement Amendment (CLIA) Number</td>
+<tr class="row-even"><td><p>REF</p></td>
+<td><p>Repriced Claim Number , Pay-To Provider Secondary Identification Number , Rendering Provider Secondary Identification , Original Reference Number (ICN/DCN) , Service Facility Location Secondary Identification , Repriced Line Item Reference Number , Mammography Certification Number , Ordering Provider Secondary Identification , Assistant Surgeon Secondary Identification , Other Payer Supervising Provider Identification , Prescription Number , Claim Identification Number For Clearinghouses and Other Transmission Intermediaries , Other Provider Secondary Identification , Other Subscriber Secondary Identification , Payer Secondary Identification Number , Prior Authorization or Referral Number , Other Payer Referring Provider Identification , Investigational Device Exemption Number , Document Identification Code , Service Facility Secondary Identification , Immunization Batch Number , Line Item Control Number , Attending Physician Secondary Identification , Other Payer Patient Identification , Destination Payer Secondary Identification , Property and Casualty Claim Number , Purchased Service Provider Secondary Identification , Other Payer Service Facility Location Identification , Demonstration Project Identifier , Claim Identification Number for Clearing Houses and Other Transmission Intermediaries , Clinical Laboratory Improvement Amendment (CLIA) Identification , Medical Record Number , Billing Provider Secondary Identification Number , Pay-To Provider Secondary Identification , Transmission Type Identification , Other Payer Purchased Service Provider Identification , Referring Clinical Laboratory Improvement Amendment (CLIA) Facility Identification , Mandatory Medicare (Section 4081) Crossover Indicator , Other Payer Rendering Provider Secondary Identification , Adjusted Repriced Claim Number , Operating Physician Secondary Identification , Peer Review Organization (PRO) Approval Number , Supervising Provider Secondary Identification , Transaction Type Identification , Other Payer Operating Provider Identification , Other Payer Rendering Provider Identification , Other Payer Claim Adjustment Indicator , Subscriber Secondary Identification , Ambulatory Patient Group (APG) , Oxygen Flow Rate , Other Subscriber Secondary Information , Other Payer Secondary Identifier , Other Payer Prior Authorization or Referral Number , Other Payer Attending Provider Identification , Other Payer Service Facility Provider Identification , Universal Product Number (UPN) , Service Predetermination Identification , Billing Provider Secondary Identification , Other Payer Secondary Identification and Reference Number , Predetermination Identification , Adjusted Repriced Line Item Reference Number , Credit/Debit Card Billing Information , Referring Provider Secondary Identification , Payer Secondary Identification , Patient Secondary Identification , Claim Identification Number for Clearinghouses and Other Transmission Intermediaries , Other Payer Other Provider Identification , Claim Submitter Credit/Debit Card Information , Other Payer identification Number , Service Authorization Exception Code , Patient Secondary Identification Number , Credit/Debit Card Information , Clinical Laboratory Improvement Amendment (CLIA) Number</p></td>
 </tr>
-<tr class="row-odd"><td>SBR</td>
-<td>Subscriber Information , Other Subscriber Information</td>
+<tr class="row-odd"><td><p>SBR</p></td>
+<td><p>Subscriber Information , Other Subscriber Information</p></td>
 </tr>
-<tr class="row-even"><td>SE</td>
-<td>Transaction Set Trailer</td>
+<tr class="row-even"><td><p>SE</p></td>
+<td><p>Transaction Set Trailer</p></td>
 </tr>
-<tr class="row-odd"><td>ST</td>
-<td>Transaction Set Header</td>
+<tr class="row-odd"><td><p>ST</p></td>
+<td><p>Transaction Set Header</p></td>
 </tr>
-<tr class="row-even"><td>SV1</td>
-<td>Professional Service</td>
+<tr class="row-even"><td><p>SV1</p></td>
+<td><p>Professional Service</p></td>
 </tr>
-<tr class="row-odd"><td>SV2</td>
-<td>Institutional Service Line</td>
+<tr class="row-odd"><td><p>SV2</p></td>
+<td><p>Institutional Service Line</p></td>
 </tr>
-<tr class="row-even"><td>SV3</td>
-<td>Dental Service</td>
+<tr class="row-even"><td><p>SV3</p></td>
+<td><p>Dental Service</p></td>
 </tr>
-<tr class="row-odd"><td>SV5</td>
-<td>Durable Medical Equipment Service</td>
+<tr class="row-odd"><td><p>SV5</p></td>
+<td><p>Durable Medical Equipment Service</p></td>
 </tr>
-<tr class="row-even"><td>SVD</td>
-<td>Line Adjudication Information , Service Line Adjudication Information</td>
+<tr class="row-even"><td><p>SVD</p></td>
+<td><p>Line Adjudication Information , Service Line Adjudication Information</p></td>
 </tr>
-<tr class="row-odd"><td>TA1</td>
-<td>Interchange Acknowledgement</td>
+<tr class="row-odd"><td><p>TA1</p></td>
+<td><p>Interchange Acknowledgement</p></td>
 </tr>
-<tr class="row-even"><td>TOO</td>
-<td>Tooth Information</td>
+<tr class="row-even"><td><p>TOO</p></td>
+<td><p>Tooth Information</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/Tiger_shark2.png" alt="Logo"/>
             </a></p>
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Architecture and Design</a><ul>
-<li><a class="reference internal" href="#architecture-summary">Architecture Summary</a><ul>
-<li><a class="reference internal" href="#meta-level-processing">Meta-Level Processing</a><ul>
-<li><a class="reference internal" href="#x12-background">X12 Background</a></li>
-<li><a class="reference internal" href="#x12-message-definitions">X12 Message Definitions</a></li>
+<h1 class="logo"><a href="index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usecase.html">Context: Use Cases</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture and Design</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#architecture-summary">Architecture Summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#container-view">Container View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#component-view">Component View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#processing-model">Processing Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#appendix-i">Appendix I</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#application-level-processing">Application-Level Processing</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#database-design-alternatives">Database Design Alternatives</a><ul>
-<li><a class="reference internal" href="#persistence-choices">Persistence Choices</a><ul>
-<li><a class="reference internal" href="#flat-text-persistence">Flat-Text Persistence</a></li>
-<li><a class="reference internal" href="#segment-type-persistence">Segment-type Persistence</a></li>
-<li><a class="reference internal" href="#application-based-persistence">Application-Based Persistence</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#general-persistence-design">General Persistence Design</a></li>
-<li><a class="reference internal" href="#orm-details">ORM Details</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#component-model">Component Model</a></li>
-<li><a class="reference internal" href="#processing-model">Processing Model</a><ul>
-<li><a class="reference internal" href="#manipulations">Manipulations</a><ul>
-<li><a class="reference internal" href="#unmarshalling">Unmarshalling</a></li>
-<li><a class="reference internal" href="#persisting">Persisting</a></li>
-<li><a class="reference internal" href="#presenting">Presenting</a></li>
-<li><a class="reference internal" href="#querying">Querying</a></li>
-<li><a class="reference internal" href="#marshalling">Marshalling</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#meta-data">Meta-data</a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#appendix-i">Appendix I</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="design/index.html">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="usecase.html"
-                        title="previous chapter">Use Cases</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="design/index.html"
-                        title="next chapter">Design Notes</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/architecture.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="usecase.html" title="previous chapter">Context: Use Cases</a></li>
+      <li>Next: <a href="design/index.html" title="next chapter">Design Notes</a></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="design/index.html" title="Design Notes"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="usecase.html" title="Use Cases"
-             >previous</a> |</li>
-        <li><a href="index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/architecture.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

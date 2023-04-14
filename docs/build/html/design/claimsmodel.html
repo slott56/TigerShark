@@ -1,184 +1,163 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Design Note: Persistent Data Model &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
-    <link rel="up" title="Design Notes" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Design Note: Persistent Data Model &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Design Note: Batch Script Design" href="batchScript.html" />
-    <link rel="prev" title="Design Note: Customization of Message Structures" href="customization.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="batchScript.html" title="Design Note: Batch Script Design"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="customization.html" title="Design Note: Customization of Message Structures"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Design Notes</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Design Note: Customization of Message Structures" href="customization.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          
+
+          <div class="body" role="main">
             
-  <div class="section" id="design-note-persistent-data-model">
-<h1>Design Note: Persistent Data Model<a class="headerlink" href="#design-note-persistent-data-model" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="../architecture.html#architecture"><em>Architecture and Design</em></a></p>
-<p>Sepecifically, see <a class="reference internal" href="../architecture.html#database-design-alternatives"><em>Database Design Alternatives</em></a>.</p>
-<div class="section" id="problem">
-<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+  <section id="design-note-persistent-data-model">
+<h1>Design Note: Persistent Data Model<a class="headerlink" href="#design-note-persistent-data-model" title="Permalink to this heading">¶</a></h1>
+<p><a class="reference internal" href="../architecture.html#architecture"><span class="std std-ref">Architecture and Design</span></a></p>
+<p>Sepecifically, see <a class="reference internal" href="../architecture.html#database-design-alternatives"><span class="std std-ref">Database Design Alternatives</span></a>.</p>
+<section id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this heading">¶</a></h2>
 <p>There are several representations for X12 messages (like Claims), all of which need to be
 either reconciled into a single model or mappings created among the representations.</p>
 <ul class="simple">
-<li>As a <tt class="docutils literal"><span class="pre">Claim</span></tt> object structure.  Very hard to read and write &#8211; requires
-complex marshalling and unmarshalling methods.  Very easy to manipulate.</li>
-<li>As an <tt class="docutils literal"><span class="pre">X12Message</span></tt> structure.  Easy to read and write, since it&#8217;s standardized flat
-text.  Hard to navigate and manipulate.</li>
-<li>As RDBMS tables and columns.  Easy to summarize multiple messages using
+<li><p>As a <code class="docutils literal notranslate"><span class="pre">Claim</span></code> object structure.  Very hard to read and write – requires
+complex marshalling and unmarshalling methods.  Very easy to manipulate.</p></li>
+<li><p>As an <code class="docutils literal notranslate"><span class="pre">X12Message</span></code> structure.  Easy to read and write, since it’s standardized flat
+text.  Hard to navigate and manipulate.</p></li>
+<li><p>As RDBMS tables and columns.  Easy to summarize multiple messages using
 SQL techniques.  Easy to persist.  Very hard to read and write, moderately
-hard to manipulate.</li>
+hard to manipulate.</p></li>
 </ul>
 <p>Note that the 837 claims form a natural-looking class hierarchy with common features
 and subclass-unique features.  A proper class hierarchy simplifies the application
 programming by making use of class inheritance techniques.</p>
-</div>
-<div class="section" id="forces">
-<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this heading">¶</a></h2>
 <p>Generic X12 structures must be used as the source and destination for
-application-specific structures like Claims or Eligibility.  It&#8217;s
+application-specific structures like Claims or Eligibility.  It’s
 standardized, and readily available.</p>
-<p>RDBMS structures must be used for persistence.  It&#8217;s standardized and readily
+<p>RDBMS structures must be used for persistence.  It’s standardized and readily
 available.  Further, simple ORM layers can bridge between a useeful object
 model and a RDBMS persistence model.</p>
 <p>There are three use cases for this structure:</p>
 <ul class="simple">
-<li>Defining the structure in the first place.  X12 messages have 57 different
-types of segments.  Some segment types are heavily reused &#8211; sometimes in separate
-loops, sometimes within a single loop &#8211; leading to 100&#8217;s of variations.</li>
-<li>Persistence of the entire X12 message, for example, a Claim.</li>
-<li>Navigation and basic get/set of elements within a segment within an instance
-of a loop.</li>
-<li>Adding and removing X12 segments and loops to fundamentally alter the
+<li><p>Defining the structure in the first place.  X12 messages have 57 different
+types of segments.  Some segment types are heavily reused – sometimes in separate
+loops, sometimes within a single loop – leading to 100’s of variations.</p></li>
+<li><p>Persistence of the entire X12 message, for example, a Claim.</p></li>
+<li><p>Navigation and basic get/set of elements within a segment within an instance
+of a loop.</p></li>
+<li><p>Adding and removing X12 segments and loops to fundamentally alter the
 claim structure.  Adding or removing a Loop generally means that a number of
-closely-related segments are added or removed.</li>
-<li>Synthesizing a message from scratch.</li>
+closely-related segments are added or removed.</p></li>
+<li><p>Synthesizing a message from scratch.</p></li>
 </ul>
 <p>We have two external, persistent representations of claims: X12 Text and RDBMS.
-We must map between both external representations using a common internal model &#8211;
-either at the <tt class="docutils literal"><span class="pre">X12Message</span></tt> level or at the application level (e.g. <tt class="docutils literal"><span class="pre">Claim</span></tt>).</p>
+We must map between both external representations using a common internal model –
+either at the <code class="docutils literal notranslate"><span class="pre">X12Message</span></code> level or at the application level (e.g. <code class="docutils literal notranslate"><span class="pre">Claim</span></code>).</p>
 <ul>
-<li><p class="first"><strong>X12Message</strong>.  In this case, each individual &#8220;attribute&#8221; is an
+<li><p><strong>X12Message</strong>.  In this case, each individual “attribute” is an
 X12 element, accessible via an XPath-like query that navigates through the X12 structure
 to the requested attribute.</p>
 <ul>
-<li><p class="first">Definition.  This comes from the <tt class="docutils literal"><span class="pre">.SEF</span></tt> files and the implementation guide.
-the <tt class="docutils literal"><span class="pre">tools.convertPyX12</span></tt>, <tt class="docutils literal"><span class="pre">tools.convertSEF</span></tt> applications can generate
+<li><p>Definition.  This comes from the <code class="docutils literal notranslate"><span class="pre">.SEF</span></code> files and the implementation guide.
+the <code class="docutils literal notranslate"><span class="pre">tools.convertPyX12</span></code>, <code class="docutils literal notranslate"><span class="pre">tools.convertSEF</span></code> applications can generate
 the entire DB schema from metadata.</p>
 <p>Any application-specific definitions must be folded in manually.</p>
 </li>
-<li><p class="first">Persistence.  This is problem-domain independent, and highly reusable.</p>
-</li>
-<li><p class="first">Navigation.</p>
+<li><p>Persistence.  This is problem-domain independent, and highly reusable.</p></li>
+<li><p>Navigation.</p>
 <ul class="simple">
-<li>Since this representation can map via Django&#8217;s ORM,
+<li><p>Since this representation can map via Django’s ORM,
 the admin pages are (in effect) generated automatically by this
-implementation.</li>
-<li>This pushes the X12/XPath navigation into the application.</li>
+implementation.</p></li>
+<li><p>This pushes the X12/XPath navigation into the application.</p></li>
 </ul>
 </li>
-<li><p class="first">Structure Changes. Simply adding a Segment in the Django admin pages can
+<li><p>Structure Changes. Simply adding a Segment in the Django admin pages can
 lead to creating an incomplete Loop. Either some validation is required
 to prevent this, or some application logic is required to define the
-complete Loop and step the user through each segment required.</p>
-</li>
+complete Loop and step the user through each segment required.</p></li>
 </ul>
 </li>
-<li><p class="first"><strong>Application-Specific, e.g. Claim</strong>.
+<li><p><strong>Application-Specific, e.g. Claim</strong>.
 In this case, each individual attribute is an actual
 object attribute.</p>
 <ul class="simple">
-<li>Definition.
+<li><p>Definition.
 This would be application-specific.
 The X12 mappings, however, for marshalling and unmarshalling X12 messages must
-be folded in manually.</li>
-<li>Persistence.  Application-specific persistence adds a layer of processing between
-the X12 unmarshalling and the application-specific structure.<ul>
-<li>The application operates at a level closer to the user&#8217;s understanding.</li>
-<li>We have a more complex (and less transparent) two-step marshalling and unmarshalling
-of X12 text to X12 structures to usable objects (e.g., Claims or Eligibility).</li>
+be folded in manually.</p></li>
+<li><p>Persistence.  Application-specific persistence adds a layer of processing between
+the X12 unmarshalling and the application-specific structure.</p>
+<ul>
+<li><p>The application operates at a level closer to the user’s understanding.</p></li>
+<li><p>We have a more complex (and less transparent) two-step marshalling and unmarshalling
+of X12 text to X12 structures to usable objects (e.g., Claims or Eligibility).</p></li>
 </ul>
 </li>
-<li>Navigation.  It allows the application to be defined in functional user terms, leading
-to clear terms.</li>
-<li>Structure Changes.  If we persist at the application level, then the default Django admin
-pages would present the user&#8217;s view of the object, e.g. Claim or Eligibility.</li>
+<li><p>Navigation.  It allows the application to be defined in functional user terms, leading
+to clear terms.</p></li>
+<li><p>Structure Changes.  If we persist at the application level, then the default Django admin
+pages would present the user’s view of the object, e.g. Claim or Eligibility.</p></li>
 </ul>
 </li>
-<li><p class="first"><strong>Both</strong>.  In this case, we use X12Message structures for persistence, but present
+<li><p><strong>Both</strong>.  In this case, we use X12Message structures for persistence, but present
 application (i.e. Claim) structures to users.  This implies two tiers of GUI (X12-level and Claim-level).
 This also implies a manual mappping between the user-oriented view of a Claim or
 Eligbility and the X12 message view.</p>
 <ul class="simple">
-<li>Definition.  This comes from the <tt class="docutils literal"><span class="pre">.SEF</span></tt> files and the implementation guide.
-the <tt class="docutils literal"><span class="pre">tools.convertPyX12</span></tt>, <tt class="docutils literal"><span class="pre">tools.convertSEF</span></tt> applications.<ul>
-<li>We can build a Claim object from the X12Message object. This forces us
+<li><p>Definition.  This comes from the <code class="docutils literal notranslate"><span class="pre">.SEF</span></code> files and the implementation guide.
+the <code class="docutils literal notranslate"><span class="pre">tools.convertPyX12</span></code>, <code class="docutils literal notranslate"><span class="pre">tools.convertSEF</span></code> applications.</p>
+<ul>
+<li><p>We can build a Claim object from the X12Message object. This forces us
 to assure that we either use the Claim exclusively or create a two-way
-mapping between Claim data and X12 data.</li>
-<li>Define an application object as a <strong>Facade</strong> that uses the X12-XPath
-mappings. In this case, we don&#8217;t duplicate the X12 data to make a Claim,
-instead we package the various &#8220;Claim to X12&#8221; mappings as get/set methods
+mapping between Claim data and X12 data.</p></li>
+<li><p>Define an application object as a <strong>Facade</strong> that uses the X12-XPath
+mappings. In this case, we don’t duplicate the X12 data to make a Claim,
+instead we package the various “Claim to X12” mappings as get/set methods
 of a Claim that provide access to the underlying X12 objects. In this
-case, an application object (e.g. Claim) is just a &#8220;view&#8221; of the X12 data.</li>
+case, an application object (e.g. Claim) is just a “view” of the X12 data.</p></li>
 </ul>
 </li>
-<li>Persistence.  This is done via the X12 solution, see above.</li>
-<li>Navigation.  There are two levels: X12 and Application.  This leads to building two tiers
+<li><p>Persistence.  This is done via the X12 solution, see above.</p></li>
+<li><p>Navigation.  There are two levels: X12 and Application.  This leads to building two tiers
 of GUI.  The lower level is a transparent view of the X12 message.  The higher
-level is a friendly, business-focused view of a application object like a Claim.</li>
-<li>Structure Changes.  At the X12 level, this is requires knowing the Loop structure
+level is a friendly, business-focused view of a application object like a Claim.</p></li>
+<li><p>Structure Changes.  At the X12 level, this is requires knowing the Loop structure
 so that appropriate segments can be added.  At the Claim level, some validation
 rules need to be in place to assure that attribute values are provided in a way
-that forces creation of appropriate X12 segments to create a valid loop structure.</li>
+that forces creation of appropriate X12 segments to create a valid loop structure.</p></li>
 </ul>
 </li>
 </ul>
-</div>
-<div class="section" id="solution">
-<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this heading">¶</a></h2>
 <p>Application class hierarchies is often essential for having user-friendly,
 functional presentation in the application.</p>
 <p>Defining a application object (e.g., Claim) that is a <strong>Facade</strong> over an X12
@@ -190,152 +169,156 @@ RDBMS and X12 structures.)</p>
 higher-level, Claim-oriented GUI separately from the low-level X12 GUI that is
 built automatically by Django. The higher-level GUI could be more easily
 customized to include Customer-specific Implmentation Guide nuances.</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="32%" />
-<col width="32%" />
-<col width="36%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head">Model</th>
-<th class="head">Presentation</th>
-<th class="head">Access</th>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Model</p></th>
+<th class="head"><p>Presentation</p></th>
+<th class="head"><p>Access</p></th>
 </tr>
 </thead>
-<tbody valign="top">
-<tr class="row-even"><td><dl class="first last docutils">
-<dt>Claim Structure</dt>
-<dd><ul class="first last simple">
-<li>Claim</li>
-<li>Claim Details</li>
-<li>Patient</li>
-<li>Provider</li>
-<li>Submitter</li>
-<li>Subscriber</li>
-<li>Sevice Line</li>
+<tbody>
+<tr class="row-even"><td><dl class="simple">
+<dt>Claim Structure</dt><dd><ul class="simple">
+<li><p>Claim</p></li>
+<li><p>Claim Details</p></li>
+<li><p>Patient</p></li>
+<li><p>Provider</p></li>
+<li><p>Submitter</p></li>
+<li><p>Subscriber</p></li>
+<li><p>Sevice Line</p></li>
 </ul>
 </dd>
 </dl>
 </td>
-<td>Claim GUI</td>
-<td><strong>Facade</strong> over X12</td>
+<td><p>Claim GUI</p></td>
+<td><p><strong>Facade</strong> over X12</p></td>
 </tr>
-<tr class="row-odd"><td><dl class="first last docutils">
-<dt>X12 Structure</dt>
-<dd><ul class="first last simple">
-<li>Loops</li>
-<li>Segment Types</li>
-<li>Elements</li>
+<tr class="row-odd"><td><dl class="simple">
+<dt>X12 Structure</dt><dd><ul class="simple">
+<li><p>Loops</p></li>
+<li><p>Segment Types</p></li>
+<li><p>Elements</p></li>
 </ul>
 </dd>
 </dl>
 </td>
-<td>Django Admin  UI</td>
-<td>ORM over SQL Tables</td>
+<td><p>Django Admin  UI</p></td>
+<td><p>ORM over SQL Tables</p></td>
 </tr>
-<tr class="row-even"><td><dl class="first last docutils">
-<dt>SQL Structure</dt>
-<dd><ul class="first last simple">
-<li>Table per
-Segment Type</li>
+<tr class="row-even"><td><dl class="simple">
+<dt>SQL Structure</dt><dd><ul class="simple">
+<li><p>Table per
+Segment Type</p></li>
 </ul>
 </dd>
 </dl>
 </td>
-<td>No GUI</td>
-<td>DB Access in ORM</td>
+<td><p>No GUI</p></td>
+<td><p>DB Access in ORM</p></td>
 </tr>
 </tbody>
 </table>
 <p>This leads to building two tiers of claim UI: the lower-level X12 Structure UI
 is the default Django admin pages.  The higher-level Claim UI would
-have to be built &#8220;by hand&#8221; to present the user with a meaningful Claim structure.</p>
+have to be built “by hand” to present the user with a meaningful Claim structure.</p>
 <p>An application object model, being a <strong>Facade</strong> over the X12 structure would tend
 to build properly persistent X12 objects in the normal course of events.</p>
-</div>
-<div class="section" id="consequences">
-<h2>Consequences<a class="headerlink" href="#consequences" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="consequences">
+<h2>Consequences<a class="headerlink" href="#consequences" title="Permalink to this heading">¶</a></h2>
 <p>We need simple-looking application class hierarchies that handle the relevant
 data items, and provides the proper level of reuse. A simple class hierarchy can
 provide proper polymorphism.</p>
-<p>Each &#8220;attribute&#8221; of a claim can become a Python property. The Python property
+<p>Each “attribute” of a claim can become a Python property. The Python property
 definition binds a getter/setter pair; these both use Python navigation to locate
 the element within the segment within the proper loop structure.</p>
 <p>Note that we need to track instances correctly so that we can navigate to the
 correct loop instance when a loop occurs multiple times.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Design Note: Persistent Data Model</a><ul>
-<li><a class="reference internal" href="#problem">Problem</a></li>
-<li><a class="reference internal" href="#forces">Forces</a></li>
-<li><a class="reference internal" href="#solution">Solution</a></li>
-<li><a class="reference internal" href="#consequences">Consequences</a></li>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="traversal.html">Traversing the complex hierarchical message definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ORMPlanning.html">Ways to map generic messages to a specific ORM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recursiveStructures.html">Persistence of recursive structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html">Segment-type customization</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">The Facade-based design pattern for claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batchScript.html">Considerations in writing batch programs and scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webservice.html">Considerations for implementing web services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html">The design for keys for X12Messages, X12Loops and X12Segments</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="customization.html"
-                        title="previous chapter">Design Note: Customization of Message Structures</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="batchScript.html"
-                        title="next chapter">Design Note: Batch Script Design</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/design/claimsmodel.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Design Notes</a><ul>
+      <li>Previous: <a href="customization.html" title="previous chapter">Design Note: Customization of Message Structures</a></li>
+      <li>Next: <a href="batchScript.html" title="next chapter">Design Note: Batch Script Design</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="batchScript.html" title="Design Note: Batch Script Design"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="customization.html" title="Design Note: Customization of Message Structures"
-             >previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Design Notes</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/design/claimsmodel.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

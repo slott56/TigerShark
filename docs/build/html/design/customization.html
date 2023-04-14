@@ -1,189 +1,180 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Design Note: Customization of Message Structures &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
-    <link rel="up" title="Design Notes" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Design Note: Customization of Message Structures &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Design Note: Persistent Data Model" href="claimsmodel.html" />
-    <link rel="prev" title="Design Note: Recursive Structures in SQL" href="recursiveStructures.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="claimsmodel.html" title="Design Note: Persistent Data Model"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="recursiveStructures.html" title="Design Note: Recursive Structures in SQL"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Design Notes</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Design Note: Recursive Structures in SQL" href="recursiveStructures.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          
+
+          <div class="body" role="main">
             
-  <div class="section" id="design-note-customization-of-message-structures">
-<h1>Design Note: Customization of Message Structures<a class="headerlink" href="#design-note-customization-of-message-structures" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="../architecture.html#architecture"><em>Architecture and Design</em></a></p>
-<div class="section" id="problem">
-<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+  <section id="design-note-customization-of-message-structures">
+<h1>Design Note: Customization of Message Structures<a class="headerlink" href="#design-note-customization-of-message-structures" title="Permalink to this heading">¶</a></h1>
+<p><a class="reference internal" href="../architecture.html#architecture"><span class="std std-ref">Architecture and Design</span></a></p>
+<section id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this heading">¶</a></h2>
 <p>Since we have a number of customers, each with a unique Implementation Guide,
 we have to adjust the data model for each customer.  We want to permit each
 customer as a simple extension module to a core application design.</p>
-</div>
-<div class="section" id="forces">
-<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
-<p>On one hand, it&#8217;s easiest to use &#8220;copy and paste&#8221; customization of the
+</section>
+<section id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this heading">¶</a></h2>
+<p>On one hand, it’s easiest to use “copy and paste” customization of the
 application, making it difficult to make across-the-board changes.</p>
 <p>On the other hand, there are 57 or so distinct Segment types, making customization
 challenging.</p>
-</div>
-<div class="section" id="solution">
-<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this heading">¶</a></h2>
 <p>A set of tools and design patterns are required.</p>
 <p>We use the following design patterns.</p>
 <ul class="simple">
-<li>Generic Parser (&#8220;unmarshalling&#8221;) class hierarchy.  A core class hierchy
+<li><p>Generic Parser (“unmarshalling”) class hierarchy.  A core class hierchy
 defines the essential parser technology.  A message-specific parser object is built
-from these classes.  This parser includes customer-specific extensions.</li>
-<li>A <strong>Factory</strong>-based parser.  The parser object uses a <strong>Factory</strong> object
-which generates a specific implementation&#8217;s segment types.</li>
-<li>Meta-data driven customizations.  A <tt class="docutils literal"><span class="pre">tools</span></tt> package to include a number
-of conversions from various kinds of metadata to our application programs.</li>
+from these classes.  This parser includes customer-specific extensions.</p></li>
+<li><p>A <strong>Factory</strong>-based parser.  The parser object uses a <strong>Factory</strong> object
+which generates a specific implementation’s segment types.</p></li>
+<li><p>Meta-data driven customizations.  A <code class="docutils literal notranslate"><span class="pre">tools</span></code> package to include a number
+of conversions from various kinds of metadata to our application programs.</p></li>
 </ul>
-</div>
-<div class="section" id="consequence">
-<h2>Consequence<a class="headerlink" href="#consequence" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="consequence">
+<h2>Consequence<a class="headerlink" href="#consequence" title="Permalink to this heading">¶</a></h2>
 <p>We have to bind the generic parser to a specific message implementation.
 This is a <strong>Factory</strong> object that emits
 the proper objects and handles customer-specific extensions.</p>
-<p>The Factory cannot shared by all classes in the <tt class="docutils literal"><span class="pre">X12.parse</span></tt> structure;
-that is relatively &#8220;global&#8221; among the various classes.  We can&#8217;t easily
+<p>The Factory cannot shared by all classes in the <code class="docutils literal notranslate"><span class="pre">X12.parse</span></code> structure;
+that is relatively “global” among the various classes.  We can’t easily
 fiddle this in at Construction time when XML is translated to Python.
 It has to come in later.
-Each <tt class="docutils literal"><span class="pre">X12.parse</span></tt> object must acquire a Factory when it executes.</p>
-<p>Further, it&#8217;s not the <tt class="docutils literal"><span class="pre">X12.parse</span></tt> package.  The Factory must be injected
+Each <code class="docutils literal notranslate"><span class="pre">X12.parse</span></code> object must acquire a Factory when it executes.</p>
+<p>Further, it’s not the <code class="docutils literal notranslate"><span class="pre">X12.parse</span></code> package.  The Factory must be injected
 into a
-separate package, with a name like <tt class="docutils literal"><span class="pre">some_project.claims-837.model</span></tt>.</p>
+separate package, with a name like <code class="docutils literal notranslate"><span class="pre">some_project.claims-837.model</span></code>.</p>
 <p>This can be handled a number of ways:</p>
 <blockquote>
 <div><ul class="simple">
-<li>a Configuration <strong>Singleton</strong> that each parser locates at run time.</li>
-<li>a Configuration object given to the Message parser, and then provided
-to each subsidiary object.</li>
+<li><p>a Configuration <strong>Singleton</strong> that each parser locates at run time.</p></li>
+<li><p>a Configuration object given to the Message parser, and then provided
+to each subsidiary object.</p></li>
 </ul>
 </div></blockquote>
-<p>Since all of the various Parser classes are proper subclasses of <tt class="docutils literal"><span class="pre">X12.parse.Parser</span></tt>,
+<p>Since all of the various Parser classes are proper subclasses of <code class="docutils literal notranslate"><span class="pre">X12.parse.Parser</span></code>,
 we can provide a property in the top-level class which propagates the selected
 Factory down to each element.</p>
 <p>Further, since Parsing is a translation from one form to another, we can easily
-make the <tt class="docutils literal"><span class="pre">unmarshall</span></tt> method accept the Factory as a parameter.</p>
-</div>
-</div>
+make the <code class="docutils literal notranslate"><span class="pre">unmarshall</span></code> method accept the Factory as a parameter.</p>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Design Note: Customization of Message Structures</a><ul>
-<li><a class="reference internal" href="#problem">Problem</a></li>
-<li><a class="reference internal" href="#forces">Forces</a></li>
-<li><a class="reference internal" href="#solution">Solution</a></li>
-<li><a class="reference internal" href="#consequence">Consequence</a></li>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="traversal.html">Traversing the complex hierarchical message definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ORMPlanning.html">Ways to map generic messages to a specific ORM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="recursiveStructures.html">Persistence of recursive structures</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Segment-type customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="claimsmodel.html">The Facade-based design pattern for claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batchScript.html">Considerations in writing batch programs and scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webservice.html">Considerations for implementing web services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html">The design for keys for X12Messages, X12Loops and X12Segments</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="recursiveStructures.html"
-                        title="previous chapter">Design Note: Recursive Structures in SQL</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="claimsmodel.html"
-                        title="next chapter">Design Note: Persistent Data Model</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/design/customization.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Design Notes</a><ul>
+      <li>Previous: <a href="recursiveStructures.html" title="previous chapter">Design Note: Recursive Structures in SQL</a></li>
+      <li>Next: <a href="claimsmodel.html" title="next chapter">Design Note: Persistent Data Model</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="claimsmodel.html" title="Design Note: Persistent Data Model"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="recursiveStructures.html" title="Design Note: Recursive Structures in SQL"
-             >previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Design Notes</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/design/customization.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

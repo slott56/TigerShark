@@ -1,283 +1,355 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Use Cases &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="_static/jquery.js"></script>
-    <script type="text/javascript" src="_static/underscore.js"></script>
-    <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Context: Use Cases &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Architecture and Design" href="architecture.html" />
-    <link rel="prev" title="Overview" href="overview.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="architecture.html" title="Architecture and Design"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="overview.html" title="Overview"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Overview" href="overview.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          
+
+          <div class="body" role="main">
             
-  <div class="section" id="use-cases">
-<span id="usecase"></span><h1>Use Cases<a class="headerlink" href="#use-cases" title="Permalink to this headline">¶</a></h1>
-<p>This document provides a <a class="reference internal" href="#actors">Actors</a> with an overview
-of the actors.</p>
-<p>The <a class="reference internal" href="#use-case-scenarios">Use Case Scenarios</a> chapter describes the individual use cases.</p>
-<p>The <a class="reference internal" href="#data-model">Data Model</a> chapter provides an overview of the key data entities.</p>
-<p>Architecture: <a class="reference internal" href="architecture.html#architecture"><em>Architecture and Design</em></a></p>
-<div class="section" id="actors">
-<h2>Actors<a class="headerlink" href="#actors" title="Permalink to this headline">¶</a></h2>
+  <section id="context-use-cases">
+<span id="context"></span><h1>Context: Use Cases<a class="headerlink" href="#context-use-cases" title="Permalink to this heading">¶</a></h1>
+<p>C4 suggests we look at Context, Container, Component, Code.</p>
+<p>This chapter describes the <a class="reference internal" href="#actors">Actors</a>
+and their <a class="reference internal" href="#use-case-scenarios">Use Case Scenarios</a>.</p>
+<p>The <a class="reference internal" href="#data-model">Data Model</a> section provides an overview of some of the key data entities.</p>
+<p>The <a class="reference internal" href="#dependencies">Dependencies</a> section identifies key dependencies.</p>
+<p>For details on the Containers and Components, see <a class="reference internal" href="architecture.html#architecture"><span class="std std-ref">Architecture and Design</span></a>.</p>
+<p>Fore more about Code, see <a class="reference internal" href="design/index.html#design"><span class="std std-ref">Design Notes</span></a>.</p>
+<section id="actors">
+<h2>Actors<a class="headerlink" href="#actors" title="Permalink to this heading">¶</a></h2>
 <p>There are two actors.</p>
 <ul>
-<li><p class="first">Developer</p>
-<p>This person transforms XML definitions of X12 transactions (e.g.,
-270 Eligibility) into Python class definitions.  This includes
-the structure definitions, plus an unmarshalling Factory.</p>
-<p>They may tweak or adjust the XML or the Python based on specific
-source or target implementation details.</p>
-<p>They will then build EDI applications which depend on the X12 message
+<li><p>Developer</p>
+<p>This person creates and modifies definitions of X12 transactions (e.g.,
+270 Eligibility) as Python class definitions.</p>
+<p>They can then build EDI applications which depend on the X12 message
 structures.</p>
 </li>
-<li><p class="first">EDI Application</p>
-<p>An EDI application will import the class definitions and the
-unmarshalling Factory.  The Factory is used to unmarshall X12 messages.
-The application can use the parsed message and marshall a resulting
-message.</p>
+<li><p>EDI Application</p>
+<p>An EDI application will import the class definitions.
+These definitions are used to unmarshall X12 messages for analysis or processing.
+The application can use the message class definitions to marshall messages in EDI exchange format.</p>
 </li>
 </ul>
-</div>
-<div class="section" id="use-case-scenarios">
-<h2>Use Case Scenarios<a class="headerlink" href="#use-case-scenarios" title="Permalink to this headline">¶</a></h2>
-<p>The following use cases are defined:</p>
+</section>
+<section id="use-case-scenarios">
+<h2>Use Case Scenarios<a class="headerlink" href="#use-case-scenarios" title="Permalink to this heading">¶</a></h2>
+<p>The following use cases are explored in detail:</p>
 <blockquote>
 <div><ul class="simple">
-<li><a class="reference internal" href="#create-a-structure-and-factory">Create A Structure and Factory</a></li>
-<li><a class="reference internal" href="#unmarshall-a-message">Unmarshall A Message</a></li>
-<li><a class="reference internal" href="#synthesize-a-message">Synthesize A Message</a></li>
-<li><a class="reference internal" href="#marshall-a-message">Marshall A Message</a></li>
+<li><p><a class="reference internal" href="#define-an-x12-structure">Define An X12 Structure</a></p></li>
+<li><p><a class="reference internal" href="#unmarshall-a-message">Unmarshall A Message</a></p></li>
+<li><p><a class="reference internal" href="#marshall-a-message">Marshall A Message</a></p></li>
 </ul>
 </div></blockquote>
-<div class="section" id="create-a-structure-and-factory">
-<h3>Create A Structure and Factory<a class="headerlink" href="#create-a-structure-and-factory" title="Permalink to this headline">¶</a></h3>
-<p>Actor locates an XML file that describes a message, for example,
-<tt class="file docutils literal"><span class="pre">pyx12-1.5.0map270.4010.X092.A1.xml</span></tt>
-in the <tt class="file docutils literal"><span class="pre">pyx12-1.5.0.zip</span></tt> archive.</p>
-<p>Actor runs the X12.MakePython converter.  System creates a module
-of Python classes plus an unmarshalling Factory class, for example
-<tt class="xref py py-mod docutils literal"><span class="pre">M270_4010_X092_A1</span></tt>.</p>
-</div>
-<div class="section" id="unmarshall-a-message">
-<span id="unmarshall"></span><h3>Unmarshall A Message<a class="headerlink" href="#unmarshall-a-message" title="Permalink to this headline">¶</a></h3>
-<p>An application imports the module with message
-definition classes and unmarshalling
-Factory class.</p>
-<p>The application creates a Factory object.</p>
-<p>The application uses the object
-to unmarshall a message.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">M270_4010_X092_A1</span>
-<span class="n">u</span> <span class="o">=</span> <span class="n">M270_4010_X092_A1</span><span class="o">.</span><span class="n">Unmarshaller</span><span class="p">()</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;a_file&#39;</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">source</span><span class="p">:</span>
-    <span class="n">msg</span><span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span> <span class="n">source</span> <span class="p">)</span>
+<p>Other use cases are combinations of these. For example,
+unmarshalling a message to change the date and marshalling the resulting message.</p>
+<section id="define-an-x12-structure">
+<h3>Define An X12 Structure<a class="headerlink" href="#define-an-x12-structure" title="Permalink to this heading">¶</a></h3>
+<p>Actor locates the IG (Implementation Guide) that describes a message.
+This has the loops, segments, composites, and data elements
+that comprise the message.
+It has the various data element definitions, syntax, and usage
+rules, as well as the repetition factors that are permitted.</p>
+<p>The PyX12 project has XML files built from from IG’s.
+For example, <code class="file docutils literal notranslate"><span class="pre">270.4010.X092.A1.xml</span></code>.
+This file is paired with data element definitions and code definitions.
+See <a class="reference external" href="https://github.com/azoner/pyx12/tree/master/pyx12/map">https://github.com/azoner/pyx12/tree/master/pyx12/map</a></p>
+<p>TigerShark tools can build JSONSchema and
+Python Modules from the XML definitions.
+Alternatively, the Python classes can be defined manually from the details in the IG.</p>
+<p>Because of the reuse of segment and element names,
+each loop definition becomes an important namespace for disambiguating
+reused segment names. A specific example is the <code class="docutils literal notranslate"><span class="pre">HL</span></code>
+segment, which appears in many loops, sometimes with
+slightly different element names, based on the loop context.</p>
+</section>
+<section id="unmarshall-a-message">
+<span id="unmarshall"></span><h3>Unmarshall A Message<a class="headerlink" href="#unmarshall-a-message" title="Permalink to this heading">¶</a></h3>
+<p>An application imports a module with message
+definition classes.</p>
+<p>The application uses the class definitions
+to unmarshall a message, creating an instance
+of the class.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">x12</span> <span class="kn">import</span> <span class="n">msg_271_4010_X092_A1</span><span class="p">,</span> <span class="n">Source</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;tests&quot;</span> <span class="o">/</span> <span class="s2">&quot;271-example.txt&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">source_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg_271_4010_X092_A1</span><span class="o">.</span><span class="n">MSG271</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="synthesize-a-message">
-<span id="synthesize"></span><h3>Synthesize A Message<a class="headerlink" href="#synthesize-a-message" title="Permalink to this headline">¶</a></h3>
+<p>The resulting <code class="docutils literal notranslate"><span class="pre">msg</span></code> object is an instance of a subclass of <code class="docutils literal notranslate"><span class="pre">Message</span></code>
+with attributes based on the loop/segment/composite/element structure of the specific message type.</p>
+</section>
+<section id="marshall-a-message">
+<span id="marshall"></span><h3>Marshall A Message<a class="headerlink" href="#marshall-a-message" title="Permalink to this heading">¶</a></h3>
 <p>An application imports the module with message
 definition classes.</p>
 <p>The application creates the message object.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">M270_4010_X092_A1</span>
-<span class="n">msg</span> <span class="o">=</span> <span class="n">M270_4010_X092_A1</span><span class="o">.</span><span class="n">M270</span><span class="p">()</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">x12.msg_270_4010_X092_A1</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="n">MSG270</span><span class="p">(</span>
+<span class="gp">... </span>   <span class="n">isa_loop</span><span class="o">=</span><span class="p">[</span>
+<span class="gp">... </span>        <span class="n">ISA_LOOP</span><span class="p">(</span>
+<span class="gp">... </span>            <span class="n">isa</span><span class="o">=</span><span class="n">ISA_LOOP_ISA</span><span class="p">(</span>
+<span class="gp">... </span>                <span class="n">isa01</span><span class="o">=</span><span class="n">ISA_LOOP_ISA01</span><span class="p">(</span><span class="s1">&#39;00&#39;</span><span class="p">),</span>
+<span class="gp">... </span>                <span class="c1"># etc. for this segment ...</span>
+<span class="gp">... </span>                <span class="n">isa16</span><span class="o">=</span><span class="n">ISA_LOOP_ISA16</span><span class="p">(</span><span class="s1">&#39;|:~&#39;</span><span class="p">),</span>
+<span class="gp">... </span>            <span class="p">),</span>
+<span class="gp">... </span>            <span class="n">gs_loop</span><span class="o">=</span><span class="p">[</span>
+<span class="gp">... </span>            <span class="c1"># etc. for this loop of segments...</span>
+<span class="gp">... </span>            <span class="p">],</span>
+<span class="gp">... </span>            <span class="n">st_loop</span><span class="o">=</span><span class="p">[</span>
+<span class="gp">... </span>                <span class="n">ST_LOOP</span><span class="p">(</span>
+<span class="gp">... </span>                    <span class="n">st</span><span class="o">=</span><span class="n">ST_LOOP_ST</span><span class="p">(</span>
+<span class="gp">... </span>                        <span class="n">st01</span><span class="o">=</span><span class="n">ST_LOOP_ST01</span><span class="p">(</span><span class="s2">&quot;271&quot;</span><span class="p">),</span> <span class="n">st02</span><span class="o">=</span><span class="n">ST_LOOP_ST02</span><span class="p">(</span><span class="s2">&quot;0001&quot;</span><span class="p">)</span>
+<span class="gp">... </span>                    <span class="p">),</span>
+<span class="gp">... </span>                    <span class="n">header</span><span class="o">=</span><span class="p">[</span>
+<span class="gp">... </span>                        <span class="n">HEADER</span><span class="p">(</span>
+<span class="gp">... </span>                            <span class="n">bht</span><span class="o">=</span><span class="n">HEADER_BHT</span><span class="p">(</span>
+<span class="gp">... </span>                                <span class="n">bht01</span><span class="o">=</span><span class="n">HEADER_BHT01</span><span class="p">(</span><span class="s2">&quot;0022&quot;</span><span class="p">),</span>
+<span class="gp">... </span>                                <span class="n">bht02</span><span class="o">=</span><span class="n">HEADER_BHT02</span><span class="p">(</span><span class="s2">&quot;11&quot;</span><span class="p">),</span>
+<span class="gp">... </span>                                <span class="n">bht03</span><span class="o">=</span><span class="n">HEADER_BHT03</span><span class="p">(</span><span class="s2">&quot;11111&quot;</span><span class="p">),</span>
+<span class="gp">... </span>                                <span class="n">bht04</span><span class="o">=</span><span class="n">HEADER_BHT04</span><span class="p">(</span><span class="s2">&quot;20120605&quot;</span><span class="p">),</span>
+<span class="gp">... </span>                                <span class="n">bht05</span><span class="o">=</span><span class="n">HEADER_BHT05</span><span class="p">(</span><span class="s2">&quot;232423&quot;</span><span class="p">),</span>
+<span class="gp">... </span>                            <span class="p">)</span>
+<span class="gp">... </span>                        <span class="p">)</span>
+<span class="gp">... </span>                    <span class="p">],</span>
+<span class="gp">... </span>                    <span class="c1"># etc.</span>
+<span class="gp">... </span>               <span class="p">)</span>
+<span class="gp">... </span>            <span class="p">],</span>
+<span class="gp">... </span>        <span class="p">)</span>
+<span class="gp">... </span>    <span class="p">]</span>
+<span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="marshall-a-message">
-<span id="marshall"></span><h3>Marshall A Message<a class="headerlink" href="#marshall-a-message" title="Permalink to this headline">¶</a></h3>
-<p>An application imports the module with message definition classes and marshalling
-Factory class.</p>
-<p>The application develops a message and a Factory object.  Perhaps
-through the <a class="reference internal" href="#unmarshall-a-message">Unmarshall a Message</a> use case.  Perhaps through
-a <a class="reference internal" href="#synthesize-a-message">Synthesize a Message</a> use case.</p>
-<p>It uses
-the Factory object to marshall the message.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">M270_4010_X092_A1</span>
-<span class="n">m</span> <span class="o">=</span> <span class="n">M270_4010_X092_A1</span><span class="o">.</span><span class="n">Marshaller</span><span class="p">()</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s">&#39;a_file&#39;</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">destination</span><span class="p">:</span>
-    <span class="n">m</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span> <span class="n">msg</span><span class="p">,</span> <span class="n">destination</span> <span class="p">)</span>
+<p>When testing healthcare applications,
+EDI messages are oten tweaked to change the date of submission.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">isa_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">st_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bht04</span> <span class="o">=</span> <span class="s2">&quot;20230223&quot;</span>
 </pre></div>
 </div>
+<p>The intent is to locate instances of the various nested loops, and
+then change element values of segments within a loop.
+Loops repeat and require indexing.</p>
+<p>The application can then dump the message in X12 (“exchange”) notation.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;changed_for_today.txt&quot;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">source_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">destination</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">msg</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
+</pre></div>
 </div>
+<p>The message can also be dumped in JSON notation.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+</pre></div>
 </div>
-<div class="section" id="data-model">
-<h2>Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h2>
-<p>There are three subject areas:</p>
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">json()</span></code> method is similar to the one
+offered by the <strong>pydantic</strong> class definitions.</p>
+</section>
+</section>
+<section id="data-model">
+<h2>Data Model<a class="headerlink" href="#data-model" title="Permalink to this heading">¶</a></h2>
+<p>An X12 Message contains Loops.
+Each Loop is a recursive structure that contains Loops and Segments.
+An Segment contains Composites (groups of Elements) and atomic Elements.</p>
+<p>Here’s the structure:</p>
+<p class="plantuml">
+<img src="_images/plantuml-4a8456aede08e8bb3e8e1fad70f1e98424e4c5b9.png" alt="class Message
+
+class Loop
+
+class Segment {
+    name: string
+}
+
+Message --&gt; Loop
+
+Loop --&gt; Loop
+Loop --&gt; Segment
+
+class Composite
+
+class Element {
+    value: Any
+}
+
+Segment --&gt; Composite
+Segment --&gt; Element
+Composite --&gt; Element"/>
+</p>
+<p>It’s important to note that only segments
+have names, and only elements have values.</p>
+<p>Further, segment names are reused by loops.
+This leads to the following – more realistic – depiction
+of the structure.</p>
+<p class="plantuml">
+<img src="_images/plantuml-dc8a9195d50f570579f0419e2dee4e163e604ef0.png" alt="class Message
+
+package Loop1 {
+    class SegmentX {
+        name: string = &quot;X&quot;
+    }
+
+    class Composite
+
+    class Element {
+        value: Any
+    }
+
+    SegmentX --&gt; Composite
+    SegmentX --&gt; Element
+    Composite --&gt; Element
+}
+
+package Loop2 {
+    class SegmentX {
+        name: string = &quot;X&quot;
+    }
+    class Composite
+
+    class Element {
+        value: Any
+    }
+
+    SegmentX --&gt; Composite
+    SegmentX --&gt; Element
+    Composite --&gt; Element
+}
+
+Message --&gt; Loop1
+Message --&gt; Loop2"/>
+</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">SegmentX</span></code> segment definition is repeated
+in each loop, often with small but significant differences,
+based on the distinct context.</p>
+<p>This leads to the following data model consideration:</p>
+<blockquote>
+<div><p>A Loop is a namespace</p>
+</div></blockquote>
+<p>This then leads to questions on how best to implement
+this “loop-as-namespace”. This is the topic of the <a class="reference internal" href="design/loopmodel.html#design-loop-namespace"><span class="std std-ref">Loops as Namespaces</span></a> design note.</p>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<p>The tools depend on the PyX12 prohject.
+The PyX12 project has XML files built from from IG’s.
+See <a class="reference external" href="https://github.com/azoner/pyx12/tree/master/pyx12/map">https://github.com/azoner/pyx12/tree/master/pyx12/map</a></p>
+<p>This schema repository contains three types of XML files.</p>
 <ul class="simple">
-<li><a class="reference internal" href="#message-schema-and-factory">Message Schema and Factory</a>.  The message structure and the
-marshall/unmarshall Factory class.
-This is the essential X12 message structure
-xreated</li>
-<li><a class="reference internal" href="#module-builder">Module Builder</a>.  This is a module which transforms the XML
-schema definition into a module with POPO&#8217;s and a Factory.</li>
-<li><a class="reference internal" href="#xml-schema">XML Schema</a>.  The master definition of the X12 message.</li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">270.4010.X092.A1.xml</span></code> message definition</p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">codes.xml</span></code></p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">dataele.xml</span></code></p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">maps.xml</span></code></p></li>
 </ul>
-<div class="section" id="message-schema-and-factory">
-<h3>Message Schema and Factory<a class="headerlink" href="#message-schema-and-factory" title="Permalink to this headline">¶</a></h3>
-<p>An X12Message contains X12Loops.
-Each X12Loop is a recursive structure that contains X12Loops and X12Segments.
-An X12Segment contains Composite Elements and Atomic Elements.</p>
-<p>The standard technique for recursive structures involves a polymorphic design,
-as shown in <a class="reference internal" href="#figure-1">Figure 1</a>.</p>
-<div class="figure">
-<img alt="_images/usecaseclaim.png" src="_images/usecaseclaim.png" />
-<p class="caption"><span class="target" id="figure-1">Figure 1</span>.</p>
-</div>
-<p>An X12Message is an X12Structure, and contains X12Structure elements.
-An X12Loop, similarly, is an X12Structure and contains X12Structure elements.
-This allows a loop to contain subloops as well as segments.  An X12Segment
-is an X12Structure (and contained within an X12Loop), but is not a container
-of other elements.</p>
-<p>X12Element and X12Composite contain the attributes of an X12Segment.</p>
-<p>For implementation notes, see <a class="reference internal" href="design/recursiveStructures.html#recursive-structures"><em>Design Note: Recursive Structures in SQL</em></a>.</p>
-</div>
-<div class="section" id="module-builder">
-<h3>Module  Builder<a class="headerlink" href="#module-builder" title="Permalink to this headline">¶</a></h3>
-<p>Transform XML definitions of X12 messages into POPO and marshall/unmarshall
-factory class.</p>
-<p>Generally, this is an XML parser which creates DOM objects,
-and a suite of Visitors to emit Python class definitions which
-reflect the X12 message structure.</p>
-<p>Other visitors can be defined wich will emit Django model definitions
-or, perhaps, SQLAlchemy model definitions.</p>
-</div>
-<div class="section" id="xml-schema">
-<h3>XML Schema<a class="headerlink" href="#xml-schema" title="Permalink to this headline">¶</a></h3>
-<p>This is the definition of X12 messages.  We borrow these from the Py12
-package which provides definitions of X12 messages.</p>
-<p>The schema repository contains three types of XML files.</p>
-<ul class="simple">
-<li><tt class="file docutils literal"><span class="pre">270.4010.X092.A1.xml</span></tt> message definition</li>
-<li><tt class="file docutils literal"><span class="pre">codes.xml</span></tt></li>
-<li><tt class="file docutils literal"><span class="pre">dataele.xml</span></tt></li>
-<li><tt class="file docutils literal"><span class="pre">maps.xml</span></tt></li>
-</ul>
-</div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="index.html">
               <img class="logo" src="_static/Tiger_shark2.png" alt="Logo"/>
             </a></p>
-  <h3><a href="index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Use Cases</a><ul>
-<li><a class="reference internal" href="#actors">Actors</a></li>
-<li><a class="reference internal" href="#use-case-scenarios">Use Case Scenarios</a><ul>
-<li><a class="reference internal" href="#create-a-structure-and-factory">Create A Structure and Factory</a></li>
-<li><a class="reference internal" href="#unmarshall-a-message">Unmarshall A Message</a></li>
-<li><a class="reference internal" href="#synthesize-a-message">Synthesize A Message</a></li>
-<li><a class="reference internal" href="#marshall-a-message">Marshall A Message</a></li>
+<h1 class="logo"><a href="index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Context: Use Cases</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#actors">Actors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-case-scenarios">Use Case Scenarios</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#data-model">Data Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#data-model">Data Model</a><ul>
-<li><a class="reference internal" href="#message-schema-and-factory">Message Schema and Factory</a></li>
-<li><a class="reference internal" href="#module-builder">Module  Builder</a></li>
-<li><a class="reference internal" href="#xml-schema">XML Schema</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="design/index.html">Design Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="overview.html"
-                        title="previous chapter">Overview</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="architecture.html"
-                        title="next chapter">Architecture and Design</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/usecase.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="overview.html" title="previous chapter">Overview</a></li>
+      <li>Next: <a href="architecture.html" title="next chapter">Architecture and Design</a></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="architecture.html" title="Architecture and Design"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="overview.html" title="Overview"
-             >previous</a> |</li>
-        <li><a href="index.html">TigerShark 3.1 documentation</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/usecase.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

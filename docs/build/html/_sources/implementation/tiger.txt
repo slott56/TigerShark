@@ -1,7 +1,0 @@
-================================
-``access`` Django Project
-================================
-
-To Be Removed.
-
-..  automodule:: access

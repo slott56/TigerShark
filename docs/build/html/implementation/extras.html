@@ -1,173 +1,123 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>extras.standardSegment Module &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
-    <link rel="up" title="Implementation" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>extras.standardSegment Module &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="test Package" href="test.html" />
-    <link rel="prev" title="claims Module" href="claims.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="test.html" title="test Package"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="claims.html" title="claims Module"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Implementation</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="claims Module" href="claims.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
-            
-  <div class="section" id="module-extras.standardSegment">
-<span id="extras-standardsegment-module"></span><h1><tt class="docutils literal"><span class="pre">extras.standardSegment</span></tt> Module<a class="headerlink" href="#module-extras.standardSegment" title="Permalink to this headline">¶</a></h1>
-<p>Define <a class="reference internal" href="x12.html#module-X12.parse" title="X12.parse"><tt class="xref py py-mod docutils literal"><span class="pre">X12.parse</span></tt></a> structures for some standard X12 Segments.</p>
-<p>These are definitions of some standard Segments without a lot
-of supporting detail.  This can be used (or extended) to cover
-cases where X12 segment metadata is not available.</p>
-<p>This module includes a conversion to emit &#8220;better-than-nothing&#8221;
-<a class="reference internal" href="x12.html#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> definitions for a few standard
-X12 Segments.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">var isa:</th><td class="field-body">ISA Segment</td>
-</tr>
-<tr class="field-even field"><th class="field-name">var gs:</th><td class="field-body">GS Segment</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">var st:</th><td class="field-body">ST Segment</td>
-</tr>
-<tr class="field-even field"><th class="field-name">var se:</th><td class="field-body">SE Segment</td>
-</tr>
-<tr class="field-odd field"><th class="field-name">var ge:</th><td class="field-body">GE Segment</td>
-</tr>
-<tr class="field-even field"><th class="field-name">var iea:</th><td class="field-body">IEA Segment</td>
-</tr>
-</tbody>
-</table>
-<dl class="function">
-<dt id="extras.standardSegment.buildSegment">
-<tt class="descclassname">extras.standardSegment.</tt><tt class="descname">buildSegment</tt><big>(</big><em>name</em>, <em>desc</em>, <em>fieldText</em><big>)</big><a class="headerlink" href="#extras.standardSegment.buildSegment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert a block of text to a Segment definition.
-The block of text has one Element defined on each line.
-The Element definition is an Element name, one or more spaces, and the
-element description.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>name</strong> &#8211; the name of the segment</li>
-<li><strong>desc</strong> &#8211; the description of the segment</li>
-<li><strong>fieldText</strong> &#8211; a block of text, with one Element name and description per line.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><a class="reference internal" href="x12.html#X12.parse.Segment" title="X12.parse.Segment"><tt class="xref py py-class docutils literal"><span class="pre">X12.parse.Segment</span></tt></a> definition</p>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
+          
 
-</div>
+          <div class="body" role="main">
+            
+  <section id="extras-standardsegment-module">
+<h1><code class="docutils literal notranslate"><span class="pre">extras.standardSegment</span></code> Module<a class="headerlink" href="#extras-standardsegment-module" title="Permalink to this heading">¶</a></h1>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
-            </a></p>
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="claims.html"
-                        title="previous chapter"><tt class="docutils literal docutils literal"><span class="pre">claims</span></tt> Module</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="test.html"
-                        title="next chapter"><tt class="docutils literal"><span class="pre">test</span></tt> Package</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/implementation/extras.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../design/index.html">Design Notes</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Implementation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="x12.html"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="claims.html"><code class="docutils literal notranslate"><span class="pre">claims</span></code> Module</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">extras.standardSegment</span></code> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="test.html"><code class="docutils literal notranslate"><span class="pre">test</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="web.html"><code class="docutils literal notranslate"><span class="pre">web</span></code> Django Project</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Implementation</a><ul>
+      <li>Previous: <a href="claims.html" title="previous chapter"><code class="docutils literal notranslate"><span class="pre">claims</span></code> Module</a></li>
+      <li>Next: <a href="test.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">test</span></code> Package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="test.html" title="test Package"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="claims.html" title="claims Module"
-             >previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Implementation</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/implementation/extras.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

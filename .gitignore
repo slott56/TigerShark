@@ -44,3 +44,7 @@ web/claims_837/*.pyc
 
 build/*
 .idea/*
+doc_source
+*/__pycache__
+*/*/__pycache__
+*/*/*/__pycache__
