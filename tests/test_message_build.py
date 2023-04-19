@@ -293,4 +293,8 @@ def test_marshall() -> None:
             )
         ]
     )
-    print(m)
+    # print(m)
+    assert m.isa_loop[0].isa.isa12.value == "00401"  # Interchange Control Version Number
+    assert m.isa_loop[0].gs_loop[0].gs.gs08.value == "004010X092A1"  # Version / Release / Industry Identifier Code
+    assert m.isa_loop[0].gs_loop[0].gs.gs01.value == "HB"  # Functional Identifier Code
+    assert m.isa_loop[0].gs_loop[0].st_loop[0].st.st01.value == "271"

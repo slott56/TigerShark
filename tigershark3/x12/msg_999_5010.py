@@ -216,8 +216,8 @@ class ISA_LOOP_ISA16(Element):
          'sequence': 16,
          'type': {'$ref': '#/$common/I15'}}
         datatype = common.I15
-        min_len = 3
-        max_len = 3
+        min_len = 1
+        max_len = 1
 
 
 class ISA_LOOP_ISA(Segment):

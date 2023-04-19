@@ -16,7 +16,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Type Annotations" href="annotations.html" />
+    <link rel="next" title="Type Hints" href="annotations.html" />
     <link rel="prev" title="Loops as Namespaces" href="loopmodel.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -37,7 +37,10 @@
   <section id="parsing-an-exchange-format-message">
 <span id="design-parsing"></span><h1>Parsing An Exchange-Format Message<a class="headerlink" href="#parsing-an-exchange-format-message" title="Permalink to this heading">¶</a></h1>
 <p>An exchange-format X12 EDI message is a sequence of segments.
-Each segment has an identifier of 2 or 3 characters, and a sequence of element values.</p>
+Each segment has an identifier of 2 or 3 characters, and a sequence of element values.
+The elements are separated by an element separator,
+and the segments are separated by a segment separator.</p>
+<p>We can depict it as follows:</p>
 <p class="plantuml">
 <img src="../_images/plantuml-170d3e13e98e6fb611a5669b9f46e07d2c760b68.png" alt="class MessageText
 
@@ -65,17 +68,48 @@ followed by two string values, “271” and “0001”.</p>
 to split the segment into fields.
 The first field is the identifier, used for parsing the structure of a message and the loops.
 The remaining values are assigned to elements and composites of the segment.</p>
-<p>Conceptually, the parsing uses approach similar to the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">identifier</span><span class="p">,</span> <span class="o">*</span><span class="n">fields</span> <span class="o">=</span> <span class="n">segment_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
-<span class="n">segment_class</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span><span class="o">.</span><span class="n">build_attrs</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
-</pre></div>
+<section id="general-parsing">
+<h2>General Parsing<a class="headerlink" href="#general-parsing" title="Permalink to this heading">¶</a></h2>
+<p>There’s a subtlety to the separators.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The three separator characters can be found at the end of the ISA segment.</p>
 </div>
-<p>Pragmatically, it’s a bit more complicated for two reasons:</p>
+<p>This could mean we have to read the ISA segment to figure
+out what separators define the structure of the ISA segment.</p>
+<p>The are two relevant conventions that seem to break the circularity of parsing the ISA to find the punctuation required to parse the ISA segment.</p>
+<ol class="arabic simple">
+<li><p>The last three characters of the ISA segment will have the three punctuation marks.
+The final element is the component separator character, which has an element separator in front
+of it and the segment separator after it.</p></li>
+<li><p>The ISA segment is generally uncompressed, and is 106 characters long. Characters 103, 104, and 105 just happen to
+have the three separators in a consistent, easy-to-find position.</p></li>
+</ol>
+<p>If the ISA is compressed, then we don’t know where it ends and what the segment separator is.
+Then we have two fallback strategies:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Hope for line break whitespace, and consume the last 3 characters of a line that starts with <code class="docutils literal notranslate"><span class="pre">&quot;ISA&quot;</span></code>.</p></li>
+<li><p>Eyeball the data, figure out what the segment separator is, and provide this “manually.”
+The element separator is position 3. The component separaror is the 16th element. (Yucky, but, sometimes necessary.)</p></li>
+</ul>
+</div></blockquote>
+<p>There seem to be three separators around the “Component Element Separator” field, ISA16, with common type I15 (which is nominally 1 position.)
+With an uncompressed ISA, the relevant values are here:</p>
+<ul class="simple">
+<li><p>Position 103: Element separator in front of it.</p></li>
+<li><p>Position 104: “Component” separator. This is one character of data. It appears to be used when an element is really an array of values.</p></li>
+<li><p>Position 105: Segment separator. Is the end of every segment.</p></li>
+</ul>
+</section>
+<section id="message-parsing">
+<h2>Message Parsing<a class="headerlink" href="#message-parsing" title="Permalink to this heading">¶</a></h2>
+<p>Pragmatically, message parsing is made complicated by two features:</p>
 <ol class="arabic simple">
 <li><p>Loops are not present in the text representation.
-A loop contains one or more segments, defining an expected sequence of segments.</p></li>
+A Loop contains one or more Segments, defining an expected sequence of Segments.</p></li>
 <li><p>Composites are not present in the text representation.
-A composite contains a number of elements; it’s a kind of sub-segment.</p></li>
+A Composite contains a number of Elements; it’s a kind of sub-Segment.</p></li>
 </ol>
 <p>This means we have the following relationships.</p>
 <p class="plantuml">
@@ -112,12 +146,45 @@ class Value
 SegmentText *--&gt; Value
 Element -- Value : Represented By &gt;"/>
 </p>
-<p>The essential algorithm works by consuming the segments to locate the loops within a message.
-A source lexical scanner can “peek” at the heading of the next segment.
-The loop parser can use the heading to decide if it should consume the next segment or if it is finished consuming segments.</p>
-<p>Consuming a segment means locating the elements and composites (sequences of elements) within the segment, and assigning text
+<p>The essential algorithm works by consuming each segment based on the defined loops within a message.
+A source lexical scanner “peeks” at the heading of the next segment.
+The Loop parser then use the heading to decide if it should consume the next Segment or if it is finished consuming Segments.</p>
+<p>Consuming a Segment means locating the Elements and Composites (sequences of Elements) within the segment, and assigning text
 values to those elements and composites. This is slightly different from consuming segments because there are fewer choices
-to be made. The process has two layers: each element consumes one value; each composite consumes a sequence of values.</p>
+to be made.</p>
+</section>
+<section id="segment-parsing">
+<h2>Segment Parsing<a class="headerlink" href="#segment-parsing" title="Permalink to this heading">¶</a></h2>
+<p>Conceptually, the Segment parsing algorithm uses approach similar to the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">identifier</span><span class="p">,</span> <span class="o">*</span><span class="n">fields</span> <span class="o">=</span> <span class="n">segment_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">element_separator</span><span class="p">)</span>
+<span class="n">segment_class</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span><span class="o">.</span><span class="n">build_attrs</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However. It appears that some elements are not really
+atomic.
+See, specifically the <code class="docutils literal notranslate"><span class="pre">834</span></code> message.
+Loops <code class="docutils literal notranslate"><span class="pre">2100A</span></code> and <code class="docutils literal notranslate"><span class="pre">2100B</span></code> have <code class="docutils literal notranslate"><span class="pre">DMG</span></code> Segments.
+The <code class="docutils literal notranslate"><span class="pre">DMG05</span></code> Element is a sequence of “components” (?).</p>
+<p>The type is <cite>list[DMG05]</cite>, something that appears unique
+to this message.</p>
+<p>This means each field value containing the component separator character
+can be decomposed into a list of values.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">component_separator</span><span class="p">)</span> <span class="k">if</span> <span class="n">component_separator</span> <span class="ow">in</span> <span class="n">val</span> <span class="k">else</span> <span class="n">val</span>
+    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">fields</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>An important consequence is the Component Separator <strong>must</strong> be provided
+separately, and can be unique for each message.
+This avoids having to escape the component separator when it occurs in a value.</p>
+<p>It appears that the software encoding a message must pick a
+component separator character based on the values present
+in those (few) fields that can have sub-components in them.</p>
+<p>The default seems to be “:”.</p>
+<p>But, if there’s a “:” value in a field,
+the separator might be “^” or “\”.</p>
+</section>
 </section>
 
 
@@ -142,16 +209,19 @@ to be made. The process has two layers: each element consumes one value; each co
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operation.html">Using TigerShark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Context: Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="classmodel.html">Message Schema as Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="element.html">Element Definitions as Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loopmodel.html">Loops as Namespace</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Parsing Algorithm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="annotations.html">Type Annotations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
 </ul>
 
 <div class="relations">
@@ -160,7 +230,7 @@ to be made. The process has two layers: each element consumes one value; each co
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Design Notes</a><ul>
       <li>Previous: <a href="loopmodel.html" title="previous chapter">Loops as Namespaces</a></li>
-      <li>Next: <a href="annotations.html" title="next chapter">Type Annotations</a></li>
+      <li>Next: <a href="annotations.html" title="next chapter">Type Hints</a></li>
   </ul></li>
   </ul></li>
 </ul>

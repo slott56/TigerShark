@@ -11,7 +11,13 @@ Base definitions for X12 message constructs:
 
 - Message -- a sequence of Loop
 
-Each of these has overall attributes defined in a ``Schema`` class definition.
+Elements have an element separator (often "|")
+
+Composites seem to have a component separator (varies widely, but ":" is common)
+
+Segments have a segment separator (often "~")
+
+For now, each of these classes has overall attributes defined in a ``Schema`` class definition.
 This class has a number of individual attribute values:
 
 -   ``json``, has a JSONSchema object.
@@ -36,10 +42,11 @@ Element will consume a single element value.
 from collections.abc import Iterator
 import datetime
 from decimal import Decimal
+import json
 import logging
 import sys
 from types import GenericAlias, UnionType, NoneType
-from typing import Any, get_type_hints, get_args, assert_type, Union
+from typing import Any, get_type_hints, get_origin, get_args, assert_type, Union
 
 
 logger = logging.getLogger("x12.base")
@@ -58,21 +65,22 @@ class Source:
 
     State invariant: ``self.text[self.pos]`` is the start of a segment.
 
-    When parsing the initial ISA segment; there's no defined ``element_sep``.
+    When parsing the initial ISA segment, there's no defined ``element_sep``.
     During parsing the ISA, the ``element_sep`` and ``segment_sep`` can be located,
-    and used for all following segments.
+    and used for all following segments. The ``array_sep`` (or component separator) is explicitly
+    provided in the ISA segment; this is used to decompose composites.
 
     In some rare cases, the ISA is already compressed. The element and segment
     separation characters must be provided separately.
 
     TODO: Consider str | TextIO | Path as ``text`` parameter type.
-
-    TODO: Consider how to read multiple complete messages from a single file.
-        Is this appropriate?
     """
-    def __init__(self, text: str, element_sep: str = "", segment_sep: str = "") -> None:
+    logger = logging.getLogger("x12.base.Source")
+
+    def __init__(self, text: str, element_sep: str = "", array_sep: str = "", segment_sep: str = "") -> None:
         self.text = text
         self.element_sep = element_sep  # Often "|", might be "*".
+        self.array_sep = array_sep  # Often ":". Sometimes "^".
         self.segment_sep = segment_sep  # Often "~".
         self.pos: int = 0
 
@@ -84,18 +92,49 @@ class Source:
 
         Note the initial ISA segment is fixed length, not compressed. Separators aren't defined yet.
         The initial ISA segment's text is returned as a single string for parsing by the segment.
+
+        Most elements are atomic with two notable exceptions:
+
+        -   There appear to be array elements that leverage
+            the ISA16 Component Separator character, called the
+            ``array_sep`` here.
+
+        -   Composites are punctuated by the ISA16 Component Separator character.
+
+        We choose to parse these non-atomic elements here by looking at the values
+        and splitting any that have the separator character.
+
+        Conceptually:
+
+            >>> source = "field|comp:osite|field~"
+            >>> segments = source.split("~")
+            >>> fields = segments[0].split("|")
+            >>> fields = [v.split(":") if ":" in v else v for v in fields]
+            >>> fields
+            ['field', ['comp', 'osite'], 'field']
+
+        ..  todo:: Optimize the field and composite splitting to avoid creating multiple lists.
         """
         if not self.segment_sep:
-            raise RuntimeError("no element or segment separators set")
+            raise RuntimeError("no element or segment separators set")  # pragma: no cover
         # Consume whitespace.
         while self.pos != len(self.text) and self.text[self.pos].isspace():
             self.pos += 1
+        # TODO: re.search() might be faster at finding the next segment separator
         start = self.pos
         while self.pos != len(self.text) and self.text[self.pos] != self.segment_sep:
             self.pos += 1
+        # assert self.text[self.pos] == self.segment_sep
         if self.pos != len(self.text):
             self.pos += 1
-        return self.text[start:self.pos-1].rstrip().split(self.element_sep)
+        elements = self.text[start:self.pos-1].rstrip().split(self.element_sep)
+        # ISA segment? Do NOT subdivide ISA16 field's value -- it would vanish into ``["", ""]``.
+        if elements[0] != "ISA":
+            elements = [
+                val.split(self.array_sep) if self.array_sep in val else val
+                for val in elements
+            ]
+        return elements
 
     def peek(self, size: int = 106) -> str:
         """
@@ -105,14 +144,14 @@ class Source:
         # Consume whitespace.
         while self.pos != len(self.text) and self.text[self.pos].isspace():
             self.pos += 1
-        # Handle the weird case of segment separator preceeded by whitespace.
+        # Handle the weird case of segment separator **preceeded** by whitespace.
         end = self.pos + size
         segment = self.text[self.pos: end].rstrip()
         while (
                 len(segment) != size and
                 end != len(self.text)
         ):
-            logger.debug("Source: Whitespace before segment separator")
+            self.logger.debug("Whitespace before segment separator")
             if not self.text[end].isspace():
                 segment += self.text[end]
             end += 1
@@ -126,6 +165,7 @@ class Source:
         if not self.element_sep:
             # Assume 3-char prefix until we have a separator
             return self.text[self.pos: self.pos+3]
+        # TODO: re.search() might be faster at finding the next element separator
         start = end = self.pos
         while end != len(self.text) and self.text[end] != self.element_sep:
             end += 1
@@ -145,13 +185,17 @@ class X12DataType:
     def to_py(self, element: "Element") -> Any:
         return element.source
 
-    def to_str(self, element: "Element") -> str:
+    def to_str(self, value: Any) -> str:
         """Apply right fill char to get to min_len, if provided."""
         if self.min_len:
-            return f"{element.value:{self.fill}<{self.min_len}s}"
+            return f"{value:{self.fill}<{self.min_len}s}"
         else:
-            return f"{element.value}"
+            return f"{value}"
 
+
+## TODO: Replace these with annotations.
+## TODO: Refactor to_py(Element, type hint with annotation)
+## TODO: Refactor to_str(object, type hint with annotation)
 
 class ANType(X12DataType):
     pass
@@ -165,18 +209,18 @@ class DTType(X12DataType):
     def to_py(self, element: "Element") -> Any:
         return datetime.datetime.strptime(element.source, "%Y%m%d").date()
 
-    def to_str(self, element: "Element") -> str:
-        return element.value.strftime("%Y%m%d")
+    def to_str(self, value: Any) -> str:
+        return value.strftime("%Y%m%d")
 
 
 class IDType(X12DataType):
     fill = "0"
-    def to_str(self, element: "Element") -> str:
+    def to_str(self, value: Any) -> str:
         """Apply left fill char to get to min_len, if provided."""
         if self.min_len:
-            return f"{str(element.value):{self.fill}>{self.min_len}s}"
+            return f"{str(value):{self.fill}>{self.min_len}s}"
         else:
-            return f"{element.value}"
+            return f"{value}"
 
 
 class RType(X12DataType):
@@ -184,34 +228,34 @@ class RType(X12DataType):
     def to_py(self, element: "Element") -> Any:
         return float(element.source)
 
-    def to_str(self, element: "Element") -> str:
+    def to_str(self, value: Any) -> str:
         """Apply left fill char to get to min_len, if provided."""
         if self.min_len:
-            return f"{element.value:{self.fill}>{self.min_len}f}"
+            return f"{value:{self.fill}>{self.min_len}f}"
         else:
-            return f"{element.value}"
+            return f"{value}"
 
 
 class TMType(X12DataType):
     def to_py(self, element: "Element") -> Any:
         return datetime.datetime.strptime(element.source, "%H%M").time()
 
-    def to_str(self, element: "Element") -> str:
-        return element.value.strftime("%H%M")
+    def to_str(self, value: Any) -> str:
+        return value.strftime("%H%M")
 
 
 class NType(X12DataType):
     fill = "0"
     def to_py(self, element: "Element") -> Any:
-        return Decimal(element.source)
+        return Decimal(element.source).scaleb(-self.scale)
 
-    def to_str(self, element: "Element") -> str:
+    def to_str(self, value: Any) -> str:
         """Apply left fill char to get to min_len, if provided."""
+        base_text = str(value).replace(".", "")
         if self.min_len:
-            base_text = str(element.value).replace(".", "")
             return f"{base_text:{self.fill}>{self.min_len}s}"
         else:
-            return f"{element.value}".strip()
+            return base_text
 
 
 TYPE_CLASS_MAP = {
@@ -236,7 +280,21 @@ TYPE_CLASS_MAP = {
 
 
 class SchemaType:
-    """An abstraction for the Schema embedded in a class."""
+    """
+    An abstraction for the Schema embedded in a class.
+
+    TODO: Replace this with pure annotations.
+
+    ::
+
+        element: Annotation[int | str | float | decimal, details...]
+
+    The datatype values become the details. ``MinLen()``, ``MaxLen()``, ``Format()``, ``Scale()``, etc.
+
+    The codes become a detail with ``Literal[...]``
+
+    The segment name is tricky. This becomes a ``_segment_name: Literal["NAME"]`` that **must be first**.
+    """
     json: dict[str, Any]
     datatype: dict[str, Any] | None
     codes: list[str] | None
@@ -265,6 +323,8 @@ class Element:
 
     This has a value attribute, schema attribute, and a datatype.
     """
+    logger = logging.getLogger("x12.base.Element")
+
     def __init__(self, source: str | None = None) -> None:
         self.source = source
         assert_type(self.__class__.Schema, SchemaType)
@@ -275,12 +335,12 @@ class Element:
         self.type_helper = type_factory(self.__class__.Schema)
 
     @classmethod
-    def fields(cls: type("Element")) -> int:
-        return 1
+    def schema(cls: type("Element")) -> dict[str, Any]:
+        return cls.Schema.json | cls.Schema.datatype
 
     @classmethod
     def build(cls: type("Element"), source_value: str) -> "Element":
-        logger.debug("Element.build %s with %r", cls.__name__, source_value)
+        cls.logger.debug("build %s with %r", cls.__name__, source_value)
         return cls(source_value)
 
     @property
@@ -291,56 +351,71 @@ class Element:
     @value.setter
     def value(self, value: Any) -> None:
         """Validate this value before applying the change."""
-        # TODO: Validate self.type_helper.to_str(value).
+        # TODO: Validate with self.type_helper...
         self.source = self.type_helper.to_str(value)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.source!r})"
 
-    def json(self) -> dict[str, Any]:
+    def asdict(self) -> dict[str, Any] | str:
         return self.source
 
 class Composite:
     """
-    A composite of atomic elements.
+    A composite of values separated the "array_sep".
 
-    These are not visible in the exchange format.
-    These are flattened out into a sequence of element values.
+    Souce may have ``value|comp:osite|value``
+    where the composite will be parsed into ``["comp", "osite"]``
     """
+    logger = logging.getLogger("x12.base.Composite")
+
     def __init__(self, **arg_dict) -> None:
         for k, v in arg_dict.items():
             setattr(self, k, v)
 
     @classmethod
-    def n_fields(cls: type("Element")) -> int:
+    def schema(cls: type("Composite")) -> dict[str, Any]:
         fields = get_type_hints(cls)
-        return len(fields)
+        return cls.Schema.json | {
+            "properties": {
+                name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
+                for name, field_type in fields.items()
+            }
+        }
 
     @classmethod
-    def attr_build(cls, field_type: type, source_values: list[str]):
-        """May pop source_values."""
+    def attr_build(cls, field_type: type, source_value: str) -> "Element":
+        """Populate Element or Element | None field value"""
         match field_type:
             case UnionType():
                 alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
                 if len(alternatives) != 1:
-                    raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")
-                return alternatives[0].build(source_values.pop(0))
+                    raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
+                return alternatives[0].build(source_value)
             case _ if issubclass(field_type, Element):
-                return field_type.build(source_values.pop(0))
-            case _:
-                raise TypeError(f"unexpected type {field_type} {type(field_type)}")
+                return field_type.build(source_value)
+            case _:  # pragma: no cover
+                raise TypeError(f"unexpected type {field_type} {field_type.mro()}")
 
     @classmethod
-    def build(cls: type("Composite"), source_values: list[str]) -> "Composite":
+    def build(cls: type("Composite"), source_value: list[str]) -> "Composite":
+        if not isinstance(source_value, list):
+            source_value = [source_value]
         fields = get_type_hints(cls)
-        logger.debug("Composite.build %s with %s", cls.__name__, fields)
-        if len(fields) != len(source_values):
+        cls.logger.debug("build %s with %s", cls.__name__, fields)
+        if len(fields) < len(source_value):
+            # Too many values for the fields of this composite.
             raise ValueError(
-                f"wrong number of values {cls.__name__} needs {len(fields)} provided {len(source_values)}"
-            )
+                f"wrong number of values {cls.__name__} needs {len(fields)} provided {len(source_value)}"
+            )  # pragma: no cover
+        elif len(fields) > len(source_value):
+            source_value.extend([None] * (len(fields) - len(source_value)))
+        else:
+            # len(fields) == len(source_value)
+            pass
         arg_dict = {}
         for name, field_type in fields.items():
-            arg_dict[name] = cls.attr_build(field_type, source_values)
+            arg_dict[name] = cls.attr_build(field_type, source_value.pop(0))
         return cls(**arg_dict)
 
     @property
@@ -353,31 +428,48 @@ class Composite:
         text = ", ".join(f"{name}={getattr(self, name)!r}" for name in fields)
         return f"{self.__class__.__name__}({text})"
 
-    def json(self) -> dict[str, Any]:
+    def asdict(self) -> dict[str, Any] | str:
+        self.logger.debug("asdict(%r)", self)
         fields = get_type_hints(self.__class__)
-        return {"__kind__": "composite", "__name__": self.__class__.__name__} | {
-            name: getattr(self, name)
-            for name in fields
-            if getattr(self, name) is not None
+        name_value = ((name, getattr(self, name)) for name in fields)
+        non_none_name_value = ((name, value) for name, value in name_value if value is not None)
+        return {"_kind": "Composite", "_name": self.__class__.__name__} | {
+            name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
+            for name, value in non_none_name_value
         }
+
 
 class Segment:
     """
-    A Segment is a collection of ``Elements | Composite]``.
+    A Segment is a collection of ``Elements | Composite``.
 
-    Composites are flattened into a sequence of values.
-    This means the exchange format parser transforms
-    the flat sequence of element values into
-    a structure that includes composites.
+    Composites have array_sep separators.
+    The lexical scanner turns these into sub-lists of the element value list.
+    So ``element1|comp:osite|element3`` is three element
+    values: ``["element1", ["comp", "osite"], "element3"]``.
 
     The ISA Segment is special. It's generally fixed-length, and it defines the element and segment separators
     used everywhere else.
 
-    If parsing ISA, we handle this as a distinct special case.
+    When parsing ISA, we handle this as a distinct special case.
+
+    ..`todo:: IndexError: pop from empty list often means wrong separators.
     """
+    logger = logging.getLogger("x12.base.Segment")
+
     def __init__(self, **arg_dict) -> None:
         for k, v in arg_dict.items():
             setattr(self, k, v)
+
+    @classmethod
+    def schema(cls: type("Segment")) -> dict[str, Any]:
+        fields = get_type_hints(cls)
+        return cls.Schema.json | {
+            "properties": {
+                name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
+                for name, field_type in fields.items()
+            }
+        }
 
     @classmethod
     def attr_build(cls, field_type: type, source_values: list[str]):
@@ -385,41 +477,42 @@ class Segment:
         Walks type structure to create Elements and Composites.
 
         May pop source_values.
+
+        ..  todo:: Implement array -- this is a feature of an 834 message (only)
+
+            Get the PyX12 834 example with the ":"-separated value of 2100A or 2100B DMG05.
         """
-        logger.debug("Segment.attr_build %s from %r", field_type, source_values)
+        cls.logger.debug("attr_build %s from %r", field_type, source_values)
         match field_type:
             case GenericAlias():  # list[Something]
+                assert get_origin(field_type) is list
+                # COMPOSITE-LIKE PROCESSING for elements that are list[Element]
                 repeating_type = get_args(field_type)[0]
-                logger.debug("  parse list[%s]", repeating_type.__name__)
-                values: list[Segment] = []
-                next_value = cls.attr_build(repeating_type, source_values)  # repeating_type.parse(source_values)
-                values.append(next_value)
-                while source_values:
-                    next_value = cls.attr_build(repeating_type, source_values)  # repeating_type.parse(source_values)
-                    values.append(next_value)
+                cls.logger.debug("  parse array list[%s]", repeating_type.__name__)
+                source_array = source_values.pop(0)
+                # values = [repeating_type.attr_build(repeating_type, item) for item in source_array]
+                values = [repeating_type.build(item) for item in source_array]
                 return values
             case UnionType():  # list[Something] | None OR Something | None
                 alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
                 if len(alternatives) != 1:
-                    raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")
+                    raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
                 if source_values:
                     return cls.attr_build(alternatives[0], source_values)
                 return cls.attr_build(alternatives[0], [None])
             case _ if issubclass(field_type, Element):
                 # Consume a single value from the elements of this segment.
-                if source_values:
-                    return field_type.build(source_values.pop(0))
-                else:
-                    return field_type.build(None)
+                return field_type.build(source_values.pop(0))
             case _ if issubclass(field_type, Composite):
-                # Consume multiple values from the elements of this segment.
-                composite_values = source_values[:field_type.n_fields()]
-                if len(composite_values) < field_type.n_fields():
-                    composite_values.extend([None]*(field_type.n_fields() - len(composite_values)))
-                del source_values[:field_type.n_fields()]
-                return field_type.build(composite_values)
-            case _:
-                raise TypeError(f"unexpected type {field_type} {type(field_type)}")
+                # Next value in this segment *should* be a list.
+                # If it didn't have the component separator, we make single-element list.
+                if source_values:
+                    composite_value = source_values.pop(0)
+                else:
+                    composite_value = []
+                return field_type.build(composite_value)
+            case _:  # pragma: no cover
+                raise TypeError(f"unexpected type {field_type} {field_type.mro()}")
 
     @classmethod
     def parse(cls: type("Segment"), source: Source) -> Union["Segment", None]:
@@ -429,7 +522,7 @@ class Segment:
         Handles ISA segments specially to extract element and segment separators.
         """
         fields = get_type_hints(cls)
-        logger.debug("Segment.parse %s with %s", cls.__name__, fields)
+        cls.logger.debug("parse %s with %s", cls.__name__, fields)
         assert_type(cls.Schema, SchemaType)
         segment_name = cls.Schema.segment_name
         if source.next_segment() != segment_name:
@@ -439,24 +532,25 @@ class Segment:
         # Used in the general case when ISA header not compressed.
         if segment_name == "ISA" and not source.element_sep:
             # Sum of field size + separator for each field.
-            # + 3 for header "ISA".
-            size = sum(f.Schema.max_len + 1 for f in fields.values()) + 2
-            logger.debug("ISA: source.element_sep=%r, source.segment_sep=%r", source.element_sep, source.segment_sep)
-            logger.debug("ISA: size=%s", size)  # Should be 107??
+            # + 3 for header "ISA"
+            # + 1 for final segment separator
+            size = sum(f.Schema.max_len + 1 for f in fields.values()) + 4
+            cls.logger.debug("ISA: source.element_sep=%r, source.segment_sep=%r", source.element_sep, source.segment_sep)
+            cls.logger.debug("ISA: size=%s", size)  # Should be 106 to include segment separator
             raw_text = source.peek(size)
-            logger.debug("ISA: text=%r, separators text[-3:]=%r", raw_text, raw_text[-3:])
-            # ISA16 (positions 103, 104 and 105) has three separator characters: element, something?, and segment.
+            cls.logger.debug("ISA: text=%r, separators text[-3:]=%r", raw_text, raw_text[-3:])
+            # ISA16 has the composite separator.
+            # It's preceeded by an element separator and followed by the segment separator.
             source.element_sep = raw_text[-3]
+            source.array_sep = raw_text[-2]
             source.segment_sep = raw_text[-1]
 
         flat_values = source.elements()[1:]  # Drops the segment name from the values.
-        logger.debug("SEGMENT %s: fields %s values %r", cls.__name__, fields, flat_values)
+        cls.logger.debug("SEGMENT %s: fields %s values %r", cls.__name__, fields, flat_values)
 
         arg_dict: dict[str, Element | Composite] = {}
         for name, field_type in fields.items():
             arg_dict[name] = cls.attr_build(field_type, flat_values)
-
-        # TODO: ISA16 Element has three characters: element_sep, ":", segment_sep
 
         obj = cls(**arg_dict)
         return obj
@@ -477,8 +571,8 @@ class Segment:
                 case _ if isinstance(field, Element):
                     values.append(field.source)
                 case _ if isinstance(field, Composite):
-                    values.extend(field.source)
-                case _:
+                    values.append(field.source)
+                case _:  # pragma: no cover
                     raise TypeError(f"unexpected {name}: {fields[name]} {field=}")
         return values
 
@@ -487,12 +581,14 @@ class Segment:
         text = ", ".join(f"{name}={getattr(self, name)}" for name in fields)
         return f"{self.__class__.__name__}({text})"
 
-    def json(self) -> dict[str, Any]:
+    def asdict(self) -> dict[str, Any] | str:
+        self.logger.debug("asdict(%r)", self)
         fields = get_type_hints(self.__class__)
-        return {"__kind__": "segment", "__name__": self.__class__.__name__} | {
-            name: getattr(self, name)
-            for name in fields
-            if getattr(self, name) is not None
+        name_value = ((name, getattr(self, name)) for name in fields)
+        non_none_name_value = ((name, value) for name, value in name_value if value is not None)
+        return {"_kind": "Segment", "_name": self.__class__.__name__} | {
+            name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
+            for name, value in non_none_name_value
         }
 
 class Loop:
@@ -504,9 +600,21 @@ class Loop:
     We need to examine the loop's structure of segments
     and sub-loops to match the segment prefix.
     """
+    logger = logging.getLogger("x12.base.Loop")
+
     def __init__(self, **arg_dict) -> None:
         for k, v in arg_dict.items():
             setattr(self, k, v)
+
+    @classmethod
+    def schema(cls: type("Loop")) -> dict[str, Any]:
+        fields = get_type_hints(cls)
+        return cls.Schema.json | {
+            "properties": {
+                name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
+                for name, field_type in fields.items()
+            }
+        }
 
     @classmethod
     def attr_build(cls, field_type: type, source: Source) -> Segment | list[Segment] | None:
@@ -515,11 +623,12 @@ class Loop:
 
         May consume source segments.
         """
-        logger.debug("Loop.attr_build %s", field_type)
+        cls.logger.debug("attr_build %s", field_type)
         match field_type:
             case GenericAlias():  # list[Something]
+                assert get_origin(field_type) is list
                 repeating_type = get_args(field_type)[0]
-                logger.debug("  parse list[%s]", repeating_type.__name__)
+                cls.logger.debug("  parse list[%s]", repeating_type.__name__)
                 values: list[Segment] = []
                 next_value = repeating_type.parse(source)
                 while next_value:
@@ -529,7 +638,7 @@ class Loop:
             case UnionType():  # Something | None OR list[Something] | None
                 alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
                 if len(alternatives) != 1:
-                    raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")
+                    raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
                 alt_type = alternatives[0]
                 return cls.attr_build(alt_type, source)
             case _ if issubclass(field_type, Segment):
@@ -539,20 +648,20 @@ class Loop:
                 if field_type.Schema.segment_name != seg_name:
                     # TODO: segment with usage == "R"? Error
                     #  Else move on to next potential segment of Loop?
-                    logger.debug("Loop expected field segment_name %r != next segment %r", field_type.Schema.segment_name, seg_name)
+                    cls.logger.debug("expected field segment_name %r != next segment %r", field_type.Schema.segment_name, seg_name)
                     return None
                 return field_type.parse(source)
-            case _ if issubclass(field_type, Loop):
+            case _ if issubclass(field_type, Loop):  # pragma: no cover
                 raise RuntimeError("unexpected nested Loop: {field_type} inside {cls.__name__}")
                 # Alternative is to parse it...
                 # return field_type.parse(source)
-            case _:
+            case _:  # pragma: no cover
                 raise TypeError(f"unexpected {field_type} {type(field_type)}")
 
     @classmethod
     def parse(cls: type("Loop"), source: Source) -> Union["Loop", None]:
         fields = get_type_hints(cls)
-        logger.debug("Loop.parse %s with %s", cls.__name__, fields)
+        cls.logger.debug("parse %s with %s", cls.__name__, fields)
         arg_dict = {}
         for name, field_type in fields.items():
             loop_value = cls.attr_build(field_type, source)
@@ -571,12 +680,12 @@ class Loop:
         This **also** does an ``attr_build()`` style type walk.
         """
         fields = get_type_hints(self.__class__)
-        logger.debug("Loop.segment_iter() fields=%r", fields)
+        self.logger.debug("segment_iter() fields=%r", fields)
         for name in fields:
             if not hasattr(self, name):
                 continue
             field = getattr(self, name)
-            logger.debug("Loop.segment_iter() name=%s field=%s", name, field)
+            self.logger.debug("segment_iter() name=%s field=%s", name, field)
             match field:
                 case list():  # list[Something]
                     for instance in field:
@@ -585,12 +694,13 @@ class Loop:
                         elif isinstance(instance, Segment):
                             yield [instance.Schema.segment_name] + instance.elements()
                         else:
-                            raise TypeError(f"unexpected {name}: {fields[name]} instance {instance=}")
+                            raise TypeError(f"unexpected {name}: {fields[name]} instance {instance=}")  # pragma: no cover
                 case _ if isinstance(field, Loop):
-                    yield from field.segment_iter()
+                    # This doesn't seem to arise in practice.
+                    yield from field.segment_iter()  # pragma: no cover
                 case _ if isinstance(field, Segment):
                     yield [field.Schema.segment_name] + field.elements()
-                case _:
+                case _:  # pragma: no cover
                     raise TypeError(f"unexpected {name}: {fields[name]} {field=}")
 
     def __repr__(self) -> str:
@@ -598,12 +708,14 @@ class Loop:
         text = ", ".join(f"{name}={getattr(self, name)}" for name in fields if hasattr(self, name))
         return f"{self.__class__.__name__}({text})"
 
-    def json(self) -> dict[str, Any]:
+    def asdict(self) -> dict[str, Any] | str:
+        self.logger.debug("asdict(%r)", self)
         fields = get_type_hints(self.__class__)
-        return {"__kind__": "loop", "__name__": self.__class__.__name__} | {
-            name: getattr(self, name)
-            for name in fields
-            if getattr(self, name) is not None
+        name_value = ((name, getattr(self, name)) for name in fields if hasattr(self, name))
+        non_none_name_value = ((name, value) for name, value in name_value if value is not None)
+        return {"_kind": "Loop", "_name": self.__class__.__name__} | {
+            name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
+            for name, value in non_none_name_value
         }
 
 class Message:
@@ -612,18 +724,31 @@ class Message:
 
     Loops can (and often do) repeat.
     """
+    logger = logging.getLogger("x12.base.Message")
+
     def __init__(self, **arg_dict) -> None:
         for k, v in arg_dict.items():
             setattr(self, k, v)
 
     @classmethod
+    def schema(cls: type("Message")) -> dict[str, Any]:
+        fields = get_type_hints(cls)
+        return cls.Schema.json | {
+            "properties": {
+                name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
+                for name, field_type in fields.items()
+            }
+        }
+
+    @classmethod
     def parse(cls: type("Message"), source: Source) -> "Message":
         fields = get_type_hints(cls)
-        logger.debug("Message.parse %s with %s", cls.__name__, fields)
+        cls.logger.debug("parse %s with %s", cls.__name__, fields)
         arg_dict = {}
         for name, loop_type in fields.items():
             match loop_type:
                 case GenericAlias():
+                    assert get_origin(loop_type) is list
                     repeating_type = get_args(loop_type)[0]
                     values = []
                     next_value = repeating_type.parse(source)
@@ -632,8 +757,9 @@ class Message:
                         next_value = repeating_type.parse(source)
                     arg_dict[name] = values
                 case _ if issubclass(loop_type, Loop):
+                    # Stand-alone Loop without a list[Loop] framing...
                     arg_dict[name] = loop_type.parse(source)
-                case _:
+                case _:  # pragma: no cover
                     raise TypeError(f"unexpected {name}: {loop_type} {type(loop_type)}")
         return cls(**arg_dict)
 
@@ -645,7 +771,8 @@ class Message:
         fields = get_type_hints(self.__class__)
         for name in fields:
             if not hasattr(self, name):
-                continue
+                # Missing entirely? Weird. But. Tolerable.
+                continue  # pragma: no cover
             loop = getattr(self, name)
             match loop:
                 case list():
@@ -653,7 +780,7 @@ class Message:
                         yield from instance.segment_iter()
                 case _ if isinstance(loop, Loop):
                     yield from loop.segment_iter()
-                case _:
+                case _:  # pragma: no cover
                     raise TypeError(f"unexpected {name}: {fields[name]} {loop=}")
 
     def __repr__(self) -> str:
@@ -665,6 +792,19 @@ class Message:
         fields = get_type_hints(self.__class__)
         return any(getattr(self, name) for name in fields)
 
+    def asdict(self) -> dict[str, Any] | str:
+        self.logger.debug("asdict(%r)", self)
+        fields = get_type_hints(self.__class__)
+        name_value = ((name, getattr(self, name)) for name in fields)
+        non_none_name_value = ((name, value) for name, value in name_value if value is not None)
+        return {"_kind": "Message", "_name": self.__class__.__name__} | {
+            name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
+            for name, value in non_none_name_value
+        }
+
+    def json(self, indent: int | None = None) -> str:
+        return json.dumps(self.asdict(), indent=indent)
+
 def demo() -> None:
     """
     A minimal demonstration of some features of the base classes.
@@ -672,8 +812,6 @@ def demo() -> None:
     >>> from x12.base import demo
     >>> demo()
     MSG(isa_loop=[ISA_LOOP(isa=ISA_LOOP_ISA(isa01=ISA_LOOP_ISA01('00'), isa16=ISA_LOOP_ISA16(':')))])
-
-    ..  todo:: ISA16 should be based on ``Source`` state, and have 3 chars: ``"|:~"``.
     """
     class ISA_LOOP_ISA01(Element):
         """Authorization Information Qualifier"""
@@ -687,7 +825,7 @@ def demo() -> None:
         class Schema:
             json = {}
             datatype = {'type': 'string', 'title': 'I16', 'data_type_code': 'ID', 'minLength': 3, 'maxLength': 3}
-            max_len = 3
+            max_len = 1
 
     class ISA_LOOP_ISA(Segment):
         class Schema:
@@ -703,11 +841,23 @@ def demo() -> None:
 
     text = "ISA|00|:~"
     logger.info("Building from %r", text)
-    m = MSG.parse(Source(text, element_sep="|", segment_sep="~"))
-    print(m)
+    parsed_m = MSG.parse(Source(text, element_sep="|", segment_sep="~"))
+    print(parsed_m)
 
+    built_m = MSG(
+        isa_loop=[
+            ISA_LOOP(
+                isa=ISA_LOOP_ISA(
+                    isa01=ISA_LOOP_ISA01('00'),
+                    # etc.
+                    isa16=ISA_LOOP_ISA16(':')
+                )
+            )
+        ]
+    )
+    print(built_m)
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)
     demo()
     logging.shutdown()

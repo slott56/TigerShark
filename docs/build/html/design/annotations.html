@@ -53,13 +53,13 @@ to further facilitate analysis and processing.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>The JSON Schema is a work in progress</p>
-<p>The JSON Schema seems reasonable, but has not really been implemented fully.</p>
+<p>The JSON Schema output seems reasonable, but has not really been implemented fully.</p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>The IG compliance is indirect</p>
-<p>These definitions are based on the PyX12 project and may have introduced
-additional bugs or complications.</p>
+<p>These definitions are based on the PyX12 project.
+TigerShark may have introduced bugs or complications.</p>
 </div>
 <p>The JSON Schema <strong>should</strong> be more tightly integrated into the Python definitions.
 An explicit <code class="docutils literal notranslate"><span class="pre">Schema</span></code> internal class should be removed.</p>
@@ -109,6 +109,10 @@ aren’t <strong>easily</strong> incorporated into a class definition.</p>
 <dd class="field-odd"><p>This isn’t obvious from Python, but can be deduced from the <code class="docutils literal notranslate"><span class="pre">|</span> <span class="pre">None</span></code> annotations used for the attributes.</p>
 </dd>
 </dl>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Reduce reliance on a <code class="docutils literal notranslate"><span class="pre">Schema</span></code> class for <code class="docutils literal notranslate"><span class="pre">Message</span></code> subclasses. <code class="docutils literal notranslate"><span class="pre">Schema</span></code> should be a property.</p>
+</div>
 </div>
 </section>
 <section id="loops">
@@ -161,6 +165,10 @@ For example, the <code class="docutils literal notranslate"><span class="pre">'u
 <p>The JSON Schema values should be deduced from pure Python.</p>
 <p>Note that the description includes values taken from the XML schema (and the IG) that don’t seem to be useful,
 but are sill preserved here.</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>Reduce reliance on a <code class="docutils literal notranslate"><span class="pre">Schema</span></code> class for <code class="docutils literal notranslate"><span class="pre">Message</span></code> subclasses. <code class="docutils literal notranslate"><span class="pre">Schema</span></code> should be a property.</p>
+</div>
 </div>
 </section>
 <section id="segments">
@@ -205,6 +213,10 @@ However, the name is an immutable feature of the segment, not a mutable attribut
 <p>Note that the description includes values taken from the XML schema (and the IG) that don’t seem to be useful,
 but are sill preserved here.</p>
 <p>The position attribute seems to be used to sort the definitions into a proper ordering within a loop definition.</p>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Reduce reliance on a <code class="docutils literal notranslate"><span class="pre">Schema</span></code> class for <code class="docutils literal notranslate"><span class="pre">Message</span></code> subclasses. <code class="docutils literal notranslate"><span class="pre">Schema</span></code> should be a property.</p>
+</div>
 </div>
 </section>
 <section id="elements">
@@ -322,7 +334,8 @@ The composite name seems to haVe been generated as part of the XML, and may not 
 <h3>Navigation</h3>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../operation.html">Using TigerShark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Context: Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="classmodel.html">Message Schema as Class</a></li>
@@ -333,6 +346,7 @@ The composite name seems to haVe been generated as part of the XML, and may not 
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
 </ul>
 
 <div class="relations">

@@ -26,12 +26,12 @@ to further facilitate analysis and processing.
 
 ..  important:: The JSON Schema is a work in progress
 
-    The JSON Schema seems reasonable, but has not really been implemented fully.
+    The JSON Schema output seems reasonable, but has not really been implemented fully.
 
 ..  important:: The IG compliance is indirect
 
-    These definitions are based on the PyX12 project and may have introduced
-    additional bugs or complications.
+    These definitions are based on the PyX12 project.
+    TigerShark may have introduced bugs or complications.
 
 The JSON Schema **should** be more tightly integrated into the Python definitions.
 An explicit ``Schema`` internal class should be removed.

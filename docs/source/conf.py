@@ -63,3 +63,8 @@ html_static_path = ['_static']
 
 # plantuml = 'java -jar $CONDA_PREFIX/share/plantuml-1.2023.4.jar'
 plantuml_syntax_error_image = True
+
+
+# -- Options for TODO -------
+
+todo_include_todos = True

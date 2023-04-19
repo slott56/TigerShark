@@ -61,14 +61,13 @@ def exchange_to_segments(source: Path, message_class: type[Message], element_sep
     else:
         logger.error("No message parsed from %s as %r", source, message_class)
 
-def exchange_to_json(source: Path, message_class: type[Message]) -> None:
+def exchange_to_json(source: Path, message_class: type[Message], element_sep: str = "", segment_sep: str = "") -> None:
     """
     TODO: Output is "json" format.
     """
-    document = Source(source.read_text())
+    document = Source(source.read_text(), element_sep=element_sep, segment_sep=segment_sep)
     msg = message_class.parse(document)
-    # TODO: JSON document output
-    print(msg)
+    print(msg.json())
 
 def main(argv: list[str] = sys.argv[1:]) -> None:
     options = get_options(argv)
@@ -91,6 +90,7 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     message_options = []
     examples = Path.cwd().parent / "tests"
+
     # message_path = examples / "834-example.txt"
     # message_class = "msg_834_5010_X220_A1.MSG834A1"
 
@@ -112,9 +112,13 @@ if __name__ == "__main__":
     # message_options = ["-s", "*:~", "-f"]
 
     # Documentation example.
-    message_path = examples / "271-example.txt"
-    message_class = "msg_271_4010_X092_A1.MSG271"
+    # message_path = examples / "271-example.txt"
+    # message_class = "msg_271_4010_X092_A1.MSG271"
+
+    # Separators Issues.
+    message_path = examples / "TEST 278_13 TXNS.txt"
+    message_class = "msg_278_4010_X094_A1.MSG278"
 
     # Command-line.
-    main(["-d", "-m", message_class, "-f", "python"] + message_options + [str(message_path)])
+    main(["-d", "-m", message_class, "-f", "json"] + message_options + [str(message_path)])
     logging.shutdown()

@@ -10,10 +10,12 @@ Tiger Shark X12 Tools
     :maxdepth: 2
 
     overview
+    operation
     usecase
     architecture
     design/index
     implementation/index
+    todo
     
 Indices and tables
 ==================

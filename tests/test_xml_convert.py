@@ -1,5 +1,7 @@
 """
 Test tools/xml
+
+..  todo:: See below in test_xml_convert -- use a visitor to examine the AST.
 """
 import ast
 from io import StringIO

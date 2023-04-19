@@ -118,7 +118,7 @@ The application creates the message object.
     ...             isa=ISA_LOOP_ISA(
     ...                 isa01=ISA_LOOP_ISA01('00'),
     ...                 # etc. for this segment ...
-    ...                 isa16=ISA_LOOP_ISA16('|:~'),
+    ...                 isa16=ISA_LOOP_ISA16(':'),
     ...             ),
     ...             gs_loop=[
     ...             # etc. for this loop of segments...
