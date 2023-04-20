@@ -370,7 +370,7 @@ def mock_message() -> xml_extract.Message:
 
 
 def test_emit_python(mock_message: xml_extract.Message, capsys: CaptureFixture) -> None:
-    data_elements = {"I01": Mock(name="Mock DataElement", min_len=2, max_len=2)}
+    data_elements = {"I01": Mock(name="Mock DataElement", min_len="2", max_len="2", int_min_len=2, int_max_len=2)}
     codes = {}
     ep = xml_extract.EmitPython().data_elements(data_elements).codesets(codes)
     ep.visit(mock_message)

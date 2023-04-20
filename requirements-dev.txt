@@ -3,3 +3,4 @@ sphinxcontrib-plantuml==0.25
 pytest==7.1.2
 pytest-cov==4.0.0
 tox==4.4.12
+mypy==1.2.0

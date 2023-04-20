@@ -76,9 +76,13 @@ Element will consume a single element value.</p>
 <dd><p>A composite of values separated the “array_sep”.</p>
 <p>Souce may have <code class="docutils literal notranslate"><span class="pre">value|comp:osite|value</span></code>
 where the composite will be parsed into <code class="docutils literal notranslate"><span class="pre">[&quot;comp&quot;,</span> <span class="pre">&quot;osite&quot;]</span></code></p>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Develop a better way to exclude “Schema” from type hints. OR. Do away with Schema.</p>
+</div>
 <dl class="py method">
 <dt class="sig sig-object py" id="x12.base.Composite.attr_build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attr_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#x12.base.Element" title="x12.base.Element"><span class="pre">Element</span></a></span></span><a class="headerlink" href="#x12.base.Composite.attr_build" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attr_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#x12.base.Element" title="x12.base.Element"><span class="pre">Element</span></a></span></span><a class="headerlink" href="#x12.base.Composite.attr_build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Populate Element or Element | None field value</p>
 </dd></dl>
 
@@ -113,8 +117,8 @@ and sub-loops to match the segment prefix.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="x12.base.Loop.segment_iter">
-<span class="sig-name descname"><span class="pre">segment_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#x12.base.Segment" title="x12.base.Segment"><span class="pre">Segment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Loop.segment_iter" title="Permalink to this definition">¶</a></dt>
-<dd><p>A flat sequence of segments in this Loop and all sub Loops.
+<span class="sig-name descname"><span class="pre">segment_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Loop.segment_iter" title="Permalink to this definition">¶</a></dt>
+<dd><p>A flat sequence of segment values in this Loop and all sub Loops.
 This is the basis for the exchange format.</p>
 <p>This <strong>also</strong> does an <code class="docutils literal notranslate"><span class="pre">attr_build()</span></code> style type walk.</p>
 </dd></dl>
@@ -128,7 +132,7 @@ This is the basis for the exchange format.</p>
 <p>Loops can (and often do) repeat.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="x12.base.Message.segment_iter">
-<span class="sig-name descname"><span class="pre">segment_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#x12.base.Segment" title="x12.base.Segment"><span class="pre">Segment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Message.segment_iter" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">segment_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">collections.abc.Sequence</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Message.segment_iter" title="Permalink to this definition">¶</a></dt>
 <dd><p>A flat sequence of segments in a Message.
 This is the basis for the exchange format.</p>
 </dd></dl>
@@ -139,7 +143,7 @@ This is the basis for the exchange format.</p>
 <dt class="sig sig-object py" id="x12.base.SchemaType">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">SchemaType</span></span><a class="headerlink" href="#x12.base.SchemaType" title="Permalink to this definition">¶</a></dt>
 <dd><p>An abstraction for the Schema embedded in a class.</p>
-<p>TODO: Replace this with pure annotations.</p>
+<p>TODO: Replace this structure with pure annotations.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">element</span><span class="p">:</span> <span class="n">Annotation</span><span class="p">[</span><span class="nb">int</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">decimal</span><span class="p">,</span> <span class="n">details</span><span class="o">...</span><span class="p">]</span>
 </pre></div>
 </div>
@@ -162,10 +166,10 @@ used everywhere else.</p>
 <p>..`todo:: IndexError: pop from empty list often means wrong separators.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="x12.base.Segment.attr_build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attr_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.Segment.attr_build" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attr_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.Segment.attr_build" title="Permalink to this definition">¶</a></dt>
 <dd><p>Walks type structure to create Elements and Composites.</p>
 <p>May pop source_values.</p>
-<div class="admonition-todo admonition" id="id1">
+<div class="admonition-todo admonition" id="id2">
 <p class="admonition-title">Todo</p>
 <p>Implement array – this is a feature of an 834 message (only)</p>
 <p>Get the PyX12 834 example with the “:”-separated value of 2100A or 2100B DMG05.</p>
@@ -174,7 +178,7 @@ used everywhere else.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="x12.base.Segment.elements">
-<span class="sig-name descname"><span class="pre">elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Segment.elements" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Segment.elements" title="Permalink to this definition">¶</a></dt>
 <dd><p>The segment as a list of Element source values.
 The segment text is the basis for the exchange format: a sequence of Segments.</p>
 </dd></dl>
@@ -207,7 +211,7 @@ separation characters must be provided separately.</p>
 <p>TODO: Consider str | TextIO | Path as <code class="docutils literal notranslate"><span class="pre">text</span></code> parameter type.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="x12.base.Source.elements">
-<span class="sig-name descname"><span class="pre">elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Source.elements" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Source.elements" title="Permalink to this definition">¶</a></dt>
 <dd><p>Unpack a Segment’s into a list of potential Element values.
 This consumes whitespace.
 It consumes the segment up to (and including) the segment_sep character.</p>
@@ -231,7 +235,7 @@ and splitting any that have the separator character.</p>
 <span class="go">[&#39;field&#39;, [&#39;comp&#39;, &#39;osite&#39;], &#39;field&#39;]</span>
 </pre></div>
 </div>
-<div class="admonition-todo admonition" id="id2">
+<div class="admonition-todo admonition" id="id3">
 <p class="admonition-title">Todo</p>
 <p>Optimize the field and composite splitting to avoid creating multiple lists.</p>
 </div>

@@ -101,7 +101,7 @@ from pathlib import Path
 from pprint import pprint, pformat
 import sys
 from textwrap import indent
-from typing import Union, TypeAlias, Any, TextIO, Self
+from typing import Union, TypeAlias, Any, TextIO, Self, cast, Deque
 from xml.etree import ElementTree as XML
 
 
@@ -111,6 +111,7 @@ optional_text = lambda tag, name: (
     sub_tag.text if (sub_tag := tag.find(name)) is not None else ""
 )
 
+JSONSchema: TypeAlias = dict[str, Any] | list[Any] | str
 
 @dataclass
 class Codeset:
@@ -128,7 +129,7 @@ class Codeset:
     def label(self):
         return self.id
 
-    def jsonschema(self) -> dict[str, Any]:
+    def jsonschema(self) -> JSONSchema:
         return self.values
 
 
@@ -179,24 +180,24 @@ def code_reader(source: TextIO) -> Iterator[Codeset]:
     document = XML.parse(source)
     codesets = document.getroot()
     for codeset_tag in codesets.findall('codeset'):
-        id = codeset_tag.find('id').text
+        id = cast(XML.Element, codeset_tag.find('id')).text
         data_ele = optional_text(codeset_tag, 'data_ele')
         source = optional_text(codeset_tag, 'source')
-        version_tag = codeset_tag.find('version')
+        version_tag = cast(XML.Element, codeset_tag.find('version'))
         values = [
             code.text for code in version_tag.findall('code')
         ]
         codeset = Codeset(
-            id=id,
+            id=cast(str, id),
             data_ele=data_ele,
-            source=source,
-            values=values
+            source=cast(str, source),
+            values=cast(list[str], values),
         )
         logger.debug(codeset)
         yield codeset
 
 
-X12_TYPE_SCHEMA = {
+X12_TYPE_SCHEMA: dict[str, JSONSchema] = {
     "AN": {"type": "string"},
     "B": {"type": "string"},  # Binary?
     "DT": {"type": "string", "format": "\d\d\d\d\d\d\d\d"},
@@ -230,8 +231,20 @@ class DataElement:
     max_len: str | None
     name: str
 
-    def jsonschema(self) -> dict[str, Any]:
-        schema: dict[str, Any] = X12_TYPE_SCHEMA[self.data_type]
+    @property
+    def int_min_len(self) -> int | None:
+        if self.min_len is not None:
+            return int(self.min_len)
+        return None
+
+    @property
+    def int_max_len(self) -> int | None:
+        if self.max_len is not None:
+            return int(self.max_len)
+        return None
+
+    def jsonschema(self) -> JSONSchema:
+        schema = cast(dict[str, Any], X12_TYPE_SCHEMA[self.data_type])
         schema |= {
             "title": self.name,
             "data_type_code": self.data_type,
@@ -329,11 +342,11 @@ def map_reader(source: TextIO) -> Iterator[SchemaMap]:
             abbr = map_tag.attrib.get("abbr")
             definition = map_tag.text
             map = SchemaMap(
-                icvn=icvn,
-                vriic=vriic,
-                fic=fic,
-                abbr=abbr,
-                definition=definition
+                icvn=cast(str, icvn),
+                vriic=cast(str, vriic),
+                fic=cast(str, fic),
+                abbr=cast(str, abbr),
+                definition=cast(str, definition),
             )
             logger.info(map)
             yield map
@@ -375,10 +388,10 @@ class Element:
         return pythonify(self.xid, "E").lower()
 
     @property
-    def class_name(self) -> None:
+    def class_name(self) -> str:
         return f"{self.loop}_{pythonify(self.xid, 'E')}"
 
-    def jsonschema(self) -> dict[str, Any]:
+    def jsonschema(self) -> JSONSchema:
         schema: dict[str, Any] = {
             "title": self.name,
             "usage": self.usage,  # Required, Situational, Not-Used
@@ -436,14 +449,14 @@ class Composite:
         return pythonify(self.xid or self.refdes or self.data_ele, "C").lower()
 
     @property
-    def class_name(self) -> None:
+    def class_name(self) -> str:
         return f"{self.loop}_{pythonify(self.xid or self.refdes or self.data_ele, 'C')}"
 
     @property
     def required(self):
         return [elt.attr_name for elt in self.elements if elt.usage == "R"]
 
-    def jsonschema(self) -> dict[str, Any]:
+    def jsonschema(self) -> JSONSchema:
         schema = {
             "title": self.name,
             "usage": self.usage,  # Required, Situational, Not-Used
@@ -489,19 +502,19 @@ class Segment:
         return pythonify(self.xid, "S").lower()
 
     @property
-    def class_name(self) -> None:
+    def class_name(self) -> str:
         return f"{self.loop}_{pythonify(self.xid, 'S')}"
 
     @property
-    def required(self) -> bool:
+    def required(self) -> list[str]:
         return [elt.attr_name for elt in self.children if elt.usage == "R"]
 
     @property
     def repeat(self) -> bool:
-        return self.max_use and self.max_use != "1"
+        return bool(self.max_use) and self.max_use != "1"
 
-    def jsonschema(self) -> dict[str, Any]:
-        schema = {
+    def jsonschema(self) -> JSONSchema:
+        schema: dict[str, Any] = {
             "title": self.name,
             "usage": self.usage,  # Required, Situational, Not-Used
             "description": f"xid={self.xid} name={self.name}",
@@ -545,19 +558,19 @@ class Loop:
     children: list[Union[Segment, "Loop"]]
 
     @property
-    def attr_name(self):
+    def attr_name(self) -> str:
         return pythonify(self.xid, "L").lower()
 
     @property
-    def class_name(self):
+    def class_name(self) -> str:
         return pythonify(self.xid, "L")
 
     @property
-    def required(self):
+    def required(self) -> list[str]:
         return [elt.attr_name for elt in self.children if elt.usage == "R"]
 
-    def jsonschema(self) -> dict[str, Any]:
-        schema = {
+    def jsonschema(self) -> JSONSchema:
+        schema: dict[str, Any] = {
             "title": self.name,
             "usage": self.usage,  # Required, Situational, Not-Used
             "description": f"xid={self.xid} name={self.name} type={self.type}",
@@ -591,15 +604,15 @@ class Message:
     loops: list[Loop]
 
     @property
-    def class_name(self):
+    def class_name(self) -> str:
         return pythonify(self.xid, "MSG")
 
     @property
-    def required(self):
+    def required(self) -> list[str]:
         return [elt.attr_name for elt in self.loops if elt.usage == "R"]
 
-    def jsonschema(self) -> dict[str, Any]:
-        schema = {
+    def jsonschema(self) -> JSONSchema:
+        schema: dict[str, Any] = {
             "title": self.name,
             "description": f"xid={self.xid} name={self.name}",
         }
@@ -706,15 +719,15 @@ def message_reader(source: TextIO) -> Message:
         # data_element = data_elements.get(element_id, None)
         # code_set = codesets.get(element_id, None)
         element = Element(
-            xid=xid_a,
+            xid=cast(str, xid_a),
             data_ele=element_id,
             name=name,
             usage=usage_a or usage,
             seq=seq_a or seq,
             refdes=refdes,
             repeat=repeat,
-            codes=codes,
-            external=external,
+            codes=cast(list[str], codes),
+            external=cast(str, external),
             common_def=element_id,
             loop=loop_context
         )
@@ -738,13 +751,13 @@ def message_reader(source: TextIO) -> Message:
             for element in base_tag.findall("element")
         ]
         composite = Composite(
-            xid=xid_a,
+            xid=cast(str, xid_a),
             data_ele=data_ele_a or data_ele,
             name=name,
             usage=usage_a or usage,
             seq=seq_a or seq,
             refdes=refdes,
-            syntax=syntax,
+            syntax=cast(list[str], syntax),
             repeat=repeat,
             elements=elements,
             loop=loop_context
@@ -764,26 +777,26 @@ def message_reader(source: TextIO) -> Message:
         max_use = optional_text(base_tag, "max_use")
         syntax = [t.text for t in base_tag.findall("syntax")]  # See syntaxType rules
         # Any number of element or composite may follow...
-        children = []
+        children: list[Element | Composite] = []
         for child_tag in base_tag.findall("*"):
             if child_tag.tag == "element":
-                c = element_walker(loop_context, child_tag)
-                children.append(c)
+                ec = element_walker(loop_context, child_tag)
+                children.append(ec)
             elif child_tag.tag == "composite":
-                c = composite_walker(loop_context, child_tag)
-                children.append(c)
+                cc = composite_walker(loop_context, child_tag)
+                children.append(cc)
             elif child_tag.tag in {"name", "end_tag", "usage", "pos", "max_use", "syntax"}:
                 pass  # Skip already processed tags
             else:
                 raise RuntimeError(f"Unexpected {child_tag.tag}")
         segment = Segment(
-            xid=xid_a,
+            xid=cast(str, xid_a),
             name=name,
             end_tag=end_tag,
             usage=usage_a or usage,
             pos=pos_a or pos,
             max_use=max_use_a or max_use,
-            syntax=syntax,
+            syntax=cast(list[str], syntax),
             children=children,
             loop=loop_context
         )
@@ -791,7 +804,7 @@ def message_reader(source: TextIO) -> Message:
         return segment
 
     def loop_walker(base_tag: XML.Element) -> Loop:
-        xid_a = base_tag.attrib.get("xid")
+        xid_a = cast(str, base_tag.attrib.get("xid"))
         pos_a = base_tag.attrib.get("pos")
         usage_a = base_tag.attrib.get("usage")
         repeat_a = base_tag.attrib.get("repeat")
@@ -801,14 +814,14 @@ def message_reader(source: TextIO) -> Message:
         pos = optional_text(base_tag, "pos")
         repeat = optional_text(base_tag, "repeat")
         # Any number of loop OR segment may follow...
-        children = []
+        children: list[Loop | Segment] = []
         for child_tag in base_tag.findall("*"):
             if child_tag.tag == "loop":
-                c = loop_walker(child_tag)
-                children.append(c)
+                cl = loop_walker(child_tag)
+                children.append(cl)
             elif child_tag.tag == "segment":
-                c = segment_walker(pythonify(xid_a, "L"), child_tag)
-                children.append(c)
+                cs = segment_walker(pythonify(xid_a, "L"), child_tag)
+                children.append(cs)
             elif child_tag.tag in {"name", "usage", "pos", "repeat"}:
                 pass  # Skip already processed tags
             else:
@@ -820,7 +833,7 @@ def message_reader(source: TextIO) -> Message:
             usage=usage_a or usage,
             pos=pos_a or pos,
             repeat=repeat_a or repeat,
-            type=type_a,
+            type=cast(str, type_a),
             children=children,
         )
         logger.debug(loop)
@@ -829,14 +842,14 @@ def message_reader(source: TextIO) -> Message:
     document = XML.parse(source)
     transaction_tag = document.getroot()
     xid = transaction_tag.attrib.get("xid")
-    name = transaction_tag.find("name").text
+    name = cast(XML.Element, transaction_tag.find("name")).text
     loops = [
         loop_walker(loop_tag)
         for loop_tag in transaction_tag.findall("loop")
     ]
     message = Message(
-        xid=xid,
-        name=name,
+        xid=cast(str, xid),
+        name=cast(str, name),
         loops=loops
     )
     return message
@@ -854,7 +867,7 @@ class MessageVisitor:
     """
     def __init__(self) -> None:
         self.source_name = ""
-        self.path = deque()
+        self.path: Deque[tuple[str, str]] = deque()
 
     def visit(self, component: Component) -> None:
         match component:
@@ -868,18 +881,18 @@ class MessageVisitor:
                 self.composite(component)
             case Segment():
                 self.path.append(("SEGMENT", component.class_name))
-                for child in component.children:
-                    self.visit(child)
+                for seg_child in component.children:
+                    self.visit(seg_child)
                 self.path.pop()
                 self.segment(component)
             case Loop():
                 self.path.append(("LOOP", component.class_name))
-                for child in component.children:
-                    self.visit(child)
+                for loop_child in component.children:
+                    self.visit(loop_child)
                 self.path.pop()
                 self.loop(component)
             case Message():
-                self.path = [("MESSAGE", component.class_name)]
+                self.path = deque([("MESSAGE", component.class_name)])
                 for loop in component.loops:
                     self.visit(loop)
                 self.path.pop()
@@ -937,9 +950,9 @@ class EmitPython(MessageVisitor):
         # Size -- mostly for ISA segment, which is fixed length, ignoring the separators.
         if element.data_ele in self.types:
             if self.types[element.data_ele].min_len:
-                print(f"        min_len = {int(self.types[element.common_def].min_len)}")
+                print(f"        min_len = {self.types[element.common_def].int_min_len}")
             if self.types[element.data_ele].max_len:
-                print(f"        max_len = {int(self.types[element.common_def].max_len)}")
+                print(f"        max_len = {self.types[element.common_def].int_max_len}")
         else:
             logger.warning("no data_element for %s", element)
 
