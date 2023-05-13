@@ -1,6 +1,6 @@
 """
 278.4010.X094.27.A1
-Created 2023-03-25 09:22:28.106529
+Created 2023-05-12 20:25:33.938572
 """
 from .base import *
 from . import common
@@ -12,7 +12,7 @@ class ISA_LOOP_ISA01(Element):
         json = {'title': 'Authorization Information Qualifier',
          'usage': 'R',
          'description': 'xid=ISA01 data_ele=I01',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/I01'}, {'enum': ['00', '03']}]}}
         datatype = common.I01
         codes = ['00', '03']
@@ -26,7 +26,7 @@ class ISA_LOOP_ISA02(Element):
         json = {'title': 'Authorization Information',
          'usage': 'R',
          'description': 'xid=ISA02 data_ele=I02',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/I02'}}
         datatype = common.I02
         min_len = 10
@@ -39,7 +39,7 @@ class ISA_LOOP_ISA03(Element):
         json = {'title': 'Security Information Qualifier',
          'usage': 'R',
          'description': 'xid=ISA03 data_ele=I03',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/I03'}, {'enum': ['00', '01']}]}}
         datatype = common.I03
         codes = ['00', '01']
@@ -53,7 +53,7 @@ class ISA_LOOP_ISA04(Element):
         json = {'title': 'Security Information',
          'usage': 'R',
          'description': 'xid=ISA04 data_ele=I04',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/I04'}}
         datatype = common.I04
         min_len = 10
@@ -66,7 +66,7 @@ class ISA_LOOP_ISA05(Element):
         json = {'title': 'Interchange ID Qualifier',
          'usage': 'R',
          'description': 'xid=ISA05 data_ele=I05',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/I05'},
                             {'enum': ['01', '14', '20', '27', '28', '29', '30', '33',
                                       'ZZ']}]}}
@@ -82,7 +82,7 @@ class ISA_LOOP_ISA06(Element):
         json = {'title': 'Interchange Sender ID',
          'usage': 'R',
          'description': 'xid=ISA06 data_ele=I06',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/I06'}}
         datatype = common.I06
         min_len = 15
@@ -95,7 +95,7 @@ class ISA_LOOP_ISA07(Element):
         json = {'title': 'Interchange ID Qualifier',
          'usage': 'R',
          'description': 'xid=ISA07 data_ele=I05',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/I05'},
                             {'enum': ['01', '14', '20', '27', '28', '29', '30', '33',
                                       'ZZ']}]}}
@@ -111,7 +111,7 @@ class ISA_LOOP_ISA08(Element):
         json = {'title': 'Interchange Receiver ID',
          'usage': 'R',
          'description': 'xid=ISA08 data_ele=I07',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/I07'}}
         datatype = common.I07
         min_len = 15
@@ -124,7 +124,7 @@ class ISA_LOOP_ISA09(Element):
         json = {'title': 'Interchange Date',
          'usage': 'R',
          'description': 'xid=ISA09 data_ele=I08',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/I08'}}
         datatype = common.I08
         min_len = 6
@@ -137,7 +137,7 @@ class ISA_LOOP_ISA10(Element):
         json = {'title': 'Interchange Time',
          'usage': 'R',
          'description': 'xid=ISA10 data_ele=I09',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/I09'}}
         datatype = common.I09
         min_len = 4
@@ -150,7 +150,7 @@ class ISA_LOOP_ISA11(Element):
         json = {'title': 'Interchange Control Standards Identifier',
          'usage': 'R',
          'description': 'xid=ISA11 data_ele=I10',
-         'sequence': 11,
+         'position': 11,
          'type': {'allOf': [{'$ref': '#/$common/I10'}, {'enum': ['U']}]}}
         datatype = common.I10
         codes = ['U']
@@ -164,7 +164,7 @@ class ISA_LOOP_ISA12(Element):
         json = {'title': 'Interchange Control Version Number',
          'usage': 'R',
          'description': 'xid=ISA12 data_ele=I11',
-         'sequence': 12,
+         'position': 12,
          'type': {'allOf': [{'$ref': '#/$common/I11'}, {'enum': ['00401']}]}}
         datatype = common.I11
         codes = ['00401']
@@ -178,7 +178,7 @@ class ISA_LOOP_ISA13(Element):
         json = {'title': 'Interchange Control Number',
          'usage': 'R',
          'description': 'xid=ISA13 data_ele=I12',
-         'sequence': 13,
+         'position': 13,
          'type': {'$ref': '#/$common/I12'}}
         datatype = common.I12
         min_len = 9
@@ -191,7 +191,7 @@ class ISA_LOOP_ISA14(Element):
         json = {'title': 'Acknowledgment Requested',
          'usage': 'R',
          'description': 'xid=ISA14 data_ele=I13',
-         'sequence': 14,
+         'position': 14,
          'type': {'allOf': [{'$ref': '#/$common/I13'}, {'enum': ['0', '1']}]}}
         datatype = common.I13
         codes = ['0', '1']
@@ -205,7 +205,7 @@ class ISA_LOOP_ISA15(Element):
         json = {'title': 'Usage Indicator',
          'usage': 'R',
          'description': 'xid=ISA15 data_ele=I14',
-         'sequence': 15,
+         'position': 15,
          'type': {'allOf': [{'$ref': '#/$common/I14'}, {'enum': ['P', 'T']}]}}
         datatype = common.I14
         codes = ['P', 'T']
@@ -219,7 +219,7 @@ class ISA_LOOP_ISA16(Element):
         json = {'title': 'Component Element Separator',
          'usage': 'R',
          'description': 'xid=ISA16 data_ele=I15',
-         'sequence': 16,
+         'position': 16,
          'type': {'$ref': '#/$common/I15'}}
         datatype = common.I15
         min_len = 1
@@ -279,7 +279,7 @@ class GS_LOOP_GS01(Element):
         json = {'title': 'Functional Identifier Code',
          'usage': 'R',
          'description': 'xid=GS01 data_ele=479',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/479'}, {'enum': ['HI']}]}}
         datatype = common.D_479
         codes = ['HI']
@@ -293,7 +293,7 @@ class GS_LOOP_GS02(Element):
         json = {'title': "Application Sender's Code",
          'usage': 'R',
          'description': 'xid=GS02 data_ele=142',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/142'}}
         datatype = common.D_142
         min_len = 2
@@ -306,7 +306,7 @@ class GS_LOOP_GS03(Element):
         json = {'title': "Application Receiver's Code",
          'usage': 'R',
          'description': 'xid=GS03 data_ele=124',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/124'}}
         datatype = common.D_124
         min_len = 2
@@ -319,7 +319,7 @@ class GS_LOOP_GS04(Element):
         json = {'title': 'Date',
          'usage': 'R',
          'description': 'xid=GS04 data_ele=373',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -332,7 +332,7 @@ class GS_LOOP_GS05(Element):
         json = {'title': 'Time',
          'usage': 'R',
          'description': 'xid=GS05 data_ele=337',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/337'}}
         datatype = common.D_337
         min_len = 4
@@ -345,7 +345,7 @@ class GS_LOOP_GS06(Element):
         json = {'title': 'Group Control Number',
          'usage': 'R',
          'description': 'xid=GS06 data_ele=28',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/28'}}
         datatype = common.D_28
         min_len = 1
@@ -358,7 +358,7 @@ class GS_LOOP_GS07(Element):
         json = {'title': 'Responsible Agency Code',
          'usage': 'R',
          'description': 'xid=GS07 data_ele=455',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/455'}, {'enum': ['X']}]}}
         datatype = common.D_455
         codes = ['X']
@@ -372,7 +372,7 @@ class GS_LOOP_GS08(Element):
         json = {'title': 'Version / Release / Industry Identifier Code',
          'usage': 'R',
          'description': 'xid=GS08 data_ele=480',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/480'}, {'enum': ['004010X094A1']}]}}
         datatype = common.D_480
         codes = ['004010X094A1']
@@ -415,7 +415,7 @@ class ST_LOOP_ST01(Element):
         json = {'title': 'Transaction Set Identifier Code',
          'usage': 'R',
          'description': 'xid=ST01 data_ele=143',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/143'}, {'enum': ['278']}]}}
         datatype = common.D_143
         codes = ['278']
@@ -429,7 +429,7 @@ class ST_LOOP_ST02(Element):
         json = {'title': 'Transaction Set Control Number',
          'usage': 'R',
          'description': 'xid=ST02 data_ele=329',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/329'}}
         datatype = common.D_329
         min_len = 4
@@ -459,7 +459,7 @@ class HEADER_BHT01(Element):
         json = {'title': 'Hierarchical Structure Code',
          'usage': 'R',
          'description': 'xid=BHT01 data_ele=1005',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1005'}, {'enum': ['0078']}]}}
         datatype = common.D_1005
         codes = ['0078']
@@ -473,7 +473,7 @@ class HEADER_BHT02(Element):
         json = {'title': 'Transaction Set Purpose Code',
          'usage': 'R',
          'description': 'xid=BHT02 data_ele=353',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/353'}, {'enum': ['11']}]}}
         datatype = common.D_353
         codes = ['11']
@@ -487,7 +487,7 @@ class HEADER_BHT03(Element):
         json = {'title': 'Submitter Transaction Identifier',
          'usage': 'R',
          'description': 'xid=BHT03 data_ele=127',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -500,7 +500,7 @@ class HEADER_BHT04(Element):
         json = {'title': 'Transaction Set Creation Date',
          'usage': 'R',
          'description': 'xid=BHT04 data_ele=373',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -513,7 +513,7 @@ class HEADER_BHT05(Element):
         json = {'title': 'Transaction Set Creation Time',
          'usage': 'R',
          'description': 'xid=BHT05 data_ele=337',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/337'}}
         datatype = common.D_337
         min_len = 4
@@ -526,7 +526,7 @@ class HEADER_BHT06(Element):
         json = {'title': 'Transaction Type Code',
          'usage': 'S',
          'description': 'xid=BHT06 data_ele=640',
-         'sequence': 6,
+         'position': 6,
          'type': {'allOf': [{'$ref': '#/$common/640'}, {'enum': ['18', '19', 'AT']}]}}
         datatype = common.D_640
         codes = ['18', '19', 'AT']
@@ -579,7 +579,7 @@ class L2000A_HL01(Element):
         json = {'title': 'Hierarchical ID Number',
          'usage': 'R',
          'description': 'xid=HL01 data_ele=628',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/628'}}
         datatype = common.D_628
         min_len = 1
@@ -592,7 +592,7 @@ class L2000A_HL02(Element):
         json = {'title': 'Hierarchical Parent ID Number',
          'usage': 'N',
          'description': 'xid=HL02 data_ele=734',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/734'}}
         datatype = common.D_734
         min_len = 1
@@ -605,7 +605,7 @@ class L2000A_HL03(Element):
         json = {'title': 'Hierarchical Level Code',
          'usage': 'R',
          'description': 'xid=HL03 data_ele=735',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/735'}, {'enum': ['20']}]}}
         datatype = common.D_735
         codes = ['20']
@@ -619,7 +619,7 @@ class L2000A_HL04(Element):
         json = {'title': 'Hierarchical Child Code',
          'usage': 'R',
          'description': 'xid=HL04 data_ele=736',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/736'}, {'enum': ['1']}]}}
         datatype = common.D_736
         codes = ['1']
@@ -637,11 +637,13 @@ class L2000A_HL(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'HL'},
                         'hl01': {'$ref': '#/$elements/L2000A_HL01'},
+                        'hl02': {'$ref': '#/$elements/L2000A_HL02'},
                         'hl03': {'$ref': '#/$elements/L2000A_HL03'},
                         'hl04': {'$ref': '#/$elements/L2000A_HL04'}},
          'required': ['hl01', 'hl03', 'hl04']}
         segment_name = 'HL'
     hl01: L2000A_HL01
+    hl02: L2000A_HL02 | None
     hl03: L2000A_HL03
     hl04: L2000A_HL04
 
@@ -652,7 +654,7 @@ class L2000A_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -666,7 +668,7 @@ class L2000A_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -679,7 +681,7 @@ class L2000A_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'R',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'},
                             {'enum': ['04', '41', '42', '79']}]}}
         datatype = common.D_901
@@ -694,7 +696,7 @@ class L2000A_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'R',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['C', 'N', 'P', 'Y']}]}}
         datatype = common.D_889
         codes = ['C', 'N', 'P', 'Y']
@@ -713,12 +715,14 @@ class L2000A_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2000A_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2000A_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2000A_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2000A_AAA04'}},
                    'required': ['aaa01', 'aaa03', 'aaa04']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2000A_AAA01
+    aaa02: L2000A_AAA02 | None
     aaa03: L2000A_AAA03
     aaa04: L2000A_AAA04
 
@@ -729,7 +733,7 @@ class L2010A_NM101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['X3']}]}}
         datatype = common.D_98
         codes = ['X3']
@@ -743,7 +747,7 @@ class L2010A_NM102(Element):
         json = {'title': 'Entity Type Qualifier',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1', '2']}]}}
         datatype = common.D_1065
         codes = ['1', '2']
@@ -757,7 +761,7 @@ class L2010A_NM103(Element):
         json = {'title': 'Utilization Management Organization (UMO) Last or Organization Name',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -770,7 +774,7 @@ class L2010A_NM104(Element):
         json = {'title': 'Utilization Management Organization (UMO) First Name',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -783,7 +787,7 @@ class L2010A_NM105(Element):
         json = {'title': 'Utilization Management Organization (UMO) Middle Name',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -796,7 +800,7 @@ class L2010A_NM106(Element):
         json = {'title': 'Name Prefix',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -809,7 +813,7 @@ class L2010A_NM107(Element):
         json = {'title': 'Utilization Management Organization (UMO) Name Suffix',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -822,7 +826,7 @@ class L2010A_NM108(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'R',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'},
                             {'enum': ['24', '34', '46', 'PI', 'XV', 'XX']}]}}
         datatype = common.D_66
@@ -837,7 +841,7 @@ class L2010A_NM109(Element):
         json = {'title': 'Utilization Management Organization (UMO) Identifier',
          'usage': 'R',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -850,7 +854,7 @@ class L2010A_NM110(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -863,7 +867,7 @@ class L2010A_NM111(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -884,9 +888,12 @@ class L2010A_NM1(Segment):
                         'nm103': {'$ref': '#/$elements/L2010A_NM103'},
                         'nm104': {'$ref': '#/$elements/L2010A_NM104'},
                         'nm105': {'$ref': '#/$elements/L2010A_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2010A_NM106'},
                         'nm107': {'$ref': '#/$elements/L2010A_NM107'},
                         'nm108': {'$ref': '#/$elements/L2010A_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2010A_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2010A_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2010A_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2010A_NM111'}},
          'required': ['nm101', 'nm102', 'nm108', 'nm109']}
         segment_name = 'NM1'
     nm101: L2010A_NM101
@@ -894,9 +901,12 @@ class L2010A_NM1(Segment):
     nm103: L2010A_NM103 | None
     nm104: L2010A_NM104 | None
     nm105: L2010A_NM105 | None
+    nm106: L2010A_NM106 | None
     nm107: L2010A_NM107 | None
     nm108: L2010A_NM108
     nm109: L2010A_NM109
+    nm110: L2010A_NM110 | None
+    nm111: L2010A_NM111 | None
 
 
 class L2010A_PER01(Element):
@@ -905,7 +915,7 @@ class L2010A_PER01(Element):
         json = {'title': 'Contact Function Code',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['IC']}]}}
         datatype = common.D_366
         codes = ['IC']
@@ -919,7 +929,7 @@ class L2010A_PER02(Element):
         json = {'title': 'Utilization Management Organization (UMO) Contact Name',
          'usage': 'S',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -932,7 +942,7 @@ class L2010A_PER03(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'}, {'enum': ['EM', 'FX', 'TE']}]}}
         datatype = common.D_365
         codes = ['EM', 'FX', 'TE']
@@ -947,7 +957,7 @@ class L2010A_PER04(Element):
                   'Number',
          'usage': 'S',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -960,7 +970,7 @@ class L2010A_PER05(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -976,7 +986,7 @@ class L2010A_PER06(Element):
                   'Number',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -989,7 +999,7 @@ class L2010A_PER07(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -1005,7 +1015,7 @@ class L2010A_PER08(Element):
                   'Number',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -1018,7 +1028,7 @@ class L2010A_PER09(Element):
         json = {'title': 'Contact Inquiry Reference',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -1042,7 +1052,8 @@ class L2010A_PER(Segment):
                         'per05': {'$ref': '#/$elements/L2010A_PER05'},
                         'per06': {'$ref': '#/$elements/L2010A_PER06'},
                         'per07': {'$ref': '#/$elements/L2010A_PER07'},
-                        'per08': {'$ref': '#/$elements/L2010A_PER08'}},
+                        'per08': {'$ref': '#/$elements/L2010A_PER08'},
+                        'per09': {'$ref': '#/$elements/L2010A_PER09'}},
          'required': ['per01']}
         segment_name = 'PER'
     per01: L2010A_PER01
@@ -1053,6 +1064,7 @@ class L2010A_PER(Segment):
     per06: L2010A_PER06 | None
     per07: L2010A_PER07 | None
     per08: L2010A_PER08 | None
+    per09: L2010A_PER09 | None
 
 
 class L2010A_AAA01(Element):
@@ -1061,7 +1073,7 @@ class L2010A_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -1075,7 +1087,7 @@ class L2010A_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -1088,7 +1100,7 @@ class L2010A_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'},
                             {'enum': ['04', '41', '42', '79', '80', 'T4']}]}}
         datatype = common.D_901
@@ -1103,7 +1115,7 @@ class L2010A_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'S',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['N', 'P', 'Y']}]}}
         datatype = common.D_889
         codes = ['N', 'P', 'Y']
@@ -1124,12 +1136,14 @@ class L2010A_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2010A_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2010A_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2010A_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2010A_AAA04'}},
                    'required': ['aaa01']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2010A_AAA01
+    aaa02: L2010A_AAA02 | None
     aaa03: L2010A_AAA03 | None
     aaa04: L2010A_AAA04 | None
 
@@ -1159,7 +1173,7 @@ class L2000B_HL01(Element):
         json = {'title': 'Hierarchical ID Number',
          'usage': 'R',
          'description': 'xid=HL01 data_ele=628',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/628'}}
         datatype = common.D_628
         min_len = 1
@@ -1172,7 +1186,7 @@ class L2000B_HL02(Element):
         json = {'title': 'Hierarchical Parent ID Number',
          'usage': 'R',
          'description': 'xid=HL02 data_ele=734',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/734'}}
         datatype = common.D_734
         min_len = 1
@@ -1185,7 +1199,7 @@ class L2000B_HL03(Element):
         json = {'title': 'Hierarchical Level Code',
          'usage': 'R',
          'description': 'xid=HL03 data_ele=735',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/735'}, {'enum': ['21']}]}}
         datatype = common.D_735
         codes = ['21']
@@ -1199,7 +1213,7 @@ class L2000B_HL04(Element):
         json = {'title': 'Hierarchical Child Code',
          'usage': 'R',
          'description': 'xid=HL04 data_ele=736',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/736'}, {'enum': ['1']}]}}
         datatype = common.D_736
         codes = ['1']
@@ -1234,7 +1248,7 @@ class L2010B_NM101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['1P', 'FA']}]}}
         datatype = common.D_98
         codes = ['1P', 'FA']
@@ -1248,7 +1262,7 @@ class L2010B_NM102(Element):
         json = {'title': 'Entity Type Qualifier',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1', '2']}]}}
         datatype = common.D_1065
         codes = ['1', '2']
@@ -1262,7 +1276,7 @@ class L2010B_NM103(Element):
         json = {'title': 'Requester Last or Organization Name',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -1275,7 +1289,7 @@ class L2010B_NM104(Element):
         json = {'title': 'Requester First Name',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -1288,7 +1302,7 @@ class L2010B_NM105(Element):
         json = {'title': 'Requester Middle Name',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -1301,7 +1315,7 @@ class L2010B_NM106(Element):
         json = {'title': 'Name Prefix',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -1314,7 +1328,7 @@ class L2010B_NM107(Element):
         json = {'title': 'Requester Name Suffix',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -1327,7 +1341,7 @@ class L2010B_NM108(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'R',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'},
                             {'enum': ['24', '34', '46', 'XX']}]}}
         datatype = common.D_66
@@ -1342,7 +1356,7 @@ class L2010B_NM109(Element):
         json = {'title': 'Requester Identifier',
          'usage': 'R',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -1355,7 +1369,7 @@ class L2010B_NM110(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -1368,7 +1382,7 @@ class L2010B_NM111(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -1389,9 +1403,12 @@ class L2010B_NM1(Segment):
                         'nm103': {'$ref': '#/$elements/L2010B_NM103'},
                         'nm104': {'$ref': '#/$elements/L2010B_NM104'},
                         'nm105': {'$ref': '#/$elements/L2010B_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2010B_NM106'},
                         'nm107': {'$ref': '#/$elements/L2010B_NM107'},
                         'nm108': {'$ref': '#/$elements/L2010B_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2010B_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2010B_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2010B_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2010B_NM111'}},
          'required': ['nm101', 'nm102', 'nm108', 'nm109']}
         segment_name = 'NM1'
     nm101: L2010B_NM101
@@ -1399,9 +1416,12 @@ class L2010B_NM1(Segment):
     nm103: L2010B_NM103 | None
     nm104: L2010B_NM104 | None
     nm105: L2010B_NM105 | None
+    nm106: L2010B_NM106 | None
     nm107: L2010B_NM107 | None
     nm108: L2010B_NM108
     nm109: L2010B_NM109
+    nm110: L2010B_NM110 | None
+    nm111: L2010B_NM111 | None
 
 
 class L2010B_REF01(Element):
@@ -1410,7 +1430,7 @@ class L2010B_REF01(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'},
                             {'enum': ['1G', '1J', 'CT', 'EI', 'N5', 'N7', 'SY',
                                       'ZH']}]}}
@@ -1426,7 +1446,7 @@ class L2010B_REF02(Element):
         json = {'title': 'Requester Supplemental Identifier',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -1439,7 +1459,7 @@ class L2010B_REF03(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -1466,12 +1486,15 @@ class L2010B_REF(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'REF'},
                                   'ref01': {'$ref': '#/$elements/L2010B_REF01'},
-                                  'ref02': {'$ref': '#/$elements/L2010B_REF02'}},
+                                  'ref02': {'$ref': '#/$elements/L2010B_REF02'},
+                                  'ref03': {'$ref': '#/$elements/L2010B_REF03'},
+                                  'c040': {'$ref': '#/$elements/L2010B_C040'}},
                    'required': ['ref01', 'ref02']},
          'maxItems': 8}
         segment_name = 'REF'
     ref01: L2010B_REF01
     ref02: L2010B_REF02
+    ref03: L2010B_REF03 | None
 
 
 class L2010B_AAA01(Element):
@@ -1480,7 +1503,7 @@ class L2010B_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -1494,7 +1517,7 @@ class L2010B_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -1507,7 +1530,7 @@ class L2010B_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'},
                             {'enum': ['35', '41', '43', '44', '45', '46', '47', '49',
                                       '50', '51', '79', '97']}]}}
@@ -1523,7 +1546,7 @@ class L2010B_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'S',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['C', 'N', 'R']}]}}
         datatype = common.D_889
         codes = ['C', 'N', 'R']
@@ -1542,12 +1565,14 @@ class L2010B_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2010B_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2010B_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2010B_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2010B_AAA04'}},
                    'required': ['aaa01']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2010B_AAA01
+    aaa02: L2010B_AAA02 | None
     aaa03: L2010B_AAA03 | None
     aaa04: L2010B_AAA04 | None
 
@@ -1558,7 +1583,7 @@ class L2010B_PRV01(Element):
         json = {'title': 'Provider Code',
          'usage': 'R',
          'description': 'xid=PRV01 data_ele=1221',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1221'},
                             {'enum': ['AD', 'AS', 'AT', 'CO', 'CV', 'OP', 'OR', 'OT',
                                       'PC', 'PE', 'RF']}]}}
@@ -1574,7 +1599,7 @@ class L2010B_PRV02(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'R',
          'description': 'xid=PRV02 data_ele=128',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['ZZ']}]}}
         datatype = common.D_128
         codes = ['ZZ']
@@ -1588,7 +1613,7 @@ class L2010B_PRV03(Element):
         json = {'title': 'Provider Taxonomy Code',
          'usage': 'R',
          'description': 'xid=PRV03 data_ele=127',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -1601,7 +1626,7 @@ class L2010B_PRV04(Element):
         json = {'title': 'State or Province Code',
          'usage': 'N',
          'description': 'xid=PRV04 data_ele=156',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         min_len = 2
@@ -1624,7 +1649,7 @@ class L2010B_PRV06(Element):
         json = {'title': 'Provider Organization Code',
          'usage': 'N',
          'description': 'xid=PRV06 data_ele=1223',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1223'}}
         datatype = common.D_1223
         min_len = 3
@@ -1642,12 +1667,17 @@ class L2010B_PRV(Segment):
          'properties': {'xid': {'literal': 'PRV'},
                         'prv01': {'$ref': '#/$elements/L2010B_PRV01'},
                         'prv02': {'$ref': '#/$elements/L2010B_PRV02'},
-                        'prv03': {'$ref': '#/$elements/L2010B_PRV03'}},
+                        'prv03': {'$ref': '#/$elements/L2010B_PRV03'},
+                        'prv04': {'$ref': '#/$elements/L2010B_PRV04'},
+                        'c035': {'$ref': '#/$elements/L2010B_C035'},
+                        'prv06': {'$ref': '#/$elements/L2010B_PRV06'}},
          'required': ['prv01', 'prv02', 'prv03']}
         segment_name = 'PRV'
     prv01: L2010B_PRV01
     prv02: L2010B_PRV02
     prv03: L2010B_PRV03
+    prv04: L2010B_PRV04 | None
+    prv06: L2010B_PRV06 | None
 
 
 class L2010B(Loop):
@@ -1676,7 +1706,7 @@ class L2000C_HL01(Element):
         json = {'title': 'Hierarchical ID Number',
          'usage': 'R',
          'description': 'xid=HL01 data_ele=628',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/628'}}
         datatype = common.D_628
         min_len = 1
@@ -1689,7 +1719,7 @@ class L2000C_HL02(Element):
         json = {'title': 'Hierarchical Parent ID Number',
          'usage': 'R',
          'description': 'xid=HL02 data_ele=734',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/734'}}
         datatype = common.D_734
         min_len = 1
@@ -1702,7 +1732,7 @@ class L2000C_HL03(Element):
         json = {'title': 'Hierarchical Level Code',
          'usage': 'R',
          'description': 'xid=HL03 data_ele=735',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/735'}, {'enum': ['22']}]}}
         datatype = common.D_735
         codes = ['22']
@@ -1716,7 +1746,7 @@ class L2000C_HL04(Element):
         json = {'title': 'Hierarchical Child Code',
          'usage': 'R',
          'description': 'xid=HL04 data_ele=736',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/736'}, {'enum': ['1']}]}}
         datatype = common.D_736
         codes = ['1']
@@ -1751,7 +1781,7 @@ class L2000C_TRN01(Element):
         json = {'title': 'Trace Type Code',
          'usage': 'R',
          'description': 'xid=TRN01 data_ele=481',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/481'}, {'enum': ['1', '2']}]}}
         datatype = common.D_481
         codes = ['1', '2']
@@ -1765,7 +1795,7 @@ class L2000C_TRN02(Element):
         json = {'title': 'Patient Event Tracking Number',
          'usage': 'R',
          'description': 'xid=TRN02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -1778,7 +1808,7 @@ class L2000C_TRN03(Element):
         json = {'title': 'Trace Assigning Entity Number',
          'usage': 'R',
          'description': 'xid=TRN03 data_ele=509',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/509'}}
         datatype = common.D_509
         min_len = 10
@@ -1791,7 +1821,7 @@ class L2000C_TRN04(Element):
         json = {'title': 'Trace Assigning Entity Additional Identifier',
          'usage': 'S',
          'description': 'xid=TRN04 data_ele=127',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -1827,7 +1857,7 @@ class L2000C_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -1841,7 +1871,7 @@ class L2000C_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -1854,7 +1884,7 @@ class L2000C_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'}, {'enum': ['15', '33', '56']}]}}
         datatype = common.D_901
         codes = ['15', '33', '56']
@@ -1868,7 +1898,7 @@ class L2000C_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'S',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['C', 'N']}]}}
         datatype = common.D_889
         codes = ['C', 'N']
@@ -1887,12 +1917,14 @@ class L2000C_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2000C_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2000C_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2000C_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2000C_AAA04'}},
                    'required': ['aaa01']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2000C_AAA01
+    aaa02: L2000C_AAA02 | None
     aaa03: L2000C_AAA03 | None
     aaa04: L2000C_AAA04 | None
 
@@ -1903,7 +1935,7 @@ class L2000C_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['439']}]}}
         datatype = common.D_374
         codes = ['439']
@@ -1917,7 +1949,7 @@ class L2000C_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -1931,7 +1963,7 @@ class L2000C_DTP03(Element):
         json = {'title': 'Accident Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -1963,7 +1995,7 @@ class L2000C_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['484']}]}}
         datatype = common.D_374
         codes = ['484']
@@ -1977,7 +2009,7 @@ class L2000C_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -1991,7 +2023,7 @@ class L2000C_DTP03(Element):
         json = {'title': 'Last Menstrual Period Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2023,7 +2055,7 @@ class L2000C_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['ABC']}]}}
         datatype = common.D_374
         codes = ['ABC']
@@ -2037,7 +2069,7 @@ class L2000C_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2051,7 +2083,7 @@ class L2000C_DTP03(Element):
         json = {'title': 'Estimated Birth Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2083,7 +2115,7 @@ class L2000C_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['431']}]}}
         datatype = common.D_374
         codes = ['431']
@@ -2097,7 +2129,7 @@ class L2000C_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2111,7 +2143,7 @@ class L2000C_DTP03(Element):
         json = {'title': 'Onset of Current Symptoms or Illness Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2143,7 +2175,7 @@ class L2000C_HI01_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI01-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['BF', 'BJ', 'BK', 'LOI']}]}}
         datatype = common.D_1270
@@ -2158,7 +2190,7 @@ class L2000C_HI01_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI01-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -2171,7 +2203,7 @@ class L2000C_HI01_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI01-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2185,7 +2217,7 @@ class L2000C_HI01_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI01-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2198,7 +2230,7 @@ class L2000C_HI01_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI01-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -2211,7 +2243,7 @@ class L2000C_HI01_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI01-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -2224,7 +2256,7 @@ class L2000C_HI01_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI01-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -2242,46 +2274,49 @@ class L2000C_C022(Composite):
          'properties': {'hi01_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI01-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'BJ', 'BK',
                                                                  'LOI']}]}},
                         'hi01_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI01-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi01_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI01-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi01_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI01-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi01_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI01-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi01_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI01-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi01_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI01-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi01_01', 'hi01_02']}
     hi01_01: L2000C_HI01_01
     hi01_02: L2000C_HI01_02
     hi01_03: L2000C_HI01_03 | None
     hi01_04: L2000C_HI01_04 | None
+    hi01_05: L2000C_HI01_05 | None
+    hi01_06: L2000C_HI01_06 | None
+    hi01_07: L2000C_HI01_07 | None
 
 
 class L2000C_HI02_01(Element):
@@ -2290,7 +2325,7 @@ class L2000C_HI02_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI02-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'BJ', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'BJ', 'LOI']
@@ -2304,7 +2339,7 @@ class L2000C_HI02_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI02-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -2317,7 +2352,7 @@ class L2000C_HI02_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI02-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2331,7 +2366,7 @@ class L2000C_HI02_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI02-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2344,7 +2379,7 @@ class L2000C_HI02_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI02-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -2357,7 +2392,7 @@ class L2000C_HI02_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI02-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -2370,7 +2405,7 @@ class L2000C_HI02_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI02-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -2388,45 +2423,48 @@ class L2000C_C022(Composite):
          'properties': {'hi02_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI02-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'BJ', 'LOI']}]}},
                         'hi02_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI02-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi02_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI02-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi02_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI02-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi02_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI02-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi02_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI02-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi02_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI02-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi02_01', 'hi02_02']}
     hi02_01: L2000C_HI02_01
     hi02_02: L2000C_HI02_02
     hi02_03: L2000C_HI02_03 | None
     hi02_04: L2000C_HI02_04 | None
+    hi02_05: L2000C_HI02_05 | None
+    hi02_06: L2000C_HI02_06 | None
+    hi02_07: L2000C_HI02_07 | None
 
 
 class L2000C_HI03_01(Element):
@@ -2435,7 +2473,7 @@ class L2000C_HI03_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI03-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -2449,7 +2487,7 @@ class L2000C_HI03_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI03-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -2462,7 +2500,7 @@ class L2000C_HI03_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI03-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2476,7 +2514,7 @@ class L2000C_HI03_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI03-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2489,7 +2527,7 @@ class L2000C_HI03_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI03-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -2502,7 +2540,7 @@ class L2000C_HI03_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI03-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -2515,7 +2553,7 @@ class L2000C_HI03_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI03-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -2533,45 +2571,48 @@ class L2000C_C022(Composite):
          'properties': {'hi03_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI03-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi03_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI03-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi03_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI03-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi03_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI03-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi03_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI03-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi03_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI03-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi03_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI03-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi03_01', 'hi03_02']}
     hi03_01: L2000C_HI03_01
     hi03_02: L2000C_HI03_02
     hi03_03: L2000C_HI03_03 | None
     hi03_04: L2000C_HI03_04 | None
+    hi03_05: L2000C_HI03_05 | None
+    hi03_06: L2000C_HI03_06 | None
+    hi03_07: L2000C_HI03_07 | None
 
 
 class L2000C_HI04_01(Element):
@@ -2580,7 +2621,7 @@ class L2000C_HI04_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI04-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -2594,7 +2635,7 @@ class L2000C_HI04_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI04-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -2607,7 +2648,7 @@ class L2000C_HI04_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI04-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2621,7 +2662,7 @@ class L2000C_HI04_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI04-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2634,7 +2675,7 @@ class L2000C_HI04_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI04-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -2647,7 +2688,7 @@ class L2000C_HI04_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI04-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -2660,7 +2701,7 @@ class L2000C_HI04_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI04-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -2678,45 +2719,48 @@ class L2000C_C022(Composite):
          'properties': {'hi04_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI04-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi04_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI04-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi04_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI04-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi04_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI04-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi04_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI04-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi04_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI04-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi04_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI04-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi04_01', 'hi04_02']}
     hi04_01: L2000C_HI04_01
     hi04_02: L2000C_HI04_02
     hi04_03: L2000C_HI04_03 | None
     hi04_04: L2000C_HI04_04 | None
+    hi04_05: L2000C_HI04_05 | None
+    hi04_06: L2000C_HI04_06 | None
+    hi04_07: L2000C_HI04_07 | None
 
 
 class L2000C_HI05_01(Element):
@@ -2725,7 +2769,7 @@ class L2000C_HI05_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI05-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -2739,7 +2783,7 @@ class L2000C_HI05_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI05-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -2752,7 +2796,7 @@ class L2000C_HI05_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI05-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2766,7 +2810,7 @@ class L2000C_HI05_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI05-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2779,7 +2823,7 @@ class L2000C_HI05_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI05-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -2792,7 +2836,7 @@ class L2000C_HI05_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI05-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -2805,7 +2849,7 @@ class L2000C_HI05_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI05-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -2823,45 +2867,48 @@ class L2000C_C022(Composite):
          'properties': {'hi05_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI05-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi05_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI05-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi05_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI05-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi05_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI05-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi05_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI05-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi05_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI05-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi05_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI05-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi05_01', 'hi05_02']}
     hi05_01: L2000C_HI05_01
     hi05_02: L2000C_HI05_02
     hi05_03: L2000C_HI05_03 | None
     hi05_04: L2000C_HI05_04 | None
+    hi05_05: L2000C_HI05_05 | None
+    hi05_06: L2000C_HI05_06 | None
+    hi05_07: L2000C_HI05_07 | None
 
 
 class L2000C_HI06_01(Element):
@@ -2870,7 +2917,7 @@ class L2000C_HI06_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI06-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -2884,7 +2931,7 @@ class L2000C_HI06_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI06-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -2897,7 +2944,7 @@ class L2000C_HI06_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI06-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2911,7 +2958,7 @@ class L2000C_HI06_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI06-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2924,7 +2971,7 @@ class L2000C_HI06_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI06-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -2937,7 +2984,7 @@ class L2000C_HI06_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI06-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -2950,7 +2997,7 @@ class L2000C_HI06_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI06-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -2968,45 +3015,48 @@ class L2000C_C022(Composite):
          'properties': {'hi06_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI06-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi06_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI06-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi06_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI06-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi06_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI06-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi06_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI06-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi06_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI06-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi06_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI06-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi06_01', 'hi06_02']}
     hi06_01: L2000C_HI06_01
     hi06_02: L2000C_HI06_02
     hi06_03: L2000C_HI06_03 | None
     hi06_04: L2000C_HI06_04 | None
+    hi06_05: L2000C_HI06_05 | None
+    hi06_06: L2000C_HI06_06 | None
+    hi06_07: L2000C_HI06_07 | None
 
 
 class L2000C_HI07_01(Element):
@@ -3015,7 +3065,7 @@ class L2000C_HI07_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI07-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -3029,7 +3079,7 @@ class L2000C_HI07_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI07-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -3042,7 +3092,7 @@ class L2000C_HI07_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI07-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -3056,7 +3106,7 @@ class L2000C_HI07_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI07-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -3069,7 +3119,7 @@ class L2000C_HI07_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI07-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -3082,7 +3132,7 @@ class L2000C_HI07_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI07-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -3095,7 +3145,7 @@ class L2000C_HI07_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI07-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -3113,45 +3163,48 @@ class L2000C_C022(Composite):
          'properties': {'hi07_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI07-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi07_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI07-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi07_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI07-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi07_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI07-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi07_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI07-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi07_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI07-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi07_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI07-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi07_01', 'hi07_02']}
     hi07_01: L2000C_HI07_01
     hi07_02: L2000C_HI07_02
     hi07_03: L2000C_HI07_03 | None
     hi07_04: L2000C_HI07_04 | None
+    hi07_05: L2000C_HI07_05 | None
+    hi07_06: L2000C_HI07_06 | None
+    hi07_07: L2000C_HI07_07 | None
 
 
 class L2000C_HI08_01(Element):
@@ -3160,7 +3213,7 @@ class L2000C_HI08_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI08-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -3174,7 +3227,7 @@ class L2000C_HI08_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI08-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -3187,7 +3240,7 @@ class L2000C_HI08_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI08-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -3201,7 +3254,7 @@ class L2000C_HI08_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI08-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -3214,7 +3267,7 @@ class L2000C_HI08_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI08-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -3227,7 +3280,7 @@ class L2000C_HI08_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI08-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -3240,7 +3293,7 @@ class L2000C_HI08_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI08-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -3258,45 +3311,48 @@ class L2000C_C022(Composite):
          'properties': {'hi08_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI08-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi08_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI08-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi08_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI08-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi08_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI08-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi08_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI08-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi08_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI08-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi08_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI08-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi08_01', 'hi08_02']}
     hi08_01: L2000C_HI08_01
     hi08_02: L2000C_HI08_02
     hi08_03: L2000C_HI08_03 | None
     hi08_04: L2000C_HI08_04 | None
+    hi08_05: L2000C_HI08_05 | None
+    hi08_06: L2000C_HI08_06 | None
+    hi08_07: L2000C_HI08_07 | None
 
 
 class L2000C_HI09_01(Element):
@@ -3305,7 +3361,7 @@ class L2000C_HI09_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI09-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -3319,7 +3375,7 @@ class L2000C_HI09_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI09-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -3332,7 +3388,7 @@ class L2000C_HI09_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI09-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -3346,7 +3402,7 @@ class L2000C_HI09_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI09-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -3359,7 +3415,7 @@ class L2000C_HI09_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI09-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -3372,7 +3428,7 @@ class L2000C_HI09_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI09-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -3385,7 +3441,7 @@ class L2000C_HI09_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI09-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -3403,45 +3459,48 @@ class L2000C_C022(Composite):
          'properties': {'hi09_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI09-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi09_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI09-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi09_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI09-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi09_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI09-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi09_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI09-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi09_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI09-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi09_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI09-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi09_01', 'hi09_02']}
     hi09_01: L2000C_HI09_01
     hi09_02: L2000C_HI09_02
     hi09_03: L2000C_HI09_03 | None
     hi09_04: L2000C_HI09_04 | None
+    hi09_05: L2000C_HI09_05 | None
+    hi09_06: L2000C_HI09_06 | None
+    hi09_07: L2000C_HI09_07 | None
 
 
 class L2000C_HI10_01(Element):
@@ -3450,7 +3509,7 @@ class L2000C_HI10_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI10-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -3464,7 +3523,7 @@ class L2000C_HI10_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI10-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -3477,7 +3536,7 @@ class L2000C_HI10_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI10-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -3491,7 +3550,7 @@ class L2000C_HI10_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI10-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -3504,7 +3563,7 @@ class L2000C_HI10_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI10-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -3517,7 +3576,7 @@ class L2000C_HI10_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI10-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -3530,7 +3589,7 @@ class L2000C_HI10_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI10-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -3548,45 +3607,48 @@ class L2000C_C022(Composite):
          'properties': {'hi10_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI10-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi10_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI10-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi10_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI10-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi10_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI10-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi10_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI10-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi10_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI10-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi10_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI10-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi10_01', 'hi10_02']}
     hi10_01: L2000C_HI10_01
     hi10_02: L2000C_HI10_02
     hi10_03: L2000C_HI10_03 | None
     hi10_04: L2000C_HI10_04 | None
+    hi10_05: L2000C_HI10_05 | None
+    hi10_06: L2000C_HI10_06 | None
+    hi10_07: L2000C_HI10_07 | None
 
 
 class L2000C_HI11_01(Element):
@@ -3595,7 +3657,7 @@ class L2000C_HI11_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI11-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -3609,7 +3671,7 @@ class L2000C_HI11_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI11-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -3622,7 +3684,7 @@ class L2000C_HI11_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI11-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -3636,7 +3698,7 @@ class L2000C_HI11_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI11-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -3649,7 +3711,7 @@ class L2000C_HI11_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI11-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -3662,7 +3724,7 @@ class L2000C_HI11_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI11-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -3675,7 +3737,7 @@ class L2000C_HI11_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI11-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -3693,45 +3755,48 @@ class L2000C_C022(Composite):
          'properties': {'hi11_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI11-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi11_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI11-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi11_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI11-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi11_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI11-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi11_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI11-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi11_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI11-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi11_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI11-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi11_01', 'hi11_02']}
     hi11_01: L2000C_HI11_01
     hi11_02: L2000C_HI11_02
     hi11_03: L2000C_HI11_03 | None
     hi11_04: L2000C_HI11_04 | None
+    hi11_05: L2000C_HI11_05 | None
+    hi11_06: L2000C_HI11_06 | None
+    hi11_07: L2000C_HI11_07 | None
 
 
 class L2000C_HI12_01(Element):
@@ -3740,7 +3805,7 @@ class L2000C_HI12_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI12-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -3754,7 +3819,7 @@ class L2000C_HI12_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI12-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -3767,7 +3832,7 @@ class L2000C_HI12_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI12-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -3781,7 +3846,7 @@ class L2000C_HI12_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI12-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -3794,7 +3859,7 @@ class L2000C_HI12_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI12-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -3807,7 +3872,7 @@ class L2000C_HI12_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI12-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -3820,7 +3885,7 @@ class L2000C_HI12_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI12-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -3838,45 +3903,48 @@ class L2000C_C022(Composite):
          'properties': {'hi12_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI12-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi12_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI12-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi12_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI12-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi12_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI12-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi12_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI12-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi12_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI12-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi12_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI12-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi12_01', 'hi12_02']}
     hi12_01: L2000C_HI12_01
     hi12_02: L2000C_HI12_02
     hi12_03: L2000C_HI12_03 | None
     hi12_04: L2000C_HI12_04 | None
+    hi12_05: L2000C_HI12_05 | None
+    hi12_06: L2000C_HI12_06 | None
+    hi12_07: L2000C_HI12_07 | None
 
 
 class L2000C_HI(Segment):
@@ -3911,7 +3979,7 @@ class L2000C_PWK01(Element):
         json = {'title': 'Attachment Report Type Code',
          'usage': 'R',
          'description': 'xid=PWK01 data_ele=755',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/755'},
                             {'enum': ['03', '04', '05', '06', '07', '08', '09', '10',
                                       '11', '13', '15', '21', '48', '55', '59', '77',
@@ -3934,7 +4002,7 @@ class L2000C_PWK02(Element):
         json = {'title': 'Attachment Transmission Code',
          'usage': 'R',
          'description': 'xid=PWK02 data_ele=756',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/756'},
                             {'enum': ['BM', 'EL', 'EM', 'FX', 'VO']}]}}
         datatype = common.D_756
@@ -3949,7 +4017,7 @@ class L2000C_PWK03(Element):
         json = {'title': 'Report Copies Needed',
          'usage': 'N',
          'description': 'xid=PWK03 data_ele=757',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/757'}}
         datatype = common.D_757
         min_len = 1
@@ -3962,7 +4030,7 @@ class L2000C_PWK04(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=PWK04 data_ele=98',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -3975,7 +4043,7 @@ class L2000C_PWK05(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'S',
          'description': 'xid=PWK05 data_ele=66',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['AC']}]}}
         datatype = common.D_66
         codes = ['AC']
@@ -3989,7 +4057,7 @@ class L2000C_PWK06(Element):
         json = {'title': 'Attachment Control Number',
          'usage': 'S',
          'description': 'xid=PWK06 data_ele=67',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -4002,7 +4070,7 @@ class L2000C_PWK07(Element):
         json = {'title': 'Attachment Description',
          'usage': 'S',
          'description': 'xid=PWK07 data_ele=352',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -4024,7 +4092,7 @@ class L2000C_PWK09(Element):
         json = {'title': 'Request Category Code',
          'usage': 'N',
          'description': 'xid=PWK09 data_ele=1525',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/1525'}}
         datatype = common.D_1525
         min_len = 1
@@ -4043,17 +4111,24 @@ class L2000C_PWK(Segment):
                    'properties': {'xid': {'literal': 'PWK'},
                                   'pwk01': {'$ref': '#/$elements/L2000C_PWK01'},
                                   'pwk02': {'$ref': '#/$elements/L2000C_PWK02'},
+                                  'pwk03': {'$ref': '#/$elements/L2000C_PWK03'},
+                                  'pwk04': {'$ref': '#/$elements/L2000C_PWK04'},
                                   'pwk05': {'$ref': '#/$elements/L2000C_PWK05'},
                                   'pwk06': {'$ref': '#/$elements/L2000C_PWK06'},
-                                  'pwk07': {'$ref': '#/$elements/L2000C_PWK07'}},
+                                  'pwk07': {'$ref': '#/$elements/L2000C_PWK07'},
+                                  'c002': {'$ref': '#/$elements/L2000C_C002'},
+                                  'pwk09': {'$ref': '#/$elements/L2000C_PWK09'}},
                    'required': ['pwk01', 'pwk02']},
          'maxItems': 10}
         segment_name = 'PWK'
     pwk01: L2000C_PWK01
     pwk02: L2000C_PWK02
+    pwk03: L2000C_PWK03 | None
+    pwk04: L2000C_PWK04 | None
     pwk05: L2000C_PWK05 | None
     pwk06: L2000C_PWK06 | None
     pwk07: L2000C_PWK07 | None
+    pwk09: L2000C_PWK09 | None
 
 
 class L2010CA_NM101(Element):
@@ -4062,7 +4137,7 @@ class L2010CA_NM101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['IL']}]}}
         datatype = common.D_98
         codes = ['IL']
@@ -4076,7 +4151,7 @@ class L2010CA_NM102(Element):
         json = {'title': 'Entity Type Qualifier',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1']}]}}
         datatype = common.D_1065
         codes = ['1']
@@ -4090,7 +4165,7 @@ class L2010CA_NM103(Element):
         json = {'title': 'Subscriber Last Name',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -4103,7 +4178,7 @@ class L2010CA_NM104(Element):
         json = {'title': 'Subscriber First Name',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -4116,7 +4191,7 @@ class L2010CA_NM105(Element):
         json = {'title': 'Subscriber Middle Name',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -4129,7 +4204,7 @@ class L2010CA_NM106(Element):
         json = {'title': 'Name Prefix',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -4142,7 +4217,7 @@ class L2010CA_NM107(Element):
         json = {'title': 'Subscriber Name Suffix',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -4155,7 +4230,7 @@ class L2010CA_NM108(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'R',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['MI', 'ZZ']}]}}
         datatype = common.D_66
         codes = ['MI', 'ZZ']
@@ -4169,7 +4244,7 @@ class L2010CA_NM109(Element):
         json = {'title': 'Subscriber Primary Identifier',
          'usage': 'R',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -4182,7 +4257,7 @@ class L2010CA_NM110(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -4195,7 +4270,7 @@ class L2010CA_NM111(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -4216,9 +4291,12 @@ class L2010CA_NM1(Segment):
                         'nm103': {'$ref': '#/$elements/L2010CA_NM103'},
                         'nm104': {'$ref': '#/$elements/L2010CA_NM104'},
                         'nm105': {'$ref': '#/$elements/L2010CA_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2010CA_NM106'},
                         'nm107': {'$ref': '#/$elements/L2010CA_NM107'},
                         'nm108': {'$ref': '#/$elements/L2010CA_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2010CA_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2010CA_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2010CA_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2010CA_NM111'}},
          'required': ['nm101', 'nm102', 'nm108', 'nm109']}
         segment_name = 'NM1'
     nm101: L2010CA_NM101
@@ -4226,9 +4304,12 @@ class L2010CA_NM1(Segment):
     nm103: L2010CA_NM103 | None
     nm104: L2010CA_NM104 | None
     nm105: L2010CA_NM105 | None
+    nm106: L2010CA_NM106 | None
     nm107: L2010CA_NM107 | None
     nm108: L2010CA_NM108
     nm109: L2010CA_NM109
+    nm110: L2010CA_NM110 | None
+    nm111: L2010CA_NM111 | None
 
 
 class L2010CA_REF01(Element):
@@ -4237,7 +4318,7 @@ class L2010CA_REF01(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'},
                             {'enum': ['1L', '1W', '6P', 'A6', 'EJ', 'F6', 'HJ', 'IG',
                                       'N6', 'NQ', 'SY']}]}}
@@ -4253,7 +4334,7 @@ class L2010CA_REF02(Element):
         json = {'title': 'Subscriber Supplemental Identifier',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -4266,7 +4347,7 @@ class L2010CA_REF03(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -4293,12 +4374,15 @@ class L2010CA_REF(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'REF'},
                                   'ref01': {'$ref': '#/$elements/L2010CA_REF01'},
-                                  'ref02': {'$ref': '#/$elements/L2010CA_REF02'}},
+                                  'ref02': {'$ref': '#/$elements/L2010CA_REF02'},
+                                  'ref03': {'$ref': '#/$elements/L2010CA_REF03'},
+                                  'c040': {'$ref': '#/$elements/L2010CA_C040'}},
                    'required': ['ref01', 'ref02']},
          'maxItems': 9}
         segment_name = 'REF'
     ref01: L2010CA_REF01
     ref02: L2010CA_REF02
+    ref03: L2010CA_REF03 | None
 
 
 class L2010CA_AAA01(Element):
@@ -4307,7 +4391,7 @@ class L2010CA_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -4321,7 +4405,7 @@ class L2010CA_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -4334,7 +4418,7 @@ class L2010CA_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'},
                             {'enum': ['15', '58', '64', '65', '66', '67', '68', '71',
                                       '72', '73', '74', '75', '76', '77', '78', '79',
@@ -4351,7 +4435,7 @@ class L2010CA_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'S',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['C', 'N']}]}}
         datatype = common.D_889
         codes = ['C', 'N']
@@ -4370,12 +4454,14 @@ class L2010CA_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2010CA_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2010CA_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2010CA_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2010CA_AAA04'}},
                    'required': ['aaa01']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2010CA_AAA01
+    aaa02: L2010CA_AAA02 | None
     aaa03: L2010CA_AAA03 | None
     aaa04: L2010CA_AAA04 | None
 
@@ -4386,7 +4472,7 @@ class L2010CA_DMG01(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DMG01 data_ele=1250',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -4400,7 +4486,7 @@ class L2010CA_DMG02(Element):
         json = {'title': 'Subscriber Birth Date',
          'usage': 'R',
          'description': 'xid=DMG02 data_ele=1251',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -4413,7 +4499,7 @@ class L2010CA_DMG03(Element):
         json = {'title': 'Subscriber Gender Code',
          'usage': 'S',
          'description': 'xid=DMG03 data_ele=1068',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1068'}, {'enum': ['F', 'M', 'U']}]}}
         datatype = common.D_1068
         codes = ['F', 'M', 'U']
@@ -4427,7 +4513,7 @@ class L2010CA_DMG04(Element):
         json = {'title': 'Marital Status Code',
          'usage': 'N',
          'description': 'xid=DMG04 data_ele=1067',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1067'}}
         datatype = common.D_1067
         min_len = 1
@@ -4440,7 +4526,7 @@ class L2010CA_DMG05(Element):
         json = {'title': 'Race or Ethnicity Code',
          'usage': 'N',
          'description': 'xid=DMG05 data_ele=1109',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1109'}}
         datatype = common.D_1109
         min_len = 1
@@ -4453,7 +4539,7 @@ class L2010CA_DMG06(Element):
         json = {'title': 'Citizenship Status Code',
          'usage': 'N',
          'description': 'xid=DMG06 data_ele=1066',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1066'}}
         datatype = common.D_1066
         min_len = 1
@@ -4466,7 +4552,7 @@ class L2010CA_DMG07(Element):
         json = {'title': 'Country Code',
          'usage': 'N',
          'description': 'xid=DMG07 data_ele=26',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         min_len = 2
@@ -4479,7 +4565,7 @@ class L2010CA_DMG08(Element):
         json = {'title': 'Basis of Verification Code',
          'usage': 'N',
          'description': 'xid=DMG08 data_ele=659',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/659'}}
         datatype = common.D_659
         min_len = 1
@@ -4492,7 +4578,7 @@ class L2010CA_DMG09(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=DMG09 data_ele=380',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -4510,12 +4596,24 @@ class L2010CA_DMG(Segment):
          'properties': {'xid': {'literal': 'DMG'},
                         'dmg01': {'$ref': '#/$elements/L2010CA_DMG01'},
                         'dmg02': {'$ref': '#/$elements/L2010CA_DMG02'},
-                        'dmg03': {'$ref': '#/$elements/L2010CA_DMG03'}},
+                        'dmg03': {'$ref': '#/$elements/L2010CA_DMG03'},
+                        'dmg04': {'$ref': '#/$elements/L2010CA_DMG04'},
+                        'dmg05': {'$ref': '#/$elements/L2010CA_DMG05'},
+                        'dmg06': {'$ref': '#/$elements/L2010CA_DMG06'},
+                        'dmg07': {'$ref': '#/$elements/L2010CA_DMG07'},
+                        'dmg08': {'$ref': '#/$elements/L2010CA_DMG08'},
+                        'dmg09': {'$ref': '#/$elements/L2010CA_DMG09'}},
          'required': ['dmg01', 'dmg02']}
         segment_name = 'DMG'
     dmg01: L2010CA_DMG01
     dmg02: L2010CA_DMG02
     dmg03: L2010CA_DMG03 | None
+    dmg04: L2010CA_DMG04 | None
+    dmg05: L2010CA_DMG05 | None
+    dmg06: L2010CA_DMG06 | None
+    dmg07: L2010CA_DMG07 | None
+    dmg08: L2010CA_DMG08 | None
+    dmg09: L2010CA_DMG09 | None
 
 
 class L2010CA(Loop):
@@ -4544,7 +4642,7 @@ class L2010CB_NM101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'},
                             {'enum': ['1P', '2B', 'ABG', 'FA', 'PR', 'X3']}]}}
         datatype = common.D_98
@@ -4559,7 +4657,7 @@ class L2010CB_NM102(Element):
         json = {'title': 'Entity Type Qualifier',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1', '2']}]}}
         datatype = common.D_1065
         codes = ['1', '2']
@@ -4573,7 +4671,7 @@ class L2010CB_NM103(Element):
         json = {'title': 'Response Contact Last or Organization Name',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -4586,7 +4684,7 @@ class L2010CB_NM104(Element):
         json = {'title': 'Response Contact First Name',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -4599,7 +4697,7 @@ class L2010CB_NM105(Element):
         json = {'title': 'Response Contact Middle Name',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -4612,7 +4710,7 @@ class L2010CB_NM106(Element):
         json = {'title': 'Name Prefix',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -4625,7 +4723,7 @@ class L2010CB_NM107(Element):
         json = {'title': 'Response Contact Name Suffix',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -4638,7 +4736,7 @@ class L2010CB_NM108(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'},
                             {'enum': ['24', '34', '46', 'PI', 'XV', 'XX']}]}}
         datatype = common.D_66
@@ -4653,7 +4751,7 @@ class L2010CB_NM109(Element):
         json = {'title': 'Response Contact Identifier',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -4666,7 +4764,7 @@ class L2010CB_NM110(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -4679,7 +4777,7 @@ class L2010CB_NM111(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -4700,9 +4798,12 @@ class L2010CB_NM1(Segment):
                         'nm103': {'$ref': '#/$elements/L2010CB_NM103'},
                         'nm104': {'$ref': '#/$elements/L2010CB_NM104'},
                         'nm105': {'$ref': '#/$elements/L2010CB_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2010CB_NM106'},
                         'nm107': {'$ref': '#/$elements/L2010CB_NM107'},
                         'nm108': {'$ref': '#/$elements/L2010CB_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2010CB_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2010CB_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2010CB_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2010CB_NM111'}},
          'required': ['nm101', 'nm102']}
         segment_name = 'NM1'
     nm101: L2010CB_NM101
@@ -4710,9 +4811,12 @@ class L2010CB_NM1(Segment):
     nm103: L2010CB_NM103 | None
     nm104: L2010CB_NM104 | None
     nm105: L2010CB_NM105 | None
+    nm106: L2010CB_NM106 | None
     nm107: L2010CB_NM107 | None
     nm108: L2010CB_NM108 | None
     nm109: L2010CB_NM109 | None
+    nm110: L2010CB_NM110 | None
+    nm111: L2010CB_NM111 | None
 
 
 class L2010CB_N301(Element):
@@ -4721,7 +4825,7 @@ class L2010CB_N301(Element):
         json = {'title': 'Response Contact Address Line',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -4734,7 +4838,7 @@ class L2010CB_N302(Element):
         json = {'title': 'Response Contact Address Line',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -4764,7 +4868,7 @@ class L2010CB_N401(Element):
         json = {'title': 'Response Contact City Name',
          'usage': 'S',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -4777,7 +4881,7 @@ class L2010CB_N402(Element):
         json = {'title': 'Response Contact State or Province Code',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -4791,7 +4895,7 @@ class L2010CB_N403(Element):
         json = {'title': 'Response Contact Postal Zone or ZIP Code',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -4804,7 +4908,7 @@ class L2010CB_N404(Element):
         json = {'title': 'Response Contact Country Code',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -4818,7 +4922,7 @@ class L2010CB_N405(Element):
         json = {'title': 'Location Qualifier',
          'usage': 'S',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/309'}, {'enum': ['B1', 'DP']}]}}
         datatype = common.D_309
         codes = ['B1', 'DP']
@@ -4832,7 +4936,7 @@ class L2010CB_N406(Element):
         json = {'title': 'Response Contact Specific Location',
          'usage': 'S',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -4870,7 +4974,7 @@ class L2010CB_PER01(Element):
         json = {'title': 'Contact Function Code',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['IC']}]}}
         datatype = common.D_366
         codes = ['IC']
@@ -4884,7 +4988,7 @@ class L2010CB_PER02(Element):
         json = {'title': 'Response Contact Name',
          'usage': 'S',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -4897,7 +5001,7 @@ class L2010CB_PER03(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'}, {'enum': ['EM', 'FX', 'TE']}]}}
         datatype = common.D_365
         codes = ['EM', 'FX', 'TE']
@@ -4911,7 +5015,7 @@ class L2010CB_PER04(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4924,7 +5028,7 @@ class L2010CB_PER05(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -4939,7 +5043,7 @@ class L2010CB_PER06(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4952,7 +5056,7 @@ class L2010CB_PER07(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -4967,7 +5071,7 @@ class L2010CB_PER08(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4980,7 +5084,7 @@ class L2010CB_PER09(Element):
         json = {'title': 'Contact Inquiry Reference',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -5005,7 +5109,8 @@ class L2010CB_PER(Segment):
                                   'per05': {'$ref': '#/$elements/L2010CB_PER05'},
                                   'per06': {'$ref': '#/$elements/L2010CB_PER06'},
                                   'per07': {'$ref': '#/$elements/L2010CB_PER07'},
-                                  'per08': {'$ref': '#/$elements/L2010CB_PER08'}},
+                                  'per08': {'$ref': '#/$elements/L2010CB_PER08'},
+                                  'per09': {'$ref': '#/$elements/L2010CB_PER09'}},
                    'required': ['per01']},
          'maxItems': 3}
         segment_name = 'PER'
@@ -5017,6 +5122,7 @@ class L2010CB_PER(Segment):
     per06: L2010CB_PER06 | None
     per07: L2010CB_PER07 | None
     per08: L2010CB_PER08 | None
+    per09: L2010CB_PER09 | None
 
 
 class L2010CB(Loop):
@@ -5046,7 +5152,7 @@ class L2000D_HL01(Element):
         json = {'title': 'Hierarchical ID Number',
          'usage': 'R',
          'description': 'xid=HL01 data_ele=628',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/628'}}
         datatype = common.D_628
         min_len = 1
@@ -5059,7 +5165,7 @@ class L2000D_HL02(Element):
         json = {'title': 'Hierarchical Parent ID Number',
          'usage': 'R',
          'description': 'xid=HL02 data_ele=734',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/734'}}
         datatype = common.D_734
         min_len = 1
@@ -5072,7 +5178,7 @@ class L2000D_HL03(Element):
         json = {'title': 'Hierarchical Level Code',
          'usage': 'R',
          'description': 'xid=HL03 data_ele=735',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/735'}, {'enum': ['23']}]}}
         datatype = common.D_735
         codes = ['23']
@@ -5086,7 +5192,7 @@ class L2000D_HL04(Element):
         json = {'title': 'Hierarchical Child Code',
          'usage': 'R',
          'description': 'xid=HL04 data_ele=736',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/736'}, {'enum': ['1']}]}}
         datatype = common.D_736
         codes = ['1']
@@ -5121,7 +5227,7 @@ class L2000D_TRN01(Element):
         json = {'title': 'Trace Type Code',
          'usage': 'R',
          'description': 'xid=TRN01 data_ele=481',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/481'}, {'enum': ['1', '2']}]}}
         datatype = common.D_481
         codes = ['1', '2']
@@ -5135,7 +5241,7 @@ class L2000D_TRN02(Element):
         json = {'title': 'Patient Event Tracking Number',
          'usage': 'R',
          'description': 'xid=TRN02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -5148,7 +5254,7 @@ class L2000D_TRN03(Element):
         json = {'title': 'Trace Assigning Entity Number',
          'usage': 'R',
          'description': 'xid=TRN03 data_ele=509',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/509'}}
         datatype = common.D_509
         min_len = 10
@@ -5161,7 +5267,7 @@ class L2000D_TRN04(Element):
         json = {'title': 'Trace Assigning Entity Additional Identifier',
          'usage': 'S',
          'description': 'xid=TRN04 data_ele=127',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -5197,7 +5303,7 @@ class L2000D_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -5211,7 +5317,7 @@ class L2000D_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -5224,7 +5330,7 @@ class L2000D_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'}, {'enum': ['15', '33', '56']}]}}
         datatype = common.D_901
         codes = ['15', '33', '56']
@@ -5238,7 +5344,7 @@ class L2000D_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'S',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['C', 'N']}]}}
         datatype = common.D_889
         codes = ['C', 'N']
@@ -5257,12 +5363,14 @@ class L2000D_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2000D_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2000D_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2000D_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2000D_AAA04'}},
                    'required': ['aaa01']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2000D_AAA01
+    aaa02: L2000D_AAA02 | None
     aaa03: L2000D_AAA03 | None
     aaa04: L2000D_AAA04 | None
 
@@ -5273,7 +5381,7 @@ class L2000D_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['439']}]}}
         datatype = common.D_374
         codes = ['439']
@@ -5287,7 +5395,7 @@ class L2000D_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -5301,7 +5409,7 @@ class L2000D_DTP03(Element):
         json = {'title': 'Accident Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -5333,7 +5441,7 @@ class L2000D_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['484']}]}}
         datatype = common.D_374
         codes = ['484']
@@ -5347,7 +5455,7 @@ class L2000D_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -5361,7 +5469,7 @@ class L2000D_DTP03(Element):
         json = {'title': 'Last Menstrual Period Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -5393,7 +5501,7 @@ class L2000D_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['ABC']}]}}
         datatype = common.D_374
         codes = ['ABC']
@@ -5407,7 +5515,7 @@ class L2000D_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -5421,7 +5529,7 @@ class L2000D_DTP03(Element):
         json = {'title': 'Estimated Birth Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -5453,7 +5561,7 @@ class L2000D_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['431']}]}}
         datatype = common.D_374
         codes = ['431']
@@ -5467,7 +5575,7 @@ class L2000D_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -5481,7 +5589,7 @@ class L2000D_DTP03(Element):
         json = {'title': 'Onset of Current Symptoms or Illness Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -5513,7 +5621,7 @@ class L2000D_HI01_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI01-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['BF', 'BJ', 'BK', 'LOI']}]}}
         datatype = common.D_1270
@@ -5528,7 +5636,7 @@ class L2000D_HI01_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI01-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -5541,7 +5649,7 @@ class L2000D_HI01_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI01-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -5555,7 +5663,7 @@ class L2000D_HI01_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI01-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -5568,7 +5676,7 @@ class L2000D_HI01_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI01-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -5581,7 +5689,7 @@ class L2000D_HI01_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI01-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -5594,7 +5702,7 @@ class L2000D_HI01_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI01-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -5612,46 +5720,49 @@ class L2000D_C022(Composite):
          'properties': {'hi01_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI01-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'BJ', 'BK',
                                                                  'LOI']}]}},
                         'hi01_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI01-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi01_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI01-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi01_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI01-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi01_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI01-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi01_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI01-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi01_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI01-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi01_01', 'hi01_02']}
     hi01_01: L2000D_HI01_01
     hi01_02: L2000D_HI01_02
     hi01_03: L2000D_HI01_03 | None
     hi01_04: L2000D_HI01_04 | None
+    hi01_05: L2000D_HI01_05 | None
+    hi01_06: L2000D_HI01_06 | None
+    hi01_07: L2000D_HI01_07 | None
 
 
 class L2000D_HI02_01(Element):
@@ -5660,7 +5771,7 @@ class L2000D_HI02_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI02-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'BJ', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'BJ', 'LOI']
@@ -5674,7 +5785,7 @@ class L2000D_HI02_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI02-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -5687,7 +5798,7 @@ class L2000D_HI02_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI02-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -5701,7 +5812,7 @@ class L2000D_HI02_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI02-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -5714,7 +5825,7 @@ class L2000D_HI02_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI02-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -5727,7 +5838,7 @@ class L2000D_HI02_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI02-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -5740,7 +5851,7 @@ class L2000D_HI02_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI02-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -5758,45 +5869,48 @@ class L2000D_C022(Composite):
          'properties': {'hi02_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI02-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'BJ', 'LOI']}]}},
                         'hi02_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI02-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi02_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI02-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi02_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI02-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi02_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI02-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi02_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI02-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi02_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI02-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi02_01', 'hi02_02']}
     hi02_01: L2000D_HI02_01
     hi02_02: L2000D_HI02_02
     hi02_03: L2000D_HI02_03 | None
     hi02_04: L2000D_HI02_04 | None
+    hi02_05: L2000D_HI02_05 | None
+    hi02_06: L2000D_HI02_06 | None
+    hi02_07: L2000D_HI02_07 | None
 
 
 class L2000D_HI03_01(Element):
@@ -5805,7 +5919,7 @@ class L2000D_HI03_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI03-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -5819,7 +5933,7 @@ class L2000D_HI03_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI03-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -5832,7 +5946,7 @@ class L2000D_HI03_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI03-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -5846,7 +5960,7 @@ class L2000D_HI03_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI03-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -5859,7 +5973,7 @@ class L2000D_HI03_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI03-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -5872,7 +5986,7 @@ class L2000D_HI03_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI03-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -5885,7 +5999,7 @@ class L2000D_HI03_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI03-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -5903,45 +6017,48 @@ class L2000D_C022(Composite):
          'properties': {'hi03_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI03-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi03_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI03-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi03_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI03-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi03_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI03-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi03_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI03-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi03_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI03-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi03_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI03-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi03_01', 'hi03_02']}
     hi03_01: L2000D_HI03_01
     hi03_02: L2000D_HI03_02
     hi03_03: L2000D_HI03_03 | None
     hi03_04: L2000D_HI03_04 | None
+    hi03_05: L2000D_HI03_05 | None
+    hi03_06: L2000D_HI03_06 | None
+    hi03_07: L2000D_HI03_07 | None
 
 
 class L2000D_HI04_01(Element):
@@ -5950,7 +6067,7 @@ class L2000D_HI04_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI04-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -5964,7 +6081,7 @@ class L2000D_HI04_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI04-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -5977,7 +6094,7 @@ class L2000D_HI04_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI04-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -5991,7 +6108,7 @@ class L2000D_HI04_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI04-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6004,7 +6121,7 @@ class L2000D_HI04_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI04-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6017,7 +6134,7 @@ class L2000D_HI04_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI04-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6030,7 +6147,7 @@ class L2000D_HI04_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI04-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -6048,45 +6165,48 @@ class L2000D_C022(Composite):
          'properties': {'hi04_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI04-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi04_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI04-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi04_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI04-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi04_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI04-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi04_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI04-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi04_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI04-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi04_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI04-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi04_01', 'hi04_02']}
     hi04_01: L2000D_HI04_01
     hi04_02: L2000D_HI04_02
     hi04_03: L2000D_HI04_03 | None
     hi04_04: L2000D_HI04_04 | None
+    hi04_05: L2000D_HI04_05 | None
+    hi04_06: L2000D_HI04_06 | None
+    hi04_07: L2000D_HI04_07 | None
 
 
 class L2000D_HI05_01(Element):
@@ -6095,7 +6215,7 @@ class L2000D_HI05_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI05-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -6109,7 +6229,7 @@ class L2000D_HI05_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI05-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -6122,7 +6242,7 @@ class L2000D_HI05_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI05-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -6136,7 +6256,7 @@ class L2000D_HI05_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI05-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6149,7 +6269,7 @@ class L2000D_HI05_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI05-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6162,7 +6282,7 @@ class L2000D_HI05_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI05-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6175,7 +6295,7 @@ class L2000D_HI05_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI05-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -6193,45 +6313,48 @@ class L2000D_C022(Composite):
          'properties': {'hi05_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI05-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi05_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI05-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi05_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI05-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi05_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI05-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi05_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI05-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi05_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI05-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi05_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI05-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi05_01', 'hi05_02']}
     hi05_01: L2000D_HI05_01
     hi05_02: L2000D_HI05_02
     hi05_03: L2000D_HI05_03 | None
     hi05_04: L2000D_HI05_04 | None
+    hi05_05: L2000D_HI05_05 | None
+    hi05_06: L2000D_HI05_06 | None
+    hi05_07: L2000D_HI05_07 | None
 
 
 class L2000D_HI06_01(Element):
@@ -6240,7 +6363,7 @@ class L2000D_HI06_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI06-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -6254,7 +6377,7 @@ class L2000D_HI06_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI06-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -6267,7 +6390,7 @@ class L2000D_HI06_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI06-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -6281,7 +6404,7 @@ class L2000D_HI06_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI06-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6294,7 +6417,7 @@ class L2000D_HI06_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI06-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6307,7 +6430,7 @@ class L2000D_HI06_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI06-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6320,7 +6443,7 @@ class L2000D_HI06_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI06-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -6338,45 +6461,48 @@ class L2000D_C022(Composite):
          'properties': {'hi06_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI06-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi06_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI06-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi06_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI06-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi06_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI06-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi06_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI06-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi06_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI06-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi06_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI06-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi06_01', 'hi06_02']}
     hi06_01: L2000D_HI06_01
     hi06_02: L2000D_HI06_02
     hi06_03: L2000D_HI06_03 | None
     hi06_04: L2000D_HI06_04 | None
+    hi06_05: L2000D_HI06_05 | None
+    hi06_06: L2000D_HI06_06 | None
+    hi06_07: L2000D_HI06_07 | None
 
 
 class L2000D_HI07_01(Element):
@@ -6385,7 +6511,7 @@ class L2000D_HI07_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI07-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -6399,7 +6525,7 @@ class L2000D_HI07_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI07-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -6412,7 +6538,7 @@ class L2000D_HI07_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI07-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -6426,7 +6552,7 @@ class L2000D_HI07_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI07-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6439,7 +6565,7 @@ class L2000D_HI07_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI07-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6452,7 +6578,7 @@ class L2000D_HI07_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI07-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6465,7 +6591,7 @@ class L2000D_HI07_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI07-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -6483,45 +6609,48 @@ class L2000D_C022(Composite):
          'properties': {'hi07_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI07-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi07_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI07-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi07_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI07-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi07_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI07-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi07_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI07-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi07_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI07-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi07_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI07-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi07_01', 'hi07_02']}
     hi07_01: L2000D_HI07_01
     hi07_02: L2000D_HI07_02
     hi07_03: L2000D_HI07_03 | None
     hi07_04: L2000D_HI07_04 | None
+    hi07_05: L2000D_HI07_05 | None
+    hi07_06: L2000D_HI07_06 | None
+    hi07_07: L2000D_HI07_07 | None
 
 
 class L2000D_HI08_01(Element):
@@ -6530,7 +6659,7 @@ class L2000D_HI08_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI08-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -6544,7 +6673,7 @@ class L2000D_HI08_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI08-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -6557,7 +6686,7 @@ class L2000D_HI08_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI08-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -6571,7 +6700,7 @@ class L2000D_HI08_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI08-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6584,7 +6713,7 @@ class L2000D_HI08_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI08-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6597,7 +6726,7 @@ class L2000D_HI08_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI08-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6610,7 +6739,7 @@ class L2000D_HI08_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI08-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -6628,45 +6757,48 @@ class L2000D_C022(Composite):
          'properties': {'hi08_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI08-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi08_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI08-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi08_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI08-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi08_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI08-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi08_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI08-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi08_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI08-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi08_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI08-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi08_01', 'hi08_02']}
     hi08_01: L2000D_HI08_01
     hi08_02: L2000D_HI08_02
     hi08_03: L2000D_HI08_03 | None
     hi08_04: L2000D_HI08_04 | None
+    hi08_05: L2000D_HI08_05 | None
+    hi08_06: L2000D_HI08_06 | None
+    hi08_07: L2000D_HI08_07 | None
 
 
 class L2000D_HI09_01(Element):
@@ -6675,7 +6807,7 @@ class L2000D_HI09_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI09-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -6689,7 +6821,7 @@ class L2000D_HI09_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI09-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -6702,7 +6834,7 @@ class L2000D_HI09_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI09-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -6716,7 +6848,7 @@ class L2000D_HI09_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI09-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6729,7 +6861,7 @@ class L2000D_HI09_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI09-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6742,7 +6874,7 @@ class L2000D_HI09_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI09-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6755,7 +6887,7 @@ class L2000D_HI09_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI09-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -6773,45 +6905,48 @@ class L2000D_C022(Composite):
          'properties': {'hi09_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI09-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi09_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI09-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi09_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI09-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi09_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI09-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi09_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI09-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi09_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI09-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi09_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI09-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi09_01', 'hi09_02']}
     hi09_01: L2000D_HI09_01
     hi09_02: L2000D_HI09_02
     hi09_03: L2000D_HI09_03 | None
     hi09_04: L2000D_HI09_04 | None
+    hi09_05: L2000D_HI09_05 | None
+    hi09_06: L2000D_HI09_06 | None
+    hi09_07: L2000D_HI09_07 | None
 
 
 class L2000D_HI10_01(Element):
@@ -6820,7 +6955,7 @@ class L2000D_HI10_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI10-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -6834,7 +6969,7 @@ class L2000D_HI10_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI10-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -6847,7 +6982,7 @@ class L2000D_HI10_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI10-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -6861,7 +6996,7 @@ class L2000D_HI10_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI10-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6874,7 +7009,7 @@ class L2000D_HI10_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI10-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6887,7 +7022,7 @@ class L2000D_HI10_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI10-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6900,7 +7035,7 @@ class L2000D_HI10_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI10-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -6918,45 +7053,48 @@ class L2000D_C022(Composite):
          'properties': {'hi10_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI10-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi10_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI10-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi10_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI10-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi10_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI10-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi10_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI10-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi10_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI10-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi10_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI10-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi10_01', 'hi10_02']}
     hi10_01: L2000D_HI10_01
     hi10_02: L2000D_HI10_02
     hi10_03: L2000D_HI10_03 | None
     hi10_04: L2000D_HI10_04 | None
+    hi10_05: L2000D_HI10_05 | None
+    hi10_06: L2000D_HI10_06 | None
+    hi10_07: L2000D_HI10_07 | None
 
 
 class L2000D_HI11_01(Element):
@@ -6965,7 +7103,7 @@ class L2000D_HI11_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI11-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -6979,7 +7117,7 @@ class L2000D_HI11_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI11-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -6992,7 +7130,7 @@ class L2000D_HI11_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI11-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -7006,7 +7144,7 @@ class L2000D_HI11_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI11-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -7019,7 +7157,7 @@ class L2000D_HI11_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI11-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -7032,7 +7170,7 @@ class L2000D_HI11_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI11-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -7045,7 +7183,7 @@ class L2000D_HI11_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI11-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -7063,45 +7201,48 @@ class L2000D_C022(Composite):
          'properties': {'hi11_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI11-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi11_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI11-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi11_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI11-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi11_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI11-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi11_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI11-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi11_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI11-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi11_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI11-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi11_01', 'hi11_02']}
     hi11_01: L2000D_HI11_01
     hi11_02: L2000D_HI11_02
     hi11_03: L2000D_HI11_03 | None
     hi11_04: L2000D_HI11_04 | None
+    hi11_05: L2000D_HI11_05 | None
+    hi11_06: L2000D_HI11_06 | None
+    hi11_07: L2000D_HI11_07 | None
 
 
 class L2000D_HI12_01(Element):
@@ -7110,7 +7251,7 @@ class L2000D_HI12_01(Element):
         json = {'title': 'Diagnosis Type Code',
          'usage': 'R',
          'description': 'xid=HI12-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['BF', 'LOI']}]}}
         datatype = common.D_1270
         codes = ['BF', 'LOI']
@@ -7124,7 +7265,7 @@ class L2000D_HI12_02(Element):
         json = {'title': 'Diagnosis Code',
          'usage': 'R',
          'description': 'xid=HI12-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -7137,7 +7278,7 @@ class L2000D_HI12_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI12-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -7151,7 +7292,7 @@ class L2000D_HI12_04(Element):
         json = {'title': 'Diagnosis Date',
          'usage': 'S',
          'description': 'xid=HI12-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -7164,7 +7305,7 @@ class L2000D_HI12_05(Element):
         json = {'title': 'Monetary Amount',
          'usage': 'N',
          'description': 'xid=HI12-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -7177,7 +7318,7 @@ class L2000D_HI12_06(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=HI12-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -7190,7 +7331,7 @@ class L2000D_HI12_07(Element):
         json = {'title': 'Version Identifier',
          'usage': 'N',
          'description': 'xid=HI12-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -7208,45 +7349,48 @@ class L2000D_C022(Composite):
          'properties': {'hi12_01': {'title': 'Diagnosis Type Code',
                                     'usage': 'R',
                                     'description': 'xid=HI12-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['BF', 'LOI']}]}},
                         'hi12_02': {'title': 'Diagnosis Code',
                                     'usage': 'R',
                                     'description': 'xid=HI12-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi12_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI12-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8']}]}},
                         'hi12_04': {'title': 'Diagnosis Date',
                                     'usage': 'S',
                                     'description': 'xid=HI12-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi12_05': {'title': 'Monetary Amount',
                                     'usage': 'N',
                                     'description': 'xid=HI12-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi12_06': {'title': 'Quantity',
                                     'usage': 'N',
                                     'description': 'xid=HI12-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi12_07': {'title': 'Version Identifier',
                                     'usage': 'N',
                                     'description': 'xid=HI12-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi12_01', 'hi12_02']}
     hi12_01: L2000D_HI12_01
     hi12_02: L2000D_HI12_02
     hi12_03: L2000D_HI12_03 | None
     hi12_04: L2000D_HI12_04 | None
+    hi12_05: L2000D_HI12_05 | None
+    hi12_06: L2000D_HI12_06 | None
+    hi12_07: L2000D_HI12_07 | None
 
 
 class L2000D_HI(Segment):
@@ -7281,7 +7425,7 @@ class L2000D_PWK01(Element):
         json = {'title': 'Attachment Report Type Code',
          'usage': 'R',
          'description': 'xid=PWK01 data_ele=755',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/755'},
                             {'enum': ['03', '04', '05', '06', '07', '08', '09', '10',
                                       '11', '13', '15', '21', '48', '55', '59', '77',
@@ -7304,7 +7448,7 @@ class L2000D_PWK02(Element):
         json = {'title': 'Attachment Transmission Code',
          'usage': 'R',
          'description': 'xid=PWK02 data_ele=756',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/756'},
                             {'enum': ['BM', 'EL', 'EM', 'FX', 'VO']}]}}
         datatype = common.D_756
@@ -7319,7 +7463,7 @@ class L2000D_PWK03(Element):
         json = {'title': 'Report Copies Needed',
          'usage': 'N',
          'description': 'xid=PWK03 data_ele=757',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/757'}}
         datatype = common.D_757
         min_len = 1
@@ -7332,7 +7476,7 @@ class L2000D_PWK04(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=PWK04 data_ele=98',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -7345,7 +7489,7 @@ class L2000D_PWK05(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'S',
          'description': 'xid=PWK05 data_ele=66',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['AC']}]}}
         datatype = common.D_66
         codes = ['AC']
@@ -7359,7 +7503,7 @@ class L2000D_PWK06(Element):
         json = {'title': 'Attachment Control Number',
          'usage': 'S',
          'description': 'xid=PWK06 data_ele=67',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -7372,7 +7516,7 @@ class L2000D_PWK07(Element):
         json = {'title': 'Attachment Description',
          'usage': 'S',
          'description': 'xid=PWK07 data_ele=352',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -7394,7 +7538,7 @@ class L2000D_PWK09(Element):
         json = {'title': 'Request Category Code',
          'usage': 'N',
          'description': 'xid=PWK09 data_ele=1525',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/1525'}}
         datatype = common.D_1525
         min_len = 1
@@ -7413,17 +7557,24 @@ class L2000D_PWK(Segment):
                    'properties': {'xid': {'literal': 'PWK'},
                                   'pwk01': {'$ref': '#/$elements/L2000D_PWK01'},
                                   'pwk02': {'$ref': '#/$elements/L2000D_PWK02'},
+                                  'pwk03': {'$ref': '#/$elements/L2000D_PWK03'},
+                                  'pwk04': {'$ref': '#/$elements/L2000D_PWK04'},
                                   'pwk05': {'$ref': '#/$elements/L2000D_PWK05'},
                                   'pwk06': {'$ref': '#/$elements/L2000D_PWK06'},
-                                  'pwk07': {'$ref': '#/$elements/L2000D_PWK07'}},
+                                  'pwk07': {'$ref': '#/$elements/L2000D_PWK07'},
+                                  'c002': {'$ref': '#/$elements/L2000D_C002'},
+                                  'pwk09': {'$ref': '#/$elements/L2000D_PWK09'}},
                    'required': ['pwk01', 'pwk02']},
          'maxItems': 10}
         segment_name = 'PWK'
     pwk01: L2000D_PWK01
     pwk02: L2000D_PWK02
+    pwk03: L2000D_PWK03 | None
+    pwk04: L2000D_PWK04 | None
     pwk05: L2000D_PWK05 | None
     pwk06: L2000D_PWK06 | None
     pwk07: L2000D_PWK07 | None
+    pwk09: L2000D_PWK09 | None
 
 
 class L2010DA_NM101(Element):
@@ -7432,7 +7583,7 @@ class L2010DA_NM101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['QC']}]}}
         datatype = common.D_98
         codes = ['QC']
@@ -7446,7 +7597,7 @@ class L2010DA_NM102(Element):
         json = {'title': 'Entity Type Qualifier',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1']}]}}
         datatype = common.D_1065
         codes = ['1']
@@ -7460,7 +7611,7 @@ class L2010DA_NM103(Element):
         json = {'title': 'Dependent Last Name',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -7473,7 +7624,7 @@ class L2010DA_NM104(Element):
         json = {'title': 'Dependent First Name',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -7486,7 +7637,7 @@ class L2010DA_NM105(Element):
         json = {'title': 'Dependent Middle Name',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -7499,7 +7650,7 @@ class L2010DA_NM106(Element):
         json = {'title': 'Name Prefix',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -7512,7 +7663,7 @@ class L2010DA_NM107(Element):
         json = {'title': 'Dependent Name Suffix',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -7525,7 +7676,7 @@ class L2010DA_NM108(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['MI', 'ZZ']}]}}
         datatype = common.D_66
         codes = ['MI', 'ZZ']
@@ -7539,7 +7690,7 @@ class L2010DA_NM109(Element):
         json = {'title': 'Dependent Primary Identifier',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -7552,7 +7703,7 @@ class L2010DA_NM110(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -7565,7 +7716,7 @@ class L2010DA_NM111(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -7586,9 +7737,12 @@ class L2010DA_NM1(Segment):
                         'nm103': {'$ref': '#/$elements/L2010DA_NM103'},
                         'nm104': {'$ref': '#/$elements/L2010DA_NM104'},
                         'nm105': {'$ref': '#/$elements/L2010DA_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2010DA_NM106'},
                         'nm107': {'$ref': '#/$elements/L2010DA_NM107'},
                         'nm108': {'$ref': '#/$elements/L2010DA_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2010DA_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2010DA_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2010DA_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2010DA_NM111'}},
          'required': ['nm101', 'nm102']}
         segment_name = 'NM1'
     nm101: L2010DA_NM101
@@ -7596,9 +7750,12 @@ class L2010DA_NM1(Segment):
     nm103: L2010DA_NM103 | None
     nm104: L2010DA_NM104 | None
     nm105: L2010DA_NM105 | None
+    nm106: L2010DA_NM106 | None
     nm107: L2010DA_NM107 | None
     nm108: L2010DA_NM108 | None
     nm109: L2010DA_NM109 | None
+    nm110: L2010DA_NM110 | None
+    nm111: L2010DA_NM111 | None
 
 
 class L2010DA_REF01(Element):
@@ -7607,7 +7764,7 @@ class L2010DA_REF01(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['A6', 'EJ', 'SY']}]}}
         datatype = common.D_128
         codes = ['A6', 'EJ', 'SY']
@@ -7621,7 +7778,7 @@ class L2010DA_REF02(Element):
         json = {'title': 'Dependent Supplemental Identifier',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -7634,7 +7791,7 @@ class L2010DA_REF03(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -7661,12 +7818,15 @@ class L2010DA_REF(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'REF'},
                                   'ref01': {'$ref': '#/$elements/L2010DA_REF01'},
-                                  'ref02': {'$ref': '#/$elements/L2010DA_REF02'}},
+                                  'ref02': {'$ref': '#/$elements/L2010DA_REF02'},
+                                  'ref03': {'$ref': '#/$elements/L2010DA_REF03'},
+                                  'c040': {'$ref': '#/$elements/L2010DA_C040'}},
                    'required': ['ref01', 'ref02']},
          'maxItems': 3}
         segment_name = 'REF'
     ref01: L2010DA_REF01
     ref02: L2010DA_REF02
+    ref03: L2010DA_REF03 | None
 
 
 class L2010DA_AAA01(Element):
@@ -7675,7 +7835,7 @@ class L2010DA_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -7689,7 +7849,7 @@ class L2010DA_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -7702,7 +7862,7 @@ class L2010DA_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'},
                             {'enum': ['15', '33', '58', '64', '65', '66', '67', '68',
                                       '71', '77', '95']}]}}
@@ -7718,7 +7878,7 @@ class L2010DA_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'S',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['C', 'N']}]}}
         datatype = common.D_889
         codes = ['C', 'N']
@@ -7737,12 +7897,14 @@ class L2010DA_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2010DA_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2010DA_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2010DA_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2010DA_AAA04'}},
                    'required': ['aaa01']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2010DA_AAA01
+    aaa02: L2010DA_AAA02 | None
     aaa03: L2010DA_AAA03 | None
     aaa04: L2010DA_AAA04 | None
 
@@ -7753,7 +7915,7 @@ class L2010DA_DMG01(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DMG01 data_ele=1250',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -7767,7 +7929,7 @@ class L2010DA_DMG02(Element):
         json = {'title': 'Dependent Birth Date',
          'usage': 'R',
          'description': 'xid=DMG02 data_ele=1251',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -7780,7 +7942,7 @@ class L2010DA_DMG03(Element):
         json = {'title': 'Dependent Gender Code',
          'usage': 'S',
          'description': 'xid=DMG03 data_ele=1068',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1068'}, {'enum': ['F', 'M', 'U']}]}}
         datatype = common.D_1068
         codes = ['F', 'M', 'U']
@@ -7794,7 +7956,7 @@ class L2010DA_DMG04(Element):
         json = {'title': 'Marital Status Code',
          'usage': 'N',
          'description': 'xid=DMG04 data_ele=1067',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1067'}}
         datatype = common.D_1067
         min_len = 1
@@ -7807,7 +7969,7 @@ class L2010DA_DMG05(Element):
         json = {'title': 'Race or Ethnicity Code',
          'usage': 'N',
          'description': 'xid=DMG05 data_ele=1109',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1109'}}
         datatype = common.D_1109
         min_len = 1
@@ -7820,7 +7982,7 @@ class L2010DA_DMG06(Element):
         json = {'title': 'Citizenship Status Code',
          'usage': 'N',
          'description': 'xid=DMG06 data_ele=1066',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1066'}}
         datatype = common.D_1066
         min_len = 1
@@ -7833,7 +7995,7 @@ class L2010DA_DMG07(Element):
         json = {'title': 'Country Code',
          'usage': 'N',
          'description': 'xid=DMG07 data_ele=26',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         min_len = 2
@@ -7846,7 +8008,7 @@ class L2010DA_DMG08(Element):
         json = {'title': 'Basis of Verification Code',
          'usage': 'N',
          'description': 'xid=DMG08 data_ele=659',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/659'}}
         datatype = common.D_659
         min_len = 1
@@ -7859,7 +8021,7 @@ class L2010DA_DMG09(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=DMG09 data_ele=380',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -7877,12 +8039,24 @@ class L2010DA_DMG(Segment):
          'properties': {'xid': {'literal': 'DMG'},
                         'dmg01': {'$ref': '#/$elements/L2010DA_DMG01'},
                         'dmg02': {'$ref': '#/$elements/L2010DA_DMG02'},
-                        'dmg03': {'$ref': '#/$elements/L2010DA_DMG03'}},
+                        'dmg03': {'$ref': '#/$elements/L2010DA_DMG03'},
+                        'dmg04': {'$ref': '#/$elements/L2010DA_DMG04'},
+                        'dmg05': {'$ref': '#/$elements/L2010DA_DMG05'},
+                        'dmg06': {'$ref': '#/$elements/L2010DA_DMG06'},
+                        'dmg07': {'$ref': '#/$elements/L2010DA_DMG07'},
+                        'dmg08': {'$ref': '#/$elements/L2010DA_DMG08'},
+                        'dmg09': {'$ref': '#/$elements/L2010DA_DMG09'}},
          'required': ['dmg01', 'dmg02']}
         segment_name = 'DMG'
     dmg01: L2010DA_DMG01
     dmg02: L2010DA_DMG02
     dmg03: L2010DA_DMG03 | None
+    dmg04: L2010DA_DMG04 | None
+    dmg05: L2010DA_DMG05 | None
+    dmg06: L2010DA_DMG06 | None
+    dmg07: L2010DA_DMG07 | None
+    dmg08: L2010DA_DMG08 | None
+    dmg09: L2010DA_DMG09 | None
 
 
 class L2010DA_INS01(Element):
@@ -7891,7 +8065,7 @@ class L2010DA_INS01(Element):
         json = {'title': 'Insured Indicator',
          'usage': 'R',
          'description': 'xid=INS01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N']}]}}
         datatype = common.D_1073
         codes = ['N']
@@ -7905,7 +8079,7 @@ class L2010DA_INS02(Element):
         json = {'title': 'Relationship to Insured',
          'usage': 'R',
          'description': 'xid=INS02 data_ele=1069',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1069'},
                             {'enum': ['01', '04', '05', '07', '09', '10', '15', '17',
                                       '19', '20', '21', '22', '23', '24', '29', '32',
@@ -7923,7 +8097,7 @@ class L2010DA_INS03(Element):
         json = {'title': 'Maintenance Type Code',
          'usage': 'N',
          'description': 'xid=INS03 data_ele=875',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/875'}}
         datatype = common.D_875
         min_len = 3
@@ -7936,7 +8110,7 @@ class L2010DA_INS04(Element):
         json = {'title': 'Maintenance Reason Code',
          'usage': 'N',
          'description': 'xid=INS04 data_ele=1203',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1203'}}
         datatype = common.D_1203
         min_len = 2
@@ -7949,7 +8123,7 @@ class L2010DA_INS05(Element):
         json = {'title': 'Benefit Status Code',
          'usage': 'N',
          'description': 'xid=INS05 data_ele=1216',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1216'}}
         datatype = common.D_1216
         min_len = 1
@@ -7962,7 +8136,7 @@ class L2010DA_INS06(Element):
         json = {'title': 'Medicare Plan Code',
          'usage': 'N',
          'description': 'xid=INS06 data_ele=1218',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1218'}}
         datatype = common.D_1218
         min_len = 1
@@ -7976,7 +8150,7 @@ class L2010DA_INS07(Element):
                   'Event Code',
          'usage': 'N',
          'description': 'xid=INS07 data_ele=1219',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1219'}}
         datatype = common.D_1219
         min_len = 1
@@ -7989,7 +8163,7 @@ class L2010DA_INS08(Element):
         json = {'title': 'Employment Status Code',
          'usage': 'N',
          'description': 'xid=INS08 data_ele=584',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/584'}}
         datatype = common.D_584
         min_len = 2
@@ -8002,7 +8176,7 @@ class L2010DA_INS09(Element):
         json = {'title': 'Student Status Code',
          'usage': 'N',
          'description': 'xid=INS09 data_ele=1220',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/1220'}}
         datatype = common.D_1220
         min_len = 1
@@ -8015,7 +8189,7 @@ class L2010DA_INS10(Element):
         json = {'title': 'Yes/No Condition or Response Code',
          'usage': 'N',
          'description': 'xid=INS10 data_ele=1073',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/1073'}}
         datatype = common.D_1073
         min_len = 1
@@ -8028,7 +8202,7 @@ class L2010DA_INS11(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'N',
          'description': 'xid=INS11 data_ele=1250',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/1250'}}
         datatype = common.D_1250
         min_len = 2
@@ -8041,7 +8215,7 @@ class L2010DA_INS12(Element):
         json = {'title': 'Date Time Period',
          'usage': 'N',
          'description': 'xid=INS12 data_ele=1251',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -8054,7 +8228,7 @@ class L2010DA_INS13(Element):
         json = {'title': 'Confidentiality Code',
          'usage': 'N',
          'description': 'xid=INS13 data_ele=1165',
-         'sequence': 13,
+         'position': 13,
          'type': {'$ref': '#/$common/1165'}}
         datatype = common.D_1165
         min_len = 1
@@ -8067,7 +8241,7 @@ class L2010DA_INS14(Element):
         json = {'title': 'City Name',
          'usage': 'N',
          'description': 'xid=INS14 data_ele=19',
-         'sequence': 14,
+         'position': 14,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -8080,7 +8254,7 @@ class L2010DA_INS15(Element):
         json = {'title': 'State or Province Code',
          'usage': 'N',
          'description': 'xid=INS15 data_ele=156',
-         'sequence': 15,
+         'position': 15,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         min_len = 2
@@ -8093,7 +8267,7 @@ class L2010DA_INS16(Element):
         json = {'title': 'Country Code',
          'usage': 'N',
          'description': 'xid=INS16 data_ele=26',
-         'sequence': 16,
+         'position': 16,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         min_len = 2
@@ -8106,7 +8280,7 @@ class L2010DA_INS17(Element):
         json = {'title': 'Birth Sequence Number',
          'usage': 'S',
          'description': 'xid=INS17 data_ele=1470',
-         'sequence': 17,
+         'position': 17,
          'type': {'$ref': '#/$common/1470'}}
         datatype = common.D_1470
         min_len = 1
@@ -8124,11 +8298,39 @@ class L2010DA_INS(Segment):
          'properties': {'xid': {'literal': 'INS'},
                         'ins01': {'$ref': '#/$elements/L2010DA_INS01'},
                         'ins02': {'$ref': '#/$elements/L2010DA_INS02'},
+                        'ins03': {'$ref': '#/$elements/L2010DA_INS03'},
+                        'ins04': {'$ref': '#/$elements/L2010DA_INS04'},
+                        'ins05': {'$ref': '#/$elements/L2010DA_INS05'},
+                        'ins06': {'$ref': '#/$elements/L2010DA_INS06'},
+                        'ins07': {'$ref': '#/$elements/L2010DA_INS07'},
+                        'ins08': {'$ref': '#/$elements/L2010DA_INS08'},
+                        'ins09': {'$ref': '#/$elements/L2010DA_INS09'},
+                        'ins10': {'$ref': '#/$elements/L2010DA_INS10'},
+                        'ins11': {'$ref': '#/$elements/L2010DA_INS11'},
+                        'ins12': {'$ref': '#/$elements/L2010DA_INS12'},
+                        'ins13': {'$ref': '#/$elements/L2010DA_INS13'},
+                        'ins14': {'$ref': '#/$elements/L2010DA_INS14'},
+                        'ins15': {'$ref': '#/$elements/L2010DA_INS15'},
+                        'ins16': {'$ref': '#/$elements/L2010DA_INS16'},
                         'ins17': {'$ref': '#/$elements/L2010DA_INS17'}},
          'required': ['ins01', 'ins02']}
         segment_name = 'INS'
     ins01: L2010DA_INS01
     ins02: L2010DA_INS02
+    ins03: L2010DA_INS03 | None
+    ins04: L2010DA_INS04 | None
+    ins05: L2010DA_INS05 | None
+    ins06: L2010DA_INS06 | None
+    ins07: L2010DA_INS07 | None
+    ins08: L2010DA_INS08 | None
+    ins09: L2010DA_INS09 | None
+    ins10: L2010DA_INS10 | None
+    ins11: L2010DA_INS11 | None
+    ins12: L2010DA_INS12 | None
+    ins13: L2010DA_INS13 | None
+    ins14: L2010DA_INS14 | None
+    ins15: L2010DA_INS15 | None
+    ins16: L2010DA_INS16 | None
     ins17: L2010DA_INS17 | None
 
 
@@ -8160,7 +8362,7 @@ class L2010DB_NM101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'},
                             {'enum': ['1P', '2B', 'ABG', 'FA', 'PR', 'X3']}]}}
         datatype = common.D_98
@@ -8175,7 +8377,7 @@ class L2010DB_NM102(Element):
         json = {'title': 'Entity Type Qualifier',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1', '2']}]}}
         datatype = common.D_1065
         codes = ['1', '2']
@@ -8189,7 +8391,7 @@ class L2010DB_NM103(Element):
         json = {'title': 'Response Contact Last or Organization Name',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -8202,7 +8404,7 @@ class L2010DB_NM104(Element):
         json = {'title': 'Response Contact First Name',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -8215,7 +8417,7 @@ class L2010DB_NM105(Element):
         json = {'title': 'Response Contact Middle Name',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -8228,7 +8430,7 @@ class L2010DB_NM106(Element):
         json = {'title': 'Name Prefix',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -8241,7 +8443,7 @@ class L2010DB_NM107(Element):
         json = {'title': 'Response Contact Name Suffix',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -8254,7 +8456,7 @@ class L2010DB_NM108(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'},
                             {'enum': ['24', '34', '46', 'PI', 'XV', 'XX']}]}}
         datatype = common.D_66
@@ -8269,7 +8471,7 @@ class L2010DB_NM109(Element):
         json = {'title': 'Response Contact Identifier',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -8282,7 +8484,7 @@ class L2010DB_NM110(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -8295,7 +8497,7 @@ class L2010DB_NM111(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -8316,9 +8518,12 @@ class L2010DB_NM1(Segment):
                         'nm103': {'$ref': '#/$elements/L2010DB_NM103'},
                         'nm104': {'$ref': '#/$elements/L2010DB_NM104'},
                         'nm105': {'$ref': '#/$elements/L2010DB_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2010DB_NM106'},
                         'nm107': {'$ref': '#/$elements/L2010DB_NM107'},
                         'nm108': {'$ref': '#/$elements/L2010DB_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2010DB_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2010DB_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2010DB_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2010DB_NM111'}},
          'required': ['nm101', 'nm102']}
         segment_name = 'NM1'
     nm101: L2010DB_NM101
@@ -8326,9 +8531,12 @@ class L2010DB_NM1(Segment):
     nm103: L2010DB_NM103 | None
     nm104: L2010DB_NM104 | None
     nm105: L2010DB_NM105 | None
+    nm106: L2010DB_NM106 | None
     nm107: L2010DB_NM107 | None
     nm108: L2010DB_NM108 | None
     nm109: L2010DB_NM109 | None
+    nm110: L2010DB_NM110 | None
+    nm111: L2010DB_NM111 | None
 
 
 class L2010DB_N301(Element):
@@ -8337,7 +8545,7 @@ class L2010DB_N301(Element):
         json = {'title': 'Response Contact Address Line',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -8350,7 +8558,7 @@ class L2010DB_N302(Element):
         json = {'title': 'Response Contact Address Line',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -8380,7 +8588,7 @@ class L2010DB_N401(Element):
         json = {'title': 'Response Contact City Name',
          'usage': 'S',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -8393,7 +8601,7 @@ class L2010DB_N402(Element):
         json = {'title': 'Response Contact State or Province Code',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -8407,7 +8615,7 @@ class L2010DB_N403(Element):
         json = {'title': 'Response Contact Postal Zone or ZIP Code',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -8420,7 +8628,7 @@ class L2010DB_N404(Element):
         json = {'title': 'Response Contact Country Code',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -8434,7 +8642,7 @@ class L2010DB_N405(Element):
         json = {'title': 'Location Qualifier',
          'usage': 'S',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/309'}, {'enum': ['B1', 'DP']}]}}
         datatype = common.D_309
         codes = ['B1', 'DP']
@@ -8448,7 +8656,7 @@ class L2010DB_N406(Element):
         json = {'title': 'Response Contact Specific Location',
          'usage': 'S',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -8486,7 +8694,7 @@ class L2010DB_PER01(Element):
         json = {'title': 'Contact Function Code',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['IC']}]}}
         datatype = common.D_366
         codes = ['IC']
@@ -8500,7 +8708,7 @@ class L2010DB_PER02(Element):
         json = {'title': 'Response Contact Name',
          'usage': 'S',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -8513,7 +8721,7 @@ class L2010DB_PER03(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'}, {'enum': ['EM', 'FX', 'TE']}]}}
         datatype = common.D_365
         codes = ['EM', 'FX', 'TE']
@@ -8527,7 +8735,7 @@ class L2010DB_PER04(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -8540,7 +8748,7 @@ class L2010DB_PER05(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -8555,7 +8763,7 @@ class L2010DB_PER06(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -8568,7 +8776,7 @@ class L2010DB_PER07(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -8583,7 +8791,7 @@ class L2010DB_PER08(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -8596,7 +8804,7 @@ class L2010DB_PER09(Element):
         json = {'title': 'Contact Inquiry Reference',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -8621,7 +8829,8 @@ class L2010DB_PER(Segment):
                                   'per05': {'$ref': '#/$elements/L2010DB_PER05'},
                                   'per06': {'$ref': '#/$elements/L2010DB_PER06'},
                                   'per07': {'$ref': '#/$elements/L2010DB_PER07'},
-                                  'per08': {'$ref': '#/$elements/L2010DB_PER08'}},
+                                  'per08': {'$ref': '#/$elements/L2010DB_PER08'},
+                                  'per09': {'$ref': '#/$elements/L2010DB_PER09'}},
                    'required': ['per01']},
          'maxItems': 3}
         segment_name = 'PER'
@@ -8633,6 +8842,7 @@ class L2010DB_PER(Segment):
     per06: L2010DB_PER06 | None
     per07: L2010DB_PER07 | None
     per08: L2010DB_PER08 | None
+    per09: L2010DB_PER09 | None
 
 
 class L2010DB(Loop):
@@ -8662,7 +8872,7 @@ class L2000E_HL01(Element):
         json = {'title': 'Hierarchical ID Number',
          'usage': 'R',
          'description': 'xid=HL01 data_ele=628',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/628'}}
         datatype = common.D_628
         min_len = 1
@@ -8675,7 +8885,7 @@ class L2000E_HL02(Element):
         json = {'title': 'Hierarchical Parent ID Number',
          'usage': 'R',
          'description': 'xid=HL02 data_ele=734',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/734'}}
         datatype = common.D_734
         min_len = 1
@@ -8688,7 +8898,7 @@ class L2000E_HL03(Element):
         json = {'title': 'Hierarchical Level Code',
          'usage': 'R',
          'description': 'xid=HL03 data_ele=735',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/735'}, {'enum': ['19']}]}}
         datatype = common.D_735
         codes = ['19']
@@ -8702,7 +8912,7 @@ class L2000E_HL04(Element):
         json = {'title': 'Hierarchical Child Code',
          'usage': 'R',
          'description': 'xid=HL04 data_ele=736',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/736'}, {'enum': ['1']}]}}
         datatype = common.D_736
         codes = ['1']
@@ -8737,7 +8947,7 @@ class L2000E_MSG01(Element):
         json = {'title': 'Free Form Message Text',
          'usage': 'R',
          'description': 'xid=MSG01 data_ele=933',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/933'}}
         datatype = common.D_933
         min_len = 1
@@ -8750,7 +8960,7 @@ class L2000E_MSG02(Element):
         json = {'title': 'Printer Carriage Control Code',
          'usage': 'N',
          'description': 'xid=MSG02 data_ele=934',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/934'}}
         datatype = common.D_934
         min_len = 2
@@ -8763,7 +8973,7 @@ class L2000E_MSG03(Element):
         json = {'title': 'Number',
          'usage': 'N',
          'description': 'xid=MSG03 data_ele=1470',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1470'}}
         datatype = common.D_1470
         min_len = 1
@@ -8779,10 +8989,14 @@ class L2000E_MSG(Segment):
          'position': 160,
          'type': 'object',
          'properties': {'xid': {'literal': 'MSG'},
-                        'msg01': {'$ref': '#/$elements/L2000E_MSG01'}},
+                        'msg01': {'$ref': '#/$elements/L2000E_MSG01'},
+                        'msg02': {'$ref': '#/$elements/L2000E_MSG02'},
+                        'msg03': {'$ref': '#/$elements/L2000E_MSG03'}},
          'required': ['msg01']}
         segment_name = 'MSG'
     msg01: L2000E_MSG01
+    msg02: L2000E_MSG02 | None
+    msg03: L2000E_MSG03 | None
 
 
 class L2010E_NM101(Element):
@@ -8791,7 +9005,7 @@ class L2010E_NM101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['1T', 'FA', 'SJ']}]}}
         datatype = common.D_98
         codes = ['1T', 'FA', 'SJ']
@@ -8805,7 +9019,7 @@ class L2010E_NM102(Element):
         json = {'title': 'Entity Type Qualifier',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1', '2']}]}}
         datatype = common.D_1065
         codes = ['1', '2']
@@ -8819,7 +9033,7 @@ class L2010E_NM103(Element):
         json = {'title': 'Service Provider Last or Organization Name',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -8832,7 +9046,7 @@ class L2010E_NM104(Element):
         json = {'title': 'Service Provider First Name',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -8845,7 +9059,7 @@ class L2010E_NM105(Element):
         json = {'title': 'Service Provider Middle Name',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -8858,7 +9072,7 @@ class L2010E_NM106(Element):
         json = {'title': 'Name Prefix',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -8871,7 +9085,7 @@ class L2010E_NM107(Element):
         json = {'title': 'Service Provider Name Suffix',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -8884,7 +9098,7 @@ class L2010E_NM108(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'},
                             {'enum': ['24', '34', '46', 'XX']}]}}
         datatype = common.D_66
@@ -8899,7 +9113,7 @@ class L2010E_NM109(Element):
         json = {'title': 'Service Provider Identifier',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -8912,7 +9126,7 @@ class L2010E_NM110(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -8925,7 +9139,7 @@ class L2010E_NM111(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -8946,9 +9160,12 @@ class L2010E_NM1(Segment):
                         'nm103': {'$ref': '#/$elements/L2010E_NM103'},
                         'nm104': {'$ref': '#/$elements/L2010E_NM104'},
                         'nm105': {'$ref': '#/$elements/L2010E_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2010E_NM106'},
                         'nm107': {'$ref': '#/$elements/L2010E_NM107'},
                         'nm108': {'$ref': '#/$elements/L2010E_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2010E_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2010E_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2010E_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2010E_NM111'}},
          'required': ['nm101', 'nm102']}
         segment_name = 'NM1'
     nm101: L2010E_NM101
@@ -8956,9 +9173,12 @@ class L2010E_NM1(Segment):
     nm103: L2010E_NM103 | None
     nm104: L2010E_NM104 | None
     nm105: L2010E_NM105 | None
+    nm106: L2010E_NM106 | None
     nm107: L2010E_NM107 | None
     nm108: L2010E_NM108 | None
     nm109: L2010E_NM109 | None
+    nm110: L2010E_NM110 | None
+    nm111: L2010E_NM111 | None
 
 
 class L2010E_REF01(Element):
@@ -8967,7 +9187,7 @@ class L2010E_REF01(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'},
                             {'enum': ['1G', '1J', 'EI', 'N5', 'N7', 'SY', 'ZH']}]}}
         datatype = common.D_128
@@ -8982,7 +9202,7 @@ class L2010E_REF02(Element):
         json = {'title': 'Service Provider Supplemental Identifier',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -8995,7 +9215,7 @@ class L2010E_REF03(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -9023,12 +9243,15 @@ class L2010E_REF(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'REF'},
                                   'ref01': {'$ref': '#/$elements/L2010E_REF01'},
-                                  'ref02': {'$ref': '#/$elements/L2010E_REF02'}},
+                                  'ref02': {'$ref': '#/$elements/L2010E_REF02'},
+                                  'ref03': {'$ref': '#/$elements/L2010E_REF03'},
+                                  'c040': {'$ref': '#/$elements/L2010E_C040'}},
                    'required': ['ref01', 'ref02']},
          'maxItems': 7}
         segment_name = 'REF'
     ref01: L2010E_REF01
     ref02: L2010E_REF02
+    ref03: L2010E_REF03 | None
 
 
 class L2010E_N301(Element):
@@ -9037,7 +9260,7 @@ class L2010E_N301(Element):
         json = {'title': 'Service Provider Address Line',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -9050,7 +9273,7 @@ class L2010E_N302(Element):
         json = {'title': 'Service Provider Address Line',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -9080,7 +9303,7 @@ class L2010E_N401(Element):
         json = {'title': 'Service Provider City Name',
          'usage': 'S',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -9093,7 +9316,7 @@ class L2010E_N402(Element):
         json = {'title': 'Service Provider State or Province Code',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -9107,7 +9330,7 @@ class L2010E_N403(Element):
         json = {'title': 'Service Provider Postal Zone or ZIP Code',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -9120,7 +9343,7 @@ class L2010E_N404(Element):
         json = {'title': 'Service Provider Country Code',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -9134,7 +9357,7 @@ class L2010E_N405(Element):
         json = {'title': 'Location Qualifier',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -9147,7 +9370,7 @@ class L2010E_N406(Element):
         json = {'title': 'Location Identifier',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -9166,12 +9389,16 @@ class L2010E_N4(Segment):
                         'n401': {'$ref': '#/$elements/L2010E_N401'},
                         'n402': {'$ref': '#/$elements/L2010E_N402'},
                         'n403': {'$ref': '#/$elements/L2010E_N403'},
-                        'n404': {'$ref': '#/$elements/L2010E_N404'}}}
+                        'n404': {'$ref': '#/$elements/L2010E_N404'},
+                        'n405': {'$ref': '#/$elements/L2010E_N405'},
+                        'n406': {'$ref': '#/$elements/L2010E_N406'}}}
         segment_name = 'N4'
     n401: L2010E_N401 | None
     n402: L2010E_N402 | None
     n403: L2010E_N403 | None
     n404: L2010E_N404 | None
+    n405: L2010E_N405 | None
+    n406: L2010E_N406 | None
 
 
 class L2010E_PER01(Element):
@@ -9180,7 +9407,7 @@ class L2010E_PER01(Element):
         json = {'title': 'Contact Function Code',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['IC']}]}}
         datatype = common.D_366
         codes = ['IC']
@@ -9194,7 +9421,7 @@ class L2010E_PER02(Element):
         json = {'title': 'Service Provider Contact Name',
          'usage': 'S',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -9207,7 +9434,7 @@ class L2010E_PER03(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'}, {'enum': ['EM', 'FX', 'TE']}]}}
         datatype = common.D_365
         codes = ['EM', 'FX', 'TE']
@@ -9221,7 +9448,7 @@ class L2010E_PER04(Element):
         json = {'title': 'Service Provider Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -9234,7 +9461,7 @@ class L2010E_PER05(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -9249,7 +9476,7 @@ class L2010E_PER06(Element):
         json = {'title': 'Service Provider Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -9262,7 +9489,7 @@ class L2010E_PER07(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -9277,7 +9504,7 @@ class L2010E_PER08(Element):
         json = {'title': 'Service Provider Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -9290,7 +9517,7 @@ class L2010E_PER09(Element):
         json = {'title': 'Contact Inquiry Reference',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -9313,7 +9540,8 @@ class L2010E_PER(Segment):
                         'per05': {'$ref': '#/$elements/L2010E_PER05'},
                         'per06': {'$ref': '#/$elements/L2010E_PER06'},
                         'per07': {'$ref': '#/$elements/L2010E_PER07'},
-                        'per08': {'$ref': '#/$elements/L2010E_PER08'}},
+                        'per08': {'$ref': '#/$elements/L2010E_PER08'},
+                        'per09': {'$ref': '#/$elements/L2010E_PER09'}},
          'required': ['per01']}
         segment_name = 'PER'
     per01: L2010E_PER01
@@ -9324,6 +9552,7 @@ class L2010E_PER(Segment):
     per06: L2010E_PER06 | None
     per07: L2010E_PER07 | None
     per08: L2010E_PER08 | None
+    per09: L2010E_PER09 | None
 
 
 class L2010E_AAA01(Element):
@@ -9332,7 +9561,7 @@ class L2010E_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -9346,7 +9575,7 @@ class L2010E_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -9359,7 +9588,7 @@ class L2010E_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'},
                             {'enum': ['15', '33', '35', '41', '43', '44', '45', '46',
                                       '47', '49', '51', '52', '79', '97']}]}}
@@ -9375,7 +9604,7 @@ class L2010E_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'S',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['C', 'N']}]}}
         datatype = common.D_889
         codes = ['C', 'N']
@@ -9394,12 +9623,14 @@ class L2010E_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2010E_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2010E_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2010E_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2010E_AAA04'}},
                    'required': ['aaa01']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2010E_AAA01
+    aaa02: L2010E_AAA02 | None
     aaa03: L2010E_AAA03 | None
     aaa04: L2010E_AAA04 | None
 
@@ -9410,7 +9641,7 @@ class L2010E_PRV01(Element):
         json = {'title': 'Provider Code',
          'usage': 'R',
          'description': 'xid=PRV01 data_ele=1221',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1221'},
                             {'enum': ['AD', 'AS', 'AT', 'CO', 'CV', 'OP', 'OR', 'OT',
                                       'PC', 'PE']}]}}
@@ -9426,7 +9657,7 @@ class L2010E_PRV02(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'R',
          'description': 'xid=PRV02 data_ele=128',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['ZZ']}]}}
         datatype = common.D_128
         codes = ['ZZ']
@@ -9440,7 +9671,7 @@ class L2010E_PRV03(Element):
         json = {'title': 'Provider Taxonomy Code',
          'usage': 'R',
          'description': 'xid=PRV03 data_ele=127',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -9453,7 +9684,7 @@ class L2010E_PRV04(Element):
         json = {'title': 'State or Province Code',
          'usage': 'N',
          'description': 'xid=PRV04 data_ele=156',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         min_len = 2
@@ -9476,7 +9707,7 @@ class L2010E_PRV06(Element):
         json = {'title': 'Provider Organization Code',
          'usage': 'N',
          'description': 'xid=PRV06 data_ele=1223',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1223'}}
         datatype = common.D_1223
         min_len = 3
@@ -9494,12 +9725,17 @@ class L2010E_PRV(Segment):
          'properties': {'xid': {'literal': 'PRV'},
                         'prv01': {'$ref': '#/$elements/L2010E_PRV01'},
                         'prv02': {'$ref': '#/$elements/L2010E_PRV02'},
-                        'prv03': {'$ref': '#/$elements/L2010E_PRV03'}},
+                        'prv03': {'$ref': '#/$elements/L2010E_PRV03'},
+                        'prv04': {'$ref': '#/$elements/L2010E_PRV04'},
+                        'c035': {'$ref': '#/$elements/L2010E_C035'},
+                        'prv06': {'$ref': '#/$elements/L2010E_PRV06'}},
          'required': ['prv01', 'prv02', 'prv03']}
         segment_name = 'PRV'
     prv01: L2010E_PRV01
     prv02: L2010E_PRV02
     prv03: L2010E_PRV03
+    prv04: L2010E_PRV04 | None
+    prv06: L2010E_PRV06 | None
 
 
 class L2010E(Loop):
@@ -9534,7 +9770,7 @@ class L2000F_HL01(Element):
         json = {'title': 'Hierarchical ID Number',
          'usage': 'R',
          'description': 'xid=HL01 data_ele=628',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/628'}}
         datatype = common.D_628
         min_len = 1
@@ -9547,7 +9783,7 @@ class L2000F_HL02(Element):
         json = {'title': 'Hierarchical Parent ID Number',
          'usage': 'R',
          'description': 'xid=HL02 data_ele=734',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/734'}}
         datatype = common.D_734
         min_len = 1
@@ -9560,7 +9796,7 @@ class L2000F_HL03(Element):
         json = {'title': 'Hierarchical Level Code',
          'usage': 'R',
          'description': 'xid=HL03 data_ele=735',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/735'}, {'enum': ['SS']}]}}
         datatype = common.D_735
         codes = ['SS']
@@ -9574,7 +9810,7 @@ class L2000F_HL04(Element):
         json = {'title': 'Hierarchical Child Code',
          'usage': 'R',
          'description': 'xid=HL04 data_ele=736',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/736'}, {'enum': ['0']}]}}
         datatype = common.D_736
         codes = ['0']
@@ -9609,7 +9845,7 @@ class L2000F_TRN01(Element):
         json = {'title': 'Trace Type Code',
          'usage': 'R',
          'description': 'xid=TRN01 data_ele=481',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/481'}, {'enum': ['1', '2']}]}}
         datatype = common.D_481
         codes = ['1', '2']
@@ -9623,7 +9859,7 @@ class L2000F_TRN02(Element):
         json = {'title': 'Service Trace Number',
          'usage': 'R',
          'description': 'xid=TRN02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -9636,7 +9872,7 @@ class L2000F_TRN03(Element):
         json = {'title': 'Trace Assigning Entity Identifier',
          'usage': 'R',
          'description': 'xid=TRN03 data_ele=509',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/509'}}
         datatype = common.D_509
         min_len = 10
@@ -9649,7 +9885,7 @@ class L2000F_TRN04(Element):
         json = {'title': 'Trace Assigning Entity Additional Identifier',
          'usage': 'S',
          'description': 'xid=TRN04 data_ele=127',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -9685,7 +9921,7 @@ class L2000F_AAA01(Element):
         json = {'title': 'Valid Request Indicator',
          'usage': 'R',
          'description': 'xid=AAA01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -9699,7 +9935,7 @@ class L2000F_AAA02(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=AAA02 data_ele=559',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -9712,7 +9948,7 @@ class L2000F_AAA03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=AAA03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'},
                             {'enum': ['15', '33', '52', '57', '60', '61', '62',
                                       'T5']}]}}
@@ -9728,7 +9964,7 @@ class L2000F_AAA04(Element):
         json = {'title': 'Follow-up Action Code',
          'usage': 'S',
          'description': 'xid=AAA04 data_ele=889',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/889'}, {'enum': ['C', 'N']}]}}
         datatype = common.D_889
         codes = ['C', 'N']
@@ -9747,12 +9983,14 @@ class L2000F_AAA(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AAA'},
                                   'aaa01': {'$ref': '#/$elements/L2000F_AAA01'},
+                                  'aaa02': {'$ref': '#/$elements/L2000F_AAA02'},
                                   'aaa03': {'$ref': '#/$elements/L2000F_AAA03'},
                                   'aaa04': {'$ref': '#/$elements/L2000F_AAA04'}},
                    'required': ['aaa01']},
          'maxItems': 9}
         segment_name = 'AAA'
     aaa01: L2000F_AAA01
+    aaa02: L2000F_AAA02 | None
     aaa03: L2000F_AAA03 | None
     aaa04: L2000F_AAA04 | None
 
@@ -9763,7 +10001,7 @@ class L2000F_UM01(Element):
         json = {'title': 'Request Category Code',
          'usage': 'R',
          'description': 'xid=UM01 data_ele=1525',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1525'}, {'enum': ['AR', 'HS', 'SC']}]}}
         datatype = common.D_1525
         codes = ['AR', 'HS', 'SC']
@@ -9777,7 +10015,7 @@ class L2000F_UM02(Element):
         json = {'title': 'Certification Type Code',
          'usage': 'R',
          'description': 'xid=UM02 data_ele=1322',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1322'},
                             {'enum': ['1', '2', '3', '4', 'I', 'R', 'S']}]}}
         datatype = common.D_1322
@@ -9792,7 +10030,7 @@ class L2000F_UM03(Element):
         json = {'title': 'Service Type Code',
          'usage': 'S',
          'description': 'xid=UM03 data_ele=1365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1365'},
                             {'enum': ['1', '2', '3', '4', '5', '6', '7', '8', '12',
                                       '14', '15', '16', '17', '18', '20', '21', '23',
@@ -9819,7 +10057,7 @@ class L2000F_UM04_01(Element):
         json = {'title': 'Facility Type Code',
          'usage': 'R',
          'description': 'xid=UM04-01 data_ele=1331',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/1331'}}
         datatype = common.D_1331
         min_len = 1
@@ -9832,7 +10070,7 @@ class L2000F_UM04_02(Element):
         json = {'title': 'Facility Code Qualifier',
          'usage': 'R',
          'description': 'xid=UM04-02 data_ele=1332',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1332'}, {'enum': ['A', 'B']}]}}
         datatype = common.D_1332
         codes = ['A', 'B']
@@ -9846,7 +10084,7 @@ class L2000F_UM04_03(Element):
         json = {'title': 'Claim Frequency Type Code',
          'usage': 'N',
          'description': 'xid=UM04-03 data_ele=1325',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1325'}}
         datatype = common.D_1325
         min_len = 1
@@ -9865,22 +10103,23 @@ class L2000F_C023(Composite):
          'properties': {'um04_01': {'title': 'Facility Type Code',
                                     'usage': 'R',
                                     'description': 'xid=UM04-01 data_ele=1331',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'$ref': '#/$common/1331'}},
                         'um04_02': {'title': 'Facility Code Qualifier',
                                     'usage': 'R',
                                     'description': 'xid=UM04-02 data_ele=1332',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'allOf': [{'$ref': '#/$common/1332'},
                                                        {'enum': ['A', 'B']}]}},
                         'um04_03': {'title': 'Claim Frequency Type Code',
                                     'usage': 'N',
                                     'description': 'xid=UM04-03 data_ele=1325',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'$ref': '#/$common/1325'}}},
          'required': ['um04_01', 'um04_02']}
     um04_01: L2000F_UM04_01
     um04_02: L2000F_UM04_02
+    um04_03: L2000F_UM04_03 | None
 
 
 class L2000F_C024(Composite):
@@ -9899,7 +10138,7 @@ class L2000F_UM06(Element):
         json = {'title': 'Level of Service Code',
          'usage': 'S',
          'description': 'xid=UM06 data_ele=1338',
-         'sequence': 6,
+         'position': 6,
          'type': {'allOf': [{'$ref': '#/$common/1338'}, {'enum': ['03', 'U']}]}}
         datatype = common.D_1338
         codes = ['03', 'U']
@@ -9913,7 +10152,7 @@ class L2000F_UM07(Element):
         json = {'title': 'Current Health Condition Code',
          'usage': 'N',
          'description': 'xid=UM07 data_ele=1213',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1213'}}
         datatype = common.D_1213
         min_len = 1
@@ -9926,7 +10165,7 @@ class L2000F_UM08(Element):
         json = {'title': 'Prognosis Code',
          'usage': 'N',
          'description': 'xid=UM08 data_ele=923',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/923'}}
         datatype = common.D_923
         min_len = 1
@@ -9939,7 +10178,7 @@ class L2000F_UM09(Element):
         json = {'title': 'Release of Information Code',
          'usage': 'N',
          'description': 'xid=UM09 data_ele=1363',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/1363'}}
         datatype = common.D_1363
         min_len = 1
@@ -9952,7 +10191,7 @@ class L2000F_UM10(Element):
         json = {'title': 'Delay Reason Code',
          'usage': 'N',
          'description': 'xid=UM10 data_ele=1514',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/1514'}}
         datatype = common.D_1514
         min_len = 1
@@ -9972,7 +10211,12 @@ class L2000F_UM(Segment):
                         'um02': {'$ref': '#/$elements/L2000F_UM02'},
                         'um03': {'$ref': '#/$elements/L2000F_UM03'},
                         'c023': {'$ref': '#/$elements/L2000F_C023'},
-                        'um06': {'$ref': '#/$elements/L2000F_UM06'}},
+                        'c024': {'$ref': '#/$elements/L2000F_C024'},
+                        'um06': {'$ref': '#/$elements/L2000F_UM06'},
+                        'um07': {'$ref': '#/$elements/L2000F_UM07'},
+                        'um08': {'$ref': '#/$elements/L2000F_UM08'},
+                        'um09': {'$ref': '#/$elements/L2000F_UM09'},
+                        'um10': {'$ref': '#/$elements/L2000F_UM10'}},
          'required': ['um01', 'um02']}
         segment_name = 'UM'
     um01: L2000F_UM01
@@ -9980,6 +10224,10 @@ class L2000F_UM(Segment):
     um03: L2000F_UM03 | None
     c023: L2000F_C023 | None
     um06: L2000F_UM06 | None
+    um07: L2000F_UM07 | None
+    um08: L2000F_UM08 | None
+    um09: L2000F_UM09 | None
+    um10: L2000F_UM10 | None
 
 
 class L2000F_HCR01(Element):
@@ -9988,7 +10236,7 @@ class L2000F_HCR01(Element):
         json = {'title': 'Certification Action Code',
          'usage': 'R',
          'description': 'xid=HCR01 data_ele=306',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/306'},
                             {'enum': ['A1', 'A3', 'A4', 'A6', 'CT', 'NA']}]}}
         datatype = common.D_306
@@ -10003,7 +10251,7 @@ class L2000F_HCR02(Element):
         json = {'title': 'Certification Number',
          'usage': 'S',
          'description': 'xid=HCR02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -10016,7 +10264,7 @@ class L2000F_HCR03(Element):
         json = {'title': 'Reject Reason Code',
          'usage': 'S',
          'description': 'xid=HCR03 data_ele=901',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/901'},
                             {'enum': ['35', '36', '37', '41', '53', '69', '70', '82',
                                       '83', '84', '85', '86', '87', '88', '89', '90',
@@ -10033,7 +10281,7 @@ class L2000F_HCR04(Element):
         json = {'title': 'Second Surgical Opinion Indicator',
          'usage': 'S',
          'description': 'xid=HCR04 data_ele=1073',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -10068,7 +10316,7 @@ class L2000F_REF01(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['BB']}]}}
         datatype = common.D_128
         codes = ['BB']
@@ -10082,7 +10330,7 @@ class L2000F_REF02(Element):
         json = {'title': 'Previous Certification Identifier',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -10095,7 +10343,7 @@ class L2000F_REF03(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -10121,11 +10369,14 @@ class L2000F_REF(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'REF'},
                         'ref01': {'$ref': '#/$elements/L2000F_REF01'},
-                        'ref02': {'$ref': '#/$elements/L2000F_REF02'}},
+                        'ref02': {'$ref': '#/$elements/L2000F_REF02'},
+                        'ref03': {'$ref': '#/$elements/L2000F_REF03'},
+                        'c040': {'$ref': '#/$elements/L2000F_C040'}},
          'required': ['ref01', 'ref02']}
         segment_name = 'REF'
     ref01: L2000F_REF01
     ref02: L2000F_REF02
+    ref03: L2000F_REF03 | None
 
 
 class L2000F_DTP01(Element):
@@ -10134,7 +10385,7 @@ class L2000F_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['472']}]}}
         datatype = common.D_374
         codes = ['472']
@@ -10148,7 +10399,7 @@ class L2000F_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -10162,7 +10413,7 @@ class L2000F_DTP03(Element):
         json = {'title': 'Proposed or Actual Service Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10194,7 +10445,7 @@ class L2000F_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['435']}]}}
         datatype = common.D_374
         codes = ['435']
@@ -10208,7 +10459,7 @@ class L2000F_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -10222,7 +10473,7 @@ class L2000F_DTP03(Element):
         json = {'title': 'Proposed or Actual Admission Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10254,7 +10505,7 @@ class L2000F_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['096']}]}}
         datatype = common.D_374
         codes = ['096']
@@ -10268,7 +10519,7 @@ class L2000F_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -10282,7 +10533,7 @@ class L2000F_DTP03(Element):
         json = {'title': 'Proposed or Actual Discharge Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10314,7 +10565,7 @@ class L2000F_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['456']}]}}
         datatype = common.D_374
         codes = ['456']
@@ -10328,7 +10579,7 @@ class L2000F_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -10342,7 +10593,7 @@ class L2000F_DTP03(Element):
         json = {'title': 'Proposed or Actual Surgery Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10374,7 +10625,7 @@ class L2000F_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['102']}]}}
         datatype = common.D_374
         codes = ['102']
@@ -10388,7 +10639,7 @@ class L2000F_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -10402,7 +10653,7 @@ class L2000F_DTP03(Element):
         json = {'title': 'Certification Issue Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10434,7 +10685,7 @@ class L2000F_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['036']}]}}
         datatype = common.D_374
         codes = ['036']
@@ -10448,7 +10699,7 @@ class L2000F_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -10462,7 +10713,7 @@ class L2000F_DTP03(Element):
         json = {'title': 'Certification Expiration Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10494,7 +10745,7 @@ class L2000F_DTP01(Element):
         json = {'title': 'Date Time Qualifier',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['007']}]}}
         datatype = common.D_374
         codes = ['007']
@@ -10508,7 +10759,7 @@ class L2000F_DTP02(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -10522,7 +10773,7 @@ class L2000F_DTP03(Element):
         json = {'title': 'Certification Effective Date',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10554,7 +10805,7 @@ class L2000F_HI01_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI01-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -10569,7 +10820,7 @@ class L2000F_HI01_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI01-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -10582,7 +10833,7 @@ class L2000F_HI01_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI01-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -10596,7 +10847,7 @@ class L2000F_HI01_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI01-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10609,7 +10860,7 @@ class L2000F_HI01_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI01-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -10622,7 +10873,7 @@ class L2000F_HI01_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI01-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -10635,7 +10886,7 @@ class L2000F_HI01_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI01-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -10653,7 +10904,7 @@ class L2000F_C022(Composite):
          'properties': {'hi01_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI01-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -10661,33 +10912,33 @@ class L2000F_C022(Composite):
                         'hi01_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI01-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi01_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI01-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi01_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI01-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi01_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI01-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi01_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI01-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi01_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI01-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi01_01', 'hi01_02']}
     hi01_01: L2000F_HI01_01
@@ -10705,7 +10956,7 @@ class L2000F_HI02_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI02-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -10720,7 +10971,7 @@ class L2000F_HI02_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI02-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -10733,7 +10984,7 @@ class L2000F_HI02_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI02-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -10747,7 +10998,7 @@ class L2000F_HI02_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI02-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10760,7 +11011,7 @@ class L2000F_HI02_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI02-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -10773,7 +11024,7 @@ class L2000F_HI02_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI02-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -10786,7 +11037,7 @@ class L2000F_HI02_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI02-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -10804,7 +11055,7 @@ class L2000F_C022(Composite):
          'properties': {'hi02_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI02-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -10812,33 +11063,33 @@ class L2000F_C022(Composite):
                         'hi02_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI02-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi02_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI02-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi02_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI02-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi02_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI02-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi02_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI02-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi02_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI02-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi02_01', 'hi02_02']}
     hi02_01: L2000F_HI02_01
@@ -10856,7 +11107,7 @@ class L2000F_HI03_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI03-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -10871,7 +11122,7 @@ class L2000F_HI03_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI03-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -10884,7 +11135,7 @@ class L2000F_HI03_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI03-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -10898,7 +11149,7 @@ class L2000F_HI03_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI03-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -10911,7 +11162,7 @@ class L2000F_HI03_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI03-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -10924,7 +11175,7 @@ class L2000F_HI03_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI03-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -10937,7 +11188,7 @@ class L2000F_HI03_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI03-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -10955,7 +11206,7 @@ class L2000F_C022(Composite):
          'properties': {'hi03_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI03-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -10963,33 +11214,33 @@ class L2000F_C022(Composite):
                         'hi03_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI03-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi03_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI03-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi03_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI03-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi03_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI03-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi03_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI03-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi03_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI03-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi03_01', 'hi03_02']}
     hi03_01: L2000F_HI03_01
@@ -11007,7 +11258,7 @@ class L2000F_HI04_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI04-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -11022,7 +11273,7 @@ class L2000F_HI04_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI04-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -11035,7 +11286,7 @@ class L2000F_HI04_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI04-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -11049,7 +11300,7 @@ class L2000F_HI04_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI04-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -11062,7 +11313,7 @@ class L2000F_HI04_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI04-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -11075,7 +11326,7 @@ class L2000F_HI04_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI04-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -11088,7 +11339,7 @@ class L2000F_HI04_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI04-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -11106,7 +11357,7 @@ class L2000F_C022(Composite):
          'properties': {'hi04_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI04-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -11114,33 +11365,33 @@ class L2000F_C022(Composite):
                         'hi04_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI04-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi04_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI04-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi04_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI04-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi04_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI04-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi04_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI04-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi04_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI04-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi04_01', 'hi04_02']}
     hi04_01: L2000F_HI04_01
@@ -11158,7 +11409,7 @@ class L2000F_HI05_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI05-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -11173,7 +11424,7 @@ class L2000F_HI05_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI05-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -11186,7 +11437,7 @@ class L2000F_HI05_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI05-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -11200,7 +11451,7 @@ class L2000F_HI05_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI05-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -11213,7 +11464,7 @@ class L2000F_HI05_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI05-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -11226,7 +11477,7 @@ class L2000F_HI05_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI05-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -11239,7 +11490,7 @@ class L2000F_HI05_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI05-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -11257,7 +11508,7 @@ class L2000F_C022(Composite):
          'properties': {'hi05_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI05-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -11265,33 +11516,33 @@ class L2000F_C022(Composite):
                         'hi05_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI05-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi05_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI05-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi05_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI05-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi05_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI05-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi05_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI05-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi05_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI05-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi05_01', 'hi05_02']}
     hi05_01: L2000F_HI05_01
@@ -11309,7 +11560,7 @@ class L2000F_HI06_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI06-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -11324,7 +11575,7 @@ class L2000F_HI06_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI06-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -11337,7 +11588,7 @@ class L2000F_HI06_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI06-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -11351,7 +11602,7 @@ class L2000F_HI06_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI06-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -11364,7 +11615,7 @@ class L2000F_HI06_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI06-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -11377,7 +11628,7 @@ class L2000F_HI06_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI06-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -11390,7 +11641,7 @@ class L2000F_HI06_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI06-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -11408,7 +11659,7 @@ class L2000F_C022(Composite):
          'properties': {'hi06_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI06-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -11416,33 +11667,33 @@ class L2000F_C022(Composite):
                         'hi06_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI06-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi06_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI06-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi06_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI06-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi06_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI06-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi06_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI06-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi06_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI06-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi06_01', 'hi06_02']}
     hi06_01: L2000F_HI06_01
@@ -11460,7 +11711,7 @@ class L2000F_HI07_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI07-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -11475,7 +11726,7 @@ class L2000F_HI07_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI07-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -11488,7 +11739,7 @@ class L2000F_HI07_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI07-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -11502,7 +11753,7 @@ class L2000F_HI07_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI07-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -11515,7 +11766,7 @@ class L2000F_HI07_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI07-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -11528,7 +11779,7 @@ class L2000F_HI07_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI07-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -11541,7 +11792,7 @@ class L2000F_HI07_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI07-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -11559,7 +11810,7 @@ class L2000F_C022(Composite):
          'properties': {'hi07_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI07-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -11567,33 +11818,33 @@ class L2000F_C022(Composite):
                         'hi07_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI07-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi07_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI07-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi07_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI07-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi07_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI07-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi07_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI07-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi07_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI07-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi07_01', 'hi07_02']}
     hi07_01: L2000F_HI07_01
@@ -11611,7 +11862,7 @@ class L2000F_HI08_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI08-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -11626,7 +11877,7 @@ class L2000F_HI08_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI08-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -11639,7 +11890,7 @@ class L2000F_HI08_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI08-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -11653,7 +11904,7 @@ class L2000F_HI08_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI08-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -11666,7 +11917,7 @@ class L2000F_HI08_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI08-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -11679,7 +11930,7 @@ class L2000F_HI08_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI08-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -11692,7 +11943,7 @@ class L2000F_HI08_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI08-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -11710,7 +11961,7 @@ class L2000F_C022(Composite):
          'properties': {'hi08_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI08-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -11718,33 +11969,33 @@ class L2000F_C022(Composite):
                         'hi08_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI08-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi08_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI08-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi08_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI08-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi08_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI08-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi08_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI08-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi08_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI08-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi08_01', 'hi08_02']}
     hi08_01: L2000F_HI08_01
@@ -11762,7 +12013,7 @@ class L2000F_HI09_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI09-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -11777,7 +12028,7 @@ class L2000F_HI09_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI09-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -11790,7 +12041,7 @@ class L2000F_HI09_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI09-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -11804,7 +12055,7 @@ class L2000F_HI09_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI09-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -11817,7 +12068,7 @@ class L2000F_HI09_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI09-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -11830,7 +12081,7 @@ class L2000F_HI09_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI09-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -11843,7 +12094,7 @@ class L2000F_HI09_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI09-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -11861,7 +12112,7 @@ class L2000F_C022(Composite):
          'properties': {'hi09_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI09-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -11869,33 +12120,33 @@ class L2000F_C022(Composite):
                         'hi09_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI09-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi09_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI09-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi09_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI09-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi09_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI09-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi09_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI09-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi09_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI09-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi09_01', 'hi09_02']}
     hi09_01: L2000F_HI09_01
@@ -11913,7 +12164,7 @@ class L2000F_HI10_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI10-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -11928,7 +12179,7 @@ class L2000F_HI10_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI10-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -11941,7 +12192,7 @@ class L2000F_HI10_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI10-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -11955,7 +12206,7 @@ class L2000F_HI10_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI10-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -11968,7 +12219,7 @@ class L2000F_HI10_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI10-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -11981,7 +12232,7 @@ class L2000F_HI10_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI10-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -11994,7 +12245,7 @@ class L2000F_HI10_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI10-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -12012,7 +12263,7 @@ class L2000F_C022(Composite):
          'properties': {'hi10_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI10-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -12020,33 +12271,33 @@ class L2000F_C022(Composite):
                         'hi10_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI10-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi10_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI10-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi10_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI10-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi10_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI10-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi10_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI10-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi10_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI10-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi10_01', 'hi10_02']}
     hi10_01: L2000F_HI10_01
@@ -12064,7 +12315,7 @@ class L2000F_HI11_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI11-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -12079,7 +12330,7 @@ class L2000F_HI11_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI11-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -12092,7 +12343,7 @@ class L2000F_HI11_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI11-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -12106,7 +12357,7 @@ class L2000F_HI11_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI11-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -12119,7 +12370,7 @@ class L2000F_HI11_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI11-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -12132,7 +12383,7 @@ class L2000F_HI11_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI11-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -12145,7 +12396,7 @@ class L2000F_HI11_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI11-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -12163,7 +12414,7 @@ class L2000F_C022(Composite):
          'properties': {'hi11_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI11-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -12171,33 +12422,33 @@ class L2000F_C022(Composite):
                         'hi11_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI11-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi11_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI11-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi11_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI11-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi11_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI11-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi11_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI11-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi11_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI11-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi11_01', 'hi11_02']}
     hi11_01: L2000F_HI11_01
@@ -12215,7 +12466,7 @@ class L2000F_HI12_01(Element):
         json = {'title': 'Code List Qualifier Code',
          'usage': 'R',
          'description': 'xid=HI12-01 data_ele=1270',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1270'},
                             {'enum': ['ABR', 'BO', 'BQ', 'JP', 'LOI', 'NDC', 'ZZ']}]}}
         datatype = common.D_1270
@@ -12230,7 +12481,7 @@ class L2000F_HI12_02(Element):
         json = {'title': 'Procedure Code',
          'usage': 'R',
          'description': 'xid=HI12-02 data_ele=1271',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -12243,7 +12494,7 @@ class L2000F_HI12_03(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=HI12-03 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -12257,7 +12508,7 @@ class L2000F_HI12_04(Element):
         json = {'title': 'Procedure Date',
          'usage': 'S',
          'description': 'xid=HI12-04 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -12270,7 +12521,7 @@ class L2000F_HI12_05(Element):
         json = {'title': 'Procedure Monetary Amount',
          'usage': 'S',
          'description': 'xid=HI12-05 data_ele=782',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -12283,7 +12534,7 @@ class L2000F_HI12_06(Element):
         json = {'title': 'Procedure Quantity',
          'usage': 'S',
          'description': 'xid=HI12-06 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -12296,7 +12547,7 @@ class L2000F_HI12_07(Element):
         json = {'title': 'Version, Release, or Industry Identifier',
          'usage': 'S',
          'description': 'xid=HI12-07 data_ele=799',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/799'}}
         datatype = common.D_799
         min_len = 1
@@ -12314,7 +12565,7 @@ class L2000F_C022(Composite):
          'properties': {'hi12_01': {'title': 'Code List Qualifier Code',
                                     'usage': 'R',
                                     'description': 'xid=HI12-01 data_ele=1270',
-                                    'sequence': 1,
+                                    'position': 1,
                                     'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                        {'enum': ['ABR', 'BO', 'BQ',
                                                                  'JP', 'LOI', 'NDC',
@@ -12322,33 +12573,33 @@ class L2000F_C022(Composite):
                         'hi12_02': {'title': 'Procedure Code',
                                     'usage': 'R',
                                     'description': 'xid=HI12-02 data_ele=1271',
-                                    'sequence': 2,
+                                    'position': 2,
                                     'type': {'$ref': '#/$common/1271'}},
                         'hi12_03': {'title': 'Date Time Period Format Qualifier',
                                     'usage': 'S',
                                     'description': 'xid=HI12-03 data_ele=1250',
-                                    'sequence': 3,
+                                    'position': 3,
                                     'type': {'allOf': [{'$ref': '#/$common/1250'},
                                                        {'enum': ['D8', 'RD8']}]}},
                         'hi12_04': {'title': 'Procedure Date',
                                     'usage': 'S',
                                     'description': 'xid=HI12-04 data_ele=1251',
-                                    'sequence': 4,
+                                    'position': 4,
                                     'type': {'$ref': '#/$common/1251'}},
                         'hi12_05': {'title': 'Procedure Monetary Amount',
                                     'usage': 'S',
                                     'description': 'xid=HI12-05 data_ele=782',
-                                    'sequence': 5,
+                                    'position': 5,
                                     'type': {'$ref': '#/$common/782'}},
                         'hi12_06': {'title': 'Procedure Quantity',
                                     'usage': 'S',
                                     'description': 'xid=HI12-06 data_ele=380',
-                                    'sequence': 6,
+                                    'position': 6,
                                     'type': {'$ref': '#/$common/380'}},
                         'hi12_07': {'title': 'Version, Release, or Industry Identifier',
                                     'usage': 'S',
                                     'description': 'xid=HI12-07 data_ele=799',
-                                    'sequence': 7,
+                                    'position': 7,
                                     'type': {'$ref': '#/$common/799'}}},
          'required': ['hi12_01', 'hi12_02']}
     hi12_01: L2000F_HI12_01
@@ -12392,7 +12643,7 @@ class L2000F_HSD01(Element):
         json = {'title': 'Quantity Qualifier',
          'usage': 'S',
          'description': 'xid=HSD01 data_ele=673',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/673'},
                             {'enum': ['DY', 'FL', 'HS', 'MN', 'VS']}]}}
         datatype = common.D_673
@@ -12407,7 +12658,7 @@ class L2000F_HSD02(Element):
         json = {'title': 'Service Unit Count',
          'usage': 'S',
          'description': 'xid=HSD02 data_ele=380',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -12420,7 +12671,7 @@ class L2000F_HSD03(Element):
         json = {'title': 'Unit or Basis for Measurement Code',
          'usage': 'S',
          'description': 'xid=HSD03 data_ele=355',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/355'}, {'enum': ['DA', 'MO', 'WK']}]}}
         datatype = common.D_355
         codes = ['DA', 'MO', 'WK']
@@ -12434,7 +12685,7 @@ class L2000F_HSD04(Element):
         json = {'title': 'Sample Selection Modulus',
          'usage': 'S',
          'description': 'xid=HSD04 data_ele=1167',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1167'}}
         datatype = common.D_1167
         min_len = 1
@@ -12447,7 +12698,7 @@ class L2000F_HSD05(Element):
         json = {'title': 'Time Period Qualifier',
          'usage': 'S',
          'description': 'xid=HSD05 data_ele=615',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/615'},
                             {'enum': ['6', '7', '21', '26', '27', '34', '35']}]}}
         datatype = common.D_615
@@ -12462,7 +12713,7 @@ class L2000F_HSD06(Element):
         json = {'title': 'Period Count',
          'usage': 'S',
          'description': 'xid=HSD06 data_ele=616',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/616'}}
         datatype = common.D_616
         min_len = 1
@@ -12475,7 +12726,7 @@ class L2000F_HSD07(Element):
         json = {'title': 'Ship, Delivery or Calendar Pattern Code',
          'usage': 'S',
          'description': 'xid=HSD07 data_ele=678',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/678'},
                             {'enum': ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
                                       'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L',
@@ -12494,7 +12745,7 @@ class L2000F_HSD08(Element):
         json = {'title': 'Delivery Pattern Time Code',
          'usage': 'S',
          'description': 'xid=HSD08 data_ele=679',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/679'},
                             {'enum': ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'Y']}]}}
         datatype = common.D_679
@@ -12537,7 +12788,7 @@ class L2000F_CL101(Element):
         json = {'title': 'Admission Type Code',
          'usage': 'S',
          'description': 'xid=CL101 data_ele=1315',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/1315'}}
         datatype = common.D_1315
         min_len = 1
@@ -12550,7 +12801,7 @@ class L2000F_CL102(Element):
         json = {'title': 'Admission Source Code',
          'usage': 'S',
          'description': 'xid=CL102 data_ele=1314',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1314'}}
         datatype = common.D_1314
         min_len = 1
@@ -12563,7 +12814,7 @@ class L2000F_CL103(Element):
         json = {'title': 'Patient Status Code',
          'usage': 'S',
          'description': 'xid=CL103 data_ele=1352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1352'}}
         datatype = common.D_1352
         min_len = 1
@@ -12576,7 +12827,7 @@ class L2000F_CL104(Element):
         json = {'title': 'Nursing Home Residential Status Code',
          'usage': 'S',
          'description': 'xid=CL104 data_ele=1345',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1345'},
                             {'enum': ['1', '2', '3', '4', '5', '6', '7', '8', '9']}]}}
         datatype = common.D_1345
@@ -12611,7 +12862,7 @@ class L2000F_CR101(Element):
         json = {'title': 'Unit or Basis for Measurement Code',
          'usage': 'N',
          'description': 'xid=CR101 data_ele=355',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/355'}}
         datatype = common.D_355
         min_len = 2
@@ -12624,7 +12875,7 @@ class L2000F_CR102(Element):
         json = {'title': 'Weight',
          'usage': 'N',
          'description': 'xid=CR102 data_ele=81',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/81'}}
         datatype = common.D_81
         min_len = 1
@@ -12637,7 +12888,7 @@ class L2000F_CR103(Element):
         json = {'title': 'Ambulance Transport Code',
          'usage': 'R',
          'description': 'xid=CR103 data_ele=1316',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1316'},
                             {'enum': ['I', 'R', 'T', 'X']}]}}
         datatype = common.D_1316
@@ -12652,7 +12903,7 @@ class L2000F_CR104(Element):
         json = {'title': 'Ambulance Transport Reason Code',
          'usage': 'N',
          'description': 'xid=CR104 data_ele=1317',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1317'}}
         datatype = common.D_1317
         min_len = 1
@@ -12665,7 +12916,7 @@ class L2000F_CR105(Element):
         json = {'title': 'Unit or Basis for Measurement Code',
          'usage': 'S',
          'description': 'xid=CR105 data_ele=355',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/355'}, {'enum': ['DH', 'DK']}]}}
         datatype = common.D_355
         codes = ['DH', 'DK']
@@ -12679,7 +12930,7 @@ class L2000F_CR106(Element):
         json = {'title': 'Transport Distance',
          'usage': 'S',
          'description': 'xid=CR106 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -12692,7 +12943,7 @@ class L2000F_CR107(Element):
         json = {'title': 'Ambulance Trip Origin Address',
          'usage': 'S',
          'description': 'xid=CR107 data_ele=166',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -12705,7 +12956,7 @@ class L2000F_CR108(Element):
         json = {'title': 'Ambulance Trip Destination Address',
          'usage': 'S',
          'description': 'xid=CR108 data_ele=166',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -12718,7 +12969,7 @@ class L2000F_CR109(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=CR109 data_ele=352',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -12731,7 +12982,7 @@ class L2000F_CR110(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=CR110 data_ele=352',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -12747,18 +12998,28 @@ class L2000F_CR1(Segment):
          'position': 120,
          'type': 'object',
          'properties': {'xid': {'literal': 'CR1'},
+                        'cr101': {'$ref': '#/$elements/L2000F_CR101'},
+                        'cr102': {'$ref': '#/$elements/L2000F_CR102'},
                         'cr103': {'$ref': '#/$elements/L2000F_CR103'},
+                        'cr104': {'$ref': '#/$elements/L2000F_CR104'},
                         'cr105': {'$ref': '#/$elements/L2000F_CR105'},
                         'cr106': {'$ref': '#/$elements/L2000F_CR106'},
                         'cr107': {'$ref': '#/$elements/L2000F_CR107'},
-                        'cr108': {'$ref': '#/$elements/L2000F_CR108'}},
+                        'cr108': {'$ref': '#/$elements/L2000F_CR108'},
+                        'cr109': {'$ref': '#/$elements/L2000F_CR109'},
+                        'cr110': {'$ref': '#/$elements/L2000F_CR110'}},
          'required': ['cr103']}
         segment_name = 'CR1'
+    cr101: L2000F_CR101 | None
+    cr102: L2000F_CR102 | None
     cr103: L2000F_CR103
+    cr104: L2000F_CR104 | None
     cr105: L2000F_CR105 | None
     cr106: L2000F_CR106 | None
     cr107: L2000F_CR107 | None
     cr108: L2000F_CR108 | None
+    cr109: L2000F_CR109 | None
+    cr110: L2000F_CR110 | None
 
 
 class L2000F_CR201(Element):
@@ -12767,7 +13028,7 @@ class L2000F_CR201(Element):
         json = {'title': 'Treatment Series Number',
          'usage': 'S',
          'description': 'xid=CR201 data_ele=609',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/609'}}
         datatype = common.D_609
         min_len = 1
@@ -12780,7 +13041,7 @@ class L2000F_CR202(Element):
         json = {'title': 'Treatment Count',
          'usage': 'S',
          'description': 'xid=CR202 data_ele=380',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -12793,7 +13054,7 @@ class L2000F_CR203(Element):
         json = {'title': 'Subluxation Level Code',
          'usage': 'S',
          'description': 'xid=CR203 data_ele=1367',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1367'},
                             {'enum': ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'CO',
                                       'IL', 'L1', 'L2', 'L3', 'L4', 'L5', 'OC', 'SA',
@@ -12811,7 +13072,7 @@ class L2000F_CR204(Element):
         json = {'title': 'Subluxation Level Code',
          'usage': 'S',
          'description': 'xid=CR204 data_ele=1367',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1367'},
                             {'enum': ['C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'CO',
                                       'IL', 'L1', 'L2', 'L3', 'L4', 'L5', 'OC', 'SA',
@@ -12829,7 +13090,7 @@ class L2000F_CR205(Element):
         json = {'title': 'Unit or Basis for Measurement Code',
          'usage': 'S',
          'description': 'xid=CR205 data_ele=355',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/355'},
                             {'enum': ['DA', 'MO', 'WK', 'YR']}]}}
         datatype = common.D_355
@@ -12844,7 +13105,7 @@ class L2000F_CR206(Element):
         json = {'title': 'Treatment Period Count',
          'usage': 'S',
          'description': 'xid=CR206 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -12857,7 +13118,7 @@ class L2000F_CR207(Element):
         json = {'title': 'Monthly Treatment Count',
          'usage': 'S',
          'description': 'xid=CR207 data_ele=380',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -12870,7 +13131,7 @@ class L2000F_CR208(Element):
         json = {'title': 'Nature of Condition Code',
          'usage': 'N',
          'description': 'xid=CR208 data_ele=1342',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/1342'}}
         datatype = common.D_1342
         min_len = 1
@@ -12883,7 +13144,7 @@ class L2000F_CR209(Element):
         json = {'title': 'Yes/No Condition or Response Code',
          'usage': 'N',
          'description': 'xid=CR209 data_ele=1073',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/1073'}}
         datatype = common.D_1073
         min_len = 1
@@ -12896,7 +13157,7 @@ class L2000F_CR210(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=CR210 data_ele=352',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -12909,7 +13170,7 @@ class L2000F_CR211(Element):
         json = {'title': 'Description',
          'usage': 'N',
          'description': 'xid=CR211 data_ele=352',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -12922,7 +13183,7 @@ class L2000F_CR212(Element):
         json = {'title': 'Yes/No Condition or Response Code',
          'usage': 'N',
          'description': 'xid=CR212 data_ele=1073',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1073'}}
         datatype = common.D_1073
         min_len = 1
@@ -12944,7 +13205,12 @@ class L2000F_CR2(Segment):
                         'cr204': {'$ref': '#/$elements/L2000F_CR204'},
                         'cr205': {'$ref': '#/$elements/L2000F_CR205'},
                         'cr206': {'$ref': '#/$elements/L2000F_CR206'},
-                        'cr207': {'$ref': '#/$elements/L2000F_CR207'}}}
+                        'cr207': {'$ref': '#/$elements/L2000F_CR207'},
+                        'cr208': {'$ref': '#/$elements/L2000F_CR208'},
+                        'cr209': {'$ref': '#/$elements/L2000F_CR209'},
+                        'cr210': {'$ref': '#/$elements/L2000F_CR210'},
+                        'cr211': {'$ref': '#/$elements/L2000F_CR211'},
+                        'cr212': {'$ref': '#/$elements/L2000F_CR212'}}}
         segment_name = 'CR2'
     cr201: L2000F_CR201 | None
     cr202: L2000F_CR202 | None
@@ -12953,6 +13219,11 @@ class L2000F_CR2(Segment):
     cr205: L2000F_CR205 | None
     cr206: L2000F_CR206 | None
     cr207: L2000F_CR207 | None
+    cr208: L2000F_CR208 | None
+    cr209: L2000F_CR209 | None
+    cr210: L2000F_CR210 | None
+    cr211: L2000F_CR211 | None
+    cr212: L2000F_CR212 | None
 
 
 class L2000F_CR501(Element):
@@ -12961,7 +13232,7 @@ class L2000F_CR501(Element):
         json = {'title': 'Certification Type Code',
          'usage': 'N',
          'description': 'xid=CR501 data_ele=1322',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/1322'}}
         datatype = common.D_1322
         min_len = 1
@@ -12974,7 +13245,7 @@ class L2000F_CR502(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=CR502 data_ele=380',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -12987,7 +13258,7 @@ class L2000F_CR503(Element):
         json = {'title': 'Oxygen Equipment Type Code',
          'usage': 'S',
          'description': 'xid=CR503 data_ele=1348',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1348'},
                             {'enum': ['A', 'B', 'C', 'D', 'E', 'O']}]}}
         datatype = common.D_1348
@@ -13002,7 +13273,7 @@ class L2000F_CR504(Element):
         json = {'title': 'Oxygen Equipment Type Code',
          'usage': 'S',
          'description': 'xid=CR504 data_ele=1348',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1348'},
                             {'enum': ['A', 'B', 'C', 'D', 'E', 'O']}]}}
         datatype = common.D_1348
@@ -13017,7 +13288,7 @@ class L2000F_CR505(Element):
         json = {'title': 'Equipment Reason Description',
          'usage': 'S',
          'description': 'xid=CR505 data_ele=352',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -13030,7 +13301,7 @@ class L2000F_CR506(Element):
         json = {'title': 'Oxygen Flow Rate',
          'usage': 'R',
          'description': 'xid=CR506 data_ele=380',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -13043,7 +13314,7 @@ class L2000F_CR507(Element):
         json = {'title': 'Daily Oxygen Use Count',
          'usage': 'S',
          'description': 'xid=CR507 data_ele=380',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -13056,7 +13327,7 @@ class L2000F_CR508(Element):
         json = {'title': 'Oxygen Use Period Hour Count',
          'usage': 'S',
          'description': 'xid=CR508 data_ele=380',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -13069,7 +13340,7 @@ class L2000F_CR509(Element):
         json = {'title': 'Respiratory Therapist Order Text',
          'usage': 'S',
          'description': 'xid=CR509 data_ele=352',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -13082,7 +13353,7 @@ class L2000F_CR510(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=CR510 data_ele=380',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -13095,7 +13366,7 @@ class L2000F_CR511(Element):
         json = {'title': 'Quantity',
          'usage': 'N',
          'description': 'xid=CR511 data_ele=380',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -13108,7 +13379,7 @@ class L2000F_CR512(Element):
         json = {'title': 'Oxygen Test Condition Code',
          'usage': 'N',
          'description': 'xid=CR512 data_ele=1349',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1349'}}
         datatype = common.D_1349
         min_len = 1
@@ -13121,7 +13392,7 @@ class L2000F_CR513(Element):
         json = {'title': 'Oxygen Test Findings Code',
          'usage': 'N',
          'description': 'xid=CR513 data_ele=1350',
-         'sequence': 13,
+         'position': 13,
          'type': {'$ref': '#/$common/1350'}}
         datatype = common.D_1350
         min_len = 1
@@ -13134,7 +13405,7 @@ class L2000F_CR514(Element):
         json = {'title': 'Oxygen Test Findings Code',
          'usage': 'N',
          'description': 'xid=CR514 data_ele=1350',
-         'sequence': 14,
+         'position': 14,
          'type': {'$ref': '#/$common/1350'}}
         datatype = common.D_1350
         min_len = 1
@@ -13147,7 +13418,7 @@ class L2000F_CR515(Element):
         json = {'title': 'Oxygen Test Findings Code',
          'usage': 'N',
          'description': 'xid=CR515 data_ele=1350',
-         'sequence': 15,
+         'position': 15,
          'type': {'$ref': '#/$common/1350'}}
         datatype = common.D_1350
         min_len = 1
@@ -13160,7 +13431,7 @@ class L2000F_CR516(Element):
         json = {'title': 'Portable Oxygen System Flow Rate',
          'usage': 'S',
          'description': 'xid=CR516 data_ele=380',
-         'sequence': 16,
+         'position': 16,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -13173,7 +13444,7 @@ class L2000F_CR517(Element):
         json = {'title': 'Oxygen Delivery System Code',
          'usage': 'R',
          'description': 'xid=CR517 data_ele=1382',
-         'sequence': 17,
+         'position': 17,
          'type': {'allOf': [{'$ref': '#/$common/1382'},
                             {'enum': ['A', 'B', 'C', 'D', 'E']}]}}
         datatype = common.D_1382
@@ -13188,7 +13459,7 @@ class L2000F_CR518(Element):
         json = {'title': 'Oxygen Equipment Type Code',
          'usage': 'S',
          'description': 'xid=CR518 data_ele=1348',
-         'sequence': 18,
+         'position': 18,
          'type': {'allOf': [{'$ref': '#/$common/1348'},
                             {'enum': ['A', 'B', 'C', 'D', 'E', 'O']}]}}
         datatype = common.D_1348
@@ -13206,6 +13477,8 @@ class L2000F_CR5(Segment):
          'position': 140,
          'type': 'object',
          'properties': {'xid': {'literal': 'CR5'},
+                        'cr501': {'$ref': '#/$elements/L2000F_CR501'},
+                        'cr502': {'$ref': '#/$elements/L2000F_CR502'},
                         'cr503': {'$ref': '#/$elements/L2000F_CR503'},
                         'cr504': {'$ref': '#/$elements/L2000F_CR504'},
                         'cr505': {'$ref': '#/$elements/L2000F_CR505'},
@@ -13213,11 +13486,19 @@ class L2000F_CR5(Segment):
                         'cr507': {'$ref': '#/$elements/L2000F_CR507'},
                         'cr508': {'$ref': '#/$elements/L2000F_CR508'},
                         'cr509': {'$ref': '#/$elements/L2000F_CR509'},
+                        'cr510': {'$ref': '#/$elements/L2000F_CR510'},
+                        'cr511': {'$ref': '#/$elements/L2000F_CR511'},
+                        'cr512': {'$ref': '#/$elements/L2000F_CR512'},
+                        'cr513': {'$ref': '#/$elements/L2000F_CR513'},
+                        'cr514': {'$ref': '#/$elements/L2000F_CR514'},
+                        'cr515': {'$ref': '#/$elements/L2000F_CR515'},
                         'cr516': {'$ref': '#/$elements/L2000F_CR516'},
                         'cr517': {'$ref': '#/$elements/L2000F_CR517'},
                         'cr518': {'$ref': '#/$elements/L2000F_CR518'}},
          'required': ['cr506', 'cr517']}
         segment_name = 'CR5'
+    cr501: L2000F_CR501 | None
+    cr502: L2000F_CR502 | None
     cr503: L2000F_CR503 | None
     cr504: L2000F_CR504 | None
     cr505: L2000F_CR505 | None
@@ -13225,6 +13506,12 @@ class L2000F_CR5(Segment):
     cr507: L2000F_CR507 | None
     cr508: L2000F_CR508 | None
     cr509: L2000F_CR509 | None
+    cr510: L2000F_CR510 | None
+    cr511: L2000F_CR511 | None
+    cr512: L2000F_CR512 | None
+    cr513: L2000F_CR513 | None
+    cr514: L2000F_CR514 | None
+    cr515: L2000F_CR515 | None
     cr516: L2000F_CR516 | None
     cr517: L2000F_CR517
     cr518: L2000F_CR518 | None
@@ -13236,7 +13523,7 @@ class L2000F_CR601(Element):
         json = {'title': 'Prognosis Code',
          'usage': 'R',
          'description': 'xid=CR601 data_ele=923',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/923'},
                             {'enum': ['1', '2', '3', '4', '5', '6', '7', '8']}]}}
         datatype = common.D_923
@@ -13251,7 +13538,7 @@ class L2000F_CR602(Element):
         json = {'title': 'Service From Date',
          'usage': 'R',
          'description': 'xid=CR602 data_ele=373',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13264,7 +13551,7 @@ class L2000F_CR603(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'S',
          'description': 'xid=CR603 data_ele=1250',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['RD8']}]}}
         datatype = common.D_1250
         codes = ['RD8']
@@ -13278,7 +13565,7 @@ class L2000F_CR604(Element):
         json = {'title': 'Home Health Certification Period',
          'usage': 'S',
          'description': 'xid=CR604 data_ele=1251',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -13291,7 +13578,7 @@ class L2000F_CR605(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR605 data_ele=373',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13304,7 +13591,7 @@ class L2000F_CR606(Element):
         json = {'title': 'Yes/No Condition or Response Code',
          'usage': 'N',
          'description': 'xid=CR606 data_ele=1073',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1073'}}
         datatype = common.D_1073
         min_len = 1
@@ -13317,7 +13604,7 @@ class L2000F_CR607(Element):
         json = {'title': 'Medicare Coverage Indicator',
          'usage': 'R',
          'description': 'xid=CR607 data_ele=1073',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'U', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'U', 'Y']
@@ -13331,7 +13618,7 @@ class L2000F_CR608(Element):
         json = {'title': 'Certification Type Code',
          'usage': 'R',
          'description': 'xid=CR608 data_ele=1322',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/1322'},
                             {'enum': ['1', '2', '3', '4', 'I', 'R', 'S']}]}}
         datatype = common.D_1322
@@ -13346,7 +13633,7 @@ class L2000F_CR609(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR609 data_ele=373',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13359,7 +13646,7 @@ class L2000F_CR610(Element):
         json = {'title': 'Product/Service ID Qualifier',
          'usage': 'N',
          'description': 'xid=CR610 data_ele=235',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/235'}}
         datatype = common.D_235
         min_len = 2
@@ -13372,7 +13659,7 @@ class L2000F_CR611(Element):
         json = {'title': 'Medical Code Value',
          'usage': 'N',
          'description': 'xid=CR611 data_ele=1137',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/1137'}}
         datatype = common.D_1137
         min_len = 1
@@ -13385,7 +13672,7 @@ class L2000F_CR612(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR612 data_ele=373',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13398,7 +13685,7 @@ class L2000F_CR613(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR613 data_ele=373',
-         'sequence': 13,
+         'position': 13,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13411,7 +13698,7 @@ class L2000F_CR614(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR614 data_ele=373',
-         'sequence': 14,
+         'position': 14,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13424,7 +13711,7 @@ class L2000F_CR615(Element):
         json = {'title': 'Date Time Period Format Qualifier',
          'usage': 'N',
          'description': 'xid=CR615 data_ele=1250',
-         'sequence': 15,
+         'position': 15,
          'type': {'$ref': '#/$common/1250'}}
         datatype = common.D_1250
         min_len = 2
@@ -13437,7 +13724,7 @@ class L2000F_CR616(Element):
         json = {'title': 'Date Time Period',
          'usage': 'N',
          'description': 'xid=CR616 data_ele=1251',
-         'sequence': 16,
+         'position': 16,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -13450,7 +13737,7 @@ class L2000F_CR617(Element):
         json = {'title': 'Patient Location Code',
          'usage': 'N',
          'description': 'xid=CR617 data_ele=1384',
-         'sequence': 17,
+         'position': 17,
          'type': {'$ref': '#/$common/1384'}}
         datatype = common.D_1384
         min_len = 1
@@ -13463,7 +13750,7 @@ class L2000F_CR618(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR618 data_ele=373',
-         'sequence': 18,
+         'position': 18,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13476,7 +13763,7 @@ class L2000F_CR619(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR619 data_ele=373',
-         'sequence': 19,
+         'position': 19,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13489,7 +13776,7 @@ class L2000F_CR620(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR620 data_ele=373',
-         'sequence': 20,
+         'position': 20,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13502,7 +13789,7 @@ class L2000F_CR621(Element):
         json = {'title': 'Date',
          'usage': 'N',
          'description': 'xid=CR621 data_ele=373',
-         'sequence': 21,
+         'position': 21,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -13522,16 +13809,46 @@ class L2000F_CR6(Segment):
                         'cr602': {'$ref': '#/$elements/L2000F_CR602'},
                         'cr603': {'$ref': '#/$elements/L2000F_CR603'},
                         'cr604': {'$ref': '#/$elements/L2000F_CR604'},
+                        'cr605': {'$ref': '#/$elements/L2000F_CR605'},
+                        'cr606': {'$ref': '#/$elements/L2000F_CR606'},
                         'cr607': {'$ref': '#/$elements/L2000F_CR607'},
-                        'cr608': {'$ref': '#/$elements/L2000F_CR608'}},
+                        'cr608': {'$ref': '#/$elements/L2000F_CR608'},
+                        'cr609': {'$ref': '#/$elements/L2000F_CR609'},
+                        'cr610': {'$ref': '#/$elements/L2000F_CR610'},
+                        'cr611': {'$ref': '#/$elements/L2000F_CR611'},
+                        'cr612': {'$ref': '#/$elements/L2000F_CR612'},
+                        'cr613': {'$ref': '#/$elements/L2000F_CR613'},
+                        'cr614': {'$ref': '#/$elements/L2000F_CR614'},
+                        'cr615': {'$ref': '#/$elements/L2000F_CR615'},
+                        'cr616': {'$ref': '#/$elements/L2000F_CR616'},
+                        'cr617': {'$ref': '#/$elements/L2000F_CR617'},
+                        'cr618': {'$ref': '#/$elements/L2000F_CR618'},
+                        'cr619': {'$ref': '#/$elements/L2000F_CR619'},
+                        'cr620': {'$ref': '#/$elements/L2000F_CR620'},
+                        'cr621': {'$ref': '#/$elements/L2000F_CR621'}},
          'required': ['cr601', 'cr602', 'cr607', 'cr608']}
         segment_name = 'CR6'
     cr601: L2000F_CR601
     cr602: L2000F_CR602
     cr603: L2000F_CR603 | None
     cr604: L2000F_CR604 | None
+    cr605: L2000F_CR605 | None
+    cr606: L2000F_CR606 | None
     cr607: L2000F_CR607
     cr608: L2000F_CR608
+    cr609: L2000F_CR609 | None
+    cr610: L2000F_CR610 | None
+    cr611: L2000F_CR611 | None
+    cr612: L2000F_CR612 | None
+    cr613: L2000F_CR613 | None
+    cr614: L2000F_CR614 | None
+    cr615: L2000F_CR615 | None
+    cr616: L2000F_CR616 | None
+    cr617: L2000F_CR617 | None
+    cr618: L2000F_CR618 | None
+    cr619: L2000F_CR619 | None
+    cr620: L2000F_CR620 | None
+    cr621: L2000F_CR621 | None
 
 
 class L2000F_PWK01(Element):
@@ -13540,7 +13857,7 @@ class L2000F_PWK01(Element):
         json = {'title': 'Attachment Report Type Code',
          'usage': 'R',
          'description': 'xid=PWK01 data_ele=755',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/755'},
                             {'enum': ['03', '04', '05', '06', '07', '08', '09', '10',
                                       '11', '13', '15', '21', '48', '55', '59', '77',
@@ -13563,7 +13880,7 @@ class L2000F_PWK02(Element):
         json = {'title': 'Attachment Transmission Code',
          'usage': 'R',
          'description': 'xid=PWK02 data_ele=756',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/756'},
                             {'enum': ['BM', 'EL', 'EM', 'FX', 'VO']}]}}
         datatype = common.D_756
@@ -13578,7 +13895,7 @@ class L2000F_PWK03(Element):
         json = {'title': 'Report Copies Needed',
          'usage': 'N',
          'description': 'xid=PWK03 data_ele=757',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/757'}}
         datatype = common.D_757
         min_len = 1
@@ -13591,7 +13908,7 @@ class L2000F_PWK04(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=PWK04 data_ele=98',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -13604,7 +13921,7 @@ class L2000F_PWK05(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'S',
          'description': 'xid=PWK05 data_ele=66',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['AC']}]}}
         datatype = common.D_66
         codes = ['AC']
@@ -13618,7 +13935,7 @@ class L2000F_PWK06(Element):
         json = {'title': 'Attachment Control Number',
          'usage': 'S',
          'description': 'xid=PWK06 data_ele=67',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -13631,7 +13948,7 @@ class L2000F_PWK07(Element):
         json = {'title': 'Attachment Description',
          'usage': 'S',
          'description': 'xid=PWK07 data_ele=352',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -13653,7 +13970,7 @@ class L2000F_PWK09(Element):
         json = {'title': 'Request Category Code',
          'usage': 'N',
          'description': 'xid=PWK09 data_ele=1525',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/1525'}}
         datatype = common.D_1525
         min_len = 1
@@ -13672,17 +13989,24 @@ class L2000F_PWK(Segment):
                    'properties': {'xid': {'literal': 'PWK'},
                                   'pwk01': {'$ref': '#/$elements/L2000F_PWK01'},
                                   'pwk02': {'$ref': '#/$elements/L2000F_PWK02'},
+                                  'pwk03': {'$ref': '#/$elements/L2000F_PWK03'},
+                                  'pwk04': {'$ref': '#/$elements/L2000F_PWK04'},
                                   'pwk05': {'$ref': '#/$elements/L2000F_PWK05'},
                                   'pwk06': {'$ref': '#/$elements/L2000F_PWK06'},
-                                  'pwk07': {'$ref': '#/$elements/L2000F_PWK07'}},
+                                  'pwk07': {'$ref': '#/$elements/L2000F_PWK07'},
+                                  'c002': {'$ref': '#/$elements/L2000F_C002'},
+                                  'pwk09': {'$ref': '#/$elements/L2000F_PWK09'}},
                    'required': ['pwk01', 'pwk02']},
          'maxItems': 10}
         segment_name = 'PWK'
     pwk01: L2000F_PWK01
     pwk02: L2000F_PWK02
+    pwk03: L2000F_PWK03 | None
+    pwk04: L2000F_PWK04 | None
     pwk05: L2000F_PWK05 | None
     pwk06: L2000F_PWK06 | None
     pwk07: L2000F_PWK07 | None
+    pwk09: L2000F_PWK09 | None
 
 
 class L2000F_MSG01(Element):
@@ -13691,7 +14015,7 @@ class L2000F_MSG01(Element):
         json = {'title': 'Free Form Message Text',
          'usage': 'R',
          'description': 'xid=MSG01 data_ele=933',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/933'}}
         datatype = common.D_933
         min_len = 1
@@ -13704,7 +14028,7 @@ class L2000F_MSG02(Element):
         json = {'title': 'Printer Carriage Control Code',
          'usage': 'N',
          'description': 'xid=MSG02 data_ele=934',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/934'}}
         datatype = common.D_934
         min_len = 2
@@ -13717,7 +14041,7 @@ class L2000F_MSG03(Element):
         json = {'title': 'Number',
          'usage': 'N',
          'description': 'xid=MSG03 data_ele=1470',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1470'}}
         datatype = common.D_1470
         min_len = 1
@@ -13733,10 +14057,14 @@ class L2000F_MSG(Segment):
          'position': 160,
          'type': 'object',
          'properties': {'xid': {'literal': 'MSG'},
-                        'msg01': {'$ref': '#/$elements/L2000F_MSG01'}},
+                        'msg01': {'$ref': '#/$elements/L2000F_MSG01'},
+                        'msg02': {'$ref': '#/$elements/L2000F_MSG02'},
+                        'msg03': {'$ref': '#/$elements/L2000F_MSG03'}},
          'required': ['msg01']}
         segment_name = 'MSG'
     msg01: L2000F_MSG01
+    msg02: L2000F_MSG02 | None
+    msg03: L2000F_MSG03 | None
 
 
 class L2010F_NM101(Element):
@@ -13745,7 +14073,7 @@ class L2010F_NM101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'},
                             {'enum': ['1P', '2B', 'ABG', 'FA', 'PR', 'X3']}]}}
         datatype = common.D_98
@@ -13760,7 +14088,7 @@ class L2010F_NM102(Element):
         json = {'title': 'Entity Type Qualifier',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1', '2']}]}}
         datatype = common.D_1065
         codes = ['1', '2']
@@ -13774,7 +14102,7 @@ class L2010F_NM103(Element):
         json = {'title': 'Response Contact Last or Organization Name',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -13787,7 +14115,7 @@ class L2010F_NM104(Element):
         json = {'title': 'Response Contact First Name',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -13800,7 +14128,7 @@ class L2010F_NM105(Element):
         json = {'title': 'Response Contact Middle Name',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -13813,7 +14141,7 @@ class L2010F_NM106(Element):
         json = {'title': 'Name Prefix',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -13826,7 +14154,7 @@ class L2010F_NM107(Element):
         json = {'title': 'Response Contact Name Suffix',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -13839,7 +14167,7 @@ class L2010F_NM108(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'},
                             {'enum': ['24', '34', '46', 'PI', 'XV', 'XX']}]}}
         datatype = common.D_66
@@ -13854,7 +14182,7 @@ class L2010F_NM109(Element):
         json = {'title': 'Response Contact Identifier',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -13867,7 +14195,7 @@ class L2010F_NM110(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -13880,7 +14208,7 @@ class L2010F_NM111(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -13903,9 +14231,12 @@ class L2010F_NM1(Segment):
                                   'nm103': {'$ref': '#/$elements/L2010F_NM103'},
                                   'nm104': {'$ref': '#/$elements/L2010F_NM104'},
                                   'nm105': {'$ref': '#/$elements/L2010F_NM105'},
+                                  'nm106': {'$ref': '#/$elements/L2010F_NM106'},
                                   'nm107': {'$ref': '#/$elements/L2010F_NM107'},
                                   'nm108': {'$ref': '#/$elements/L2010F_NM108'},
-                                  'nm109': {'$ref': '#/$elements/L2010F_NM109'}},
+                                  'nm109': {'$ref': '#/$elements/L2010F_NM109'},
+                                  'nm110': {'$ref': '#/$elements/L2010F_NM110'},
+                                  'nm111': {'$ref': '#/$elements/L2010F_NM111'}},
                    'required': ['nm101', 'nm102']}}
         segment_name = 'NM1'
     nm101: L2010F_NM101
@@ -13913,9 +14244,12 @@ class L2010F_NM1(Segment):
     nm103: L2010F_NM103 | None
     nm104: L2010F_NM104 | None
     nm105: L2010F_NM105 | None
+    nm106: L2010F_NM106 | None
     nm107: L2010F_NM107 | None
     nm108: L2010F_NM108 | None
     nm109: L2010F_NM109 | None
+    nm110: L2010F_NM110 | None
+    nm111: L2010F_NM111 | None
 
 
 class L2010F_N301(Element):
@@ -13924,7 +14258,7 @@ class L2010F_N301(Element):
         json = {'title': 'Response Contact Address Line',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -13937,7 +14271,7 @@ class L2010F_N302(Element):
         json = {'title': 'Response Contact Address Line',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -13967,7 +14301,7 @@ class L2010F_N401(Element):
         json = {'title': 'Response Contact City Name',
          'usage': 'S',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -13980,7 +14314,7 @@ class L2010F_N402(Element):
         json = {'title': 'Response Contact State or Province Code',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -13994,7 +14328,7 @@ class L2010F_N403(Element):
         json = {'title': 'Response Contact Postal Zone or ZIP Code',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -14007,7 +14341,7 @@ class L2010F_N404(Element):
         json = {'title': 'Response Contact Country Code',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -14021,7 +14355,7 @@ class L2010F_N405(Element):
         json = {'title': 'Location Qualifier',
          'usage': 'S',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/309'}, {'enum': ['B1', 'DP']}]}}
         datatype = common.D_309
         codes = ['B1', 'DP']
@@ -14035,7 +14369,7 @@ class L2010F_N406(Element):
         json = {'title': 'Response Contact Specific Location',
          'usage': 'S',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -14073,7 +14407,7 @@ class L2010F_PER01(Element):
         json = {'title': 'Contact Function Code',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['IC']}]}}
         datatype = common.D_366
         codes = ['IC']
@@ -14087,7 +14421,7 @@ class L2010F_PER02(Element):
         json = {'title': 'Response Contact Name',
          'usage': 'S',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -14100,7 +14434,7 @@ class L2010F_PER03(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'}, {'enum': ['EM', 'FX', 'TE']}]}}
         datatype = common.D_365
         codes = ['EM', 'FX', 'TE']
@@ -14114,7 +14448,7 @@ class L2010F_PER04(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -14127,7 +14461,7 @@ class L2010F_PER05(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -14142,7 +14476,7 @@ class L2010F_PER06(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -14155,7 +14489,7 @@ class L2010F_PER07(Element):
         json = {'title': 'Communication Number Qualifier',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -14170,7 +14504,7 @@ class L2010F_PER08(Element):
         json = {'title': 'Response Contact Communication Number',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -14183,7 +14517,7 @@ class L2010F_PER09(Element):
         json = {'title': 'Contact Inquiry Reference',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -14208,7 +14542,8 @@ class L2010F_PER(Segment):
                                   'per05': {'$ref': '#/$elements/L2010F_PER05'},
                                   'per06': {'$ref': '#/$elements/L2010F_PER06'},
                                   'per07': {'$ref': '#/$elements/L2010F_PER07'},
-                                  'per08': {'$ref': '#/$elements/L2010F_PER08'}},
+                                  'per08': {'$ref': '#/$elements/L2010F_PER08'},
+                                  'per09': {'$ref': '#/$elements/L2010F_PER09'}},
                    'required': ['per01']},
          'maxItems': 3}
         segment_name = 'PER'
@@ -14220,6 +14555,7 @@ class L2010F_PER(Segment):
     per06: L2010F_PER06 | None
     per07: L2010F_PER07 | None
     per08: L2010F_PER08 | None
+    per09: L2010F_PER09 | None
 
 
 class L2010F(Loop):
@@ -14446,7 +14782,7 @@ class ST_LOOP_SE01(Element):
         json = {'title': 'Transaction Segment Count',
          'usage': 'R',
          'description': 'xid=SE01 data_ele=96',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/96'}}
         datatype = common.D_96
         min_len = 1
@@ -14459,7 +14795,7 @@ class ST_LOOP_SE02(Element):
         json = {'title': 'Transaction Set Control Number',
          'usage': 'R',
          'description': 'xid=SE02 data_ele=329',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/329'}}
         datatype = common.D_329
         min_len = 4
@@ -14495,11 +14831,13 @@ class ST_LOOP(Loop):
                    'properties': {'st': {'$ref': '#/$segments/ST_LOOP_ST'},
                                   'header': {'$ref': '#/$segments/HEADER'},
                                   'detail': {'$ref': '#/$segments/DETAIL'},
+                                  'footer': {'$ref': '#/$segments/FOOTER'},
                                   'se': {'$ref': '#/$segments/ST_LOOP_SE'}},
                    'required': ['st', 'header', 'se']}}
     st: ST_LOOP_ST
     header: list[HEADER]
     detail: list[DETAIL] | None
+    footer: list[FOOTER] | None
     se: ST_LOOP_SE
 
 
@@ -14509,7 +14847,7 @@ class GS_LOOP_GE01(Element):
         json = {'title': 'Number of Transaction Sets Included',
          'usage': 'R',
          'description': 'xid=GE01 data_ele=97',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/97'}}
         datatype = common.D_97
         min_len = 1
@@ -14522,7 +14860,7 @@ class GS_LOOP_GE02(Element):
         json = {'title': 'Group Control Number',
          'usage': 'R',
          'description': 'xid=GE02 data_ele=28',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/28'}}
         datatype = common.D_28
         min_len = 1
@@ -14570,7 +14908,7 @@ class ISA_LOOP_TA101(Element):
         json = {'title': 'Interchange Control Number',
          'usage': 'R',
          'description': 'xid=TA101 data_ele=I12',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/I12'}}
         datatype = common.I12
         min_len = 9
@@ -14583,7 +14921,7 @@ class ISA_LOOP_TA102(Element):
         json = {'title': 'Interchange Date',
          'usage': 'R',
          'description': 'xid=TA102 data_ele=I08',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/I08'}}
         datatype = common.I08
         min_len = 6
@@ -14596,7 +14934,7 @@ class ISA_LOOP_TA103(Element):
         json = {'title': 'Interchange Time',
          'usage': 'R',
          'description': 'xid=TA103 data_ele=I09',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/I09'}}
         datatype = common.I09
         min_len = 4
@@ -14609,7 +14947,7 @@ class ISA_LOOP_TA104(Element):
         json = {'title': 'Interchange Acknowledgement Code',
          'usage': 'R',
          'description': 'xid=TA104 data_ele=I17',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/I17'}, {'enum': ['A', 'E', 'R']}]}}
         datatype = common.I17
         codes = ['A', 'E', 'R']
@@ -14623,7 +14961,7 @@ class ISA_LOOP_TA105(Element):
         json = {'title': 'Interchange Note Code',
          'usage': 'R',
          'description': 'xid=TA105 data_ele=I18',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/I18'},
                             {'enum': ['000', '001', '002', '003', '004', '005', '006',
                                       '007', '008', '009', '010', '011', '012', '013',
@@ -14665,7 +15003,7 @@ class ISA_LOOP_IEA01(Element):
         json = {'title': 'Number of Included Functional Groups',
          'usage': 'R',
          'description': 'xid=IEA01 data_ele=I16',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/I16'}}
         datatype = common.I16
         min_len = 1
@@ -14678,7 +15016,7 @@ class ISA_LOOP_IEA02(Element):
         json = {'title': 'Interchange Control Number',
          'usage': 'R',
          'description': 'xid=IEA02 data_ele=I12',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/I12'}}
         datatype = common.I12
         min_len = 9

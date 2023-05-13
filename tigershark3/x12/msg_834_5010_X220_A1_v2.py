@@ -1,6 +1,6 @@
 """
 834.5010.X220.A1.v2
-Created 2023-03-25 09:22:28.424589
+Created 2023-05-12 20:25:34.268566
 """
 from .base import *
 from . import common
@@ -12,7 +12,7 @@ class ST_LOOP_ST01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=ST01 data_ele=143',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/143'}, {'enum': ['834']}]}}
         datatype = common.D_143
         codes = ['834']
@@ -26,7 +26,7 @@ class ST_LOOP_ST02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=ST02 data_ele=329',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/329'}}
         datatype = common.D_329
         min_len = 4
@@ -39,7 +39,7 @@ class ST_LOOP_ST03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=ST03 data_ele=1705',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1705'}, {'enum': ['005010X220A1']}]}}
         datatype = common.D_1705
         codes = ['005010X220A1']
@@ -72,7 +72,7 @@ class HEADER_BGN01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=BGN01 data_ele=353',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/353'}, {'enum': ['00', '15', '22']}]}}
         datatype = common.D_353
         codes = ['00', '15', '22']
@@ -86,7 +86,7 @@ class HEADER_BGN02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=BGN02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -99,7 +99,7 @@ class HEADER_BGN03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=BGN03 data_ele=373',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -112,7 +112,7 @@ class HEADER_BGN04(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=BGN04 data_ele=337',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/337'}}
         datatype = common.D_337
         min_len = 4
@@ -125,7 +125,7 @@ class HEADER_BGN05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=BGN05 data_ele=623',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/623'},
                             {'enum': ['01', '02', '03', '04', '05', '06', '07', '08',
                                       '09', '10', '11', '12', '13', '14', '15', '16',
@@ -146,7 +146,7 @@ class HEADER_BGN06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=BGN06 data_ele=127',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -159,7 +159,7 @@ class HEADER_BGN07(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=BGN07 data_ele=640',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/640'}}
         datatype = common.D_640
         min_len = 2
@@ -172,7 +172,7 @@ class HEADER_BGN08(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=BGN08 data_ele=306',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/306'}, {'enum': ['2', '4', 'RX']}]}}
         datatype = common.D_306
         codes = ['2', '4', 'RX']
@@ -186,7 +186,7 @@ class HEADER_BGN09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=BGN09 data_ele=786',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/786'}}
         datatype = common.D_786
         min_len = 2
@@ -209,7 +209,9 @@ class HEADER_BGN(Segment):
                         'bgn04': {'$ref': '#/$elements/HEADER_BGN04'},
                         'bgn05': {'$ref': '#/$elements/HEADER_BGN05'},
                         'bgn06': {'$ref': '#/$elements/HEADER_BGN06'},
-                        'bgn08': {'$ref': '#/$elements/HEADER_BGN08'}},
+                        'bgn07': {'$ref': '#/$elements/HEADER_BGN07'},
+                        'bgn08': {'$ref': '#/$elements/HEADER_BGN08'},
+                        'bgn09': {'$ref': '#/$elements/HEADER_BGN09'}},
          'required': ['bgn01', 'bgn02', 'bgn03', 'bgn04', 'bgn08']}
         segment_name = 'BGN'
     bgn01: HEADER_BGN01
@@ -218,7 +220,9 @@ class HEADER_BGN(Segment):
     bgn04: HEADER_BGN04
     bgn05: HEADER_BGN05 | None
     bgn06: HEADER_BGN06 | None
+    bgn07: HEADER_BGN07 | None
     bgn08: HEADER_BGN08
+    bgn09: HEADER_BGN09 | None
 
 
 class HEADER_REF01(Element):
@@ -227,7 +231,7 @@ class HEADER_REF01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['38']}]}}
         datatype = common.D_128
         codes = ['38']
@@ -241,7 +245,7 @@ class HEADER_REF02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -254,7 +258,7 @@ class HEADER_REF03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -281,11 +285,14 @@ class HEADER_REF(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'REF'},
                         'ref01': {'$ref': '#/$elements/HEADER_REF01'},
-                        'ref02': {'$ref': '#/$elements/HEADER_REF02'}},
+                        'ref02': {'$ref': '#/$elements/HEADER_REF02'},
+                        'ref03': {'$ref': '#/$elements/HEADER_REF03'},
+                        'ref04': {'$ref': '#/$elements/HEADER_REF04'}},
          'required': ['ref01', 'ref02']}
         segment_name = 'REF'
     ref01: HEADER_REF01
     ref02: HEADER_REF02
+    ref03: HEADER_REF03 | None
 
 
 class HEADER_DTP01(Element):
@@ -294,7 +301,7 @@ class HEADER_DTP01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'},
                             {'enum': ['007', '090', '091', '303', '382', '388']}]}}
         datatype = common.D_374
@@ -309,7 +316,7 @@ class HEADER_DTP02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -323,7 +330,7 @@ class HEADER_DTP03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -356,7 +363,7 @@ class HEADER_QTY01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=QTY01 data_ele=673',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/673'}, {'enum': ['DT', 'ET', 'TO']}]}}
         datatype = common.D_673
         codes = ['DT', 'ET', 'TO']
@@ -370,7 +377,7 @@ class HEADER_QTY02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=QTY02 data_ele=380',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -392,7 +399,7 @@ class HEADER_QTY04(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=QTY04 data_ele=61',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/61'}}
         datatype = common.D_61
         min_len = 1
@@ -411,12 +418,15 @@ class HEADER_QTY(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'QTY'},
                                   'qty01': {'$ref': '#/$elements/HEADER_QTY01'},
-                                  'qty02': {'$ref': '#/$elements/HEADER_QTY02'}},
+                                  'qty02': {'$ref': '#/$elements/HEADER_QTY02'},
+                                  'qty03': {'$ref': '#/$elements/HEADER_QTY03'},
+                                  'qty04': {'$ref': '#/$elements/HEADER_QTY04'}},
                    'required': ['qty01', 'qty02']},
          'maxItems': 3}
         segment_name = 'QTY'
     qty01: HEADER_QTY01
     qty02: HEADER_QTY02
+    qty04: HEADER_QTY04 | None
 
 
 class L1000A_N101(Element):
@@ -425,7 +435,7 @@ class L1000A_N101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['P5']}]}}
         datatype = common.D_98
         codes = ['P5']
@@ -439,7 +449,7 @@ class L1000A_N102(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N102 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -452,7 +462,7 @@ class L1000A_N103(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N103 data_ele=66',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['24', '94', 'FI']}]}}
         datatype = common.D_66
         codes = ['24', '94', 'FI']
@@ -466,7 +476,7 @@ class L1000A_N104(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N104 data_ele=67',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -479,7 +489,7 @@ class L1000A_N105(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N105 data_ele=706',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -492,7 +502,7 @@ class L1000A_N106(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N106 data_ele=98',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -512,13 +522,17 @@ class L1000A_N1(Segment):
                         'n101': {'$ref': '#/$elements/L1000A_N101'},
                         'n102': {'$ref': '#/$elements/L1000A_N102'},
                         'n103': {'$ref': '#/$elements/L1000A_N103'},
-                        'n104': {'$ref': '#/$elements/L1000A_N104'}},
+                        'n104': {'$ref': '#/$elements/L1000A_N104'},
+                        'n105': {'$ref': '#/$elements/L1000A_N105'},
+                        'n106': {'$ref': '#/$elements/L1000A_N106'}},
          'required': ['n101', 'n103', 'n104']}
         segment_name = 'N1'
     n101: L1000A_N101
     n102: L1000A_N102 | None
     n103: L1000A_N103
     n104: L1000A_N104
+    n105: L1000A_N105 | None
+    n106: L1000A_N106 | None
 
 
 class L1000A(Loop):
@@ -541,7 +555,7 @@ class L1000B_N101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['IN']}]}}
         datatype = common.D_98
         codes = ['IN']
@@ -555,7 +569,7 @@ class L1000B_N102(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N102 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -568,7 +582,7 @@ class L1000B_N103(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N103 data_ele=66',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['94', 'FI', 'XV']}]}}
         datatype = common.D_66
         codes = ['94', 'FI', 'XV']
@@ -582,7 +596,7 @@ class L1000B_N104(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N104 data_ele=67',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -595,7 +609,7 @@ class L1000B_N105(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N105 data_ele=706',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -608,7 +622,7 @@ class L1000B_N106(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N106 data_ele=98',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -628,13 +642,17 @@ class L1000B_N1(Segment):
                         'n101': {'$ref': '#/$elements/L1000B_N101'},
                         'n102': {'$ref': '#/$elements/L1000B_N102'},
                         'n103': {'$ref': '#/$elements/L1000B_N103'},
-                        'n104': {'$ref': '#/$elements/L1000B_N104'}},
+                        'n104': {'$ref': '#/$elements/L1000B_N104'},
+                        'n105': {'$ref': '#/$elements/L1000B_N105'},
+                        'n106': {'$ref': '#/$elements/L1000B_N106'}},
          'required': ['n101', 'n103', 'n104']}
         segment_name = 'N1'
     n101: L1000B_N101
     n102: L1000B_N102 | None
     n103: L1000B_N103
     n104: L1000B_N104
+    n105: L1000B_N105 | None
+    n106: L1000B_N106 | None
 
 
 class L1000B(Loop):
@@ -657,7 +675,7 @@ class L1000C_N101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['BO', 'TV']}]}}
         datatype = common.D_98
         codes = ['BO', 'TV']
@@ -671,7 +689,7 @@ class L1000C_N102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N102 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -684,7 +702,7 @@ class L1000C_N103(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N103 data_ele=66',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['94', 'FI', 'XV']}]}}
         datatype = common.D_66
         codes = ['94', 'FI', 'XV']
@@ -698,7 +716,7 @@ class L1000C_N104(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N104 data_ele=67',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -711,7 +729,7 @@ class L1000C_N105(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N105 data_ele=706',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -724,7 +742,7 @@ class L1000C_N106(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N106 data_ele=98',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -744,13 +762,17 @@ class L1000C_N1(Segment):
                         'n101': {'$ref': '#/$elements/L1000C_N101'},
                         'n102': {'$ref': '#/$elements/L1000C_N102'},
                         'n103': {'$ref': '#/$elements/L1000C_N103'},
-                        'n104': {'$ref': '#/$elements/L1000C_N104'}},
+                        'n104': {'$ref': '#/$elements/L1000C_N104'},
+                        'n105': {'$ref': '#/$elements/L1000C_N105'},
+                        'n106': {'$ref': '#/$elements/L1000C_N106'}},
          'required': ['n101', 'n102', 'n103', 'n104']}
         segment_name = 'N1'
     n101: L1000C_N101
     n102: L1000C_N102
     n103: L1000C_N103
     n104: L1000C_N104
+    n105: L1000C_N105 | None
+    n106: L1000C_N106 | None
 
 
 class L1100C_ACT01(Element):
@@ -759,7 +781,7 @@ class L1100C_ACT01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=ACT01 data_ele=508',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/508'}}
         datatype = common.D_508
         min_len = 1
@@ -772,7 +794,7 @@ class L1100C_ACT02(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=ACT02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -785,7 +807,7 @@ class L1100C_ACT03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=ACT03 data_ele=66',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/66'}}
         datatype = common.D_66
         min_len = 1
@@ -798,7 +820,7 @@ class L1100C_ACT04(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=ACT04 data_ele=67',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -811,7 +833,7 @@ class L1100C_ACT05(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=ACT05 data_ele=569',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/569'}}
         datatype = common.D_569
         min_len = 1
@@ -824,7 +846,7 @@ class L1100C_ACT06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=ACT06 data_ele=508',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/508'}}
         datatype = common.D_508
         min_len = 1
@@ -837,7 +859,7 @@ class L1100C_ACT07(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=ACT07 data_ele=352',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -850,7 +872,7 @@ class L1100C_ACT08(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=ACT08 data_ele=107',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/107'}}
         datatype = common.D_107
         min_len = 1
@@ -863,7 +885,7 @@ class L1100C_ACT09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=ACT09 data_ele=1216',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/1216'}}
         datatype = common.D_1216
         min_len = 1
@@ -881,11 +903,25 @@ class L1100C_ACT(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'ACT'},
                         'act01': {'$ref': '#/$elements/L1100C_ACT01'},
-                        'act06': {'$ref': '#/$elements/L1100C_ACT06'}},
+                        'act02': {'$ref': '#/$elements/L1100C_ACT02'},
+                        'act03': {'$ref': '#/$elements/L1100C_ACT03'},
+                        'act04': {'$ref': '#/$elements/L1100C_ACT04'},
+                        'act05': {'$ref': '#/$elements/L1100C_ACT05'},
+                        'act06': {'$ref': '#/$elements/L1100C_ACT06'},
+                        'act07': {'$ref': '#/$elements/L1100C_ACT07'},
+                        'act08': {'$ref': '#/$elements/L1100C_ACT08'},
+                        'act09': {'$ref': '#/$elements/L1100C_ACT09'}},
          'required': ['act01']}
         segment_name = 'ACT'
     act01: L1100C_ACT01
+    act02: L1100C_ACT02 | None
+    act03: L1100C_ACT03 | None
+    act04: L1100C_ACT04 | None
+    act05: L1100C_ACT05 | None
     act06: L1100C_ACT06 | None
+    act07: L1100C_ACT07 | None
+    act08: L1100C_ACT08 | None
+    act09: L1100C_ACT09 | None
 
 
 class L1100C(Loop):
@@ -950,7 +986,7 @@ class L2000_INS01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=INS01 data_ele=1073',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -964,7 +1000,7 @@ class L2000_INS02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=INS02 data_ele=1069',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1069'},
                             {'enum': ['01', '03', '04', '05', '06', '07', '08', '09',
                                       '10', '11', '12', '13', '14', '15', '16', '17',
@@ -982,7 +1018,7 @@ class L2000_INS03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=INS03 data_ele=875',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/875'},
                             {'enum': ['001', '021', '024', '025', '030']}]}}
         datatype = common.D_875
@@ -997,7 +1033,7 @@ class L2000_INS04(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS04 data_ele=1203',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1203'},
                             {'enum': ['01', '02', '03', '04', '05', '06', '07', '08',
                                       '09', '10', '11', '14', '15', '16', '17', '18',
@@ -1018,7 +1054,7 @@ class L2000_INS05(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=INS05 data_ele=1216',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/1216'},
                             {'enum': ['A', 'C', 'S', 'T']}]}}
         datatype = common.D_1216
@@ -1033,7 +1069,7 @@ class L2000_INS06_01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=INS06-01 data_ele=1218',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1218'},
                             {'enum': ['A', 'B', 'C', 'D', 'E']}]}}
         datatype = common.D_1218
@@ -1048,7 +1084,7 @@ class L2000_INS06_02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS06-02 data_ele=1701',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1701'}, {'enum': ['0', '1', '2']}]}}
         datatype = common.D_1701
         codes = ['0', '1', '2']
@@ -1062,7 +1098,7 @@ class L2000_INS06_03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=INS06-03 data_ele=1701',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1701'}}
         datatype = common.D_1701
         min_len = 1
@@ -1075,7 +1111,7 @@ class L2000_INS06_04(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=INS06-04 data_ele=1701',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1701'}}
         datatype = common.D_1701
         min_len = 1
@@ -1093,29 +1129,31 @@ class L2000_INS06(Composite):
          'properties': {'ins06_01': {'title': '',
                                      'usage': 'R',
                                      'description': 'xid=INS06-01 data_ele=1218',
-                                     'sequence': 1,
+                                     'position': 1,
                                      'type': {'allOf': [{'$ref': '#/$common/1218'},
                                                         {'enum': ['A', 'B', 'C', 'D',
                                                                   'E']}]}},
                         'ins06_02': {'title': '',
                                      'usage': 'S',
                                      'description': 'xid=INS06-02 data_ele=1701',
-                                     'sequence': 2,
+                                     'position': 2,
                                      'type': {'allOf': [{'$ref': '#/$common/1701'},
                                                         {'enum': ['0', '1', '2']}]}},
                         'ins06_03': {'title': '',
                                      'usage': 'N',
                                      'description': 'xid=INS06-03 data_ele=1701',
-                                     'sequence': 3,
+                                     'position': 3,
                                      'type': {'$ref': '#/$common/1701'}},
                         'ins06_04': {'title': '',
                                      'usage': 'N',
                                      'description': 'xid=INS06-04 data_ele=1701',
-                                     'sequence': 4,
+                                     'position': 4,
                                      'type': {'$ref': '#/$common/1701'}}},
          'required': ['ins06_01']}
     ins06_01: L2000_INS06_01
     ins06_02: L2000_INS06_02 | None
+    ins06_03: L2000_INS06_03 | None
+    ins06_04: L2000_INS06_04 | None
 
 
 class L2000_INS07(Element):
@@ -1124,7 +1162,7 @@ class L2000_INS07(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS07 data_ele=1219',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/1219'},
                             {'enum': ['1', '10', '2', '3', '4', '5', '6', '7', '8', '9',
                                       'ZZ']}]}}
@@ -1140,7 +1178,7 @@ class L2000_INS08(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS08 data_ele=584',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/584'},
                             {'enum': ['AC', 'AO', 'AU', 'FT', 'L1', 'PT', 'RT',
                                       'TE']}]}}
@@ -1156,7 +1194,7 @@ class L2000_INS09(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS09 data_ele=1220',
-         'sequence': 9,
+         'position': 9,
          'type': {'allOf': [{'$ref': '#/$common/1220'}, {'enum': ['F', 'N', 'P']}]}}
         datatype = common.D_1220
         codes = ['F', 'N', 'P']
@@ -1170,7 +1208,7 @@ class L2000_INS10(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS10 data_ele=1073',
-         'sequence': 10,
+         'position': 10,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -1184,7 +1222,7 @@ class L2000_INS11(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS11 data_ele=1250',
-         'sequence': 11,
+         'position': 11,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -1198,7 +1236,7 @@ class L2000_INS12(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS12 data_ele=1251',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -1211,7 +1249,7 @@ class L2000_INS13(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS13 data_ele=1165',
-         'sequence': 13,
+         'position': 13,
          'type': {'allOf': [{'$ref': '#/$common/1165'}, {'enum': ['R', 'U']}]}}
         datatype = common.D_1165
         codes = ['R', 'U']
@@ -1225,7 +1263,7 @@ class L2000_INS14(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=INS14 data_ele=19',
-         'sequence': 14,
+         'position': 14,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -1238,7 +1276,7 @@ class L2000_INS15(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=INS15 data_ele=156',
-         'sequence': 15,
+         'position': 15,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         min_len = 2
@@ -1251,7 +1289,7 @@ class L2000_INS16(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=INS16 data_ele=26',
-         'sequence': 16,
+         'position': 16,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         min_len = 2
@@ -1264,7 +1302,7 @@ class L2000_INS17(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=INS17 data_ele=1470',
-         'sequence': 17,
+         'position': 17,
          'type': {'$ref': '#/$common/1470'}}
         datatype = common.D_1470
         min_len = 1
@@ -1294,6 +1332,9 @@ class L2000_INS(Segment):
                         'ins11': {'$ref': '#/$elements/L2000_INS11'},
                         'ins12': {'$ref': '#/$elements/L2000_INS12'},
                         'ins13': {'$ref': '#/$elements/L2000_INS13'},
+                        'ins14': {'$ref': '#/$elements/L2000_INS14'},
+                        'ins15': {'$ref': '#/$elements/L2000_INS15'},
+                        'ins16': {'$ref': '#/$elements/L2000_INS16'},
                         'ins17': {'$ref': '#/$elements/L2000_INS17'}},
          'required': ['ins01', 'ins02', 'ins03', 'ins05']}
         segment_name = 'INS'
@@ -1310,6 +1351,9 @@ class L2000_INS(Segment):
     ins11: L2000_INS11 | None
     ins12: L2000_INS12 | None
     ins13: L2000_INS13 | None
+    ins14: L2000_INS14 | None
+    ins15: L2000_INS15 | None
+    ins16: L2000_INS16 | None
     ins17: L2000_INS17 | None
 
 
@@ -1319,7 +1363,7 @@ class L2000_REF01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['0F']}]}}
         datatype = common.D_128
         codes = ['0F']
@@ -1333,7 +1377,7 @@ class L2000_REF02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -1346,7 +1390,7 @@ class L2000_REF03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -1373,11 +1417,14 @@ class L2000_REF(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'REF'},
                         'ref01': {'$ref': '#/$elements/L2000_REF01'},
-                        'ref02': {'$ref': '#/$elements/L2000_REF02'}},
+                        'ref02': {'$ref': '#/$elements/L2000_REF02'},
+                        'ref03': {'$ref': '#/$elements/L2000_REF03'},
+                        'ref04': {'$ref': '#/$elements/L2000_REF04'}},
          'required': ['ref01', 'ref02']}
         segment_name = 'REF'
     ref01: L2000_REF01
     ref02: L2000_REF02
+    ref03: L2000_REF03 | None
 
 
 class L2000_REF01(Element):
@@ -1386,7 +1433,7 @@ class L2000_REF01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['1L']}]}}
         datatype = common.D_128
         codes = ['1L']
@@ -1400,7 +1447,7 @@ class L2000_REF02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -1413,7 +1460,7 @@ class L2000_REF03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -1440,11 +1487,14 @@ class L2000_REF(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'REF'},
                         'ref01': {'$ref': '#/$elements/L2000_REF01'},
-                        'ref02': {'$ref': '#/$elements/L2000_REF02'}},
+                        'ref02': {'$ref': '#/$elements/L2000_REF02'},
+                        'ref03': {'$ref': '#/$elements/L2000_REF03'},
+                        'ref04': {'$ref': '#/$elements/L2000_REF04'}},
          'required': ['ref01', 'ref02']}
         segment_name = 'REF'
     ref01: L2000_REF01
     ref02: L2000_REF02
+    ref03: L2000_REF03 | None
 
 
 class L2000_REF01(Element):
@@ -1453,7 +1503,7 @@ class L2000_REF01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'},
                             {'enum': ['17', '23', '3H', '4A', '6O', 'ABB', 'D3', 'DX',
                                       'F6', 'P5', 'Q4', 'QQ', 'ZZ']}]}}
@@ -1469,7 +1519,7 @@ class L2000_REF02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -1482,7 +1532,7 @@ class L2000_REF03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -1510,12 +1560,15 @@ class L2000_REF(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'REF'},
                                   'ref01': {'$ref': '#/$elements/L2000_REF01'},
-                                  'ref02': {'$ref': '#/$elements/L2000_REF02'}},
+                                  'ref02': {'$ref': '#/$elements/L2000_REF02'},
+                                  'ref03': {'$ref': '#/$elements/L2000_REF03'},
+                                  'ref04': {'$ref': '#/$elements/L2000_REF04'}},
                    'required': ['ref01', 'ref02']},
          'maxItems': 13}
         segment_name = 'REF'
     ref01: L2000_REF01
     ref02: L2000_REF02
+    ref03: L2000_REF03 | None
 
 
 class L2000_DTP01(Element):
@@ -1524,7 +1577,7 @@ class L2000_DTP01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'},
                             {'enum': ['050', '286', '296', '297', '300', '301', '303',
                                       '336', '337', '338', '339', '340', '341', '350',
@@ -1542,7 +1595,7 @@ class L2000_DTP02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -1556,7 +1609,7 @@ class L2000_DTP03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -1590,7 +1643,7 @@ class L2100A_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['74', 'IL']}]}}
         datatype = common.D_98
         codes = ['74', 'IL']
@@ -1604,7 +1657,7 @@ class L2100A_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1']}]}}
         datatype = common.D_1065
         codes = ['1']
@@ -1618,7 +1671,7 @@ class L2100A_NM103(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -1631,7 +1684,7 @@ class L2100A_NM104(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -1644,7 +1697,7 @@ class L2100A_NM105(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -1657,7 +1710,7 @@ class L2100A_NM106(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -1670,7 +1723,7 @@ class L2100A_NM107(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -1683,7 +1736,7 @@ class L2100A_NM108(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['34', 'ZZ']}]}}
         datatype = common.D_66
         codes = ['34', 'ZZ']
@@ -1697,7 +1750,7 @@ class L2100A_NM109(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -1710,7 +1763,7 @@ class L2100A_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -1723,7 +1776,7 @@ class L2100A_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -1736,7 +1789,7 @@ class L2100A_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -1761,7 +1814,10 @@ class L2100A_NM1(Segment):
                         'nm106': {'$ref': '#/$elements/L2100A_NM106'},
                         'nm107': {'$ref': '#/$elements/L2100A_NM107'},
                         'nm108': {'$ref': '#/$elements/L2100A_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2100A_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2100A_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2100A_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2100A_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2100A_NM112'}},
          'required': ['nm101', 'nm102', 'nm103']}
         segment_name = 'NM1'
     nm101: L2100A_NM101
@@ -1773,6 +1829,9 @@ class L2100A_NM1(Segment):
     nm107: L2100A_NM107 | None
     nm108: L2100A_NM108 | None
     nm109: L2100A_NM109 | None
+    nm110: L2100A_NM110 | None
+    nm111: L2100A_NM111 | None
+    nm112: L2100A_NM112 | None
 
 
 class L2100A_PER01(Element):
@@ -1781,7 +1840,7 @@ class L2100A_PER01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['IP']}]}}
         datatype = common.D_366
         codes = ['IP']
@@ -1795,7 +1854,7 @@ class L2100A_PER02(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -1808,7 +1867,7 @@ class L2100A_PER03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -1824,7 +1883,7 @@ class L2100A_PER04(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -1837,7 +1896,7 @@ class L2100A_PER05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -1853,7 +1912,7 @@ class L2100A_PER06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -1866,7 +1925,7 @@ class L2100A_PER07(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -1882,7 +1941,7 @@ class L2100A_PER08(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -1895,7 +1954,7 @@ class L2100A_PER09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -1913,21 +1972,25 @@ class L2100A_PER(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'PER'},
                         'per01': {'$ref': '#/$elements/L2100A_PER01'},
+                        'per02': {'$ref': '#/$elements/L2100A_PER02'},
                         'per03': {'$ref': '#/$elements/L2100A_PER03'},
                         'per04': {'$ref': '#/$elements/L2100A_PER04'},
                         'per05': {'$ref': '#/$elements/L2100A_PER05'},
                         'per06': {'$ref': '#/$elements/L2100A_PER06'},
                         'per07': {'$ref': '#/$elements/L2100A_PER07'},
-                        'per08': {'$ref': '#/$elements/L2100A_PER08'}},
+                        'per08': {'$ref': '#/$elements/L2100A_PER08'},
+                        'per09': {'$ref': '#/$elements/L2100A_PER09'}},
          'required': ['per01', 'per03', 'per04']}
         segment_name = 'PER'
     per01: L2100A_PER01
+    per02: L2100A_PER02 | None
     per03: L2100A_PER03
     per04: L2100A_PER04
     per05: L2100A_PER05 | None
     per06: L2100A_PER06 | None
     per07: L2100A_PER07 | None
     per08: L2100A_PER08 | None
+    per09: L2100A_PER09 | None
 
 
 class L2100A_N301(Element):
@@ -1936,7 +1999,7 @@ class L2100A_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -1949,7 +2012,7 @@ class L2100A_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -1979,7 +2042,7 @@ class L2100A_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -1992,7 +2055,7 @@ class L2100A_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -2006,7 +2069,7 @@ class L2100A_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -2019,7 +2082,7 @@ class L2100A_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -2033,7 +2096,7 @@ class L2100A_N405(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/309'}, {'enum': ['60', 'CY']}]}}
         datatype = common.D_309
         codes = ['60', 'CY']
@@ -2047,7 +2110,7 @@ class L2100A_N406(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -2060,7 +2123,7 @@ class L2100A_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -2101,7 +2164,7 @@ class L2100A_DMG01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DMG01 data_ele=1250',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -2115,7 +2178,7 @@ class L2100A_DMG02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DMG02 data_ele=1251',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -2128,7 +2191,7 @@ class L2100A_DMG03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DMG03 data_ele=1068',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1068'}, {'enum': ['F', 'M', 'U']}]}}
         datatype = common.D_1068
         codes = ['F', 'M', 'U']
@@ -2142,7 +2205,7 @@ class L2100A_DMG04(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG04 data_ele=1067',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1067'},
                             {'enum': ['B', 'D', 'I', 'M', 'R', 'S', 'U', 'W', 'X']}]}}
         datatype = common.D_1067
@@ -2157,7 +2220,7 @@ class L2100A_DMG05_01(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG05-01 data_ele=1109',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1109'},
                             {'enum': ['7', '8', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
                                       'I', 'J', 'N', 'O', 'P', 'Z']}]}}
@@ -2173,7 +2236,7 @@ class L2100A_DMG05_02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG05-02 data_ele=1270',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['RET']}]}}
         datatype = common.D_1270
         codes = ['RET']
@@ -2187,7 +2250,7 @@ class L2100A_DMG05_03(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG05-03 data_ele=1271',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -2205,7 +2268,7 @@ class L2100A_DMG05(Composite):
          'properties': {'dmg05_01': {'title': '',
                                      'usage': 'S',
                                      'description': 'xid=DMG05-01 data_ele=1109',
-                                     'sequence': 1,
+                                     'position': 1,
                                      'type': {'allOf': [{'$ref': '#/$common/1109'},
                                                         {'enum': ['7', '8', 'A', 'B',
                                                                   'C', 'D', 'E', 'F',
@@ -2215,13 +2278,13 @@ class L2100A_DMG05(Composite):
                         'dmg05_02': {'title': '',
                                      'usage': 'S',
                                      'description': 'xid=DMG05-02 data_ele=1270',
-                                     'sequence': 2,
+                                     'position': 2,
                                      'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                         {'enum': ['RET']}]}},
                         'dmg05_03': {'title': '',
                                      'usage': 'S',
                                      'description': 'xid=DMG05-03 data_ele=1271',
-                                     'sequence': 3,
+                                     'position': 3,
                                      'type': {'$ref': '#/$common/1271'}}}}
     dmg05_01: L2100A_DMG05_01 | None
     dmg05_02: L2100A_DMG05_02 | None
@@ -2234,7 +2297,7 @@ class L2100A_DMG06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG06 data_ele=1066',
-         'sequence': 6,
+         'position': 6,
          'type': {'allOf': [{'$ref': '#/$common/1066'},
                             {'enum': ['1', '2', '3', '4', '5', '6', '7']}]}}
         datatype = common.D_1066
@@ -2249,7 +2312,7 @@ class L2100A_DMG07(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DMG07 data_ele=26',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         min_len = 2
@@ -2262,7 +2325,7 @@ class L2100A_DMG08(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DMG08 data_ele=659',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/659'}}
         datatype = common.D_659
         min_len = 1
@@ -2275,7 +2338,7 @@ class L2100A_DMG09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DMG09 data_ele=380',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -2288,7 +2351,7 @@ class L2100A_DMG10(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG10 data_ele=1270',
-         'sequence': 10,
+         'position': 10,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['REC']}]}}
         datatype = common.D_1270
         codes = ['REC']
@@ -2302,7 +2365,7 @@ class L2100A_DMG11(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG11 data_ele=1271',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -2325,6 +2388,9 @@ class L2100A_DMG(Segment):
                         'dmg04': {'$ref': '#/$elements/L2100A_DMG04'},
                         'dmg05': {'$ref': '#/$elements/L2100A_DMG05'},
                         'dmg06': {'$ref': '#/$elements/L2100A_DMG06'},
+                        'dmg07': {'$ref': '#/$elements/L2100A_DMG07'},
+                        'dmg08': {'$ref': '#/$elements/L2100A_DMG08'},
+                        'dmg09': {'$ref': '#/$elements/L2100A_DMG09'},
                         'dmg10': {'$ref': '#/$elements/L2100A_DMG10'},
                         'dmg11': {'$ref': '#/$elements/L2100A_DMG11'}},
          'required': ['dmg01', 'dmg02', 'dmg03']}
@@ -2335,6 +2401,9 @@ class L2100A_DMG(Segment):
     dmg04: L2100A_DMG04 | None
     dmg05: L2100A_DMG05 | None
     dmg06: L2100A_DMG06 | None
+    dmg07: L2100A_DMG07 | None
+    dmg08: L2100A_DMG08 | None
+    dmg09: L2100A_DMG09 | None
     dmg10: L2100A_DMG10 | None
     dmg11: L2100A_DMG11 | None
 
@@ -2345,7 +2414,7 @@ class L2100A_EC01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=EC01 data_ele=1176',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1176'},
                             {'enum': ['01', '02', '03', '04', '05', '06', '07', '08',
                                       '09', '10', '11', '12', '17', '18', '19', '20',
@@ -2362,7 +2431,7 @@ class L2100A_EC02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=EC02 data_ele=1176',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1176'},
                             {'enum': ['01', '02', '03', '04', '05', '06', '07', '08',
                                       '09', '10', '11', '12', '17', '18', '19', '20',
@@ -2379,7 +2448,7 @@ class L2100A_EC03(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=EC03 data_ele=1176',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1176'},
                             {'enum': ['01', '02', '03', '04', '05', '06', '07', '08',
                                       '09', '10', '11', '12', '17', '18', '19', '20',
@@ -2396,7 +2465,7 @@ class L2100A_EC04(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=EC04 data_ele=954',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/954'}}
         datatype = common.D_954
         min_len = 1
@@ -2409,7 +2478,7 @@ class L2100A_EC05(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=EC05 data_ele=1201',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1201'}}
         datatype = common.D_1201
         min_len = 1
@@ -2422,7 +2491,7 @@ class L2100A_EC06(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=EC06 data_ele=1149',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1149'}}
         datatype = common.D_1149
         min_len = 4
@@ -2441,12 +2510,18 @@ class L2100A_EC(Segment):
                    'properties': {'xid': {'literal': 'EC'},
                                   'ec01': {'$ref': '#/$elements/L2100A_EC01'},
                                   'ec02': {'$ref': '#/$elements/L2100A_EC02'},
-                                  'ec03': {'$ref': '#/$elements/L2100A_EC03'}},
+                                  'ec03': {'$ref': '#/$elements/L2100A_EC03'},
+                                  'ec04': {'$ref': '#/$elements/L2100A_EC04'},
+                                  'ec05': {'$ref': '#/$elements/L2100A_EC05'},
+                                  'ec06': {'$ref': '#/$elements/L2100A_EC06'}},
                    'required': ['ec01']}}
         segment_name = 'EC'
     ec01: L2100A_EC01
     ec02: L2100A_EC02 | None
     ec03: L2100A_EC03 | None
+    ec04: L2100A_EC04 | None
+    ec05: L2100A_EC05 | None
+    ec06: L2100A_EC06 | None
 
 
 class L2100A_ICM01(Element):
@@ -2455,7 +2530,7 @@ class L2100A_ICM01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=ICM01 data_ele=594',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/594'},
                             {'enum': ['1', '2', '3', '4', '6', '7', '8', '9', 'B', 'C',
                                       'H', 'Q', 'S', 'U']}]}}
@@ -2471,7 +2546,7 @@ class L2100A_ICM02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=ICM02 data_ele=782',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -2484,7 +2559,7 @@ class L2100A_ICM03(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=ICM03 data_ele=380',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -2497,7 +2572,7 @@ class L2100A_ICM04(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=ICM04 data_ele=310',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -2510,7 +2585,7 @@ class L2100A_ICM05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=ICM05 data_ele=1214',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1214'}}
         datatype = common.D_1214
         min_len = 1
@@ -2523,7 +2598,7 @@ class L2100A_ICM06(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=ICM06 data_ele=100',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/100'}}
         datatype = common.D_100
         min_len = 3
@@ -2543,7 +2618,8 @@ class L2100A_ICM(Segment):
                         'icm02': {'$ref': '#/$elements/L2100A_ICM02'},
                         'icm03': {'$ref': '#/$elements/L2100A_ICM03'},
                         'icm04': {'$ref': '#/$elements/L2100A_ICM04'},
-                        'icm05': {'$ref': '#/$elements/L2100A_ICM05'}},
+                        'icm05': {'$ref': '#/$elements/L2100A_ICM05'},
+                        'icm06': {'$ref': '#/$elements/L2100A_ICM06'}},
          'required': ['icm01', 'icm02']}
         segment_name = 'ICM'
     icm01: L2100A_ICM01
@@ -2551,6 +2627,7 @@ class L2100A_ICM(Segment):
     icm03: L2100A_ICM03 | None
     icm04: L2100A_ICM04 | None
     icm05: L2100A_ICM05 | None
+    icm06: L2100A_ICM06 | None
 
 
 class L2100A_AMT01(Element):
@@ -2559,7 +2636,7 @@ class L2100A_AMT01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=AMT01 data_ele=522',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/522'},
                             {'enum': ['B9', 'C1', 'D2', 'EBA', 'FK', 'P3', 'R']}]}}
         datatype = common.D_522
@@ -2574,7 +2651,7 @@ class L2100A_AMT02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=AMT02 data_ele=782',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -2587,7 +2664,7 @@ class L2100A_AMT03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=AMT03 data_ele=478',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/478'}}
         datatype = common.D_478
         min_len = 1
@@ -2605,12 +2682,14 @@ class L2100A_AMT(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AMT'},
                                   'amt01': {'$ref': '#/$elements/L2100A_AMT01'},
-                                  'amt02': {'$ref': '#/$elements/L2100A_AMT02'}},
+                                  'amt02': {'$ref': '#/$elements/L2100A_AMT02'},
+                                  'amt03': {'$ref': '#/$elements/L2100A_AMT03'}},
                    'required': ['amt01', 'amt02']},
          'maxItems': 7}
         segment_name = 'AMT'
     amt01: L2100A_AMT01
     amt02: L2100A_AMT02
+    amt03: L2100A_AMT03 | None
 
 
 class L2100A_HLH01(Element):
@@ -2619,7 +2698,7 @@ class L2100A_HLH01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=HLH01 data_ele=1212',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1212'},
                             {'enum': ['N', 'S', 'T', 'U', 'X']}]}}
         datatype = common.D_1212
@@ -2634,7 +2713,7 @@ class L2100A_HLH02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=HLH02 data_ele=65',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/65'}}
         datatype = common.D_65
         min_len = 1
@@ -2647,7 +2726,7 @@ class L2100A_HLH03(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=HLH03 data_ele=81',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/81'}}
         datatype = common.D_81
         min_len = 1
@@ -2660,7 +2739,7 @@ class L2100A_HLH04(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HLH04 data_ele=81',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/81'}}
         datatype = common.D_81
         min_len = 1
@@ -2673,7 +2752,7 @@ class L2100A_HLH05(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HLH05 data_ele=352',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -2686,7 +2765,7 @@ class L2100A_HLH06(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HLH06 data_ele=1213',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1213'}}
         datatype = common.D_1213
         min_len = 1
@@ -2699,7 +2778,7 @@ class L2100A_HLH07(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HLH07 data_ele=352',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -2717,12 +2796,20 @@ class L2100A_HLH(Segment):
          'properties': {'xid': {'literal': 'HLH'},
                         'hlh01': {'$ref': '#/$elements/L2100A_HLH01'},
                         'hlh02': {'$ref': '#/$elements/L2100A_HLH02'},
-                        'hlh03': {'$ref': '#/$elements/L2100A_HLH03'}},
+                        'hlh03': {'$ref': '#/$elements/L2100A_HLH03'},
+                        'hlh04': {'$ref': '#/$elements/L2100A_HLH04'},
+                        'hlh05': {'$ref': '#/$elements/L2100A_HLH05'},
+                        'hlh06': {'$ref': '#/$elements/L2100A_HLH06'},
+                        'hlh07': {'$ref': '#/$elements/L2100A_HLH07'}},
          'required': ['hlh01']}
         segment_name = 'HLH'
     hlh01: L2100A_HLH01
     hlh02: L2100A_HLH02 | None
     hlh03: L2100A_HLH03 | None
+    hlh04: L2100A_HLH04 | None
+    hlh05: L2100A_HLH05 | None
+    hlh06: L2100A_HLH06 | None
+    hlh07: L2100A_HLH07 | None
 
 
 class L2100A_LUI01(Element):
@@ -2731,7 +2818,7 @@ class L2100A_LUI01(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=LUI01 data_ele=66',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['LD', 'LE']}]}}
         datatype = common.D_66
         codes = ['LD', 'LE']
@@ -2745,7 +2832,7 @@ class L2100A_LUI02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=LUI02 data_ele=67',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -2758,7 +2845,7 @@ class L2100A_LUI03(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=LUI03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -2771,7 +2858,7 @@ class L2100A_LUI04(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=LUI04 data_ele=1303',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1303'},
                             {'enum': ['5', '6', '7', '8']}]}}
         datatype = common.D_1303
@@ -2786,7 +2873,7 @@ class L2100A_LUI05(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=LUI05 data_ele=1476',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1476'}}
         datatype = common.D_1476
         min_len = 1
@@ -2807,12 +2894,14 @@ class L2100A_LUI(Segment):
                                   'lui01': {'$ref': '#/$elements/L2100A_LUI01'},
                                   'lui02': {'$ref': '#/$elements/L2100A_LUI02'},
                                   'lui03': {'$ref': '#/$elements/L2100A_LUI03'},
-                                  'lui04': {'$ref': '#/$elements/L2100A_LUI04'}}}}
+                                  'lui04': {'$ref': '#/$elements/L2100A_LUI04'},
+                                  'lui05': {'$ref': '#/$elements/L2100A_LUI05'}}}}
         segment_name = 'LUI'
     lui01: L2100A_LUI01 | None
     lui02: L2100A_LUI02 | None
     lui03: L2100A_LUI03 | None
     lui04: L2100A_LUI04 | None
+    lui05: L2100A_LUI05 | None
 
 
 class L2100A(Loop):
@@ -2853,7 +2942,7 @@ class L2100B_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['70']}]}}
         datatype = common.D_98
         codes = ['70']
@@ -2867,7 +2956,7 @@ class L2100B_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1']}]}}
         datatype = common.D_1065
         codes = ['1']
@@ -2881,7 +2970,7 @@ class L2100B_NM103(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -2894,7 +2983,7 @@ class L2100B_NM104(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -2907,7 +2996,7 @@ class L2100B_NM105(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -2920,7 +3009,7 @@ class L2100B_NM106(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -2933,7 +3022,7 @@ class L2100B_NM107(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -2946,7 +3035,7 @@ class L2100B_NM108(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['34', 'ZZ']}]}}
         datatype = common.D_66
         codes = ['34', 'ZZ']
@@ -2960,7 +3049,7 @@ class L2100B_NM109(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -2973,7 +3062,7 @@ class L2100B_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -2986,7 +3075,7 @@ class L2100B_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -2999,7 +3088,7 @@ class L2100B_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -3024,7 +3113,10 @@ class L2100B_NM1(Segment):
                         'nm106': {'$ref': '#/$elements/L2100B_NM106'},
                         'nm107': {'$ref': '#/$elements/L2100B_NM107'},
                         'nm108': {'$ref': '#/$elements/L2100B_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2100B_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2100B_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2100B_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2100B_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2100B_NM112'}},
          'required': ['nm101', 'nm102', 'nm103']}
         segment_name = 'NM1'
     nm101: L2100B_NM101
@@ -3036,6 +3128,9 @@ class L2100B_NM1(Segment):
     nm107: L2100B_NM107 | None
     nm108: L2100B_NM108 | None
     nm109: L2100B_NM109 | None
+    nm110: L2100B_NM110 | None
+    nm111: L2100B_NM111 | None
+    nm112: L2100B_NM112 | None
 
 
 class L2100B_DMG01(Element):
@@ -3044,7 +3139,7 @@ class L2100B_DMG01(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG01 data_ele=1250',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -3058,7 +3153,7 @@ class L2100B_DMG02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG02 data_ele=1251',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -3071,7 +3166,7 @@ class L2100B_DMG03(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG03 data_ele=1068',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1068'}, {'enum': ['F', 'M', 'U']}]}}
         datatype = common.D_1068
         codes = ['F', 'M', 'U']
@@ -3085,7 +3180,7 @@ class L2100B_DMG04(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG04 data_ele=1067',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1067'},
                             {'enum': ['B', 'D', 'I', 'M', 'R', 'S', 'U', 'W', 'X']}]}}
         datatype = common.D_1067
@@ -3100,7 +3195,7 @@ class L2100B_DMG05_01(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG05-01 data_ele=1109',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1109'},
                             {'enum': ['7', '8', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
                                       'I', 'J', 'N', 'O', 'P', 'Z']}]}}
@@ -3116,7 +3211,7 @@ class L2100B_DMG05_02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG05-02 data_ele=1270',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['RET']}]}}
         datatype = common.D_1270
         codes = ['RET']
@@ -3130,7 +3225,7 @@ class L2100B_DMG05_03(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG05-03 data_ele=1271',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -3148,7 +3243,7 @@ class L2100B_DMG05(Composite):
          'properties': {'dmg05_01': {'title': '',
                                      'usage': 'S',
                                      'description': 'xid=DMG05-01 data_ele=1109',
-                                     'sequence': 1,
+                                     'position': 1,
                                      'type': {'allOf': [{'$ref': '#/$common/1109'},
                                                         {'enum': ['7', '8', 'A', 'B',
                                                                   'C', 'D', 'E', 'F',
@@ -3158,13 +3253,13 @@ class L2100B_DMG05(Composite):
                         'dmg05_02': {'title': '',
                                      'usage': 'S',
                                      'description': 'xid=DMG05-02 data_ele=1270',
-                                     'sequence': 2,
+                                     'position': 2,
                                      'type': {'allOf': [{'$ref': '#/$common/1270'},
                                                         {'enum': ['RET']}]}},
                         'dmg05_03': {'title': '',
                                      'usage': 'S',
                                      'description': 'xid=DMG05-03 data_ele=1271',
-                                     'sequence': 3,
+                                     'position': 3,
                                      'type': {'$ref': '#/$common/1271'}}}}
     dmg05_01: L2100B_DMG05_01 | None
     dmg05_02: L2100B_DMG05_02 | None
@@ -3177,7 +3272,7 @@ class L2100B_DMG06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG06 data_ele=1066',
-         'sequence': 6,
+         'position': 6,
          'type': {'allOf': [{'$ref': '#/$common/1066'},
                             {'enum': ['1', '2', '3', '4', '5', '6', '7']}]}}
         datatype = common.D_1066
@@ -3192,7 +3287,7 @@ class L2100B_DMG07(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DMG07 data_ele=26',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         min_len = 2
@@ -3205,7 +3300,7 @@ class L2100B_DMG08(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DMG08 data_ele=659',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/659'}}
         datatype = common.D_659
         min_len = 1
@@ -3218,7 +3313,7 @@ class L2100B_DMG09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DMG09 data_ele=380',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -3231,7 +3326,7 @@ class L2100B_DMG10(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG10 data_ele=1270',
-         'sequence': 10,
+         'position': 10,
          'type': {'allOf': [{'$ref': '#/$common/1270'}, {'enum': ['REC']}]}}
         datatype = common.D_1270
         codes = ['REC']
@@ -3245,7 +3340,7 @@ class L2100B_DMG11(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DMG11 data_ele=1271',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/1271'}}
         datatype = common.D_1271
         min_len = 1
@@ -3268,6 +3363,9 @@ class L2100B_DMG(Segment):
                         'dmg04': {'$ref': '#/$elements/L2100B_DMG04'},
                         'dmg05': {'$ref': '#/$elements/L2100B_DMG05'},
                         'dmg06': {'$ref': '#/$elements/L2100B_DMG06'},
+                        'dmg07': {'$ref': '#/$elements/L2100B_DMG07'},
+                        'dmg08': {'$ref': '#/$elements/L2100B_DMG08'},
+                        'dmg09': {'$ref': '#/$elements/L2100B_DMG09'},
                         'dmg10': {'$ref': '#/$elements/L2100B_DMG10'},
                         'dmg11': {'$ref': '#/$elements/L2100B_DMG11'}}}
         segment_name = 'DMG'
@@ -3277,6 +3375,9 @@ class L2100B_DMG(Segment):
     dmg04: L2100B_DMG04 | None
     dmg05: L2100B_DMG05 | None
     dmg06: L2100B_DMG06 | None
+    dmg07: L2100B_DMG07 | None
+    dmg08: L2100B_DMG08 | None
+    dmg09: L2100B_DMG09 | None
     dmg10: L2100B_DMG10 | None
     dmg11: L2100B_DMG11 | None
 
@@ -3303,7 +3404,7 @@ class L2100C_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['31']}]}}
         datatype = common.D_98
         codes = ['31']
@@ -3317,7 +3418,7 @@ class L2100C_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1']}]}}
         datatype = common.D_1065
         codes = ['1']
@@ -3331,7 +3432,7 @@ class L2100C_NM103(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -3344,7 +3445,7 @@ class L2100C_NM104(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -3357,7 +3458,7 @@ class L2100C_NM105(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -3370,7 +3471,7 @@ class L2100C_NM106(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -3383,7 +3484,7 @@ class L2100C_NM107(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -3396,7 +3497,7 @@ class L2100C_NM108(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/66'}}
         datatype = common.D_66
         min_len = 1
@@ -3409,7 +3510,7 @@ class L2100C_NM109(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -3422,7 +3523,7 @@ class L2100C_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -3435,7 +3536,7 @@ class L2100C_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -3448,7 +3549,7 @@ class L2100C_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -3466,11 +3567,31 @@ class L2100C_NM1(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'NM1'},
                         'nm101': {'$ref': '#/$elements/L2100C_NM101'},
-                        'nm102': {'$ref': '#/$elements/L2100C_NM102'}},
+                        'nm102': {'$ref': '#/$elements/L2100C_NM102'},
+                        'nm103': {'$ref': '#/$elements/L2100C_NM103'},
+                        'nm104': {'$ref': '#/$elements/L2100C_NM104'},
+                        'nm105': {'$ref': '#/$elements/L2100C_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2100C_NM106'},
+                        'nm107': {'$ref': '#/$elements/L2100C_NM107'},
+                        'nm108': {'$ref': '#/$elements/L2100C_NM108'},
+                        'nm109': {'$ref': '#/$elements/L2100C_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2100C_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2100C_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2100C_NM112'}},
          'required': ['nm101', 'nm102']}
         segment_name = 'NM1'
     nm101: L2100C_NM101
     nm102: L2100C_NM102
+    nm103: L2100C_NM103 | None
+    nm104: L2100C_NM104 | None
+    nm105: L2100C_NM105 | None
+    nm106: L2100C_NM106 | None
+    nm107: L2100C_NM107 | None
+    nm108: L2100C_NM108 | None
+    nm109: L2100C_NM109 | None
+    nm110: L2100C_NM110 | None
+    nm111: L2100C_NM111 | None
+    nm112: L2100C_NM112 | None
 
 
 class L2100C_N301(Element):
@@ -3479,7 +3600,7 @@ class L2100C_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -3492,7 +3613,7 @@ class L2100C_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -3522,7 +3643,7 @@ class L2100C_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -3535,7 +3656,7 @@ class L2100C_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -3549,7 +3670,7 @@ class L2100C_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -3562,7 +3683,7 @@ class L2100C_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -3576,7 +3697,7 @@ class L2100C_N405(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -3589,7 +3710,7 @@ class L2100C_N406(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -3602,7 +3723,7 @@ class L2100C_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -3623,6 +3744,8 @@ class L2100C_N4(Segment):
                         'n402': {'$ref': '#/$elements/L2100C_N402'},
                         'n403': {'$ref': '#/$elements/L2100C_N403'},
                         'n404': {'$ref': '#/$elements/L2100C_N404'},
+                        'n405': {'$ref': '#/$elements/L2100C_N405'},
+                        'n406': {'$ref': '#/$elements/L2100C_N406'},
                         'n407': {'$ref': '#/$elements/L2100C_N407'}},
          'required': ['n401']}
         segment_name = 'N4'
@@ -3630,6 +3753,8 @@ class L2100C_N4(Segment):
     n402: L2100C_N402 | None
     n403: L2100C_N403 | None
     n404: L2100C_N404 | None
+    n405: L2100C_N405 | None
+    n406: L2100C_N406 | None
     n407: L2100C_N407 | None
 
 
@@ -3657,7 +3782,7 @@ class L2100D_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['36']}]}}
         datatype = common.D_98
         codes = ['36']
@@ -3671,7 +3796,7 @@ class L2100D_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1', '2']}]}}
         datatype = common.D_1065
         codes = ['1', '2']
@@ -3685,7 +3810,7 @@ class L2100D_NM103(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -3698,7 +3823,7 @@ class L2100D_NM104(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -3711,7 +3836,7 @@ class L2100D_NM105(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -3724,7 +3849,7 @@ class L2100D_NM106(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -3737,7 +3862,7 @@ class L2100D_NM107(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -3750,7 +3875,7 @@ class L2100D_NM108(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['24', '34']}]}}
         datatype = common.D_66
         codes = ['24', '34']
@@ -3764,7 +3889,7 @@ class L2100D_NM109(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -3777,7 +3902,7 @@ class L2100D_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -3790,7 +3915,7 @@ class L2100D_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -3803,7 +3928,7 @@ class L2100D_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -3828,7 +3953,10 @@ class L2100D_NM1(Segment):
                         'nm106': {'$ref': '#/$elements/L2100D_NM106'},
                         'nm107': {'$ref': '#/$elements/L2100D_NM107'},
                         'nm108': {'$ref': '#/$elements/L2100D_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2100D_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2100D_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2100D_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2100D_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2100D_NM112'}},
          'required': ['nm101', 'nm102']}
         segment_name = 'NM1'
     nm101: L2100D_NM101
@@ -3840,6 +3968,9 @@ class L2100D_NM1(Segment):
     nm107: L2100D_NM107 | None
     nm108: L2100D_NM108 | None
     nm109: L2100D_NM109 | None
+    nm110: L2100D_NM110 | None
+    nm111: L2100D_NM111 | None
+    nm112: L2100D_NM112 | None
 
 
 class L2100D_PER01(Element):
@@ -3848,7 +3979,7 @@ class L2100D_PER01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['EP']}]}}
         datatype = common.D_366
         codes = ['EP']
@@ -3862,7 +3993,7 @@ class L2100D_PER02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -3875,7 +4006,7 @@ class L2100D_PER03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -3890,7 +4021,7 @@ class L2100D_PER04(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -3903,7 +4034,7 @@ class L2100D_PER05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -3918,7 +4049,7 @@ class L2100D_PER06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -3931,7 +4062,7 @@ class L2100D_PER07(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -3946,7 +4077,7 @@ class L2100D_PER08(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -3959,7 +4090,7 @@ class L2100D_PER09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -3983,7 +4114,8 @@ class L2100D_PER(Segment):
                         'per05': {'$ref': '#/$elements/L2100D_PER05'},
                         'per06': {'$ref': '#/$elements/L2100D_PER06'},
                         'per07': {'$ref': '#/$elements/L2100D_PER07'},
-                        'per08': {'$ref': '#/$elements/L2100D_PER08'}},
+                        'per08': {'$ref': '#/$elements/L2100D_PER08'},
+                        'per09': {'$ref': '#/$elements/L2100D_PER09'}},
          'required': ['per01', 'per03', 'per04']}
         segment_name = 'PER'
     per01: L2100D_PER01
@@ -3994,6 +4126,7 @@ class L2100D_PER(Segment):
     per06: L2100D_PER06 | None
     per07: L2100D_PER07 | None
     per08: L2100D_PER08 | None
+    per09: L2100D_PER09 | None
 
 
 class L2100D_N301(Element):
@@ -4002,7 +4135,7 @@ class L2100D_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -4015,7 +4148,7 @@ class L2100D_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -4045,7 +4178,7 @@ class L2100D_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -4058,7 +4191,7 @@ class L2100D_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -4072,7 +4205,7 @@ class L2100D_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -4085,7 +4218,7 @@ class L2100D_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -4099,7 +4232,7 @@ class L2100D_N405(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -4112,7 +4245,7 @@ class L2100D_N406(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -4125,7 +4258,7 @@ class L2100D_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -4146,6 +4279,8 @@ class L2100D_N4(Segment):
                         'n402': {'$ref': '#/$elements/L2100D_N402'},
                         'n403': {'$ref': '#/$elements/L2100D_N403'},
                         'n404': {'$ref': '#/$elements/L2100D_N404'},
+                        'n405': {'$ref': '#/$elements/L2100D_N405'},
+                        'n406': {'$ref': '#/$elements/L2100D_N406'},
                         'n407': {'$ref': '#/$elements/L2100D_N407'}},
          'required': ['n401']}
         segment_name = 'N4'
@@ -4153,6 +4288,8 @@ class L2100D_N4(Segment):
     n402: L2100D_N402 | None
     n403: L2100D_N403 | None
     n404: L2100D_N404 | None
+    n405: L2100D_N405 | None
+    n406: L2100D_N406 | None
     n407: L2100D_N407 | None
 
 
@@ -4182,7 +4319,7 @@ class L2100E_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['M8']}]}}
         datatype = common.D_98
         codes = ['M8']
@@ -4196,7 +4333,7 @@ class L2100E_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['2']}]}}
         datatype = common.D_1065
         codes = ['2']
@@ -4210,7 +4347,7 @@ class L2100E_NM103(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -4223,7 +4360,7 @@ class L2100E_NM104(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -4236,7 +4373,7 @@ class L2100E_NM105(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -4249,7 +4386,7 @@ class L2100E_NM106(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -4262,7 +4399,7 @@ class L2100E_NM107(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -4275,7 +4412,7 @@ class L2100E_NM108(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/66'}}
         datatype = common.D_66
         min_len = 1
@@ -4288,7 +4425,7 @@ class L2100E_NM109(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -4301,7 +4438,7 @@ class L2100E_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -4314,7 +4451,7 @@ class L2100E_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -4327,7 +4464,7 @@ class L2100E_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -4346,12 +4483,30 @@ class L2100E_NM1(Segment):
          'properties': {'xid': {'literal': 'NM1'},
                         'nm101': {'$ref': '#/$elements/L2100E_NM101'},
                         'nm102': {'$ref': '#/$elements/L2100E_NM102'},
-                        'nm103': {'$ref': '#/$elements/L2100E_NM103'}},
+                        'nm103': {'$ref': '#/$elements/L2100E_NM103'},
+                        'nm104': {'$ref': '#/$elements/L2100E_NM104'},
+                        'nm105': {'$ref': '#/$elements/L2100E_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2100E_NM106'},
+                        'nm107': {'$ref': '#/$elements/L2100E_NM107'},
+                        'nm108': {'$ref': '#/$elements/L2100E_NM108'},
+                        'nm109': {'$ref': '#/$elements/L2100E_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2100E_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2100E_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2100E_NM112'}},
          'required': ['nm101', 'nm102', 'nm103']}
         segment_name = 'NM1'
     nm101: L2100E_NM101
     nm102: L2100E_NM102
     nm103: L2100E_NM103
+    nm104: L2100E_NM104 | None
+    nm105: L2100E_NM105 | None
+    nm106: L2100E_NM106 | None
+    nm107: L2100E_NM107 | None
+    nm108: L2100E_NM108 | None
+    nm109: L2100E_NM109 | None
+    nm110: L2100E_NM110 | None
+    nm111: L2100E_NM111 | None
+    nm112: L2100E_NM112 | None
 
 
 class L2100E_PER01(Element):
@@ -4360,7 +4515,7 @@ class L2100E_PER01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['SK']}]}}
         datatype = common.D_366
         codes = ['SK']
@@ -4374,7 +4529,7 @@ class L2100E_PER02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -4387,7 +4542,7 @@ class L2100E_PER03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -4402,7 +4557,7 @@ class L2100E_PER04(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4415,7 +4570,7 @@ class L2100E_PER05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -4430,7 +4585,7 @@ class L2100E_PER06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4443,7 +4598,7 @@ class L2100E_PER07(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['EM', 'EX', 'FX', 'TE']}]}}
         datatype = common.D_365
@@ -4458,7 +4613,7 @@ class L2100E_PER08(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4471,7 +4626,7 @@ class L2100E_PER09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -4495,7 +4650,8 @@ class L2100E_PER(Segment):
                         'per05': {'$ref': '#/$elements/L2100E_PER05'},
                         'per06': {'$ref': '#/$elements/L2100E_PER06'},
                         'per07': {'$ref': '#/$elements/L2100E_PER07'},
-                        'per08': {'$ref': '#/$elements/L2100E_PER08'}},
+                        'per08': {'$ref': '#/$elements/L2100E_PER08'},
+                        'per09': {'$ref': '#/$elements/L2100E_PER09'}},
          'required': ['per01', 'per03', 'per04']}
         segment_name = 'PER'
     per01: L2100E_PER01
@@ -4506,6 +4662,7 @@ class L2100E_PER(Segment):
     per06: L2100E_PER06 | None
     per07: L2100E_PER07 | None
     per08: L2100E_PER08 | None
+    per09: L2100E_PER09 | None
 
 
 class L2100E_N301(Element):
@@ -4514,7 +4671,7 @@ class L2100E_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -4527,7 +4684,7 @@ class L2100E_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -4557,7 +4714,7 @@ class L2100E_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -4570,7 +4727,7 @@ class L2100E_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -4584,7 +4741,7 @@ class L2100E_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -4597,7 +4754,7 @@ class L2100E_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -4611,7 +4768,7 @@ class L2100E_N405(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -4624,7 +4781,7 @@ class L2100E_N406(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -4637,7 +4794,7 @@ class L2100E_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -4658,6 +4815,8 @@ class L2100E_N4(Segment):
                         'n402': {'$ref': '#/$elements/L2100E_N402'},
                         'n403': {'$ref': '#/$elements/L2100E_N403'},
                         'n404': {'$ref': '#/$elements/L2100E_N404'},
+                        'n405': {'$ref': '#/$elements/L2100E_N405'},
+                        'n406': {'$ref': '#/$elements/L2100E_N406'},
                         'n407': {'$ref': '#/$elements/L2100E_N407'}},
          'required': ['n401']}
         segment_name = 'N4'
@@ -4665,6 +4824,8 @@ class L2100E_N4(Segment):
     n402: L2100E_N402 | None
     n403: L2100E_N403 | None
     n404: L2100E_N404 | None
+    n405: L2100E_N405 | None
+    n406: L2100E_N406 | None
     n407: L2100E_N407 | None
 
 
@@ -4694,7 +4855,7 @@ class L2100F_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['S3']}]}}
         datatype = common.D_98
         codes = ['S3']
@@ -4708,7 +4869,7 @@ class L2100F_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1']}]}}
         datatype = common.D_1065
         codes = ['1']
@@ -4722,7 +4883,7 @@ class L2100F_NM103(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -4735,7 +4896,7 @@ class L2100F_NM104(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -4748,7 +4909,7 @@ class L2100F_NM105(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -4761,7 +4922,7 @@ class L2100F_NM106(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -4774,7 +4935,7 @@ class L2100F_NM107(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -4787,7 +4948,7 @@ class L2100F_NM108(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['34', 'ZZ']}]}}
         datatype = common.D_66
         codes = ['34', 'ZZ']
@@ -4801,7 +4962,7 @@ class L2100F_NM109(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -4814,7 +4975,7 @@ class L2100F_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -4827,7 +4988,7 @@ class L2100F_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -4840,7 +5001,7 @@ class L2100F_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -4865,7 +5026,10 @@ class L2100F_NM1(Segment):
                         'nm106': {'$ref': '#/$elements/L2100F_NM106'},
                         'nm107': {'$ref': '#/$elements/L2100F_NM107'},
                         'nm108': {'$ref': '#/$elements/L2100F_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2100F_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2100F_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2100F_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2100F_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2100F_NM112'}},
          'required': ['nm101', 'nm102', 'nm103', 'nm104']}
         segment_name = 'NM1'
     nm101: L2100F_NM101
@@ -4877,6 +5041,9 @@ class L2100F_NM1(Segment):
     nm107: L2100F_NM107 | None
     nm108: L2100F_NM108 | None
     nm109: L2100F_NM109 | None
+    nm110: L2100F_NM110 | None
+    nm111: L2100F_NM111 | None
+    nm112: L2100F_NM112 | None
 
 
 class L2100F_PER01(Element):
@@ -4885,7 +5052,7 @@ class L2100F_PER01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['PQ']}]}}
         datatype = common.D_366
         codes = ['PQ']
@@ -4899,7 +5066,7 @@ class L2100F_PER02(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -4912,7 +5079,7 @@ class L2100F_PER03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -4928,7 +5095,7 @@ class L2100F_PER04(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4941,7 +5108,7 @@ class L2100F_PER05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -4957,7 +5124,7 @@ class L2100F_PER06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4970,7 +5137,7 @@ class L2100F_PER07(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'HP', 'TE',
                                       'WP']}]}}
@@ -4986,7 +5153,7 @@ class L2100F_PER08(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -4999,7 +5166,7 @@ class L2100F_PER09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -5017,21 +5184,25 @@ class L2100F_PER(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'PER'},
                         'per01': {'$ref': '#/$elements/L2100F_PER01'},
+                        'per02': {'$ref': '#/$elements/L2100F_PER02'},
                         'per03': {'$ref': '#/$elements/L2100F_PER03'},
                         'per04': {'$ref': '#/$elements/L2100F_PER04'},
                         'per05': {'$ref': '#/$elements/L2100F_PER05'},
                         'per06': {'$ref': '#/$elements/L2100F_PER06'},
                         'per07': {'$ref': '#/$elements/L2100F_PER07'},
-                        'per08': {'$ref': '#/$elements/L2100F_PER08'}},
+                        'per08': {'$ref': '#/$elements/L2100F_PER08'},
+                        'per09': {'$ref': '#/$elements/L2100F_PER09'}},
          'required': ['per01', 'per03', 'per04']}
         segment_name = 'PER'
     per01: L2100F_PER01
+    per02: L2100F_PER02 | None
     per03: L2100F_PER03
     per04: L2100F_PER04
     per05: L2100F_PER05 | None
     per06: L2100F_PER06 | None
     per07: L2100F_PER07 | None
     per08: L2100F_PER08 | None
+    per09: L2100F_PER09 | None
 
 
 class L2100F_N301(Element):
@@ -5040,7 +5211,7 @@ class L2100F_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -5053,7 +5224,7 @@ class L2100F_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -5083,7 +5254,7 @@ class L2100F_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -5096,7 +5267,7 @@ class L2100F_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -5110,7 +5281,7 @@ class L2100F_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -5123,7 +5294,7 @@ class L2100F_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -5137,7 +5308,7 @@ class L2100F_N405(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -5150,7 +5321,7 @@ class L2100F_N406(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -5163,7 +5334,7 @@ class L2100F_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -5184,6 +5355,8 @@ class L2100F_N4(Segment):
                         'n402': {'$ref': '#/$elements/L2100F_N402'},
                         'n403': {'$ref': '#/$elements/L2100F_N403'},
                         'n404': {'$ref': '#/$elements/L2100F_N404'},
+                        'n405': {'$ref': '#/$elements/L2100F_N405'},
+                        'n406': {'$ref': '#/$elements/L2100F_N406'},
                         'n407': {'$ref': '#/$elements/L2100F_N407'}},
          'required': ['n401']}
         segment_name = 'N4'
@@ -5191,6 +5364,8 @@ class L2100F_N4(Segment):
     n402: L2100F_N402 | None
     n403: L2100F_N403 | None
     n404: L2100F_N404 | None
+    n405: L2100F_N405 | None
+    n406: L2100F_N406 | None
     n407: L2100F_N407 | None
 
 
@@ -5220,7 +5395,7 @@ class L2100G_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'},
                             {'enum': ['6Y', '9K', 'E1', 'EI', 'EXS', 'GB', 'GD', 'J6',
                                       'LR', 'QD', 'S1', 'TZ', 'X4']}]}}
@@ -5236,7 +5411,7 @@ class L2100G_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1']}]}}
         datatype = common.D_1065
         codes = ['1']
@@ -5250,7 +5425,7 @@ class L2100G_NM103(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -5263,7 +5438,7 @@ class L2100G_NM104(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -5276,7 +5451,7 @@ class L2100G_NM105(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -5289,7 +5464,7 @@ class L2100G_NM106(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -5302,7 +5477,7 @@ class L2100G_NM107(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -5315,7 +5490,7 @@ class L2100G_NM108(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['34', 'ZZ']}]}}
         datatype = common.D_66
         codes = ['34', 'ZZ']
@@ -5329,7 +5504,7 @@ class L2100G_NM109(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -5342,7 +5517,7 @@ class L2100G_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -5355,7 +5530,7 @@ class L2100G_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -5368,7 +5543,7 @@ class L2100G_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -5393,7 +5568,10 @@ class L2100G_NM1(Segment):
                         'nm106': {'$ref': '#/$elements/L2100G_NM106'},
                         'nm107': {'$ref': '#/$elements/L2100G_NM107'},
                         'nm108': {'$ref': '#/$elements/L2100G_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2100G_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2100G_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2100G_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2100G_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2100G_NM112'}},
          'required': ['nm101', 'nm102', 'nm103']}
         segment_name = 'NM1'
     nm101: L2100G_NM101
@@ -5405,6 +5583,9 @@ class L2100G_NM1(Segment):
     nm107: L2100G_NM107 | None
     nm108: L2100G_NM108 | None
     nm109: L2100G_NM109 | None
+    nm110: L2100G_NM110 | None
+    nm111: L2100G_NM111 | None
+    nm112: L2100G_NM112 | None
 
 
 class L2100G_PER01(Element):
@@ -5413,7 +5594,7 @@ class L2100G_PER01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['RP']}]}}
         datatype = common.D_366
         codes = ['RP']
@@ -5427,7 +5608,7 @@ class L2100G_PER02(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -5440,7 +5621,7 @@ class L2100G_PER03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -5456,7 +5637,7 @@ class L2100G_PER04(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -5469,7 +5650,7 @@ class L2100G_PER05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -5485,7 +5666,7 @@ class L2100G_PER06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -5498,7 +5679,7 @@ class L2100G_PER07(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -5514,7 +5695,7 @@ class L2100G_PER08(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -5527,7 +5708,7 @@ class L2100G_PER09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -5545,21 +5726,25 @@ class L2100G_PER(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'PER'},
                         'per01': {'$ref': '#/$elements/L2100G_PER01'},
+                        'per02': {'$ref': '#/$elements/L2100G_PER02'},
                         'per03': {'$ref': '#/$elements/L2100G_PER03'},
                         'per04': {'$ref': '#/$elements/L2100G_PER04'},
                         'per05': {'$ref': '#/$elements/L2100G_PER05'},
                         'per06': {'$ref': '#/$elements/L2100G_PER06'},
                         'per07': {'$ref': '#/$elements/L2100G_PER07'},
-                        'per08': {'$ref': '#/$elements/L2100G_PER08'}},
+                        'per08': {'$ref': '#/$elements/L2100G_PER08'},
+                        'per09': {'$ref': '#/$elements/L2100G_PER09'}},
          'required': ['per01', 'per03', 'per04']}
         segment_name = 'PER'
     per01: L2100G_PER01
+    per02: L2100G_PER02 | None
     per03: L2100G_PER03
     per04: L2100G_PER04
     per05: L2100G_PER05 | None
     per06: L2100G_PER06 | None
     per07: L2100G_PER07 | None
     per08: L2100G_PER08 | None
+    per09: L2100G_PER09 | None
 
 
 class L2100G_N301(Element):
@@ -5568,7 +5753,7 @@ class L2100G_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -5581,7 +5766,7 @@ class L2100G_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -5611,7 +5796,7 @@ class L2100G_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -5624,7 +5809,7 @@ class L2100G_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -5638,7 +5823,7 @@ class L2100G_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -5651,7 +5836,7 @@ class L2100G_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -5665,7 +5850,7 @@ class L2100G_N405(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -5678,7 +5863,7 @@ class L2100G_N406(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -5691,7 +5876,7 @@ class L2100G_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -5712,6 +5897,8 @@ class L2100G_N4(Segment):
                         'n402': {'$ref': '#/$elements/L2100G_N402'},
                         'n403': {'$ref': '#/$elements/L2100G_N403'},
                         'n404': {'$ref': '#/$elements/L2100G_N404'},
+                        'n405': {'$ref': '#/$elements/L2100G_N405'},
+                        'n406': {'$ref': '#/$elements/L2100G_N406'},
                         'n407': {'$ref': '#/$elements/L2100G_N407'}},
          'required': ['n401']}
         segment_name = 'N4'
@@ -5719,6 +5906,8 @@ class L2100G_N4(Segment):
     n402: L2100G_N402 | None
     n403: L2100G_N403 | None
     n404: L2100G_N404 | None
+    n405: L2100G_N405 | None
+    n406: L2100G_N406 | None
     n407: L2100G_N407 | None
 
 
@@ -5748,7 +5937,7 @@ class L2100H_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['45']}]}}
         datatype = common.D_98
         codes = ['45']
@@ -5762,7 +5951,7 @@ class L2100H_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1']}]}}
         datatype = common.D_1065
         codes = ['1']
@@ -5776,7 +5965,7 @@ class L2100H_NM103(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -5789,7 +5978,7 @@ class L2100H_NM104(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -5802,7 +5991,7 @@ class L2100H_NM105(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -5815,7 +6004,7 @@ class L2100H_NM106(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -5828,7 +6017,7 @@ class L2100H_NM107(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -5841,7 +6030,7 @@ class L2100H_NM108(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/66'}}
         datatype = common.D_66
         min_len = 1
@@ -5854,7 +6043,7 @@ class L2100H_NM109(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -5867,7 +6056,7 @@ class L2100H_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -5880,7 +6069,7 @@ class L2100H_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -5893,7 +6082,7 @@ class L2100H_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -5916,7 +6105,12 @@ class L2100H_NM1(Segment):
                         'nm104': {'$ref': '#/$elements/L2100H_NM104'},
                         'nm105': {'$ref': '#/$elements/L2100H_NM105'},
                         'nm106': {'$ref': '#/$elements/L2100H_NM106'},
-                        'nm107': {'$ref': '#/$elements/L2100H_NM107'}},
+                        'nm107': {'$ref': '#/$elements/L2100H_NM107'},
+                        'nm108': {'$ref': '#/$elements/L2100H_NM108'},
+                        'nm109': {'$ref': '#/$elements/L2100H_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2100H_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2100H_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2100H_NM112'}},
          'required': ['nm101', 'nm102']}
         segment_name = 'NM1'
     nm101: L2100H_NM101
@@ -5926,6 +6120,11 @@ class L2100H_NM1(Segment):
     nm105: L2100H_NM105 | None
     nm106: L2100H_NM106 | None
     nm107: L2100H_NM107 | None
+    nm108: L2100H_NM108 | None
+    nm109: L2100H_NM109 | None
+    nm110: L2100H_NM110 | None
+    nm111: L2100H_NM111 | None
+    nm112: L2100H_NM112 | None
 
 
 class L2100H_N301(Element):
@@ -5934,7 +6133,7 @@ class L2100H_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -5947,7 +6146,7 @@ class L2100H_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -5977,7 +6176,7 @@ class L2100H_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -5990,7 +6189,7 @@ class L2100H_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -6004,7 +6203,7 @@ class L2100H_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -6017,7 +6216,7 @@ class L2100H_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -6031,7 +6230,7 @@ class L2100H_N405(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -6044,7 +6243,7 @@ class L2100H_N406(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -6057,7 +6256,7 @@ class L2100H_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -6078,6 +6277,8 @@ class L2100H_N4(Segment):
                         'n402': {'$ref': '#/$elements/L2100H_N402'},
                         'n403': {'$ref': '#/$elements/L2100H_N403'},
                         'n404': {'$ref': '#/$elements/L2100H_N404'},
+                        'n405': {'$ref': '#/$elements/L2100H_N405'},
+                        'n406': {'$ref': '#/$elements/L2100H_N406'},
                         'n407': {'$ref': '#/$elements/L2100H_N407'}},
          'required': ['n401']}
         segment_name = 'N4'
@@ -6085,6 +6286,8 @@ class L2100H_N4(Segment):
     n402: L2100H_N402 | None
     n403: L2100H_N403 | None
     n404: L2100H_N404 | None
+    n405: L2100H_N405 | None
+    n406: L2100H_N406 | None
     n407: L2100H_N407 | None
 
 
@@ -6112,7 +6315,7 @@ class L2200_DSB01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DSB01 data_ele=1146',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1146'},
                             {'enum': ['1', '2', '3', '4']}]}}
         datatype = common.D_1146
@@ -6127,7 +6330,7 @@ class L2200_DSB02(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DSB02 data_ele=380',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6140,7 +6343,7 @@ class L2200_DSB03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DSB03 data_ele=1149',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1149'}}
         datatype = common.D_1149
         min_len = 4
@@ -6153,7 +6356,7 @@ class L2200_DSB04(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DSB04 data_ele=1154',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1154'}}
         datatype = common.D_1154
         min_len = 1
@@ -6166,7 +6369,7 @@ class L2200_DSB05(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DSB05 data_ele=1161',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1161'}}
         datatype = common.D_1161
         min_len = 1
@@ -6179,7 +6382,7 @@ class L2200_DSB06(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=DSB06 data_ele=782',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6192,7 +6395,7 @@ class L2200_DSB07(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DSB07 data_ele=235',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/235'}, {'enum': ['DX', 'ZZ']}]}}
         datatype = common.D_235
         codes = ['DX', 'ZZ']
@@ -6206,7 +6409,7 @@ class L2200_DSB08(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=DSB08 data_ele=1137',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/1137'}}
         datatype = common.D_1137
         min_len = 1
@@ -6224,11 +6427,21 @@ class L2200_DSB(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'DSB'},
                         'dsb01': {'$ref': '#/$elements/L2200_DSB01'},
+                        'dsb02': {'$ref': '#/$elements/L2200_DSB02'},
+                        'dsb03': {'$ref': '#/$elements/L2200_DSB03'},
+                        'dsb04': {'$ref': '#/$elements/L2200_DSB04'},
+                        'dsb05': {'$ref': '#/$elements/L2200_DSB05'},
+                        'dsb06': {'$ref': '#/$elements/L2200_DSB06'},
                         'dsb07': {'$ref': '#/$elements/L2200_DSB07'},
                         'dsb08': {'$ref': '#/$elements/L2200_DSB08'}},
          'required': ['dsb01']}
         segment_name = 'DSB'
     dsb01: L2200_DSB01
+    dsb02: L2200_DSB02 | None
+    dsb03: L2200_DSB03 | None
+    dsb04: L2200_DSB04 | None
+    dsb05: L2200_DSB05 | None
+    dsb06: L2200_DSB06 | None
     dsb07: L2200_DSB07 | None
     dsb08: L2200_DSB08 | None
 
@@ -6239,7 +6452,7 @@ class L2200_DTP01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['360', '361']}]}}
         datatype = common.D_374
         codes = ['360', '361']
@@ -6253,7 +6466,7 @@ class L2200_DTP02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -6267,7 +6480,7 @@ class L2200_DTP03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6316,7 +6529,7 @@ class L2300_HD01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=HD01 data_ele=875',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/875'},
                             {'enum': ['001', '002', '021', '024', '025', '026', '030',
                                       '032']}]}}
@@ -6332,7 +6545,7 @@ class L2300_HD02(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HD02 data_ele=1203',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/1203'}}
         datatype = common.D_1203
         min_len = 2
@@ -6345,7 +6558,7 @@ class L2300_HD03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=HD03 data_ele=1205',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1205'},
                             {'enum': ['AG', 'AH', 'AJ', 'AK', 'DCP', 'DEN', 'EPO',
                                       'FAC', 'HE', 'HLT', 'HMO', 'LTC', 'LTD', 'MM',
@@ -6363,7 +6576,7 @@ class L2300_HD04(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=HD04 data_ele=1204',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1204'}}
         datatype = common.D_1204
         min_len = 1
@@ -6376,7 +6589,7 @@ class L2300_HD05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=HD05 data_ele=1207',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/1207'},
                             {'enum': ['CHD', 'DEP', 'E1D', 'E2D', 'E3D', 'E5D', 'E6D',
                                       'E7D', 'E8D', 'E9D', 'ECH', 'EMP', 'ESP', 'FAM',
@@ -6393,7 +6606,7 @@ class L2300_HD06(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HD06 data_ele=609',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/609'}}
         datatype = common.D_609
         min_len = 1
@@ -6406,7 +6619,7 @@ class L2300_HD07(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HD07 data_ele=609',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/609'}}
         datatype = common.D_609
         min_len = 1
@@ -6419,7 +6632,7 @@ class L2300_HD08(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HD08 data_ele=1209',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/1209'}}
         datatype = common.D_1209
         min_len = 1
@@ -6432,7 +6645,7 @@ class L2300_HD09(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=HD09 data_ele=1073',
-         'sequence': 9,
+         'position': 9,
          'type': {'allOf': [{'$ref': '#/$common/1073'}, {'enum': ['N', 'Y']}]}}
         datatype = common.D_1073
         codes = ['N', 'Y']
@@ -6446,7 +6659,7 @@ class L2300_HD10(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HD10 data_ele=1211',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/1211'}}
         datatype = common.D_1211
         min_len = 2
@@ -6459,7 +6672,7 @@ class L2300_HD11(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=HD11 data_ele=1073',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/1073'}}
         datatype = common.D_1073
         min_len = 1
@@ -6476,17 +6689,29 @@ class L2300_HD(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'HD'},
                         'hd01': {'$ref': '#/$elements/L2300_HD01'},
+                        'hd02': {'$ref': '#/$elements/L2300_HD02'},
                         'hd03': {'$ref': '#/$elements/L2300_HD03'},
                         'hd04': {'$ref': '#/$elements/L2300_HD04'},
                         'hd05': {'$ref': '#/$elements/L2300_HD05'},
-                        'hd09': {'$ref': '#/$elements/L2300_HD09'}},
+                        'hd06': {'$ref': '#/$elements/L2300_HD06'},
+                        'hd07': {'$ref': '#/$elements/L2300_HD07'},
+                        'hd08': {'$ref': '#/$elements/L2300_HD08'},
+                        'hd09': {'$ref': '#/$elements/L2300_HD09'},
+                        'hd10': {'$ref': '#/$elements/L2300_HD10'},
+                        'hd11': {'$ref': '#/$elements/L2300_HD11'}},
          'required': ['hd01', 'hd03']}
         segment_name = 'HD'
     hd01: L2300_HD01
+    hd02: L2300_HD02 | None
     hd03: L2300_HD03
     hd04: L2300_HD04 | None
     hd05: L2300_HD05 | None
+    hd06: L2300_HD06 | None
+    hd07: L2300_HD07 | None
+    hd08: L2300_HD08 | None
     hd09: L2300_HD09 | None
+    hd10: L2300_HD10 | None
+    hd11: L2300_HD11 | None
 
 
 class L2300_DTP01(Element):
@@ -6495,7 +6720,7 @@ class L2300_DTP01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'},
                             {'enum': ['300', '303', '343', '348', '349', '543',
                                       '695']}]}}
@@ -6511,7 +6736,7 @@ class L2300_DTP02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -6525,7 +6750,7 @@ class L2300_DTP03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -6559,7 +6784,7 @@ class L2300_AMT01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=AMT01 data_ele=522',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/522'},
                             {'enum': ['B9', 'C1', 'D2', 'EBA', 'FK', 'P3', 'R']}]}}
         datatype = common.D_522
@@ -6574,7 +6799,7 @@ class L2300_AMT02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=AMT02 data_ele=782',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/782'}}
         datatype = common.D_782
         min_len = 1
@@ -6587,7 +6812,7 @@ class L2300_AMT03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=AMT03 data_ele=478',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/478'}}
         datatype = common.D_478
         min_len = 1
@@ -6605,12 +6830,14 @@ class L2300_AMT(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'AMT'},
                                   'amt01': {'$ref': '#/$elements/L2300_AMT01'},
-                                  'amt02': {'$ref': '#/$elements/L2300_AMT02'}},
+                                  'amt02': {'$ref': '#/$elements/L2300_AMT02'},
+                                  'amt03': {'$ref': '#/$elements/L2300_AMT03'}},
                    'required': ['amt01', 'amt02']},
          'maxItems': 9}
         segment_name = 'AMT'
     amt01: L2300_AMT01
     amt02: L2300_AMT02
+    amt03: L2300_AMT03 | None
 
 
 class L2300_REF01(Element):
@@ -6619,7 +6846,7 @@ class L2300_REF01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'},
                             {'enum': ['17', '1L', '9V', 'CE', 'E8', 'M7', 'PID', 'RB',
                                       'X9', 'XM', 'XX1', 'XX2', 'ZX', 'ZZ']}]}}
@@ -6635,7 +6862,7 @@ class L2300_REF02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -6648,7 +6875,7 @@ class L2300_REF03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -6676,12 +6903,15 @@ class L2300_REF(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'REF'},
                                   'ref01': {'$ref': '#/$elements/L2300_REF01'},
-                                  'ref02': {'$ref': '#/$elements/L2300_REF02'}},
+                                  'ref02': {'$ref': '#/$elements/L2300_REF02'},
+                                  'ref03': {'$ref': '#/$elements/L2300_REF03'},
+                                  'ref04': {'$ref': '#/$elements/L2300_REF04'}},
                    'required': ['ref01', 'ref02']},
          'maxItems': 14}
         segment_name = 'REF'
     ref01: L2300_REF01
     ref02: L2300_REF02
+    ref03: L2300_REF03 | None
 
 
 class L2300_REF01(Element):
@@ -6690,7 +6920,7 @@ class L2300_REF01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['QQ']}]}}
         datatype = common.D_128
         codes = ['QQ']
@@ -6704,7 +6934,7 @@ class L2300_REF02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -6717,7 +6947,7 @@ class L2300_REF03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -6744,11 +6974,14 @@ class L2300_REF(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'REF'},
                         'ref01': {'$ref': '#/$elements/L2300_REF01'},
-                        'ref02': {'$ref': '#/$elements/L2300_REF02'}},
+                        'ref02': {'$ref': '#/$elements/L2300_REF02'},
+                        'ref03': {'$ref': '#/$elements/L2300_REF03'},
+                        'ref04': {'$ref': '#/$elements/L2300_REF04'}},
          'required': ['ref01', 'ref02']}
         segment_name = 'REF'
     ref01: L2300_REF01
     ref02: L2300_REF02
+    ref03: L2300_REF03 | None
 
 
 class L2300_IDC01(Element):
@@ -6757,7 +6990,7 @@ class L2300_IDC01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=IDC01 data_ele=1204',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/1204'}}
         datatype = common.D_1204
         min_len = 1
@@ -6770,7 +7003,7 @@ class L2300_IDC02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=IDC02 data_ele=1215',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1215'}, {'enum': ['D', 'H', 'P']}]}}
         datatype = common.D_1215
         codes = ['D', 'H', 'P']
@@ -6784,7 +7017,7 @@ class L2300_IDC03(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=IDC03 data_ele=380',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/380'}}
         datatype = common.D_380
         min_len = 1
@@ -6797,7 +7030,7 @@ class L2300_IDC04(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=IDC04 data_ele=306',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/306'}, {'enum': ['1', '2', 'RX']}]}}
         datatype = common.D_306
         codes = ['1', '2', 'RX']
@@ -6834,7 +7067,7 @@ class L2310_LX01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=LX01 data_ele=554',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/554'}}
         datatype = common.D_554
         min_len = 1
@@ -6862,7 +7095,7 @@ class L2310_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'},
                             {'enum': ['1X', '3D', '80', 'FA', 'OD', 'P3', 'QA', 'QN',
                                       'Y2']}]}}
@@ -6878,7 +7111,7 @@ class L2310_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['1', '2']}]}}
         datatype = common.D_1065
         codes = ['1', '2']
@@ -6892,7 +7125,7 @@ class L2310_NM103(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -6905,7 +7138,7 @@ class L2310_NM104(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -6918,7 +7151,7 @@ class L2310_NM105(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -6931,7 +7164,7 @@ class L2310_NM106(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -6944,7 +7177,7 @@ class L2310_NM107(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -6957,7 +7190,7 @@ class L2310_NM108(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'},
                             {'enum': ['34', 'FI', 'SV', 'XX']}]}}
         datatype = common.D_66
@@ -6972,7 +7205,7 @@ class L2310_NM109(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -6985,7 +7218,7 @@ class L2310_NM110(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'allOf': [{'$ref': '#/$common/706'}, {'enum': ['25', '26', '72']}]}}
         datatype = common.D_706
         codes = ['25', '26', '72']
@@ -6999,7 +7232,7 @@ class L2310_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -7012,7 +7245,7 @@ class L2310_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -7038,7 +7271,9 @@ class L2310_NM1(Segment):
                         'nm107': {'$ref': '#/$elements/L2310_NM107'},
                         'nm108': {'$ref': '#/$elements/L2310_NM108'},
                         'nm109': {'$ref': '#/$elements/L2310_NM109'},
-                        'nm110': {'$ref': '#/$elements/L2310_NM110'}},
+                        'nm110': {'$ref': '#/$elements/L2310_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2310_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2310_NM112'}},
          'required': ['nm101', 'nm102', 'nm110']}
         segment_name = 'NM1'
     nm101: L2310_NM101
@@ -7051,6 +7286,8 @@ class L2310_NM1(Segment):
     nm108: L2310_NM108 | None
     nm109: L2310_NM109 | None
     nm110: L2310_NM110
+    nm111: L2310_NM111 | None
+    nm112: L2310_NM112 | None
 
 
 class L2310_N301(Element):
@@ -7059,7 +7296,7 @@ class L2310_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -7072,7 +7309,7 @@ class L2310_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -7104,7 +7341,7 @@ class L2310_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -7117,7 +7354,7 @@ class L2310_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -7131,7 +7368,7 @@ class L2310_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -7144,7 +7381,7 @@ class L2310_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -7158,7 +7395,7 @@ class L2310_N405(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -7171,7 +7408,7 @@ class L2310_N406(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -7184,7 +7421,7 @@ class L2310_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -7205,6 +7442,8 @@ class L2310_N4(Segment):
                         'n402': {'$ref': '#/$elements/L2310_N402'},
                         'n403': {'$ref': '#/$elements/L2310_N403'},
                         'n404': {'$ref': '#/$elements/L2310_N404'},
+                        'n405': {'$ref': '#/$elements/L2310_N405'},
+                        'n406': {'$ref': '#/$elements/L2310_N406'},
                         'n407': {'$ref': '#/$elements/L2310_N407'}},
          'required': ['n401']}
         segment_name = 'N4'
@@ -7212,6 +7451,8 @@ class L2310_N4(Segment):
     n402: L2310_N402 | None
     n403: L2310_N403 | None
     n404: L2310_N404 | None
+    n405: L2310_N405 | None
+    n406: L2310_N406 | None
     n407: L2310_N407 | None
 
 
@@ -7221,7 +7462,7 @@ class L2310_PER01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['IC']}]}}
         datatype = common.D_366
         codes = ['IC']
@@ -7235,7 +7476,7 @@ class L2310_PER02(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -7248,7 +7489,7 @@ class L2310_PER03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -7264,7 +7505,7 @@ class L2310_PER04(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -7277,7 +7518,7 @@ class L2310_PER05(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -7293,7 +7534,7 @@ class L2310_PER06(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -7306,7 +7547,7 @@ class L2310_PER07(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/365'},
                             {'enum': ['AP', 'BN', 'CP', 'EM', 'EX', 'FX', 'HP', 'TE',
                                       'WP']}]}}
@@ -7322,7 +7563,7 @@ class L2310_PER08(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -7335,7 +7576,7 @@ class L2310_PER09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -7354,22 +7595,26 @@ class L2310_PER(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'PER'},
                                   'per01': {'$ref': '#/$elements/L2310_PER01'},
+                                  'per02': {'$ref': '#/$elements/L2310_PER02'},
                                   'per03': {'$ref': '#/$elements/L2310_PER03'},
                                   'per04': {'$ref': '#/$elements/L2310_PER04'},
                                   'per05': {'$ref': '#/$elements/L2310_PER05'},
                                   'per06': {'$ref': '#/$elements/L2310_PER06'},
                                   'per07': {'$ref': '#/$elements/L2310_PER07'},
-                                  'per08': {'$ref': '#/$elements/L2310_PER08'}},
+                                  'per08': {'$ref': '#/$elements/L2310_PER08'},
+                                  'per09': {'$ref': '#/$elements/L2310_PER09'}},
                    'required': ['per01', 'per03', 'per04']},
          'maxItems': 2}
         segment_name = 'PER'
     per01: L2310_PER01
+    per02: L2310_PER02 | None
     per03: L2310_PER03
     per04: L2310_PER04
     per05: L2310_PER05 | None
     per06: L2310_PER06 | None
     per07: L2310_PER07 | None
     per08: L2310_PER08 | None
+    per09: L2310_PER09 | None
 
 
 class L2310_PLA01(Element):
@@ -7378,7 +7623,7 @@ class L2310_PLA01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PLA01 data_ele=306',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/306'}, {'enum': ['2']}]}}
         datatype = common.D_306
         codes = ['2']
@@ -7392,7 +7637,7 @@ class L2310_PLA02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PLA02 data_ele=98',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['1P']}]}}
         datatype = common.D_98
         codes = ['1P']
@@ -7406,7 +7651,7 @@ class L2310_PLA03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PLA03 data_ele=373',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -7419,7 +7664,7 @@ class L2310_PLA04(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PLA04 data_ele=337',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/337'}}
         datatype = common.D_337
         min_len = 4
@@ -7432,7 +7677,7 @@ class L2310_PLA05(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PLA05 data_ele=1203',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/1203'},
                             {'enum': ['14', '22', '46', 'AA', 'AB', 'AC', 'AD', 'AE',
                                       'AF', 'AG', 'AH', 'AI', 'AJ']}]}}
@@ -7454,12 +7699,14 @@ class L2310_PLA(Segment):
                         'pla01': {'$ref': '#/$elements/L2310_PLA01'},
                         'pla02': {'$ref': '#/$elements/L2310_PLA02'},
                         'pla03': {'$ref': '#/$elements/L2310_PLA03'},
+                        'pla04': {'$ref': '#/$elements/L2310_PLA04'},
                         'pla05': {'$ref': '#/$elements/L2310_PLA05'}},
          'required': ['pla01', 'pla02', 'pla03', 'pla05']}
         segment_name = 'PLA'
     pla01: L2310_PLA01
     pla02: L2310_PLA02
     pla03: L2310_PLA03
+    pla04: L2310_PLA04 | None
     pla05: L2310_PLA05
 
 
@@ -7493,7 +7740,7 @@ class L2320_COB01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=COB01 data_ele=1138',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/1138'},
                             {'enum': ['P', 'S', 'T', 'U']}]}}
         datatype = common.D_1138
@@ -7508,7 +7755,7 @@ class L2320_COB02(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=COB02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -7521,7 +7768,7 @@ class L2320_COB03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=COB03 data_ele=1143',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/1143'}, {'enum': ['1', '5', '6']}]}}
         datatype = common.D_1143
         codes = ['1', '5', '6']
@@ -7535,7 +7782,7 @@ class L2320_COB04(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=COB04 data_ele=1365',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/1365'},
                             {'enum': ['1', '35', '48', '50', '54', '89', '90', 'A4',
                                       'AG', 'AL', 'BB']}]}}
@@ -7572,7 +7819,7 @@ class L2320_REF01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'},
                             {'enum': ['60', '6P', 'SY', 'ZZ']}]}}
         datatype = common.D_128
@@ -7587,7 +7834,7 @@ class L2320_REF02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -7600,7 +7847,7 @@ class L2320_REF03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -7628,12 +7875,15 @@ class L2320_REF(Segment):
                    'type': 'object',
                    'properties': {'xid': {'literal': 'REF'},
                                   'ref01': {'$ref': '#/$elements/L2320_REF01'},
-                                  'ref02': {'$ref': '#/$elements/L2320_REF02'}},
+                                  'ref02': {'$ref': '#/$elements/L2320_REF02'},
+                                  'ref03': {'$ref': '#/$elements/L2320_REF03'},
+                                  'ref04': {'$ref': '#/$elements/L2320_REF04'}},
                    'required': ['ref01', 'ref02']},
          'maxItems': 4}
         segment_name = 'REF'
     ref01: L2320_REF01
     ref02: L2320_REF02
+    ref03: L2320_REF03 | None
 
 
 class L2320_DTP01(Element):
@@ -7642,7 +7892,7 @@ class L2320_DTP01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['344', '345']}]}}
         datatype = common.D_374
         codes = ['344', '345']
@@ -7656,7 +7906,7 @@ class L2320_DTP02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8']}]}}
         datatype = common.D_1250
         codes = ['D8']
@@ -7670,7 +7920,7 @@ class L2320_DTP03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -7704,7 +7954,7 @@ class L2330_NM101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['36', 'GW', 'IN']}]}}
         datatype = common.D_98
         codes = ['36', 'GW', 'IN']
@@ -7718,7 +7968,7 @@ class L2330_NM102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=NM102 data_ele=1065',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1065'}, {'enum': ['2']}]}}
         datatype = common.D_1065
         codes = ['2']
@@ -7732,7 +7982,7 @@ class L2330_NM103(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM103 data_ele=1035',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -7745,7 +7995,7 @@ class L2330_NM104(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM104 data_ele=1036',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/1036'}}
         datatype = common.D_1036
         min_len = 1
@@ -7758,7 +8008,7 @@ class L2330_NM105(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM105 data_ele=1037',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/1037'}}
         datatype = common.D_1037
         min_len = 1
@@ -7771,7 +8021,7 @@ class L2330_NM106(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM106 data_ele=1038',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/1038'}}
         datatype = common.D_1038
         min_len = 1
@@ -7784,7 +8034,7 @@ class L2330_NM107(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM107 data_ele=1039',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1039'}}
         datatype = common.D_1039
         min_len = 1
@@ -7797,7 +8047,7 @@ class L2330_NM108(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM108 data_ele=66',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/66'}, {'enum': ['FI', 'NI', 'XV']}]}}
         datatype = common.D_66
         codes = ['FI', 'NI', 'XV']
@@ -7811,7 +8061,7 @@ class L2330_NM109(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=NM109 data_ele=67',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -7824,7 +8074,7 @@ class L2330_NM110(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM110 data_ele=706',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -7837,7 +8087,7 @@ class L2330_NM111(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM111 data_ele=98',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -7850,7 +8100,7 @@ class L2330_NM112(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=NM112 data_ele=1035',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/1035'}}
         datatype = common.D_1035
         min_len = 1
@@ -7870,15 +8120,29 @@ class L2330_NM1(Segment):
                         'nm101': {'$ref': '#/$elements/L2330_NM101'},
                         'nm102': {'$ref': '#/$elements/L2330_NM102'},
                         'nm103': {'$ref': '#/$elements/L2330_NM103'},
+                        'nm104': {'$ref': '#/$elements/L2330_NM104'},
+                        'nm105': {'$ref': '#/$elements/L2330_NM105'},
+                        'nm106': {'$ref': '#/$elements/L2330_NM106'},
+                        'nm107': {'$ref': '#/$elements/L2330_NM107'},
                         'nm108': {'$ref': '#/$elements/L2330_NM108'},
-                        'nm109': {'$ref': '#/$elements/L2330_NM109'}},
+                        'nm109': {'$ref': '#/$elements/L2330_NM109'},
+                        'nm110': {'$ref': '#/$elements/L2330_NM110'},
+                        'nm111': {'$ref': '#/$elements/L2330_NM111'},
+                        'nm112': {'$ref': '#/$elements/L2330_NM112'}},
          'required': ['nm101', 'nm102']}
         segment_name = 'NM1'
     nm101: L2330_NM101
     nm102: L2330_NM102
     nm103: L2330_NM103 | None
+    nm104: L2330_NM104 | None
+    nm105: L2330_NM105 | None
+    nm106: L2330_NM106 | None
+    nm107: L2330_NM107 | None
     nm108: L2330_NM108 | None
     nm109: L2330_NM109 | None
+    nm110: L2330_NM110 | None
+    nm111: L2330_NM111 | None
+    nm112: L2330_NM112 | None
 
 
 class L2330_N301(Element):
@@ -7887,7 +8151,7 @@ class L2330_N301(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N301 data_ele=166',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -7900,7 +8164,7 @@ class L2330_N302(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N302 data_ele=166',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/166'}}
         datatype = common.D_166
         min_len = 1
@@ -7930,7 +8194,7 @@ class L2330_N401(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N401 data_ele=19',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/19'}}
         datatype = common.D_19
         min_len = 2
@@ -7943,7 +8207,7 @@ class L2330_N402(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N402 data_ele=156',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/156'}}
         datatype = common.D_156
         codes = common.states
@@ -7957,7 +8221,7 @@ class L2330_N403(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N403 data_ele=116',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/116'}}
         datatype = common.D_116
         min_len = 3
@@ -7970,7 +8234,7 @@ class L2330_N404(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N404 data_ele=26',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/26'}}
         datatype = common.D_26
         codes = common.country
@@ -7984,7 +8248,7 @@ class L2330_N405(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N405 data_ele=309',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/309'}}
         datatype = common.D_309
         min_len = 1
@@ -7997,7 +8261,7 @@ class L2330_N406(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N406 data_ele=310',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/310'}}
         datatype = common.D_310
         min_len = 1
@@ -8010,7 +8274,7 @@ class L2330_N407(Element):
         json = {'title': '',
          'usage': 'S',
          'description': 'xid=N407 data_ele=1715',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/1715'}}
         datatype = common.D_1715
         min_len = 1
@@ -8031,6 +8295,8 @@ class L2330_N4(Segment):
                         'n402': {'$ref': '#/$elements/L2330_N402'},
                         'n403': {'$ref': '#/$elements/L2330_N403'},
                         'n404': {'$ref': '#/$elements/L2330_N404'},
+                        'n405': {'$ref': '#/$elements/L2330_N405'},
+                        'n406': {'$ref': '#/$elements/L2330_N406'},
                         'n407': {'$ref': '#/$elements/L2330_N407'}},
          'required': ['n401']}
         segment_name = 'N4'
@@ -8038,6 +8304,8 @@ class L2330_N4(Segment):
     n402: L2330_N402 | None
     n403: L2330_N403 | None
     n404: L2330_N404 | None
+    n405: L2330_N405 | None
+    n406: L2330_N406 | None
     n407: L2330_N407 | None
 
 
@@ -8047,7 +8315,7 @@ class L2330_PER01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER01 data_ele=366',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/366'}, {'enum': ['CN']}]}}
         datatype = common.D_366
         codes = ['CN']
@@ -8061,7 +8329,7 @@ class L2330_PER02(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER02 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -8074,7 +8342,7 @@ class L2330_PER03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER03 data_ele=365',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/365'}, {'enum': ['TE']}]}}
         datatype = common.D_365
         codes = ['TE']
@@ -8088,7 +8356,7 @@ class L2330_PER04(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=PER04 data_ele=364',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -8101,7 +8369,7 @@ class L2330_PER05(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER05 data_ele=365',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/365'}}
         datatype = common.D_365
         min_len = 2
@@ -8114,7 +8382,7 @@ class L2330_PER06(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER06 data_ele=364',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -8127,7 +8395,7 @@ class L2330_PER07(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER07 data_ele=365',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/365'}}
         datatype = common.D_365
         min_len = 2
@@ -8140,7 +8408,7 @@ class L2330_PER08(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER08 data_ele=364',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/364'}}
         datatype = common.D_364
         min_len = 1
@@ -8153,7 +8421,7 @@ class L2330_PER09(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=PER09 data_ele=443',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/443'}}
         datatype = common.D_443
         min_len = 1
@@ -8171,13 +8439,25 @@ class L2330_PER(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'PER'},
                         'per01': {'$ref': '#/$elements/L2330_PER01'},
+                        'per02': {'$ref': '#/$elements/L2330_PER02'},
                         'per03': {'$ref': '#/$elements/L2330_PER03'},
-                        'per04': {'$ref': '#/$elements/L2330_PER04'}},
+                        'per04': {'$ref': '#/$elements/L2330_PER04'},
+                        'per05': {'$ref': '#/$elements/L2330_PER05'},
+                        'per06': {'$ref': '#/$elements/L2330_PER06'},
+                        'per07': {'$ref': '#/$elements/L2330_PER07'},
+                        'per08': {'$ref': '#/$elements/L2330_PER08'},
+                        'per09': {'$ref': '#/$elements/L2330_PER09'}},
          'required': ['per01', 'per03', 'per04']}
         segment_name = 'PER'
     per01: L2330_PER01
+    per02: L2330_PER02 | None
     per03: L2330_PER03
     per04: L2330_PER04
+    per05: L2330_PER05 | None
+    per06: L2330_PER06 | None
+    per07: L2330_PER07 | None
+    per08: L2330_PER08 | None
+    per09: L2330_PER09 | None
 
 
 class L2330(Loop):
@@ -8253,7 +8533,7 @@ class L2700_LS_LS01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=LS01 data_ele=447',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/447'}, {'enum': ['2700']}]}}
         datatype = common.D_447
         codes = ['2700']
@@ -8282,7 +8562,7 @@ class L2700_LX01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=LX01 data_ele=554',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/554'}}
         datatype = common.D_554
         min_len = 1
@@ -8310,7 +8590,7 @@ class L2750_N101(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['75']}]}}
         datatype = common.D_98
         codes = ['75']
@@ -8324,7 +8604,7 @@ class L2750_N102(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=N102 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -8337,7 +8617,7 @@ class L2750_N103(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N103 data_ele=66',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/66'}}
         datatype = common.D_66
         min_len = 1
@@ -8350,7 +8630,7 @@ class L2750_N104(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N104 data_ele=67',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -8363,7 +8643,7 @@ class L2750_N105(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N105 data_ele=706',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -8376,7 +8656,7 @@ class L2750_N106(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=N106 data_ele=98',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -8394,11 +8674,19 @@ class L2750_N1(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'N1'},
                         'n101': {'$ref': '#/$elements/L2750_N101'},
-                        'n102': {'$ref': '#/$elements/L2750_N102'}},
+                        'n102': {'$ref': '#/$elements/L2750_N102'},
+                        'n103': {'$ref': '#/$elements/L2750_N103'},
+                        'n104': {'$ref': '#/$elements/L2750_N104'},
+                        'n105': {'$ref': '#/$elements/L2750_N105'},
+                        'n106': {'$ref': '#/$elements/L2750_N106'}},
          'required': ['n101', 'n102']}
         segment_name = 'N1'
     n101: L2750_N101
     n102: L2750_N102
+    n103: L2750_N103 | None
+    n104: L2750_N104 | None
+    n105: L2750_N105 | None
+    n106: L2750_N106 | None
 
 
 class L2750_REF01(Element):
@@ -8407,7 +8695,7 @@ class L2750_REF01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF01 data_ele=128',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/128'},
                             {'enum': ['00', '17', '18', '19', '26', '3L', '6M', '9V',
                                       '9X', 'GE', 'LU', 'PID', 'XX1', 'XX2', 'YY',
@@ -8424,7 +8712,7 @@ class L2750_REF02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=REF02 data_ele=127',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -8437,7 +8725,7 @@ class L2750_REF03(Element):
         json = {'title': '',
          'usage': 'N',
          'description': 'xid=REF03 data_ele=352',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/352'}}
         datatype = common.D_352
         min_len = 1
@@ -8464,11 +8752,14 @@ class L2750_REF(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'REF'},
                         'ref01': {'$ref': '#/$elements/L2750_REF01'},
-                        'ref02': {'$ref': '#/$elements/L2750_REF02'}},
+                        'ref02': {'$ref': '#/$elements/L2750_REF02'},
+                        'ref03': {'$ref': '#/$elements/L2750_REF03'},
+                        'ref04': {'$ref': '#/$elements/L2750_REF04'}},
          'required': ['ref01', 'ref02']}
         segment_name = 'REF'
     ref01: L2750_REF01
     ref02: L2750_REF02
+    ref03: L2750_REF03 | None
 
 
 class L2750_DTP01(Element):
@@ -8477,7 +8768,7 @@ class L2750_DTP01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP01 data_ele=374',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['007']}]}}
         datatype = common.D_374
         codes = ['007']
@@ -8491,7 +8782,7 @@ class L2750_DTP02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP02 data_ele=1250',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/1250'}, {'enum': ['D8', 'RD8']}]}}
         datatype = common.D_1250
         codes = ['D8', 'RD8']
@@ -8505,7 +8796,7 @@ class L2750_DTP03(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=DTP03 data_ele=1251',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1251'}}
         datatype = common.D_1251
         min_len = 1
@@ -8555,7 +8846,7 @@ class L2700_LE01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=LE01 data_ele=447',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/447'}}
         datatype = common.D_447
         min_len = 1
@@ -8672,7 +8963,7 @@ class ST_LOOP_SE01(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=SE01 data_ele=96',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/96'}}
         datatype = common.D_96
         min_len = 1
@@ -8685,7 +8976,7 @@ class ST_LOOP_SE02(Element):
         json = {'title': '',
          'usage': 'R',
          'description': 'xid=SE02 data_ele=329',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/329'}}
         datatype = common.D_329
         min_len = 4

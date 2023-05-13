@@ -32,7 +32,7 @@ There are two distinct "levels" or "views" to this application.
 
 :Application:
     A message is implemented as class in a module.
-    The class is used to unmarshall and marshall the text of messages in a variety of formats.
+    The class is used to load and dump (other terms are parse, deserialize, unmarshall) the text of messages in a variety of formats.
     Often, this is "exchange" format to Python and Python to JSON conversions to parse a message and persist an easy-to-use copy.
     It can also be JSON to Python and Python back to "exchange" format to create messages usable by other EDI applications.
 
@@ -153,8 +153,8 @@ The component packaging breaks into two major areas.
 
 Here are some more details on the Python packages and modules.
 
--   :mod:`x12`. This is a package for handling the marshalling and
-    unmarshalling of X12 messages.
+-   :mod:`x12`. This is a package for handling the serializing and
+    deserializing of X12 messages.
 
     -   :mod:`x12.base`. This has the abstract base class definitions for all messages.
 
@@ -175,28 +175,28 @@ There are several kinds of processing that are part of TigerShark.
 -   The application processing includes multiple conversions between Exchange (the X12 text format),
     JSON and Python notation.
 
-    -   `Unmarshalling`_ extracts useful Python objects from messages in Exchange or JSON format.
+    -   `Loading`_ extracts useful Python objects from messages in Exchange or JSON format.
 
     -   An application can modify the Python or JSON message. An application can persist the JSON or Python notation, also.
 
-    -   `Marshalling`_ builds a message in Exchange format or JSON from Python objects.
+    -   `Dumping`_ builds a message in Exchange format or JSON from Python objects.
 
 -   `JSON Schema`_ describes the JSON Schema formalization of the structure.
     This is how messages are described.
 
-Unmarshalling
+Loading
 =============
 
 See :ref:`unmarshall`.
 
-An message class has a :meth:`parse` method for unmarshalling text to create Plain Old Python Objects.
+An message class has a :meth:`parse` method for loading (or deserializing or parsing) text to create Plain Old Python Objects.
 
-Marshalling
+Dumping
 ===========
 
 See :ref:`marshall`.
 
-Each Message object handles marshalling into X12 text
+Each Message object handles serialization into X12 text
 or JSON.
 A :meth:`dump` method handles X12 "exchange format".
 A :meth:`json` method handles JSON.

@@ -10,7 +10,8 @@ The following design notes are details of the software design.
     :maxdepth: 2
 
     Message Schema as Class <classmodel>
-    Element Definitions as Class <element>
     Loops as Namespace <loopmodel>
     Parsing Algorithm <parsing>
-    Type Annotations <annotations>
+    Type Hints <type_hints>
+    Element Types and Annotations <annotations>
+

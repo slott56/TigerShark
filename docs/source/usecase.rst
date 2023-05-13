@@ -33,8 +33,8 @@ There are two actors.
 -   EDI Application
 
     An EDI application will import the class definitions.
-    These definitions are used to unmarshall X12 messages for analysis or processing.
-    The application can use the message class definitions to marshall messages in EDI exchange format.
+    These definitions are used to deserialize X12 messages for analysis or processing.
+    The application can use the message class definitions to serialize messages in EDI exchange format.
 
 Use Case Scenarios
 ^^^^^^^^^^^^^^^^^^^^^
@@ -43,12 +43,12 @@ The following use cases are explored in detail:
 
     - `Define An X12 Structure`_
 
-    - `Unmarshall A Message`_
+    - `Deserialize A Message`_ (Also called "parsing" or "loading")
 
-    - `Marshall A Message`_
+    - `Serialize A Message`_ (Also called "unparsing" or "dumping")
 
 Other use cases are combinations of these. For example,
-unmarshalling a message to change the date and marshalling the resulting message.
+deserializing a message to change the date and serializing the resulting message.
 
 Define An X12 Structure
 =================================
@@ -76,14 +76,14 @@ slightly different element names, based on the loop context.
 
 ..  _`unmarshall`:
 
-Unmarshall A Message
-====================
+Deserialize A Message
+=====================
 
 An application imports a module with message
 definition classes.
 
 The application uses the class definitions
-to unmarshall a message, creating an instance
+to parse a message, creating an instance
 of the class.
 
 ..  doctest::
@@ -100,7 +100,7 @@ with attributes based on the loop/segment/composite/element structure of the spe
 
 ..  _`marshall`:
 
-Marshall A Message
+Serialize A Message
 ====================
 
 An application imports the module with message

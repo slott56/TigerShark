@@ -55,8 +55,8 @@ structures.</p>
 </li>
 <li><p>EDI Application</p>
 <p>An EDI application will import the class definitions.
-These definitions are used to unmarshall X12 messages for analysis or processing.
-The application can use the message class definitions to marshall messages in EDI exchange format.</p>
+These definitions are used to deserialize X12 messages for analysis or processing.
+The application can use the message class definitions to serialize messages in EDI exchange format.</p>
 </li>
 </ul>
 </section>
@@ -66,12 +66,12 @@ The application can use the message class definitions to marshall messages in ED
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference internal" href="#define-an-x12-structure">Define An X12 Structure</a></p></li>
-<li><p><a class="reference internal" href="#unmarshall-a-message">Unmarshall A Message</a></p></li>
-<li><p><a class="reference internal" href="#marshall-a-message">Marshall A Message</a></p></li>
+<li><p><a class="reference internal" href="#deserialize-a-message">Deserialize A Message</a> (Also called “parsing” or “loading”)</p></li>
+<li><p><a class="reference internal" href="#serialize-a-message">Serialize A Message</a> (Also called “unparsing” or “dumping”)</p></li>
 </ul>
 </div></blockquote>
 <p>Other use cases are combinations of these. For example,
-unmarshalling a message to change the date and marshalling the resulting message.</p>
+deserializing a message to change the date and serializing the resulting message.</p>
 <section id="define-an-x12-structure">
 <h3>Define An X12 Structure<a class="headerlink" href="#define-an-x12-structure" title="Permalink to this heading">¶</a></h3>
 <p>Actor locates the IG (Implementation Guide) that describes a message.
@@ -92,12 +92,12 @@ reused segment names. A specific example is the <code class="docutils literal no
 segment, which appears in many loops, sometimes with
 slightly different element names, based on the loop context.</p>
 </section>
-<section id="unmarshall-a-message">
-<span id="unmarshall"></span><h3>Unmarshall A Message<a class="headerlink" href="#unmarshall-a-message" title="Permalink to this heading">¶</a></h3>
+<section id="deserialize-a-message">
+<span id="unmarshall"></span><h3>Deserialize A Message<a class="headerlink" href="#deserialize-a-message" title="Permalink to this heading">¶</a></h3>
 <p>An application imports a module with message
 definition classes.</p>
 <p>The application uses the class definitions
-to unmarshall a message, creating an instance
+to parse a message, creating an instance
 of the class.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">x12</span> <span class="kn">import</span> <span class="n">msg_271_4010_X092_A1</span><span class="p">,</span> <span class="n">Source</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
@@ -110,8 +110,8 @@ of the class.</p>
 <p>The resulting <code class="docutils literal notranslate"><span class="pre">msg</span></code> object is an instance of a subclass of <code class="docutils literal notranslate"><span class="pre">Message</span></code>
 with attributes based on the loop/segment/composite/element structure of the specific message type.</p>
 </section>
-<section id="marshall-a-message">
-<span id="marshall"></span><h3>Marshall A Message<a class="headerlink" href="#marshall-a-message" title="Permalink to this heading">¶</a></h3>
+<section id="serialize-a-message">
+<span id="marshall"></span><h3>Serialize A Message<a class="headerlink" href="#serialize-a-message" title="Permalink to this heading">¶</a></h3>
 <p>An application imports the module with message
 definition classes.</p>
 <p>The application creates the message object.</p>

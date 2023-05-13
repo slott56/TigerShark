@@ -56,7 +56,7 @@ This defines X12 message types as Plain Old Python Object (POPO) classes.</p>
 </dd>
 <dt class="field-even">Application<span class="colon">:</span></dt>
 <dd class="field-even"><p>A message is implemented as class in a module.
-The class is used to unmarshall and marshall the text of messages in a variety of formats.
+The class is used to load and dump (other terms are parse, deserialize, unmarshall) the text of messages in a variety of formats.
 Often, this is “exchange” format to Python and Python to JSON conversions to parse a message and persist an easy-to-use copy.
 It can also be JSON to Python and Python back to “exchange” format to create messages usable by other EDI applications.</p>
 </dd>
@@ -157,8 +157,8 @@ some_app --&gt; msg_xxx_yyyy_zzz"/>
 </p>
 <p>Here are some more details on the Python packages and modules.</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="implementation/x12.html#module-x12" title="x12"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12</span></code></a>. This is a package for handling the marshalling and
-unmarshalling of X12 messages.</p>
+<li><p><a class="reference internal" href="implementation/x12.html#module-x12" title="x12"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12</span></code></a>. This is a package for handling the serializing and
+deserializing of X12 messages.</p>
 <ul>
 <li><p><a class="reference internal" href="implementation/x12.html#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a>. This has the abstract base class definitions for all messages.</p></li>
 <li><p><a class="reference internal" href="implementation/x12.html#module-x12.common" title="x12.common"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code></a>. This has common data element and code definitions. This is built by the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching this is unwise.</p></li>
@@ -179,23 +179,23 @@ unmarshalling of X12 messages.</p>
 <li><p>The application processing includes multiple conversions between Exchange (the X12 text format),
 JSON and Python notation.</p>
 <ul>
-<li><p><a class="reference internal" href="#unmarshalling">Unmarshalling</a> extracts useful Python objects from messages in Exchange or JSON format.</p></li>
+<li><p><a class="reference internal" href="#loading">Loading</a> extracts useful Python objects from messages in Exchange or JSON format.</p></li>
 <li><p>An application can modify the Python or JSON message. An application can persist the JSON or Python notation, also.</p></li>
-<li><p><a class="reference internal" href="#marshalling">Marshalling</a> builds a message in Exchange format or JSON from Python objects.</p></li>
+<li><p><a class="reference internal" href="#dumping">Dumping</a> builds a message in Exchange format or JSON from Python objects.</p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#json-schema">JSON Schema</a> describes the JSON Schema formalization of the structure.
 This is how messages are described.</p></li>
 </ul>
-<section id="unmarshalling">
-<h3>Unmarshalling<a class="headerlink" href="#unmarshalling" title="Permalink to this heading">¶</a></h3>
-<p>See <a class="reference internal" href="usecase.html#unmarshall"><span class="std std-ref">Unmarshall A Message</span></a>.</p>
-<p>An message class has a <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> method for unmarshalling text to create Plain Old Python Objects.</p>
+<section id="loading">
+<h3>Loading<a class="headerlink" href="#loading" title="Permalink to this heading">¶</a></h3>
+<p>See <a class="reference internal" href="usecase.html#unmarshall"><span class="std std-ref">Deserialize A Message</span></a>.</p>
+<p>An message class has a <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> method for loading (or deserializing or parsing) text to create Plain Old Python Objects.</p>
 </section>
-<section id="marshalling">
-<h3>Marshalling<a class="headerlink" href="#marshalling" title="Permalink to this heading">¶</a></h3>
-<p>See <a class="reference internal" href="usecase.html#marshall"><span class="std std-ref">Marshall A Message</span></a>.</p>
-<p>Each Message object handles marshalling into X12 text
+<section id="dumping">
+<h3>Dumping<a class="headerlink" href="#dumping" title="Permalink to this heading">¶</a></h3>
+<p>See <a class="reference internal" href="usecase.html#marshall"><span class="std std-ref">Serialize A Message</span></a>.</p>
+<p>Each Message object handles serialization into X12 text
 or JSON.
 A <code class="xref py py-meth docutils literal notranslate"><span class="pre">dump()</span></code> method handles X12 “exchange format”.
 A <code class="xref py py-meth docutils literal notranslate"><span class="pre">json()</span></code> method handles JSON.</p>

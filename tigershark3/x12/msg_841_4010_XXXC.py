@@ -1,6 +1,6 @@
 """
 841.4010.XXXC
-Created 2023-03-25 09:22:30.298789
+Created 2023-05-12 20:25:36.084543
 """
 from .base import *
 from . import common
@@ -12,7 +12,7 @@ class ISA_LOOP_ISA01(Element):
         json = {'title': 'Authorization Information Qualifier',
          'usage': 'R',
          'description': 'xid=ISA01 data_ele=I01',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/I01'}, {'enum': ['00', '03']}]}}
         datatype = common.I01
         codes = ['00', '03']
@@ -26,7 +26,7 @@ class ISA_LOOP_ISA02(Element):
         json = {'title': 'Authorization Information',
          'usage': 'R',
          'description': 'xid=ISA02 data_ele=I02',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/I02'}}
         datatype = common.I02
         min_len = 10
@@ -39,7 +39,7 @@ class ISA_LOOP_ISA03(Element):
         json = {'title': 'Security Information Qualifier',
          'usage': 'R',
          'description': 'xid=ISA03 data_ele=I03',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/I03'}, {'enum': ['00', '01']}]}}
         datatype = common.I03
         codes = ['00', '01']
@@ -53,7 +53,7 @@ class ISA_LOOP_ISA04(Element):
         json = {'title': 'Security Information',
          'usage': 'R',
          'description': 'xid=ISA04 data_ele=I04',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/I04'}}
         datatype = common.I04
         min_len = 10
@@ -66,7 +66,7 @@ class ISA_LOOP_ISA05(Element):
         json = {'title': 'Interchange ID Qualifier',
          'usage': 'R',
          'description': 'xid=ISA05 data_ele=I05',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/I05'},
                             {'enum': ['01', '14', '20', '27', '28', '29', '30', '33',
                                       'ZZ']}]}}
@@ -82,7 +82,7 @@ class ISA_LOOP_ISA06(Element):
         json = {'title': 'Interchange Sender ID',
          'usage': 'R',
          'description': 'xid=ISA06 data_ele=I06',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/I06'}}
         datatype = common.I06
         min_len = 15
@@ -95,7 +95,7 @@ class ISA_LOOP_ISA07(Element):
         json = {'title': 'Interchange ID Qualifier',
          'usage': 'R',
          'description': 'xid=ISA07 data_ele=I05',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/I05'},
                             {'enum': ['01', '14', '20', '27', '28', '29', '30', '33',
                                       'ZZ']}]}}
@@ -111,7 +111,7 @@ class ISA_LOOP_ISA08(Element):
         json = {'title': 'Interchange Receiver ID',
          'usage': 'R',
          'description': 'xid=ISA08 data_ele=I07',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/I07'}}
         datatype = common.I07
         min_len = 15
@@ -124,7 +124,7 @@ class ISA_LOOP_ISA09(Element):
         json = {'title': 'Interchange Date',
          'usage': 'R',
          'description': 'xid=ISA09 data_ele=I08',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/I08'}}
         datatype = common.I08
         min_len = 6
@@ -137,7 +137,7 @@ class ISA_LOOP_ISA10(Element):
         json = {'title': 'Interchange Time',
          'usage': 'R',
          'description': 'xid=ISA10 data_ele=I09',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/I09'}}
         datatype = common.I09
         min_len = 4
@@ -150,7 +150,7 @@ class ISA_LOOP_ISA11(Element):
         json = {'title': 'Interchange Control Standards Identifier',
          'usage': 'R',
          'description': 'xid=ISA11 data_ele=I10',
-         'sequence': 11,
+         'position': 11,
          'type': {'allOf': [{'$ref': '#/$common/I10'}, {'enum': ['U']}]}}
         datatype = common.I10
         codes = ['U']
@@ -164,7 +164,7 @@ class ISA_LOOP_ISA12(Element):
         json = {'title': 'Interchange Control Version Number',
          'usage': 'R',
          'description': 'xid=ISA12 data_ele=I11',
-         'sequence': 12,
+         'position': 12,
          'type': {'allOf': [{'$ref': '#/$common/I11'}, {'enum': ['00401']}]}}
         datatype = common.I11
         codes = ['00401']
@@ -178,7 +178,7 @@ class ISA_LOOP_ISA13(Element):
         json = {'title': 'Interchange Control Number',
          'usage': 'R',
          'description': 'xid=ISA13 data_ele=I12',
-         'sequence': 13,
+         'position': 13,
          'type': {'$ref': '#/$common/I12'}}
         datatype = common.I12
         min_len = 9
@@ -191,7 +191,7 @@ class ISA_LOOP_ISA14(Element):
         json = {'title': 'Acknowledgment Requested',
          'usage': 'R',
          'description': 'xid=ISA14 data_ele=I13',
-         'sequence': 14,
+         'position': 14,
          'type': {'allOf': [{'$ref': '#/$common/I13'}, {'enum': ['0', '1']}]}}
         datatype = common.I13
         codes = ['0', '1']
@@ -205,7 +205,7 @@ class ISA_LOOP_ISA15(Element):
         json = {'title': 'Usage Indicator',
          'usage': 'R',
          'description': 'xid=ISA15 data_ele=I14',
-         'sequence': 15,
+         'position': 15,
          'type': {'allOf': [{'$ref': '#/$common/I14'}, {'enum': ['P', 'T']}]}}
         datatype = common.I14
         codes = ['P', 'T']
@@ -219,7 +219,7 @@ class ISA_LOOP_ISA16(Element):
         json = {'title': 'Component Element Separator',
          'usage': 'R',
          'description': 'xid=ISA16 data_ele=I15',
-         'sequence': 16,
+         'position': 16,
          'type': {'$ref': '#/$common/I15'}}
         datatype = common.I15
         min_len = 1
@@ -279,7 +279,7 @@ class GS_LOOP_GS01(Element):
         json = {'title': 'Functional Identifier Code',
          'usage': 'R',
          'description': 'xid=GS01 data_ele=479',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/479'}, {'enum': ['SP']}]}}
         datatype = common.D_479
         codes = ['SP']
@@ -293,7 +293,7 @@ class GS_LOOP_GS02(Element):
         json = {'title': "Application Sender's Code",
          'usage': 'R',
          'description': 'xid=GS02 data_ele=142',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/142'}}
         datatype = common.D_142
         min_len = 2
@@ -306,7 +306,7 @@ class GS_LOOP_GS03(Element):
         json = {'title': "Application Receiver's Code",
          'usage': 'R',
          'description': 'xid=GS03 data_ele=124',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/124'}}
         datatype = common.D_124
         min_len = 2
@@ -319,7 +319,7 @@ class GS_LOOP_GS04(Element):
         json = {'title': 'Date',
          'usage': 'R',
          'description': 'xid=GS04 data_ele=373',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -332,7 +332,7 @@ class GS_LOOP_GS05(Element):
         json = {'title': 'Time',
          'usage': 'R',
          'description': 'xid=GS05 data_ele=337',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/337'}}
         datatype = common.D_337
         min_len = 4
@@ -345,7 +345,7 @@ class GS_LOOP_GS06(Element):
         json = {'title': 'Group Control Number',
          'usage': 'R',
          'description': 'xid=GS06 data_ele=28',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/28'}}
         datatype = common.D_28
         min_len = 1
@@ -358,7 +358,7 @@ class GS_LOOP_GS07(Element):
         json = {'title': 'Responsible Agency Code',
          'usage': 'R',
          'description': 'xid=GS07 data_ele=455',
-         'sequence': 7,
+         'position': 7,
          'type': {'allOf': [{'$ref': '#/$common/455'}, {'enum': ['X']}]}}
         datatype = common.D_455
         codes = ['X']
@@ -372,7 +372,7 @@ class GS_LOOP_GS08(Element):
         json = {'title': 'Version / Release / Industry Identifier Code',
          'usage': 'R',
          'description': 'xid=GS08 data_ele=480',
-         'sequence': 8,
+         'position': 8,
          'type': {'allOf': [{'$ref': '#/$common/480'}, {'enum': ['004010XXXC']}]}}
         datatype = common.D_480
         codes = ['004010XXXC']
@@ -415,7 +415,7 @@ class ST_LOOP_ST01(Element):
         json = {'title': 'Transaction Set Identifier Code',
          'usage': 'R',
          'description': 'xid=ST01 data_ele=143',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/143'}, {'enum': ['841']}]}}
         datatype = common.D_143
         codes = ['841']
@@ -429,7 +429,7 @@ class ST_LOOP_ST02(Element):
         json = {'title': 'Transaction Set Control Number',
          'usage': 'R',
          'description': 'xid=ST02 data_ele=329',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/329'}}
         datatype = common.D_329
         min_len = 4
@@ -459,7 +459,7 @@ class L1000_SPI01(Element):
         json = {'title': 'Security Level Code',
          'usage': 'R',
          'description': 'xid=SPI01 data_ele=786',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/786'}, {'enum': ['00']}]}}
         datatype = common.D_786
         codes = ['00']
@@ -473,7 +473,7 @@ class L1000_SPI02(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'N',
          'description': 'xid=SPI02 data_ele=128',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/128'}}
         datatype = common.D_128
         min_len = 2
@@ -486,7 +486,7 @@ class L1000_SPI03(Element):
         json = {'title': 'Reference Identification',
          'usage': 'N',
          'description': 'xid=SPI03 data_ele=127',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -499,7 +499,7 @@ class L1000_SPI04(Element):
         json = {'title': 'Entity Title',
          'usage': 'R',
          'description': 'xid=SPI04 data_ele=790',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/790'}}
         datatype = common.D_790
 
@@ -510,7 +510,7 @@ class L1000_SPI05(Element):
         json = {'title': 'Entity Purpose',
          'usage': 'R',
          'description': 'xid=SPI05 data_ele=791',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/791'}}
         datatype = common.D_791
 
@@ -521,7 +521,7 @@ class L1000_SPI06(Element):
         json = {'title': 'Entity Status Code',
          'usage': 'N',
          'description': 'xid=SPI06 data_ele=792',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/792'}}
         datatype = common.D_792
 
@@ -532,7 +532,7 @@ class L1000_SPI07(Element):
         json = {'title': 'Transaction Set Purpose Code',
          'usage': 'N',
          'description': 'xid=SPI07 data_ele=353',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/353'}}
         datatype = common.D_353
         min_len = 2
@@ -545,7 +545,7 @@ class L1000_SPI08(Element):
         json = {'title': 'Report Type Code',
          'usage': 'N',
          'description': 'xid=SPI08 data_ele=755',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/755'}}
         datatype = common.D_755
         min_len = 2
@@ -558,7 +558,7 @@ class L1000_SPI09(Element):
         json = {'title': 'Security Level Code',
          'usage': 'N',
          'description': 'xid=SPI09 data_ele=786',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/786'}}
         datatype = common.D_786
         min_len = 2
@@ -571,7 +571,7 @@ class L1000_SPI10(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=SPI10 data_ele=559',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -584,7 +584,7 @@ class L1000_SPI11(Element):
         json = {'title': 'Source Subqualifier',
          'usage': 'N',
          'description': 'xid=SPI11 data_ele=822',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/822'}}
         datatype = common.D_822
         min_len = 1
@@ -597,7 +597,7 @@ class L1000_SPI12(Element):
         json = {'title': 'Assigned Number',
          'usage': 'N',
          'description': 'xid=SPI12 data_ele=554',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/554'}}
         datatype = common.D_554
         min_len = 1
@@ -610,7 +610,7 @@ class L1000_SPI13(Element):
         json = {'title': 'Certification Type Code',
          'usage': 'N',
          'description': 'xid=SPI13 data_ele=1322',
-         'sequence': 13,
+         'position': 13,
          'type': {'$ref': '#/$common/1322'}}
         datatype = common.D_1322
         min_len = 1
@@ -623,7 +623,7 @@ class L1000_SPI14(Element):
         json = {'title': 'Proposal Data Detail Identifier Code',
          'usage': 'N',
          'description': 'xid=SPI14 data_ele=1401',
-         'sequence': 14,
+         'position': 14,
          'type': {'$ref': '#/$common/1401'}}
         datatype = common.D_1401
 
@@ -634,7 +634,7 @@ class L1000_SPI15(Element):
         json = {'title': 'Heirarchal Structure Code',
          'usage': 'N',
          'description': 'xid=SPI15 data_ele=1005',
-         'sequence': 15,
+         'position': 15,
          'type': {'$ref': '#/$common/1005'}}
         datatype = common.D_1005
         min_len = 4
@@ -652,13 +652,37 @@ class L1000_SPI(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'SPI'},
                         'spi01': {'$ref': '#/$elements/L1000_SPI01'},
+                        'spi02': {'$ref': '#/$elements/L1000_SPI02'},
+                        'spi03': {'$ref': '#/$elements/L1000_SPI03'},
                         'spi04': {'$ref': '#/$elements/L1000_SPI04'},
-                        'spi05': {'$ref': '#/$elements/L1000_SPI05'}},
+                        'spi05': {'$ref': '#/$elements/L1000_SPI05'},
+                        'spi06': {'$ref': '#/$elements/L1000_SPI06'},
+                        'spi07': {'$ref': '#/$elements/L1000_SPI07'},
+                        'spi08': {'$ref': '#/$elements/L1000_SPI08'},
+                        'spi09': {'$ref': '#/$elements/L1000_SPI09'},
+                        'spi10': {'$ref': '#/$elements/L1000_SPI10'},
+                        'spi11': {'$ref': '#/$elements/L1000_SPI11'},
+                        'spi12': {'$ref': '#/$elements/L1000_SPI12'},
+                        'spi13': {'$ref': '#/$elements/L1000_SPI13'},
+                        'spi14': {'$ref': '#/$elements/L1000_SPI14'},
+                        'spi15': {'$ref': '#/$elements/L1000_SPI15'}},
          'required': ['spi01', 'spi04', 'spi05']}
         segment_name = 'SPI'
     spi01: L1000_SPI01
+    spi02: L1000_SPI02 | None
+    spi03: L1000_SPI03 | None
     spi04: L1000_SPI04
     spi05: L1000_SPI05
+    spi06: L1000_SPI06 | None
+    spi07: L1000_SPI07 | None
+    spi08: L1000_SPI08 | None
+    spi09: L1000_SPI09 | None
+    spi10: L1000_SPI10 | None
+    spi11: L1000_SPI11 | None
+    spi12: L1000_SPI12 | None
+    spi13: L1000_SPI13 | None
+    spi14: L1000_SPI14 | None
+    spi15: L1000_SPI15 | None
 
 
 class L1000_RDT01(Element):
@@ -667,7 +691,7 @@ class L1000_RDT01(Element):
         json = {'title': 'Revision Level Code',
          'usage': 'N',
          'description': 'xid=RDT01 data_ele=795',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/795'}}
         datatype = common.D_795
 
@@ -678,7 +702,7 @@ class L1000_RDT02(Element):
         json = {'title': 'Revision Value',
          'usage': 'N',
          'description': 'xid=RDT02 data_ele=796',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/796'}}
         datatype = common.D_796
 
@@ -689,7 +713,7 @@ class L1000_RDT03(Element):
         json = {'title': 'Date/Time Qualifier',
          'usage': 'R',
          'description': 'xid=RDT03 data_ele=374',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['171']}]}}
         datatype = common.D_374
         codes = ['171']
@@ -703,7 +727,7 @@ class L1000_RDT04(Element):
         json = {'title': 'Date',
          'usage': 'R',
          'description': 'xid=RDT04 data_ele=373',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -716,7 +740,7 @@ class L1000_RDT05(Element):
         json = {'title': 'Time',
          'usage': 'N',
          'description': 'xid=RDT05 data_ele=337',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/337'}}
         datatype = common.D_337
         min_len = 4
@@ -729,7 +753,7 @@ class L1000_RDT06(Element):
         json = {'title': 'Time Code',
          'usage': 'N',
          'description': 'xid=RDT06 data_ele=623',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/623'}}
         datatype = common.D_623
         min_len = 2
@@ -747,12 +771,20 @@ class L1000_RDT(Segment):
                    'syntax': ['C0102', 'L030405', 'C0605'],
                    'type': 'object',
                    'properties': {'xid': {'literal': 'RDT'},
+                                  'rdt01': {'$ref': '#/$elements/L1000_RDT01'},
+                                  'rdt02': {'$ref': '#/$elements/L1000_RDT02'},
                                   'rdt03': {'$ref': '#/$elements/L1000_RDT03'},
-                                  'rdt04': {'$ref': '#/$elements/L1000_RDT04'}},
+                                  'rdt04': {'$ref': '#/$elements/L1000_RDT04'},
+                                  'rdt05': {'$ref': '#/$elements/L1000_RDT05'},
+                                  'rdt06': {'$ref': '#/$elements/L1000_RDT06'}},
                    'required': ['rdt03', 'rdt04']}}
         segment_name = 'RDT'
+    rdt01: L1000_RDT01 | None
+    rdt02: L1000_RDT02 | None
     rdt03: L1000_RDT03
     rdt04: L1000_RDT04
+    rdt05: L1000_RDT05 | None
+    rdt06: L1000_RDT06 | None
 
 
 class L1000_RDT01(Element):
@@ -761,7 +793,7 @@ class L1000_RDT01(Element):
         json = {'title': 'Revision Level Code',
          'usage': 'N',
          'description': 'xid=RDT01 data_ele=795',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/795'}}
         datatype = common.D_795
 
@@ -772,7 +804,7 @@ class L1000_RDT02(Element):
         json = {'title': 'Revision Value',
          'usage': 'N',
          'description': 'xid=RDT02 data_ele=796',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/796'}}
         datatype = common.D_796
 
@@ -783,7 +815,7 @@ class L1000_RDT03(Element):
         json = {'title': 'Date/Time Qualifier',
          'usage': 'R',
          'description': 'xid=RDT03 data_ele=374',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/374'}, {'enum': ['007']}]}}
         datatype = common.D_374
         codes = ['007']
@@ -797,7 +829,7 @@ class L1000_RDT04(Element):
         json = {'title': 'Date',
          'usage': 'R',
          'description': 'xid=RDT04 data_ele=373',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/373'}}
         datatype = common.D_373
         min_len = 8
@@ -810,7 +842,7 @@ class L1000_RDT05(Element):
         json = {'title': 'Time',
          'usage': 'N',
          'description': 'xid=RDT05 data_ele=337',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/337'}}
         datatype = common.D_337
         min_len = 4
@@ -823,7 +855,7 @@ class L1000_RDT06(Element):
         json = {'title': 'Time Code',
          'usage': 'N',
          'description': 'xid=RDT06 data_ele=623',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/623'}}
         datatype = common.D_623
         min_len = 2
@@ -840,12 +872,20 @@ class L1000_RDT(Segment):
          'syntax': ['C0102', 'L030405', 'C0605'],
          'type': 'object',
          'properties': {'xid': {'literal': 'RDT'},
+                        'rdt01': {'$ref': '#/$elements/L1000_RDT01'},
+                        'rdt02': {'$ref': '#/$elements/L1000_RDT02'},
                         'rdt03': {'$ref': '#/$elements/L1000_RDT03'},
-                        'rdt04': {'$ref': '#/$elements/L1000_RDT04'}},
+                        'rdt04': {'$ref': '#/$elements/L1000_RDT04'},
+                        'rdt05': {'$ref': '#/$elements/L1000_RDT05'},
+                        'rdt06': {'$ref': '#/$elements/L1000_RDT06'}},
          'required': ['rdt03', 'rdt04']}
         segment_name = 'RDT'
+    rdt01: L1000_RDT01 | None
+    rdt02: L1000_RDT02 | None
     rdt03: L1000_RDT03
     rdt04: L1000_RDT04
+    rdt05: L1000_RDT05 | None
+    rdt06: L1000_RDT06 | None
 
 
 class L1100_N101(Element):
@@ -854,7 +894,7 @@ class L1100_N101(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'R',
          'description': 'xid=N101 data_ele=98',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/98'}, {'enum': ['0F']}]}}
         datatype = common.D_98
         codes = ['0F']
@@ -868,7 +908,7 @@ class L1100_N102(Element):
         json = {'title': 'Name',
          'usage': 'R',
          'description': 'xid=N102 data_ele=93',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/93'}}
         datatype = common.D_93
         min_len = 1
@@ -881,7 +921,7 @@ class L1100_N103(Element):
         json = {'title': 'Identification Code Qualifier',
          'usage': 'N',
          'description': 'xid=N103 data_ele=66',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/66'}}
         datatype = common.D_66
         min_len = 1
@@ -894,7 +934,7 @@ class L1100_N104(Element):
         json = {'title': 'Identification Code',
          'usage': 'N',
          'description': 'xid=N104 data_ele=67',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/67'}}
         datatype = common.D_67
         min_len = 2
@@ -907,7 +947,7 @@ class L1100_N105(Element):
         json = {'title': 'Entity Relationship Code',
          'usage': 'N',
          'description': 'xid=N105 data_ele=706',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/706'}}
         datatype = common.D_706
         min_len = 2
@@ -920,7 +960,7 @@ class L1100_N106(Element):
         json = {'title': 'Entity Identifier Code',
          'usage': 'N',
          'description': 'xid=N106 data_ele=98',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/98'}}
         datatype = common.D_98
         min_len = 2
@@ -938,11 +978,19 @@ class L1100_N1(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'N1'},
                         'n101': {'$ref': '#/$elements/L1100_N101'},
-                        'n102': {'$ref': '#/$elements/L1100_N102'}},
+                        'n102': {'$ref': '#/$elements/L1100_N102'},
+                        'n103': {'$ref': '#/$elements/L1100_N103'},
+                        'n104': {'$ref': '#/$elements/L1100_N104'},
+                        'n105': {'$ref': '#/$elements/L1100_N105'},
+                        'n106': {'$ref': '#/$elements/L1100_N106'}},
          'required': ['n101', 'n102']}
         segment_name = 'N1'
     n101: L1100_N101
     n102: L1100_N102
+    n103: L1100_N103 | None
+    n104: L1100_N104 | None
+    n105: L1100_N105 | None
+    n106: L1100_N106 | None
 
 
 class L1100(Loop):
@@ -995,7 +1043,7 @@ class L2000_HL01(Element):
         json = {'title': 'Hierarchical ID Number',
          'usage': 'R',
          'description': 'xid=HL01 data_ele=628',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/628'}, {'enum': ['1']}]}}
         datatype = common.D_628
         codes = ['1']
@@ -1009,7 +1057,7 @@ class L2000_HL02(Element):
         json = {'title': 'Hierarchical Parent ID Number',
          'usage': 'N',
          'description': 'xid=HL02 data_ele=734',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/734'}}
         datatype = common.D_734
         min_len = 1
@@ -1022,7 +1070,7 @@ class L2000_HL03(Element):
         json = {'title': 'Hierarchical Level Code',
          'usage': 'R',
          'description': 'xid=HL03 data_ele=735',
-         'sequence': 3,
+         'position': 3,
          'type': {'allOf': [{'$ref': '#/$common/735'}, {'enum': ['I']}]}}
         datatype = common.D_735
         codes = ['I']
@@ -1036,7 +1084,7 @@ class L2000_HL04(Element):
         json = {'title': 'Hierarchical Child Code',
          'usage': 'N',
          'description': 'xid=HL04 data_ele=736',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/736'}}
         datatype = common.D_736
         min_len = 1
@@ -1053,11 +1101,15 @@ class L2000_HL(Segment):
          'type': 'object',
          'properties': {'xid': {'literal': 'HL'},
                         'hl01': {'$ref': '#/$elements/L2000_HL01'},
-                        'hl03': {'$ref': '#/$elements/L2000_HL03'}},
+                        'hl02': {'$ref': '#/$elements/L2000_HL02'},
+                        'hl03': {'$ref': '#/$elements/L2000_HL03'},
+                        'hl04': {'$ref': '#/$elements/L2000_HL04'}},
          'required': ['hl01', 'hl03']}
         segment_name = 'HL'
     hl01: L2000_HL01
+    hl02: L2000_HL02 | None
     hl03: L2000_HL03
+    hl04: L2000_HL04 | None
 
 
 class L2100_SPI01(Element):
@@ -1066,7 +1118,7 @@ class L2100_SPI01(Element):
         json = {'title': 'Security Level Code',
          'usage': 'R',
          'description': 'xid=SPI01 data_ele=786',
-         'sequence': 1,
+         'position': 1,
          'type': {'allOf': [{'$ref': '#/$common/786'}, {'enum': ['00']}]}}
         datatype = common.D_786
         codes = ['00']
@@ -1080,7 +1132,7 @@ class L2100_SPI02(Element):
         json = {'title': 'Reference Identification Qualifier',
          'usage': 'R',
          'description': 'xid=SPI02 data_ele=128',
-         'sequence': 2,
+         'position': 2,
          'type': {'allOf': [{'$ref': '#/$common/128'}, {'enum': ['ZZ']}]}}
         datatype = common.D_128
         codes = ['ZZ']
@@ -1094,7 +1146,7 @@ class L2100_SPI03(Element):
         json = {'title': 'Reference Identification',
          'usage': 'R',
          'description': 'xid=SPI03 data_ele=127',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/127'}}
         datatype = common.D_127
         min_len = 1
@@ -1107,7 +1159,7 @@ class L2100_SPI04(Element):
         json = {'title': 'Entity Title',
          'usage': 'R',
          'description': 'xid=SPI04 data_ele=790',
-         'sequence': 4,
+         'position': 4,
          'type': {'$ref': '#/$common/790'}}
         datatype = common.D_790
 
@@ -1118,7 +1170,7 @@ class L2100_SPI05(Element):
         json = {'title': 'Entity Purpose',
          'usage': 'N',
          'description': 'xid=SPI05 data_ele=791',
-         'sequence': 5,
+         'position': 5,
          'type': {'$ref': '#/$common/791'}}
         datatype = common.D_791
 
@@ -1129,7 +1181,7 @@ class L2100_SPI06(Element):
         json = {'title': 'Entity Status Code',
          'usage': 'N',
          'description': 'xid=SPI06 data_ele=792',
-         'sequence': 6,
+         'position': 6,
          'type': {'$ref': '#/$common/792'}}
         datatype = common.D_792
 
@@ -1140,7 +1192,7 @@ class L2100_SPI07(Element):
         json = {'title': 'Transaction Set Purpose Code',
          'usage': 'N',
          'description': 'xid=SPI07 data_ele=353',
-         'sequence': 7,
+         'position': 7,
          'type': {'$ref': '#/$common/353'}}
         datatype = common.D_353
         min_len = 2
@@ -1153,7 +1205,7 @@ class L2100_SPI08(Element):
         json = {'title': 'Report Type Code',
          'usage': 'N',
          'description': 'xid=SPI08 data_ele=755',
-         'sequence': 8,
+         'position': 8,
          'type': {'$ref': '#/$common/755'}}
         datatype = common.D_755
         min_len = 2
@@ -1166,7 +1218,7 @@ class L2100_SPI09(Element):
         json = {'title': 'Security Level Code',
          'usage': 'N',
          'description': 'xid=SPI09 data_ele=786',
-         'sequence': 9,
+         'position': 9,
          'type': {'$ref': '#/$common/786'}}
         datatype = common.D_786
         min_len = 2
@@ -1179,7 +1231,7 @@ class L2100_SPI10(Element):
         json = {'title': 'Agency Qualifier Code',
          'usage': 'N',
          'description': 'xid=SPI10 data_ele=559',
-         'sequence': 10,
+         'position': 10,
          'type': {'$ref': '#/$common/559'}}
         datatype = common.D_559
         min_len = 2
@@ -1192,7 +1244,7 @@ class L2100_SPI11(Element):
         json = {'title': 'Source Subqualifier',
          'usage': 'N',
          'description': 'xid=SPI11 data_ele=822',
-         'sequence': 11,
+         'position': 11,
          'type': {'$ref': '#/$common/822'}}
         datatype = common.D_822
         min_len = 1
@@ -1205,7 +1257,7 @@ class L2100_SPI12(Element):
         json = {'title': 'Assigned Number',
          'usage': 'N',
          'description': 'xid=SPI12 data_ele=554',
-         'sequence': 12,
+         'position': 12,
          'type': {'$ref': '#/$common/554'}}
         datatype = common.D_554
         min_len = 1
@@ -1218,7 +1270,7 @@ class L2100_SPI13(Element):
         json = {'title': 'Certification Type Code',
          'usage': 'N',
          'description': 'xid=SPI13 data_ele=1322',
-         'sequence': 13,
+         'position': 13,
          'type': {'$ref': '#/$common/1322'}}
         datatype = common.D_1322
         min_len = 1
@@ -1231,7 +1283,7 @@ class L2100_SPI14(Element):
         json = {'title': 'Proposal Data Detail Identifier Code',
          'usage': 'N',
          'description': 'xid=SPI14 data_ele=1401',
-         'sequence': 14,
+         'position': 14,
          'type': {'$ref': '#/$common/1401'}}
         datatype = common.D_1401
 
@@ -1242,7 +1294,7 @@ class L2100_SPI15(Element):
         json = {'title': 'Heirarchal Structure Code',
          'usage': 'N',
          'description': 'xid=SPI15 data_ele=1005',
-         'sequence': 15,
+         'position': 15,
          'type': {'$ref': '#/$common/1005'}}
         datatype = common.D_1005
         min_len = 4
@@ -1262,13 +1314,35 @@ class L2100_SPI(Segment):
                         'spi01': {'$ref': '#/$elements/L2100_SPI01'},
                         'spi02': {'$ref': '#/$elements/L2100_SPI02'},
                         'spi03': {'$ref': '#/$elements/L2100_SPI03'},
-                        'spi04': {'$ref': '#/$elements/L2100_SPI04'}},
+                        'spi04': {'$ref': '#/$elements/L2100_SPI04'},
+                        'spi05': {'$ref': '#/$elements/L2100_SPI05'},
+                        'spi06': {'$ref': '#/$elements/L2100_SPI06'},
+                        'spi07': {'$ref': '#/$elements/L2100_SPI07'},
+                        'spi08': {'$ref': '#/$elements/L2100_SPI08'},
+                        'spi09': {'$ref': '#/$elements/L2100_SPI09'},
+                        'spi10': {'$ref': '#/$elements/L2100_SPI10'},
+                        'spi11': {'$ref': '#/$elements/L2100_SPI11'},
+                        'spi12': {'$ref': '#/$elements/L2100_SPI12'},
+                        'spi13': {'$ref': '#/$elements/L2100_SPI13'},
+                        'spi14': {'$ref': '#/$elements/L2100_SPI14'},
+                        'spi15': {'$ref': '#/$elements/L2100_SPI15'}},
          'required': ['spi01', 'spi02', 'spi03', 'spi04']}
         segment_name = 'SPI'
     spi01: L2100_SPI01
     spi02: L2100_SPI02
     spi03: L2100_SPI03
     spi04: L2100_SPI04
+    spi05: L2100_SPI05 | None
+    spi06: L2100_SPI06 | None
+    spi07: L2100_SPI07 | None
+    spi08: L2100_SPI08 | None
+    spi09: L2100_SPI09 | None
+    spi10: L2100_SPI10 | None
+    spi11: L2100_SPI11 | None
+    spi12: L2100_SPI12 | None
+    spi13: L2100_SPI13 | None
+    spi14: L2100_SPI14 | None
+    spi15: L2100_SPI15 | None
 
 
 class L2100_MSG01(Element):
@@ -1277,7 +1351,7 @@ class L2100_MSG01(Element):
         json = {'title': 'Free-Form Text Message',
          'usage': 'R',
          'description': 'xid=MSG01 data_ele=933',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/933'}}
         datatype = common.D_933
         min_len = 1
@@ -1290,7 +1364,7 @@ class L2100_MSG02(Element):
         json = {'title': 'Printer Carriage Control Code',
          'usage': 'N',
          'description': 'xid=MSG02 data_ele=934',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/934'}}
         datatype = common.D_934
         min_len = 2
@@ -1303,7 +1377,7 @@ class L2100_MSG03(Element):
         json = {'title': 'Number',
          'usage': 'N',
          'description': 'xid=MSG03 data_ele=1470',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/1470'}}
         datatype = common.D_1470
         min_len = 1
@@ -1321,10 +1395,14 @@ class L2100_MSG(Segment):
                    'syntax': ['C0302'],
                    'type': 'object',
                    'properties': {'xid': {'literal': 'MSG'},
-                                  'msg01': {'$ref': '#/$elements/L2100_MSG01'}},
+                                  'msg01': {'$ref': '#/$elements/L2100_MSG01'},
+                                  'msg02': {'$ref': '#/$elements/L2100_MSG02'},
+                                  'msg03': {'$ref': '#/$elements/L2100_MSG03'}},
                    'required': ['msg01']}}
         segment_name = 'MSG'
     msg01: L2100_MSG01
+    msg02: L2100_MSG02 | None
+    msg03: L2100_MSG03 | None
 
 
 class L2100(Loop):
@@ -1387,7 +1465,7 @@ class ST_LOOP_SE01(Element):
         json = {'title': 'Transaction Segment Count',
          'usage': 'R',
          'description': 'xid=SE01 data_ele=96',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/96'}}
         datatype = common.D_96
         min_len = 1
@@ -1400,7 +1478,7 @@ class ST_LOOP_SE02(Element):
         json = {'title': 'Transaction Set Control Number',
          'usage': 'R',
          'description': 'xid=SE02 data_ele=329',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/329'}}
         datatype = common.D_329
         min_len = 4
@@ -1436,11 +1514,13 @@ class ST_LOOP(Loop):
                    'properties': {'st': {'$ref': '#/$segments/ST_LOOP_ST'},
                                   'header': {'$ref': '#/$segments/HEADER'},
                                   'detail': {'$ref': '#/$segments/DETAIL'},
+                                  'footer': {'$ref': '#/$segments/FOOTER'},
                                   'se': {'$ref': '#/$segments/ST_LOOP_SE'}},
                    'required': ['st', 'header', 'se']}}
     st: ST_LOOP_ST
     header: list[HEADER]
     detail: list[DETAIL] | None
+    footer: list[FOOTER] | None
     se: ST_LOOP_SE
 
 
@@ -1450,7 +1530,7 @@ class GS_LOOP_GE01(Element):
         json = {'title': 'Number of Transaction Sets Included',
          'usage': 'R',
          'description': 'xid=GE01 data_ele=97',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/97'}}
         datatype = common.D_97
         min_len = 1
@@ -1463,7 +1543,7 @@ class GS_LOOP_GE02(Element):
         json = {'title': 'Group Control Number',
          'usage': 'R',
          'description': 'xid=GE02 data_ele=28',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/28'}}
         datatype = common.D_28
         min_len = 1
@@ -1511,7 +1591,7 @@ class ISA_LOOP_TA101(Element):
         json = {'title': 'Interchange Control Number',
          'usage': 'R',
          'description': 'xid=TA101 data_ele=I12',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/I12'}}
         datatype = common.I12
         min_len = 9
@@ -1524,7 +1604,7 @@ class ISA_LOOP_TA102(Element):
         json = {'title': 'Interchange Date',
          'usage': 'R',
          'description': 'xid=TA102 data_ele=I08',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/I08'}}
         datatype = common.I08
         min_len = 6
@@ -1537,7 +1617,7 @@ class ISA_LOOP_TA103(Element):
         json = {'title': 'Interchange Time',
          'usage': 'R',
          'description': 'xid=TA103 data_ele=I09',
-         'sequence': 3,
+         'position': 3,
          'type': {'$ref': '#/$common/I09'}}
         datatype = common.I09
         min_len = 4
@@ -1550,7 +1630,7 @@ class ISA_LOOP_TA104(Element):
         json = {'title': 'Interchange Acknowledgement Code',
          'usage': 'R',
          'description': 'xid=TA104 data_ele=I17',
-         'sequence': 4,
+         'position': 4,
          'type': {'allOf': [{'$ref': '#/$common/I17'}, {'enum': ['A', 'E', 'R']}]}}
         datatype = common.I17
         codes = ['A', 'E', 'R']
@@ -1564,7 +1644,7 @@ class ISA_LOOP_TA105(Element):
         json = {'title': 'Interchange Note Code',
          'usage': 'R',
          'description': 'xid=TA105 data_ele=I18',
-         'sequence': 5,
+         'position': 5,
          'type': {'allOf': [{'$ref': '#/$common/I18'},
                             {'enum': ['000', '001', '002', '003', '004', '005', '006',
                                       '007', '008', '009', '010', '011', '012', '013',
@@ -1606,7 +1686,7 @@ class ISA_LOOP_IEA01(Element):
         json = {'title': 'Number of Included Functional Groups',
          'usage': 'R',
          'description': 'xid=IEA01 data_ele=I16',
-         'sequence': 1,
+         'position': 1,
          'type': {'$ref': '#/$common/I16'}}
         datatype = common.I16
         min_len = 1
@@ -1619,7 +1699,7 @@ class ISA_LOOP_IEA02(Element):
         json = {'title': 'Interchange Control Number',
          'usage': 'R',
          'description': 'xid=IEA02 data_ele=I12',
-         'sequence': 2,
+         'position': 2,
          'type': {'$ref': '#/$common/I12'}}
         datatype = common.I12
         min_len = 9

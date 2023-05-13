@@ -39,7 +39,7 @@ The bottom-level (Composite, Element) structures have a :meth:`build` method tha
 consumes oen or more fields of a segment. Composite will consume multiple element values.
 Element will consume a single element value.
 """
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterator
 import datetime
 from decimal import Decimal
 import json
@@ -47,9 +47,10 @@ import logging
 import sys
 from types import GenericAlias, UnionType, NoneType
 from typing import (
-    Any, cast, get_type_hints, get_origin, get_args, assert_type, Union, TypeAlias
+    Any, cast, get_type_hints, get_origin, get_args, assert_type, Union, TypeAlias,
+    Annotated, Sequence
 )
-
+from .annotations import *
 
 logger = logging.getLogger("x12.base")
 
@@ -75,20 +76,21 @@ class Source:
     In some rare cases, the ISA is already compressed. The element and segment
     separation characters must be provided separately.
 
-    TODO: Consider str | TextIO | Path as ``text`` parameter type.
+    ..  todo:: Consider str | TextIO | Path as ``text`` parameter types.
     """
     logger = logging.getLogger("x12.base.Source")
 
-    def __init__(self, text: str, element_sep: str = "", array_sep: str = "", segment_sep: str = "") -> None:
+    def __init__(self, text: str, element_sep: str = "", segment_sep: str = "", array_sep: str = "") -> None:
         self.text = text
         self.element_sep = element_sep  # Often "|", might be "*".
-        self.array_sep = array_sep  # Often ":". Sometimes "^".
         self.segment_sep = segment_sep  # Often "~".
+        # The Component_Separator is the value of ISA16. It is not, generally, set in advance.
+        self.array_sep = array_sep  # Often ":". Sometimes "^".
         self.pos: int = 0
 
     def elements(self) -> list[str | list[str]]:
         """
-        Unpack a Segment's into a list of potential Element values.
+        Unpack a Segment into a list of potential Element values.
         This consumes whitespace.
         It consumes the segment up to (and including) the segment_sep character.
 
@@ -97,7 +99,7 @@ class Source:
 
         Most elements are atomic with two notable exceptions:
 
-        -   There appear to be array elements that leverage
+        -   There array array-like elements that leverage
             the ISA16 Component Separator character, called the
             ``array_sep`` here.
 
@@ -130,8 +132,8 @@ class Source:
         if self.pos != len(self.text):
             self.pos += 1
         elements = self.text[start:self.pos-1].rstrip().split(self.element_sep)
-        # ISA segment? Do NOT subdivide ISA16 field's value -- it would vanish into ``["", ""]``.
-        # OR. If ISA: replace ISA16 with array_sep value.
+        # ISA segment? Do NOT subdivide ISA16 field's value -- it vanishes into ``["", ""]``.
+        # TODO: Segment ISA parser can replace ISA16 ``["", ""]`` value with the parsed array_sep value.
         if elements[0] == "ISA":
             return cast(list[str | list[str]], elements)
         return [
@@ -166,7 +168,7 @@ class Source:
         while self.pos != len(self.text) and self.text[self.pos].isspace():
             self.pos += 1
         if not self.element_sep:
-            # Assume 3-char prefix until we have a separator
+            # Assume a 3-char prefix until we have a separator
             return self.text[self.pos: self.pos+3]
         # TODO: re.search() might be faster at finding the next element separator
         start = end = self.pos
@@ -181,24 +183,28 @@ class Source:
 class X12DataType:
     fill = " "
 
-    def __init__(self, min_len: int = 0, scale: int = 0) -> None:
+    def __init__(self, min_len: int | None = None, max_len: int | None = None, scale: int = 0) -> None:
         self.min_len = min_len
+        self.max_len = max_len
         self.scale = scale
 
-    def to_py(self, element: "Element") -> Any:
-        return element.source
+    def to_py(self, source: str | None) -> Any:
+        return source
 
-    def to_str(self, value: Any) -> str:
+    def to_str(self, value: Any) -> str | None:
         """Apply right fill char to get to min_len, if provided."""
-        if self.min_len:
-            return f"{value:{self.fill}<{self.min_len}s}"
-        else:
+        if value:
+            if self.min_len:
+                return f"{value:{self.fill}<{self.min_len}s}"
             return f"{value}"
+        # Rewrite zero-len strings as None.
+        return f"{value}"
 
 
 ## TODO: Replace these with annotations.
-## TODO: Refactor to_py(Element, type hint with annotation)
-## TODO: Refactor to_str(object, type hint with annotation)
+## TODO: Refactor the features into Segment and Composite
+## - element_parse(type, str) -> Any:
+## - element_str(type, Any) -> str:
 
 class ANType(X12DataType):
     pass
@@ -209,55 +215,107 @@ class BType(X12DataType):
 
 
 class DTType(X12DataType):
-    def to_py(self, element: "Element") -> Any:
-        if element.source:
-            return datetime.datetime.strptime(element.source, "%Y%m%d").date()
+    def __init__(self, min_len: int | None = None, max_len: int | None = None, scale: int = 0) -> None:
+        super().__init__(min_len, max_len, scale)
+        if self.min_len == 6 and self.max_len == 6:
+            self.date_formats = ["%y%m%d"]
+        elif self.min_len == 8 and self.max_len == 8:
+            self.date_formats = ["%Y%m%d"]
+        else:
+            self.date_formats = ["%Y%m%d", "%y%m%d"]
+
+    def to_py(self, source: str | None) -> Any:
+        if source:
+            for d_format in self.date_formats:
+                try:
+                    return datetime.datetime.strptime(source, d_format).date()
+                except ValueError:  # pragma: no cover
+                    pass
+            raise ValueError(f"could not parse DT {source=} with formats {self.date_formats}")  # pragma: no cover
         return None
 
     def to_str(self, value: Any) -> str:
-        return value.strftime("%Y%m%d")
+        # print(f"DTType.to_str({value=}) {self.min_len=} {self.max_len=} {self.date_formats[0]=}")
+        return value.strftime(self.date_formats[0])
 
 
 class IDType(X12DataType):
     fill = "0"
-    def to_str(self, value: Any) -> str:
+    def to_str(self, value: Any) -> str | None:
         """Apply left fill char to get to min_len, if provided."""
-        if self.min_len:
-            return f"{str(value):{self.fill}>{self.min_len}s}"
-        else:
-            return f"{value}"
+        # print(f"IDType.to_str({value=}) {self.min_len=} {self.max_len=}")
+        if value:
+            if self.min_len:
+                return f"{str(value):{self.fill}>{self.min_len}s}"
+            else:
+                return f"{value}"
+        # Tends to rewrite zero-len strings as None.
+        return None
 
 
 class RType(X12DataType):
     fill = "0"
-    def to_py(self, element: "Element") -> Any:
-        if element.source:
-            return float(element.source)
+    def to_py(self, source: str | None) -> Any:
+        if source:
+            return float(source)
         return None
 
     def to_str(self, value: Any) -> str:
-        """Apply left fill char to get to min_len, if provided."""
-        if self.min_len:
-            return f"{value:{self.fill}>{self.min_len}f}"
+        """
+        Apply left fill char to get to min_len, if provided.
+        Remove trailing zeroes. If it was a whole number, remove the dot, too.
+        """
+        if value is not None:
+            if self.min_len:
+                return f"{value:{self.fill}>{self.min_len}f}".rstrip("0").rstrip(".")
+            else:
+                return f"{value}".rstrip("0").rstrip(".")
         else:
-            return f"{value}"
+            return ""  # pragma: no cover
 
 
 class TMType(X12DataType):
-    def to_py(self, element: "Element") -> Any:
-        if element.source:
-            return datetime.datetime.strptime(element.source, "%H%M").time()
+    def __init__(self, min_len: int | None = None, max_len: int | None = None, scale: int = 0) -> None:
+        super().__init__(min_len, max_len, scale)
+        if self.min_len == 4 and self.max_len == 4:
+            self.time_formats = ["%H%M"]
+        elif self.min_len == 4 and self.max_len == 8:
+            # Some length annotations is min 4 to max 8. Unclear what the remaining 4 digits might be.
+            self.time_formats = ["%H%M", "%H%M%S",]
+        elif self.min_len == 6 and self.max_len == 6:
+            # Makes sense logically. No examples, though.
+            self.time_formats = ["%H%M%S"]  # pragma: no cover
+        else:
+            self.time_formats = ["%H%M", "%H%M%S", ]
+
+    def to_py(self, source: str | None) -> Any:
+        # print(f"TMType.to_py({source=}) {self.time_formats=}")
+        if source:
+            for t_format in self.time_formats:
+                try:
+                    tm = datetime.datetime.strptime(source, t_format).time()
+                    self.time_formats = [t_format]
+                    # print(f"TMType.to_py({source=}) {self.time_formats=} {tm=}")
+                    return tm
+                except ValueError:
+                    pass
+            raise ValueError(f"could not parse TM {source=} with formats {self.time_formats}")  # pragma: no cover
         return None
 
     def to_str(self, value: Any) -> str:
-        return value.strftime("%H%M")
+        # print(f"TMType.to_str({value=}) {self.min_len=} {self.max_len=} {self.time_formats[0]=}")
+        if value is not None:
+            return value.strftime(self.time_formats[0])
+        return ""  # pragma: no cover
 
 
 class NType(X12DataType):
     fill = "0"
-    def to_py(self, element: "Element") -> Any:
-        if element.source:
-            return Decimal(element.source).scaleb(-self.scale)
+    def to_py(self, source: str | None) -> Any:
+        if source is not None:
+            if source == "":
+                return Decimal("0").scaleb(-self.scale)  # pragma: no cover
+            return Decimal(source).scaleb(-self.scale)
         return None
 
     def to_str(self, value: Any) -> str:
@@ -294,7 +352,7 @@ class SchemaType:
     """
     An abstraction for the Schema embedded in a class.
 
-    TODO: Replace this structure with pure annotations.
+    .. todo: Replace this structure with an annotation.
 
     ::
 
@@ -313,18 +371,31 @@ class SchemaType:
     max_len: int | None
     segment_name: str | None
 
-
 def type_factory(schema: type[SchemaType]) -> X12DataType:
+    """
+    This version works with Schema and is the interim solution.
+    With Annotations, this is replaced by a generic conversion.
+    """
     if hasattr(schema, "datatype") and schema.datatype:
-        type_code = schema.datatype['data_type_code']
-        scale = schema.datatype.get('scale', None)
+        type_code: str = schema.datatype['data_type_code']
+        min_len: int | None = schema.datatype.get('minLength', None)
+        max_len: int | None = schema.datatype.get('maxLength', None)
+        scale: int | None = schema.datatype.get('scale', None)
     else:
         # Defaults if the data type was never defined
         type_code = "AN"
+        min_len = None
+        max_len = None
         scale = None
     cls = TYPE_CLASS_MAP[type_code]
-    min_len = getattr(schema, "min_len") if hasattr(schema, "min_len") else None
-    helper = cls(min_len=min_len, scale=scale)
+    # Any overrides to the base definition?
+    if hasattr(schema, "min_len"):
+        if (v := getattr(schema, "min_len")) > 0:
+            min_len = v
+    if hasattr(schema, "max_len"):
+        if (v := getattr(schema, "max_len")) > 0:
+            max_len = v
+    helper = cls(min_len=min_len, max_len=max_len, scale=scale or 0)
     return helper
 
 
@@ -335,42 +406,47 @@ class Element:
     """
     An atomic element.
 
-    This has a value attribute, schema attribute, and a datatype.
+    This has a ``value`` attribute with the value.
+
+    Two kinds of subclasses are possible.
+
+    -   Those defined with a ``Schema`` attribute with the JSONSchema definition.
+        These have a ``source`` attribute has the source text.
+        And a ``type_helper`` attribte with an ``X12DataType`` type definition.
+
+    -   Those defined with a ``value`` attribute with an annotated type.
+
+    This may raise ValueError exceptions for invalid data.
     """
     Schema: type[SchemaType]
     logger = logging.getLogger("x12.base.Element")
 
     def __init__(self, source: str | None = None) -> None:
-        self.source = source
-        assert_type(self.__class__.Schema, type[SchemaType])
         schema = self.__class__.Schema
-        if hasattr(schema, "codes"):
-            self.codes = schema.codes
-        else:
-            self.code = None
+        # if hasattr(schema, "codes"):
+        #     self.codes = schema.codes
+        # else:
+        #     self.codes = None
         self.type_helper = type_factory(schema)
+        self.value = self.type_helper.to_py(source)
+
+    @property
+    def source(self) -> str | None:
+        if self.value is not None:
+            return self.type_helper.to_str(self.value)
+        else:
+            return None
 
     @classmethod
     def schema(cls: type["Element"]) -> dict[str, Any]:
         if not hasattr(cls, "Schema"):
-            raise TypeError(f"{cls} has no Schema attribute")
-        return (cls.Schema.json or {}) | (cls.Schema.datatype or {})
+            raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
+        return getattr(cls.Schema, 'json', {}) | getattr(cls.Schema, 'datatype', {})
 
     @classmethod
     def build(cls: type["Element"], source_value: str | None) -> "Element":
         cls.logger.debug("build %s with %r", cls.__name__, source_value)
         return cls(source_value)
-
-    @property
-    def value(self) -> Any:
-        """Apply any conversion based on the datatype information"""
-        return self.type_helper.to_py(self)
-
-    @value.setter
-    def value(self, value: Any) -> None:
-        """Validate this value before applying the change."""
-        # TODO: Validate with self.type_helper...
-        self.source = self.type_helper.to_str(value)
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.source!r})"
@@ -397,13 +473,14 @@ class Composite:
     @classmethod
     def schema(cls: type["Composite"]) -> dict[str, Any]:
         if not hasattr(cls, "Schema"):
-            raise TypeError(f"{cls} has no Schema attribute")
+            raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
         assert_type(cls.Schema, type[SchemaType])
         fields = get_type_hints(cls)
         return cls.Schema.json | {
             "properties": {
                 name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
                 for name, field_type in fields.items()
+                if name not in {'Schema',}
             }
         }
 
@@ -418,7 +495,7 @@ class Composite:
                 return alternatives[0].build(source_value)
             case _ if issubclass(field_type, Element):
                 return field_type.build(source_value)
-        raise TypeError(f"unexpected type {field_type}")
+        raise TypeError(f"unexpected type {field_type}")  # pragma: no cover
 
     @classmethod
     def build(cls: type["Composite"], source_value: str | None | list[str | None]) -> "Composite":
@@ -426,15 +503,16 @@ class Composite:
         cls.logger.debug("build %s with %s", cls.__name__, fields)
         if not isinstance(source_value, list):
             source_value = [source_value]
-        if len(fields) < len(source_value):
+        num_fields = sum(1 for name in fields if name != 'Schema')
+        if num_fields < len(source_value):
             # Too many values for the fields of this composite.
             raise ValueError(
-                f"wrong number of values {cls.__name__} needs {len(fields)} provided {len(source_value)}"
+                f"wrong number of values {cls.__name__} needs {num_fields} provided {len(source_value)}"
             )  # pragma: no cover
-        elif len(fields) > len(source_value):
-            source_value.extend([None] * (len(fields) - len(source_value)))
+        elif num_fields > len(source_value):
+            source_value.extend([None] * (num_fields - len(source_value)))
         else:
-            # len(fields) == len(source_value)
+            # num_fields == len(source_value)
             pass
         arg_dict = {}
         for name, field_type in fields.items():
@@ -490,14 +568,14 @@ class Segment:
     @classmethod
     def schema(cls: type["Segment"]) -> dict[str, Any]:
         if not hasattr(cls, "Schema"):
-            raise TypeError(f"{cls} has no Schema attribute")
+            raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
         assert_type(cls.Schema, type[SchemaType])
         fields = get_type_hints(cls)
         return cls.Schema.json | {
             "properties": {
                 name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
                 for name, field_type in fields.items()
-                if name != 'Schema'
+                if name not in {'Schema',}
             }
         }
 
@@ -542,7 +620,7 @@ class Segment:
                 else:
                     composite_value = []
                 return field_type.build(composite_value)
-        raise TypeError(f"unexpected type {field_type} {field_type.mro()}")
+        raise TypeError(f"unexpected type {field_type} {field_type.mro()}")  # pragma: no cover
 
     @classmethod
     def parse(cls: type["Segment"], source: Source) -> Union["Segment", None]:
@@ -554,7 +632,7 @@ class Segment:
         fields = get_type_hints(cls)
         cls.logger.debug("parse %s with %s", cls.__name__, fields)
         if not hasattr(cls, "Schema"):
-            raise TypeError(f"{cls} has no Schema attribute")
+            raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
         assert_type(cls.Schema, type[SchemaType])
         segment_name = cls.Schema.segment_name
         if source.next_segment() != segment_name:
@@ -593,6 +671,12 @@ class Segment:
         """
         The segment as a list of Element source values.
         The segment text is the basis for the exchange format: a sequence of Segments.
+
+        .. note:: Confusing overlap of names with the Source class.
+
+            This is **not** the same concept at all.
+
+        ..  todo:: Rename this.
         """
         fields = get_type_hints(self.__class__)
         values: list[str | None | list[str | None]] = []
@@ -606,6 +690,7 @@ class Segment:
                         [cast(str | None, instance.source) for instance in field]
                     )
                 case _ if isinstance(field, Element):
+                    self.logger.debug(f"{name}: {field} {field.type_helper.__class__.__name__} {field.schema()=} {field.source=}")
                     values.append(field.source)
                 case _ if isinstance(field, Composite):
                     values.append(field.source)
@@ -651,7 +736,7 @@ class Loop:
             "properties": {
                 name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
                 for name, field_type in fields.items()
-                if name != 'Schema'
+                if name not in {'Schema',}
             }
         }
 
@@ -694,7 +779,7 @@ class Loop:
                 raise RuntimeError("unexpected nested Loop: {field_type} inside {cls.__name__}")
                 # Alternative is to parse it...
                 # return field_type.parse(source)
-        raise TypeError(f"unexpected {field_type} {type(field_type)}")
+        raise TypeError(f"unexpected {field_type} {type(field_type)}")  # pragma: no cover
 
     @classmethod
     def parse(cls: type["Loop"], source: Source) -> Union["Loop", None]:
@@ -712,7 +797,7 @@ class Loop:
         else:
             return None
 
-    def segment_iter(self) -> Iterator[Sequence[str | None | Sequence[str | None]]]:
+    def segment_iter(self) -> Iterator[list[str | None | list[str | None]]]:
         """
         A flat sequence of segment values in this Loop and all sub Loops.
         This is the basis for the exchange format.
@@ -778,7 +863,7 @@ class Message:
             "properties": {
                 name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
                 for name, field_type in fields.items()
-                if name != "Schema"
+                if name not in {'Schema',}
             }
         }
 
@@ -807,7 +892,7 @@ class Message:
                     raise TypeError(f"unexpected {name}: {loop_type} {type(loop_type)}")
         return cls(**arg_dict)
 
-    def segment_iter(self) -> Iterator[Sequence[str | None | Sequence[str | None]]]:
+    def segment_iter(self) -> Iterator[list[str | None | list[str | None]]]:
         """
         A flat sequence of segments in a Message.
         This is the basis for the exchange format.
@@ -868,7 +953,7 @@ def demo() -> None:
         """Component Element Separator"""
         class Schema:
             json: dict[str, Any] = {}
-            datatype = {'type': 'string', 'title': 'I16', 'data_type_code': 'ID', 'minLength': 3, 'maxLength': 3}
+            datatype = {'type': 'string', 'title': 'I16', 'data_type_code': 'AN', 'minLength': 1, 'maxLength': 1}
             max_len = 1
 
     class ISA_LOOP_ISA(Segment):

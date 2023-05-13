@@ -67,17 +67,102 @@ The Data Element definitions, used to create Elements, are heavily reused.
 These become a module of Schema details used to build the final schema
 for a given Element.
 
+The Data Type attribute is -- apparently -- the base
+Python type, only.
+
+There are 3 variations on DT:
+
+-   ``<data_ele ele_num="I08" data_type="DT" min_len="6" max_len="6" name="I08"/>``
+
+-   ``<data_ele ele_num="373" data_type="DT" min_len="8" max_len="8" name="Date"/>``
+
+-   ``<data_ele ele_num="29" data_type="DT" min_len="6" max_len="8" name="Date"/>``
+
+This means there are three underlying data element definitions
+
+:I08:
+    ``{"type": "string", "minLength": 6, "maxLength": 6, "format": "\\d{6}", "x-datetime": "%y%m%d"}``
+
+:D373:
+    ``{"type": "string", "minLength": 8, "maxLength": 8, "format": "\\d{8}", "x-datetime": "%Y%m%d"}``
+
+:D29:
+    ``{"type": "string", "minLength": 6, "maxLength": 8, "format": "\\d{6,8}", "x-datetime": ["%Y%m%d", "%y%m%d"]}``
+
+Where the ``x-datetime`` field is an extension to provide the conversion format for :py:func:`datetime.datetime.strptime`
+
 The Code definitions, similarly, are part of the module of schema details.
 These are incorporated explicitly into the JSON Schema.
 
-The "$ref" path will be "#/$common/some_code" or "#/$common/some_element_schema".
+In JSON Schema, a "$ref" path of the form "#/$common/some_code" or "#/$common/some_element_schema",
+provides a reference to the reusable data element definitions.
 This parallels the Python ``x12.common`` module which has these definitions.
 
-The idea is the "$common" section is part of each message's overall JSONSchema definition.
-It could be replace with an external reference using a full URI, which might be more
+Using "#" implies  the "$common" section is part of each message's overall JSONSchema definition.
+It could be replaced with an external reference using a full URI, which might be more
 sensible in the long run.
 
-These are generally ``"type": {"$ref": "#/$common/some_element_schema"}`` constructs.
+Type Names and Stuctures
+------------------------
+
+There are two pools of type definitions in ``dataele.xml``
+
+-   ``Ixx`` names, part of the reused ISA segment.
+
+-   ``nnn`` numbers, used everywhere else. We rename these to ``D_nnn`` to provide a Pythonic name.
+
+There are two pools of code definitions:
+
+-   Common codesets defined in the ``codes.xml``.  (There are 9 of these.)
+
+-   Data-element specific codesets defined within the element of a message.
+
+A data type, then, has the following definition aspects:
+
+-   Base ``data_type_code`` ("AN", "ID", "DT", "TM", etc.)
+    These are -- generally -- mappings to a Python type.
+    For the ``Nx``, it includes the decimal scale factor.
+    For ``DT`` and ``TM``, the length is required, also.
+
+-   Annotations with common definition details (minLength, maxLength, title) from ``common.xml``.
+    A "format" value is implied by the length for ``DT``, ``TM``, ``Nx``, ``N``, and ``R``.
+
+-   Enumerated literals come either from a ``codes.xml`` or from the element definition.
+
+Type Extensions
+---------------
+
+Some messages will have AN fields with a type and a value.
+This extra type detail is one of the following:
+
+-   D8 (yyyymmdd),
+
+-   D6 (yymmdd),
+
+-   RD8 (yyyymmdd-yyyymmdd),
+
+-   TM (hhmm)
+
+These are types **outside** the X12 definitions.
+They're application-specific, and depend on
+two adjacent fields to work.
+
+Schema and Annotations
+======================
+
+There are two approaches to defining the type details.
+
+-   JSON Schema structures. This is called the "interim" solution.
+    It leverages an explicit class for each Element to carry
+    the schema details.
+
+-   Type Annotations. This is the goal.
+    All of the schema information is carried
+    through Annotations.
+
+The transition is tricky because
+the ``xml_extract`` application must generate
+both variants, making it rather complicated.
 
 X12 Message Version Mapping
 ===========================
@@ -96,13 +181,22 @@ from collections.abc import Iterator
 from contextlib import redirect_stdout
 from dataclasses import dataclass, asdict, field
 import datetime
+from decimal import Decimal
 import logging
 from pathlib import Path
 from pprint import pprint, pformat
 import sys
 from textwrap import indent
-from typing import Union, TypeAlias, Any, TextIO, Self, cast, Deque
+from typing import (
+    Union, TypeAlias, Any, TextIO,
+    Self, cast, Deque,
+    Annotated, Literal, ForwardRef,
+    Type
+)
+from typing_extensions import _AnnotatedAlias
 from xml.etree import ElementTree as XML
+
+from x12.annotations import *
 
 
 logger = logging.getLogger("xml_extract")
@@ -132,6 +226,8 @@ class Codeset:
     def jsonschema(self) -> JSONSchema:
         return self.values
 
+    def annotation(self) -> _AnnotatedAlias:
+        return Annotated[str, Literal[self.values], Title(self.id)]
 
 def code_reader(source: TextIO) -> Iterator[Codeset]:
     """
@@ -198,14 +294,15 @@ def code_reader(source: TextIO) -> Iterator[Codeset]:
 
 
 X12_TYPE_SCHEMA: dict[str, JSONSchema] = {
-    "AN": {"type": "string"},
+    "AN": {"type": "string"}, # AlphaNumeric
     "B": {"type": "string"},  # Binary?
-    "DT": {"type": "string", "format": "\d\d\d\d\d\d\d\d"},
+    "DT": {"type": "string"},  # date, format based on length, "format": "\\d{6,8}"
     "ID": {"type": "string"}, # Identifier, numeric string.
     "R": {"type": "number"},  # Real
-    "TM": {"type": "string", "format": "\d\d\d\d"},
-    "N": {"type": "number"},  # Number
-    "N0": {"type": "number", "scale": 0}, # 0 decimal places, i.e. integer.
+    "TM": {"type": "string"},  # Time. format "format": "\\d{4,6}"
+    "N": {"type": "integer"},  # Number (integer?)
+    # These have no proper JSONSchema representation, the underlying type is "Decimal" with a scale.
+    "N0": {"type": "number", "scale": 0}, # 0 decimal places.
     "N1": {"type": "number", "scale": 1},
     "N2": {"type": "number", "scale": 2}, # 2 decimal places, i.e. currency.
     "N3": {"type": "number", "scale": 3},
@@ -217,6 +314,26 @@ X12_TYPE_SCHEMA: dict[str, JSONSchema] = {
     "N9": {"type": "number", "scale": 9},
 }
 
+X12_TYPE_ANNOTATION: dict[str, type | object] = {
+    "AN": str,  # AlphaNumeric
+    "B": str,  # Binary?
+    "DT": datetime.date,  # Annotation will add MinLen(6-8), MaxLen(6-8), Format(r"\d{6}{8}") details
+    "ID": Annotated[str, Format(r"\d+")],  # Identifier, numeric string.
+    "R": float,  # Real
+    "TM": datetime.time,  # Annotation will add MinLen(4-6), MaxLen(4-6), Format(r"\d{4}{6}") details
+    "N": int,  # Number (integer?)
+    "N0": Annotated[Decimal, Scale(0)],  # 0 decimal places
+    "N1": Annotated[Decimal, Scale(1)],
+    "N2": Annotated[Decimal, Scale(2)],  # 2 decimal places, i.e. currency.
+    "N3": Annotated[Decimal, Scale(3)],
+    "N4": Annotated[Decimal, Scale(4)],
+    "N5": Annotated[Decimal, Scale(5)],
+    "N6": Annotated[Decimal, Scale(6)],
+    "N7": Annotated[Decimal, Scale(7)],
+    "N8": Annotated[Decimal, Scale(8)],
+    "N9": Annotated[Decimal, Scale(9)],
+}
+
 
 @dataclass
 class DataElement:
@@ -226,7 +343,7 @@ class DataElement:
     A JSONSchema {"type": ..., "minLength": ..., "maxLength": ..., "description": ...} schema
     """
     ele_num: str
-    data_type: str
+    data_type: str  # Base type
     min_len: str | None
     max_len: str | None
     name: str
@@ -253,8 +370,30 @@ class DataElement:
             schema["minLength"] = int(self.min_len)
         if self.max_len is not None:
             schema["maxLength"] = int(self.max_len)
+        # additional special cases
+        if self.data_type in {"DT", "TM"}:
+            if self.min_len == self.max_len:
+                schema["format"] = f"\\d{{{self.min_len}}}"
+            else:
+                schema["format"] = f"\\d{{{self.min_len},{self.max_len}}}"
         return schema
 
+    def annotation(self) -> _AnnotatedAlias:
+        base = cast(dict[str, _AnnotatedAlias], X12_TYPE_ANNOTATION[self.data_type])
+        extensions = [base, Title(self.name)]
+        # OR... extensions = Annotated[base, Title(self.name)]
+        if self.min_len is not None:
+            extensions.append(MinLen(int(self.min_len)))
+            # OR... extensions = Annotated[base, MinLen(int(self.min_len))]
+        if self.max_len is not None:
+            extensions.append(MaxLen(int(self.max_len)))
+            # OR... extensions = Annotated[base, MaxLen(int(self.max_len))]
+        if self.data_type in {"DT", "TM"}:
+            if self.min_len == self.max_len:
+                extensions.append(Format(f"\\d{self.min_len}"))
+            else:
+                extensions.append(Format(f"\\d{self.min_len,self.max_len}"))
+        return Annotated[*extensions]
 
 def element_reader(source: TextIO) -> Iterator[DataElement]:
     """
@@ -302,7 +441,7 @@ def element_reader(source: TextIO) -> Iterator[DataElement]:
             data_type=data_type,
             min_len=min_len,
             max_len=max_len,
-            name=name
+            name=name,
         )
         logger.debug(data_ele)
         yield data_ele
@@ -396,7 +535,7 @@ class Element:
             "title": self.name,
             "usage": self.usage,  # Required, Situational, Not-Used
             "description": f"xid={self.xid} data_ele={self.data_ele}",
-            "sequence": int(self.seq),
+            "position": int(self.seq),
         }
         # Can have both common type def & locally-defined codes.
         # This is a "allOf" merge between {$ref: common_def} type and {"enum": ...} for codes.
@@ -421,6 +560,43 @@ class Element:
                 "maxItems": int(self.repeat)
             }
         return schema
+
+    def annotation(self) -> _AnnotatedAlias:
+        """
+        Some Segment or Composite will have
+
+        ::
+
+            item: Annotated[DT, Title("Item"), Usage("R"), Sequence("1")]
+
+        The ``DT`` type alias is ``Annotated[datetime.date, ...]``.
+
+        This flattens nicely to ``datetime.date`` with details.
+
+        Or
+
+        ::
+
+            item: Annotated[list[Annotated[DT, title("Item"), ...]], MaxItems(4)]
+
+        The list -- as a whole -- and the items both have annotations.
+        The over-all ``list[]`` has a ``MaxItems()`` annotation.
+        The Element within the list has the detailed annotations for this element.
+        This flattens nicely to ``list[datetime.date]``.
+        """
+        # While this works, mypy can't figure it out.
+        base = Annotated[  # type: ignore [valid-type]
+            ForwardRef(self.data_ele), Title(self.name), Usage(self.usage), Position(self.seq)
+        ]
+        if self.codes:
+            base = Annotated[base, Literal[self.codes]]
+        if self.common_def:
+            base = Annotated[base, Enumerated(self.common_def)]
+        if self.external:
+            base = Annotated[base, Enumerated(self.external)]
+        if self.repeat:
+            base = Annotated[list[base], MaxItems(int(self.repeat))]  # type: ignore [valid-type]
+        return base
 
 @dataclass
 class Composite:
@@ -480,6 +656,17 @@ class Composite:
             }
         return schema
 
+    def annotation(self) -> _AnnotatedAlias:
+        # While this works, mypy can't figure it out.
+        base = Annotated[  # type: ignore [valid-type]
+            ForwardRef(self.data_ele), Title(self.name), Usage(self.usage), Position(self.seq)
+        ]
+        if self.required:
+            base = Annotated[base, Required(True)]
+        if self.repeat:
+            base = Annotated[list[base], MaxItems(int(self.repeat))]  # type: ignore [valid-type]
+        return base
+
 @dataclass
 class Segment:
     """
@@ -528,8 +715,8 @@ class Segment:
             schema["type"] = "object"
             schema["properties"] = {"xid": {"literal": self.xid}}
             for elt in self.children:
-                if elt.usage == "N":
-                    continue
+                # if elt.usage == "N":
+                #     continue
                 schema["properties"][elt.attr_name] = {"$ref": f"#/$elements/{elt.class_name}"}  # elt.jsonschema()
         if req := self.required:
             schema["required"] = req
@@ -541,6 +728,38 @@ class Segment:
             if self.max_use != ">1":
                 schema['maxItems'] = int(self.max_use)
         return schema
+
+    def annotation(self) -> _AnnotatedAlias:
+        """
+        Some Message or Loop will have
+
+        ::
+
+            segment: Annotated[Loop_Seg_Class, Title("Segnment"), Usage("R"), Sequence("1")]
+
+        This flattens nicely to ``Loop_Seg_Class`` with details.
+
+        Or
+
+        ::
+
+            segment: Annotated[list[Annotated[Loop_Seg_Class, title("Segnment"), ...]], MaxItems(4)]
+
+        The list -- as a whole -- and the items both have annotations.
+        List annotations are small (MaxItems).
+        The Segment in the list has more complex annotations.
+        """
+        # While this works, mypy can't figure it out.
+        base = Annotated[  # type: ignore [valid-type]
+            ForwardRef(self.class_name), Title(self.name), Usage(self.usage), Position(self.pos)
+        ]
+        if self.syntax:
+            base = Annotated[base, Syntax(self.syntax)]
+        if self.required:
+            base = Annotated[base, Required(True)]
+        if self.repeat:
+            base = Annotated[list[base], MaxItems(int(self.max_use))]  # type: ignore [valid-type]
+        return base
 
 @dataclass
 class Loop:
@@ -581,7 +800,7 @@ class Loop:
             schema["properties"] = {
                 elt.attr_name: {"$ref": f"#/$segments/{elt.class_name}"}  # elt.jsonschema()
                 for elt in self.children
-                if elt.usage != "N"
+                # if elt.usage != "N"
             }
         if req := self.required:
             schema["required"] = req
@@ -593,6 +812,20 @@ class Loop:
             if self.repeat != ">1":
                 schema['maxItems'] = int(self.repeat)
         return schema
+
+    def annotation(self) -> _AnnotatedAlias:
+        # While this works, mypy can't figure it out.
+        base = Annotated[  # type: ignore [valid-type]
+            ForwardRef(self.class_name), Title(self.name), Usage(self.usage), Position(self.pos)
+        ]
+        if self.required:
+            base = Annotated[cast(type, base), Required(True)]
+        if self.repeat:
+            if self.repeat.startswith('>'):
+                base = Annotated[list[base], MinItems(int(self.repeat[1:]))]  # type: ignore [valid-type]
+            else:
+                base = Annotated[list[base], MaxItems(int(self.repeat))]  # type: ignore [valid-type]
+        return base
 
 @dataclass
 class Message:
@@ -612,6 +845,11 @@ class Message:
         return [elt.attr_name for elt in self.loops if elt.usage == "R"]
 
     def jsonschema(self) -> JSONSchema:
+        """
+        Emits JSON Schema for a message.
+
+        ..  todo:: properly flatten the message to emit $loop, $segment, $composite, and $element definitions.
+        """
         schema: dict[str, Any] = {
             "title": self.name,
             "description": f"xid={self.xid} name={self.name}",
@@ -621,7 +859,7 @@ class Message:
             schema["properties"] = {
                 elt.attr_name: {"$ref": f"#/$loops/{elt.class_name}"}  # elt.jsonschema()
                 for elt in self.loops
-                if elt.usage != "N"
+                # if elt.usage != "N"
             }
         if req := self.required:
             schema["required"] = req
@@ -679,8 +917,6 @@ def message_reader(source: TextIO) -> Message:
             repeat
             valid_codes (external)
                 code
-
-    format: one of D8 (yyyymmdd), D6 (yymmdd), RD8 (yyyymmdd-yyyymmdd), TM (hhmm)  Not sure where this is used.
 
     usage: one of R (required), S (situational), N (not used)
 
@@ -916,12 +1152,15 @@ class MessageVisitor:
         pass
 
 
-class EmitPython(MessageVisitor):
+class EmitPython_Interim(MessageVisitor):
     """
     Message visitor to emit Pythonic definitions for
     Elements, Composites, Segments, Loops, and Messages.
 
-    These will be extension subclasses to definitions in ``x12.base``.
+    This is "Interim", which uses an explicit ``Schema``
+    internal class definition.
+
+    The classes created will be extension subclasses to definitions in ``x12.base``.
     """
     def __init__(self) -> None:
         super().__init__()
@@ -929,12 +1168,22 @@ class EmitPython(MessageVisitor):
         self.types: dict[str, DataElement]
 
     def codesets(self, c: dict[str, Codeset]) -> Self:
+        """Setter for codesets."""
         self.codes = c
         return self
 
     def data_elements(self, d: dict[str, DataElement]) -> Self:
+        """Setter for data elements."""
         self.types = d
         return self
+
+    def dump_codesets(self):
+        for id in self.codes:
+            print(f"{pythonify(id, 'C_')} = {self.codes[id].jsonschema()}")
+
+    def dump_data_elements(self):
+        for name in self.types:
+            print(f"{pythonify(name, 'D_')} = {self.types[name].jsonschema()}")
 
     def element(self, element: Element) -> None:
         print("\n")
@@ -964,8 +1213,8 @@ class EmitPython(MessageVisitor):
         print(f'    class Schema:')
         print(f"        json = {indent(pformat(composite.jsonschema(), compact=True, sort_dicts=False), 8*' ').lstrip()}")
         for elt in composite.elements:
-            if elt.usage == "N":
-                continue
+            # if elt.usage == "N":
+            #    continue
             if elt.repeat:
                 type_text = f"list[{elt.class_name}]"
             else:
@@ -983,7 +1232,8 @@ class EmitPython(MessageVisitor):
         print(f"        segment_name = {segment.xid!r}")
         for elt in segment.children:
             if elt.usage == "N":
-                continue
+                if isinstance(elt,Composite) and len(elt.elements) == 0:
+                    continue
             if elt.repeat:
                 type_text = f"list[{elt.class_name}]"
             else:
@@ -999,8 +1249,8 @@ class EmitPython(MessageVisitor):
         print(f'    class Schema:')
         print(f"        json = {indent(pformat(loop.jsonschema(), compact=True, sort_dicts=False), 8*' ').lstrip()}")
         for elt in loop.children:
-            if elt.usage == "N":
-                continue
+            # if elt.usage == "N":
+            #     continue
             if elt.repeat:
                 type_text = f"list[{elt.class_name}]"
             else:
@@ -1015,8 +1265,8 @@ class EmitPython(MessageVisitor):
         print(f'    class Schema:')
         print(f"        json = {indent(pformat(message.jsonschema(), compact=True, sort_dicts=False), 8*' ').lstrip()}")
         for elt in message.loops:
-            if elt.usage == "N":
-                continue
+            # if elt.usage == "N":
+            #    continue
             if elt.repeat:
                 type_text = f"list[{elt.class_name}]"
             else:
@@ -1026,22 +1276,117 @@ class EmitPython(MessageVisitor):
             print(f"    {elt.attr_name}: {type_text}")
 
 
+def text_annotation(annotation: _AnnotatedAlias) -> str:
+    return repr(annotation).replace("typing.", "")
+
+
+class EmitPython_Annotated(MessageVisitor):
+    """
+    Message visitor to emit Pythonic definitions for
+    Elements, Composites, Segments, Loops, and Messages.
+
+    This is "Annotated", which uses only annotations.
+
+    The classes created will be extension subclasses to definitions in ``x12.base``.
+    """
+    def __init__(self) -> None:
+        super().__init__()
+        self.codes: dict[str, Codeset]
+        self.types: dict[str, DataElement]
+
+    def codesets(self, c: dict[str, Codeset]) -> Self:
+        self.codes = c
+        return self
+
+    def data_elements(self, d: dict[str, DataElement]) -> Self:
+        self.types = d
+        return self
+
+    def dump_codesets(self):
+        for id, values in self.codes.items():
+            annotation = Annotated[str, Literal[*values]]
+            print(f"{pythonify(id, 'C_')}: TypeAlias = {text_annotation(annotation)}")
+
+    def dump_data_elements(self):
+        for name, base_def in X12_TYPE_ANNOTATION.items():
+            print(f"{name}: TypeAlias = {text_annotation(base_def)}")
+        for name, de_def in self.types.items():
+            assert de_def.data_type in X12_TYPE_ANNOTATION, f"Data type {de_def.data_type!r} unknown"
+            base = str(de_def.data_type)
+            if de_def.min_len:
+                base = Annotated[base, MinLen(de_def.min_len)]
+            if de_def.max_len:
+                base = Annotated[base, MaxLen(de_def.max_len)]
+            print(
+                f"{pythonify(name, 'D_')}: TypeAlias = {text_annotation(base)}"
+            )
+
+    def element(self, element: Element) -> None:
+        pass  # Not a separate class in the Python.
+
+    def segment(self, segment: Segment) -> None:
+        print("\n")
+        # print(f"# {self.path}")
+        print(f'class {segment.class_name}(Segment):\n    """{segment.name}"""')
+        for elt in segment.children:
+            # if elt.usage == "N":
+            #    continue
+            annotation = elt.annotation()
+            if elt.attr_name not in segment.required:
+                annotation = Union[annotation, None]
+            print(f"    {elt.attr_name}: {text_annotation(annotation)}")
+
+    def loop(self, loop: Loop) -> None:
+        print("\n")
+        # print(f"# {self.path}")
+        print(f'class {loop.class_name}(Loop):')
+        for elt in loop.children:
+            # if elt.usage == "N":
+            #    continue
+            annotation = elt.annotation()
+            if elt.attr_name not in loop.required:
+                annotation = Union[annotation, None]
+            print(f"    {elt.attr_name}: {text_annotation(annotation)}")
+
+    def message(self, message: Message) -> None:
+        print("\n")
+        print(f'class {message.class_name}(Message):\n    """{message.name}"""')
+        for elt in message.loops:
+            # if elt.usage == "N":
+            #    continue
+            annotation = elt.annotation()
+            if elt.attr_name not in message.required:
+                annotation = Union[annotation, None]
+            print(f"    {elt.attr_name}: {text_annotation(annotation)}")
+
 def make_common_module(
         codesets: dict[str, Codeset],
         data_elements: dict[str, DataElement],
         target_package: Path
 ) -> None:
+    """
+    Emits common module with definitions of common data types.
+
+    Depends on ``EmitPython_Interim`` class.
+    """
     target_path = (target_package / "common").with_suffix(".py")
+
+    code_writer = EmitPython_Interim().data_elements(data_elements).codesets(codesets)
+
     with target_path.open('w') as target_file:
         with redirect_stdout(target_file):
             print('"""')
             print(f"Created {datetime.datetime.now()}")
             print('"""')
             print()
-            for id in codesets:
-                print(f"{pythonify(id, 'C_')} = {codesets[id].jsonschema()}")
-            for name in data_elements:
-                print(f"{pythonify(name, 'D_')} = {data_elements[name].jsonschema()}")
+            print("from typing import TypeAlias, Literal, Annotated")
+            print("from x12.annotations import *")
+            code_writer.dump_codesets()
+            code_writer.dump_data_elements()
+            # for id in codesets:
+            #     print(f"{pythonify(id, 'C_')} = {codesets[id].jsonschema()}")
+            # for name in data_elements:
+            #     print(f"{pythonify(name, 'D_')} = {data_elements[name].jsonschema()}")
 
 def make_message_module(
         codesets: dict[str, Codeset],
@@ -1049,14 +1394,21 @@ def make_message_module(
         source_path: Path,
         target_package: Path
 ) -> None:
+    """
+    Emits a module to parse a message.
+
+    Depends on ``EmitPython_Interim`` class.
+    """
     target_stem = f'msg_{source_path.stem.replace(".", "_")}'
     target_path = (target_package / target_stem).with_suffix(".py")
     logger.info("%s -> %s", source_path.name, target_path.name)
 
-    code_writer = EmitPython().data_elements(data_elements).codesets(codesets)
-    code_writer.source_name = source_path.stem
     with source_path.open() as source:
         msg = message_reader(source)
+
+    code_writer = EmitPython_Interim().data_elements(data_elements).codesets(codesets)
+    code_writer.source_name = source_path.stem
+
     with target_path.open('w') as target_file:
         with redirect_stdout(target_file):
             print('"""')
@@ -1070,7 +1422,7 @@ def make_message_module(
 
 def make_python(base: Path, target: Path) -> None:
     """
-    Extract from XML schema, creating Python (with some JSON Schema).
+    Extract from XML schema, creating Python.
 
     Each message becomes a separate module in an overall "x12" package.
     """
@@ -1096,6 +1448,7 @@ def make_python(base: Path, target: Path) -> None:
 
     with (base / "maps.xml").open() as source:
         maps = list(map_reader(source))
+
     # TODO: Emit the mapping objects.
 
 
@@ -1105,6 +1458,13 @@ def make_message_schema(
         source_path: Path,
         target_package: Path
 ) -> None:
+    """
+    Emit JSON Schema for a message.
+
+    ..  todo:: Include the "$ref" data types and code sets.
+
+    JSON Schema **should** be created from the Python, not from the XML.
+    """
     target_stem = f'msg_{source_path.stem.replace(".", "_")}'
     target_path = (target_package / target_stem).with_suffix(".json")
     logger.info("%s -> %s", source_path.name, target_path.name)
@@ -1118,6 +1478,8 @@ def make_jsonschema(base: Path, target: Path) -> None:
     Extract from XML schema, creating JSON Schema.
 
     Each message becomes a separate .json document.
+
+    JSON Schema **should** be created from the Python, not from the XML.
     """
     with (base / "codes.xml").open() as source:
         logger.info("Reading %s", source.name)
@@ -1140,8 +1502,10 @@ def make_jsonschema(base: Path, target: Path) -> None:
 
 def main(base: Path, x12_package: Path | None, json_dir: Path | None) -> None:
     """
-    Extract from XML schema.
-    Make Python or Make JSONSchema.
+    Extract from XML schema and make Python modules for parsing messages.
+
+    Making JSON Schema is possible.
+    JSON Schema **should** be created from the Python, not from the XML.
     """
     logger.info("Source %s", base)
     if x12_package:

@@ -1,7 +1,9 @@
 """
-Created 2023-03-25 09:22:27.857661
+Created 2023-05-12 20:25:33.519837
 """
 
+from typing import TypeAlias, Literal, Annotated
+from x12.annotations import *
 states = ['AA', 'AB', 'AE', 'AK', 'AL', 'AP', 'AR', 'AS', 'AZ', 'BC', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'FM', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MB', 'MD', 'ME', 'MH', 'MI', 'MN', 'MO', 'MP', 'MS', 'MT', 'NB', 'NC', 'ND', 'NE', 'NF', 'NH', 'NJ', 'NM', 'NS', 'NT', 'NV', 'NY', 'OH', 'OK', 'ON', 'OR', 'PA', 'PE', 'PQ', 'PR', 'RI', 'SC', 'SD', 'SK', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA', 'WI', 'WV', 'WY', 'YT']
 country = ['AF', 'AL', 'DZ', 'AS', 'AD', 'AO', 'AI', 'AQ', 'AG', 'AR', 'AM', 'AW', 'AU', 'AT', 'AZ', 'BS', 'BH', 'BD', 'BB', 'BY', 'BE', 'BZ', 'BJ', 'BM', 'BT', 'BO', 'BA', 'BW', 'BV', 'BR', 'IO', 'BN', 'BG', 'BF', 'BI', 'KH', 'CM', 'CA', 'CV', 'KY', 'CF', 'TD', 'CL', 'CN', 'CX', 'CC', 'CO', 'KM', 'CG', 'CD', 'CK', 'CR', 'CI', 'HR', 'CU', 'CY', 'CZ', 'DK', 'DJ', 'DM', 'DO', 'TP', 'EC', 'EG', 'SV', 'GQ', 'ER', 'EE', 'ET', 'FK', 'FO', 'FJ', 'FI', 'FR', 'GF', 'PF', 'TF', 'GA', 'GM', 'GE', 'DE', 'GH', 'GI', 'GR', 'GL', 'GD', 'GP', 'GU', 'GT', 'GN', 'GW', 'GY', 'HT', 'HM', 'VA', 'HN', 'HK', 'HU', 'IS', 'IN', 'ID', 'IR', 'IQ', 'IE', 'IL', 'IT', 'JM', 'JP', 'JO', 'KZ', 'KE', 'KI', 'KP', 'KR', 'KW', 'KG', 'LA', 'LV', 'LB', 'LS', 'LR', 'LY', 'LI', 'LT', 'LU', 'MO', 'MK', 'MG', 'MW', 'MY', 'MV', 'ML', 'MT', 'MH', 'MQ', 'MR', 'MU', 'YT', 'MX', 'FM', 'MD', 'MC', 'MN', 'MS', 'MA', 'MZ', 'MM', 'NA', 'NR', 'NP', 'NL', 'AN', 'NC', 'NZ', 'NI', 'NE', 'NG', 'NU', 'NF', 'MP', 'NO', 'OM', 'PK', 'PW', 'PS', 'PA', 'PG', 'PY', 'PE', 'PH', 'PN', 'PL', 'PT', 'PR', 'QA', 'RE', 'RO', 'RU', 'RW', 'SH', 'KN', 'LC', 'PM', 'VC', 'WS', 'SM', 'ST', 'SA', 'SN', 'SC', 'SL', 'SG', 'SK', 'SI', 'SB', 'SO', 'ZA', 'GS', 'ES', 'LK', 'SD', 'SR', 'SJ', 'SZ', 'SE', 'CH', 'SY', 'TW', 'TJ', 'TZ', 'TH', 'TG', 'TK', 'TO', 'TT', 'TN', 'TR', 'TM', 'TC', 'TV', 'UG', 'UA', 'AE', 'GB', 'US', 'UM', 'UY', 'UZ', 'VU', 'VE', 'VN', 'VG', 'VI', 'WF', 'EH', 'YE', 'YU', 'ZM', 'ZW']
 currency = ['ADP', 'AED', 'AFA', 'ALL', 'ANG', 'AOK', 'ARA', 'ATS', 'AUD', 'AWG', 'BBD', 'BDT', 'BEF', 'BGL', 'BHD', 'BIF', 'BMD', 'BND', 'BOB', 'BRC', 'BSD', 'BTN', 'BUK', 'BWP', 'BZD', 'CAD', 'CHF', 'CLF', 'CLP', 'CNY', 'COP', 'CRC', 'CSK', 'CUP', 'CVE', 'CYP', 'DDM', 'DEM', 'DJF', 'DKK', 'DOP', 'DZD', 'ECS', 'EGP', 'ESP', 'ETB', 'EUR', 'FIM', 'FJD', 'FKP', 'FRF', 'GBP', 'GHC', 'GIP', 'GMD', 'GNF', 'GRD', 'GTQ', 'GWP', 'GYD', 'HKD', 'HNL', 'HTG', 'HUF', 'IDR', 'IEP', 'ILS', 'INR', 'IQD', 'IRR', 'ISK', 'ITL', 'JMD', 'JOD', 'JPY', 'KES', 'KHR', 'KMF', 'KPW', 'KRW', 'KWD', 'KYD', 'LAK', 'LBP', 'LKR', 'LRD', 'LSL', 'LUF', 'LYD', 'MAD', 'MGF', 'MNT', 'MOP', 'MRO', 'MTL', 'MUR', 'MVR', 'MWK', 'MXP', 'MYR', 'MZM', 'NGN', 'NIC', 'NLG', 'NOK', 'NPR', 'NZD', 'OMR', 'PAB', 'PEI', 'PGK', 'PHP', 'PKR', 'PLZ', 'PTE', 'PYG', 'QAR', 'ROL', 'RWF', 'SAR', 'SBD', 'SCR', 'SDP', 'SEK', 'SGD', 'SHP', 'SLL', 'SOS', 'SRG', 'STD', 'SUR', 'SVC', 'SYP', 'SZL', 'THB', 'TND', 'TOP', 'TPE', 'TRL', 'TTD', 'TWD', 'TZS', 'UGS', 'USD', 'UYP', 'VEB', 'VND', 'VUV', 'WST', 'YDD', 'YER', 'YUD', 'ZAR', 'ZMK', 'ZRZ', 'ZWD']
@@ -189,8 +191,8 @@ D_236 = {'type': 'string', 'title': 'Price Identifier Code', 'data_type_code': '
 D_248 = {'type': 'string', 'title': 'Allowance or Charge Indicator', 'data_type_code': 'ID', 'minLength': 1, 'maxLength': 1}
 D_26 = {'type': 'string', 'title': 'Country Code', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 3}
 D_28 = {'type': 'number', 'scale': 0, 'title': 'Group Control Number', 'data_type_code': 'N0', 'minLength': 1, 'maxLength': 9}
-D_29 = {'type': 'string', 'format': '\\d\\d\\d\\d\\d\\d\\d\\d', 'title': 'Date', 'data_type_code': 'DT', 'minLength': 6, 'maxLength': 8}
-D_30 = {'type': 'string', 'format': '\\d\\d\\d\\d', 'title': 'Time', 'data_type_code': 'TM', 'minLength': 4, 'maxLength': 4}
+D_29 = {'type': 'string', 'title': 'Date', 'data_type_code': 'DT', 'minLength': 6, 'maxLength': 8, 'format': '\\d{6,8}'}
+D_30 = {'type': 'string', 'title': 'Time', 'data_type_code': 'TM', 'minLength': 4, 'maxLength': 4, 'format': '\\d{4}'}
 D_280 = {'type': 'number', 'title': 'Exchange Rate', 'data_type_code': 'R', 'minLength': 4, 'maxLength': 10}
 D_289 = {'type': 'number', 'scale': 0, 'title': 'Multiple Price Quantity', 'data_type_code': 'N0', 'minLength': 1, 'maxLength': 2}
 D_305 = {'type': 'string', 'title': 'Transaction Handling Code', 'data_type_code': 'ID', 'minLength': 1, 'maxLength': 2}
@@ -202,7 +204,7 @@ D_328 = {'type': 'string', 'title': 'Release Number', 'data_type_code': 'AN', 'm
 D_329 = {'type': 'string', 'title': 'Transaction Set Control Number', 'data_type_code': 'AN', 'minLength': 4, 'maxLength': 9}
 D_331 = {'type': 'string', 'title': 'Allowance or Charge Method of Handling Code', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
 D_332 = {'type': 'number', 'title': 'Percent, Decimal Format', 'data_type_code': 'R', 'minLength': 1, 'maxLength': 6}
-D_337 = {'type': 'string', 'format': '\\d\\d\\d\\d', 'title': 'Time', 'data_type_code': 'TM', 'minLength': 4, 'maxLength': 8}
+D_337 = {'type': 'string', 'title': 'Time', 'data_type_code': 'TM', 'minLength': 4, 'maxLength': 8, 'format': '\\d{4,8}'}
 D_338 = {'type': 'number', 'title': 'Terms Discount Percent', 'data_type_code': 'R', 'minLength': 1, 'maxLength': 6}
 D_349 = {'type': 'string', 'title': 'Item Description Type', 'data_type_code': 'ID', 'minLength': 1, 'maxLength': 1}
 D_350 = {'type': 'string', 'title': 'Assigned Identification', 'data_type_code': 'AN', 'minLength': 1, 'maxLength': 20}
@@ -215,7 +217,7 @@ D_363 = {'type': 'string', 'title': 'Note Reference Code', 'data_type_code': 'ID
 D_364 = {'type': 'string', 'title': 'Communication Number', 'data_type_code': 'AN', 'minLength': 1, 'maxLength': 256}
 D_365 = {'type': 'string', 'title': 'Communication Number Qualifier', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
 D_366 = {'type': 'string', 'title': 'Contact Function Code', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
-D_373 = {'type': 'string', 'format': '\\d\\d\\d\\d\\d\\d\\d\\d', 'title': 'Date', 'data_type_code': 'DT', 'minLength': 8, 'maxLength': 8}
+D_373 = {'type': 'string', 'title': 'Date', 'data_type_code': 'DT', 'minLength': 8, 'maxLength': 8, 'format': '\\d{8}'}
 D_374 = {'type': 'string', 'title': 'Date/Time Qualifier', 'data_type_code': 'ID', 'minLength': 3, 'maxLength': 3}
 D_378 = {'type': 'string', 'title': 'Allowance/Charge Percent Qualifier', 'data_type_code': 'ID', 'minLength': 1, 'maxLength': 1}
 D_380 = {'type': 'number', 'title': 'Quantity', 'data_type_code': 'R', 'minLength': 1, 'maxLength': 15}
@@ -336,8 +338,8 @@ I04 = {'type': 'string', 'title': 'I04', 'data_type_code': 'AN', 'minLength': 10
 I05 = {'type': 'string', 'title': 'I05', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
 I06 = {'type': 'string', 'title': 'I06', 'data_type_code': 'AN', 'minLength': 15, 'maxLength': 15}
 I07 = {'type': 'string', 'title': 'I07', 'data_type_code': 'AN', 'minLength': 15, 'maxLength': 15}
-I08 = {'type': 'string', 'format': '\\d\\d\\d\\d\\d\\d\\d\\d', 'title': 'I08', 'data_type_code': 'DT', 'minLength': 6, 'maxLength': 6}
-I09 = {'type': 'string', 'format': '\\d\\d\\d\\d', 'title': 'I09', 'data_type_code': 'TM', 'minLength': 4, 'maxLength': 4}
+I08 = {'type': 'string', 'title': 'I08', 'data_type_code': 'DT', 'minLength': 6, 'maxLength': 6, 'format': '\\d{6}'}
+I09 = {'type': 'string', 'title': 'I09', 'data_type_code': 'TM', 'minLength': 4, 'maxLength': 4, 'format': '\\d{4}'}
 I10 = {'type': 'string', 'title': 'I10', 'data_type_code': 'ID', 'minLength': 1, 'maxLength': 1}
 I11 = {'type': 'string', 'title': 'I11', 'data_type_code': 'ID', 'minLength': 5, 'maxLength': 5}
 I12 = {'type': 'number', 'scale': 0, 'title': 'I12', 'data_type_code': 'N0', 'minLength': 9, 'maxLength': 9}

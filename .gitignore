@@ -25,3 +25,4 @@ doc_source
 *.egg-info/*
 docs/build/doctrees/*/*.doctree
 docs/build/doctrees/*.doctree
+.nova/Configuration.json

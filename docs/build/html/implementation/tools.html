@@ -100,6 +100,27 @@ This parallels the Python <code class="docutils literal notranslate"><span class
 It could be replace with an external reference using a full URI, which might be more
 sensible in the long run.</p>
 <p>These are generally <code class="docutils literal notranslate"><span class="pre">&quot;type&quot;:</span> <span class="pre">{&quot;$ref&quot;:</span> <span class="pre">&quot;#/$common/some_element_schema&quot;}</span></code> constructs.</p>
+<p>Some messages will have AN fields with a type and a value.
+The type is one of the following:</p>
+<ul class="simple">
+<li><p>D8 (yyyymmdd),</p></li>
+<li><p>D6 (yymmdd),</p></li>
+<li><p>RD8 (yyyymmdd-yyyymmdd),</p></li>
+<li><p>TM (hhmm)</p></li>
+</ul>
+<p>These are types <strong>outside</strong> the X12 definitions.
+They’re application-specific.</p>
+</section>
+<section id="schema-and-annotations">
+<h4>Schema and Annotations<a class="headerlink" href="#schema-and-annotations" title="Permalink to this heading">¶</a></h4>
+<p>There are two approaches to defining the type details.</p>
+<ul class="simple">
+<li><p>JSON Schema structures. This  is an interim solution.</p></li>
+<li><p>Type Annotations. This is the goal.</p></li>
+</ul>
+<p>We provide both strategies as part of a transition
+from the interim JSON Schema structure to the final
+Type Annotation.</p>
 </section>
 <section id="x12-message-version-mapping">
 <h4>X12 Message Version Mapping<a class="headerlink" href="#x12-message-version-mapping" title="Permalink to this heading">¶</a></h4>
@@ -143,14 +164,44 @@ The composite is described as if it’s a sub-segment.</p>
 <p>Yes, codes are locally defined codes, where code_set is an imported set of codes.
 They’re both the same JSONSchema enum attribute.</p>
 <p>Usage=”R” (required) percolates up to the containing Composite or Segment.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tools.xml_extract.Element.annotation">
+<span class="sig-name descname"><span class="pre">annotation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Annotated</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tools.xml_extract.Element.annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some Segment or Composite will have</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">item</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">DT</span><span class="p">,</span> <span class="n">Title</span><span class="p">(</span><span class="s2">&quot;Item&quot;</span><span class="p">),</span> <span class="n">Usage</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">),</span> <span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">DT</span></code> type alias is <code class="docutils literal notranslate"><span class="pre">Annotated[datetime.date,</span> <span class="pre">...]</span></code>.</p>
+<p>This flattens nicely to <code class="docutils literal notranslate"><span class="pre">datetime.date</span></code> with details.</p>
+<p>Or</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">item</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="n">DT</span><span class="p">,</span> <span class="n">title</span><span class="p">(</span><span class="s2">&quot;Item&quot;</span><span class="p">),</span> <span class="o">...</span><span class="p">]],</span> <span class="n">MaxItems</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>The list – as a whole – and the items both have annotations.
+The over-all <code class="docutils literal notranslate"><span class="pre">list[]</span></code> has a <code class="docutils literal notranslate"><span class="pre">MaxItems()</span></code> annotation.
+The Element within the list has the detailed annotations for this element.
+This flattens nicely to <code class="docutils literal notranslate"><span class="pre">list[datetime.date]</span></code>.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
-<dt class="sig sig-object py" id="tools.xml_extract.EmitPython">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">EmitPython</span></span><a class="headerlink" href="#tools.xml_extract.EmitPython" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="tools.xml_extract.EmitPython_Annotated">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">EmitPython_Annotated</span></span><a class="headerlink" href="#tools.xml_extract.EmitPython_Annotated" title="Permalink to this definition">¶</a></dt>
 <dd><p>Message visitor to emit Pythonic definitions for
 Elements, Composites, Segments, Loops, and Messages.</p>
-<p>These will be extension subclasses to definitions in <code class="docutils literal notranslate"><span class="pre">x12.base</span></code>.</p>
+<p>This is “Annotated”, which uses only annotations.</p>
+<p>The classes created will be extension subclasses to definitions in <code class="docutils literal notranslate"><span class="pre">x12.base</span></code>.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="tools.xml_extract.EmitPython_Interim">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">EmitPython_Interim</span></span><a class="headerlink" href="#tools.xml_extract.EmitPython_Interim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Message visitor to emit Pythonic definitions for
+Elements, Composites, Segments, Loops, and Messages.</p>
+<p>This is “Interim”, which uses an explicit <code class="docutils literal notranslate"><span class="pre">Schema</span></code>
+internal class definition.</p>
+<p>The classes created will be extension subclasses to definitions in <code class="docutils literal notranslate"><span class="pre">x12.base</span></code>.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -164,6 +215,16 @@ Elements, Composites, Segments, Loops, and Messages.</p>
 <dt class="sig sig-object py" id="tools.xml_extract.Message">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">Message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loops</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tools.xml_extract.Loop" title="tools.xml_extract.Loop"><span class="pre">tools.xml_extract.Loop</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.xml_extract.Message" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Complete Message.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tools.xml_extract.Message.jsonschema">
+<span class="sig-name descname"><span class="pre">jsonschema</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></span><a class="headerlink" href="#tools.xml_extract.Message.jsonschema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emits JSON Schema for a message.</p>
+<div class="admonition-todo admonition" id="id2">
+<p class="admonition-title">Todo</p>
+<p>properly flatten the message to emit $loop, $segment, $composite, and $element definitions.</p>
+</div>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -185,6 +246,23 @@ and finally the containing message.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">Segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_tag</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">usage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_use</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">syntax</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#tools.xml_extract.Element" title="tools.xml_extract.Element"><span class="pre">tools.xml_extract.Element</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#tools.xml_extract.Composite" title="tools.xml_extract.Composite"><span class="pre">tools.xml_extract.Composite</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#tools.xml_extract.Segment" title="Permalink to this definition">¶</a></dt>
 <dd><p>A collection of Elements and Composites.</p>
 <p>A JSONSchema {“type”: “object”: “properties”: {…}} schema</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="tools.xml_extract.Segment.annotation">
+<span class="sig-name descname"><span class="pre">annotation</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Annotated</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#tools.xml_extract.Segment.annotation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Some Message or Loop will have</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">segment</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="n">Loop_Seg_Class</span><span class="p">,</span> <span class="n">Title</span><span class="p">(</span><span class="s2">&quot;Segnment&quot;</span><span class="p">),</span> <span class="n">Usage</span><span class="p">(</span><span class="s2">&quot;R&quot;</span><span class="p">),</span> <span class="n">Sequence</span><span class="p">(</span><span class="s2">&quot;1&quot;</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>This flattens nicely to <code class="docutils literal notranslate"><span class="pre">Loop_Seg_Class</span></code> with details.</p>
+<p>Or</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">segment</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="n">Loop_Seg_Class</span><span class="p">,</span> <span class="n">title</span><span class="p">(</span><span class="s2">&quot;Segnment&quot;</span><span class="p">),</span> <span class="o">...</span><span class="p">]],</span> <span class="n">MaxItems</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+</pre></div>
+</div>
+<p>The list – as a whole – and the items both have annotations.
+List annotations are small (MaxItems).
+The Segment in the list has more complex annotations.</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py function">
@@ -266,8 +344,16 @@ Note that the schema is all attributes, not actual tags.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="tools.xml_extract.main">
 <span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x12_package</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">pathlib.Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tools.xml_extract.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract from XML schema.
-Make Python or Make JSONSchema.</p>
+<dd><p>Extract from XML schema and make Python modules for parsing messages.</p>
+<p>Making JSON Schema is possible.
+JSON Schema <strong>should</strong> be created from the Python, not from the XML.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tools.xml_extract.make_common_module">
+<span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">make_common_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codesets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tools.xml_extract.Codeset" title="tools.xml_extract.Codeset"><span class="pre">tools.xml_extract.Codeset</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tools.xml_extract.DataElement" title="tools.xml_extract.DataElement"><span class="pre">tools.xml_extract.DataElement</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_package</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tools.xml_extract.make_common_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emits common module with definitions of common data types.</p>
+<p>Depends on <code class="docutils literal notranslate"><span class="pre">EmitPython_Interim</span></code> class.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -275,12 +361,31 @@ Make Python or Make JSONSchema.</p>
 <span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">make_jsonschema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tools.xml_extract.make_jsonschema" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract from XML schema, creating JSON Schema.</p>
 <p>Each message becomes a separate .json document.</p>
+<p>JSON Schema <strong>should</strong> be created from the Python, not from the XML.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tools.xml_extract.make_message_module">
+<span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">make_message_module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codesets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tools.xml_extract.Codeset" title="tools.xml_extract.Codeset"><span class="pre">tools.xml_extract.Codeset</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tools.xml_extract.DataElement" title="tools.xml_extract.DataElement"><span class="pre">tools.xml_extract.DataElement</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_package</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tools.xml_extract.make_message_module" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emits a module to parse a message.</p>
+<p>Depends on <code class="docutils literal notranslate"><span class="pre">EmitPython_Interim</span></code> class.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="tools.xml_extract.make_message_schema">
+<span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">make_message_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">codesets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tools.xml_extract.Codeset" title="tools.xml_extract.Codeset"><span class="pre">tools.xml_extract.Codeset</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_elements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#tools.xml_extract.DataElement" title="tools.xml_extract.DataElement"><span class="pre">tools.xml_extract.DataElement</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_package</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tools.xml_extract.make_message_schema" title="Permalink to this definition">¶</a></dt>
+<dd><p>Emit JSON Schema for a message.</p>
+<div class="admonition-todo admonition" id="id3">
+<p class="admonition-title">Todo</p>
+<p>Include the “$ref” data types and code sets.</p>
+</div>
+<p>JSON Schema <strong>should</strong> be created from the Python, not from the XML.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="tools.xml_extract.make_python">
 <span class="sig-prename descclassname"><span class="pre">tools.xml_extract.</span></span><span class="sig-name descname"><span class="pre">make_python</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#tools.xml_extract.make_python" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract from XML schema, creating Python (with some JSON Schema).</p>
+<dd><p>Extract from XML schema, creating Python.</p>
 <p>Each message becomes a separate module in an overall “x12” package.</p>
 </dd></dl>
 
@@ -346,7 +451,6 @@ Hence the duplication.</p>
         <span class="n">code</span>
 </pre></div>
 </div>
-<p>format: one of D8 (yyyymmdd), D6 (yymmdd), RD8 (yyyymmdd-yyyymmdd), TM (hhmm)  Not sure where this is used.</p>
 <p>usage: one of R (required), S (situational), N (not used)</p>
 <p>syntax: uses a string with the following structure <code class="docutils literal notranslate"><span class="pre">(E|L|P|C|R)([0-9]{2}){2,20}</span></code></p>
 <blockquote>

@@ -27,7 +27,7 @@ The core idea is that a Segment is a group of related Data Elements. A segment
 has an identifier, making it possible to identify repeating loops 
 and any omitted segments.
 
-The segments are terminated with a `~` and data elements terminated with `*`.
+The segments are often terminated with a `~` and data elements terminated with `*` or `|`.
 A complete schema is required, including details of fields that are optional.
 
 See https://docs.informatica.com/data-integration/b2b-data-transformation/10-1/libraries-guide/descriptions-of-the-libraries/hipaa-library/hipaa-message-structure.html
@@ -40,14 +40,33 @@ We rely on https://github.com/azoner/pyx12 for the definition of the message.
 (Ideally, we'd go to the source documents, including
 the X12 standard and Implementation Guides. We don't know where to find these.)
 
+Building the Message Classes
+============================
+
+1. Clone and check out  https://github.com/azoner/pyx12.
+2. `cd tigershark3/tools`.
+3. Put `tigershark` on the `PYTHONPATH` environment variable.
+4. Run the `xml_extract.py` application to build the message classes.
+   All of the parameters are in the `__name__ == "__main__"` block.
+
+```shell
+cd tigershar3/tools
+PYTHONPATH=.. python xml_extract.py
+```
+
 State of the Project
 ====================
 
 Version 3.0
 -----------
 
-A foundational rewrite. This uses type annotations to define message structure.
-It works with JSON Schema to export (and import) messages in JSON notation.
+A foundational rewrite. This uses Python type annotations to define message structure.
+The ``tools/xml_extract.py`` tool converts PyX12 XML message definitions into
+pure Python classes.  
+
+It can emit a JSON Schema description of messages, also.
+This permits transforming raw data to JSON for analysis and processing.
+
 
 Version 0.2.5
 -------------

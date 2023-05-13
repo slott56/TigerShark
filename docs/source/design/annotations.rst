@@ -1,295 +1,182 @@
 ..  _`design.annotations`:
 
-################
-Type Hints
-################
+#############################
+Element Types and Annotations
+#############################
 
-The message/loop/segment/composite structure is defined with type hints.
-Individual elements don't rely on type annotations, but instead rely on JSON Schema details provided separately.
+Currently, the :mod:`x12.base.Element` class defines individual, atomic elements.
+Is this necessary? Or can we approach it without the added overhead of these classes?
+Can we replace them with type annotations and focus on the
+collections (i.e. Composites and Segments)?
 
-We'll explore this with a series of examples.
+We have the following considerations:
 
--   `Messages`_. These are collections of Loops.
+-   Providing a complete JSON Schema definition for an Element of a Message.
 
--   `Loops`_. These are collections of Segments and Sub-Loops.
+-   Using the Annotation information to convert between serialized text and native Python values.
 
--   `Segments`_. These are collections of Elements and Composites.
+-   Updating ``tools/xml_extract.py`` application.
 
--   `Elements`_. These are atomic.
+Essential Schema Details
+========================
 
--   `Composites`_. These are collections of Elements.
+The XML source files have the definitionof the schema.
+These appear to be derived from the
+source .SEF files, which we don't have.
 
-The objective is to provide a pure-Python definition of the X12 EDI structure.
-This can make it easier to examine and analyze messages.
-It can also make it somewhat easier to define alternative syntax for messages
-to further facilitate analysis and processing.
+The schema details in the XML source files include the following:
 
-..  important:: The JSON Schema is a work in progress
+:Text without further specifications:
+    ``'data_type_code': 'AN'`` or ``'data_type_code': 'ID'``.
 
-    The JSON Schema output seems reasonable, but has not really been implemented fully.
+    The ``str`` type needs length information in addition to the base type.
+    This should become ``typing.Annotated[str, MinLen(x), MaxLen(y)]``.
 
-..  important:: The IG compliance is indirect
+    The annotation becomes JSONSchema ``{"type": "string", "minLength": x, "maxLength": y}``
 
-    These definitions are based on the PyX12 project.
-    TigerShark may have introduced bugs or complications.
+:Text with a list of values:
+    ``'data_type_code': 'AN'`` or ``'data_type_code': 'ID'``.
 
-The JSON Schema **should** be more tightly integrated into the Python definitions.
-An explicit ``Schema`` internal class should be removed.
+    The ``Literal["value", ...]`` type could be used for this; it has the advantage of being supported directly by **mypy**.
+    An alternative is ``typing.Annotated[str, MinLen(2), MaxLen(2), Enumerated("value", "value")]``;
+    while somewhat more internally consistent, it bypasses **mypy**.
 
-Messages
-=========
+    The annotation becomes JSONSchema ``{"type": "string", "minLength": x, "maxLength": y, "enum": [values, ...]}``
 
-Here's an example of a Message definition.
+:Text with a format specification:
+    ``'data_type_code': 'DT'`` or ``'data_type_code': 'TM'``.
 
-::
+    The Python ``str`` type needs format information in addition to the base type.
+    This could be ``typing.Annotated[str, MinLen(4), MaxLen(4), Format(r'\d\d\d\d')]``.
+    The conversion to ``datetime.date`` or ``datetime.time``, however, omitted when using a ``str``\ -focused type annotation.
 
-    class MSG270(Message):
-        """HIPAA Health Care Eligibility Inquiry X092A1-270"""
-        class Schema:
-            json = {'title': 'HIPAA Health Care Eligibility Inquiry X092A1-270',
-             'description': 'xid=270 name=HIPAA Health Care Eligibility Inquiry X092A1-270',
-             'type': 'object',
-             'properties': {'isa_loop': {'$ref': '#/$loops/ISA_LOOP'}},
-             'required': ['isa_loop']}
-        isa_loop: list[ISA_LOOP]
+    This should be ``typing.Annotated[datetime.time, Format('%H%M')]`` or ``typing.Annotated[datetime.date, Format('%Y%m%d')]``.
+    In the exotic cases of permitting either 6- or 8-position dates, ``typing.Annotated[datetime.date, Format('%Y%m%d'), Format('%y%m%d')]`` might be workable.
 
-The message contains a single attribute.
+    Preserving the length information (to be consistent with other annotations)
+    is redundant, but possibly helpful. Consider ``typing.Annotated[datetime.time, MinLen(4), MaxLen(4), Format('%H%M')]``.
 
-:isa_loop:
-    This is defined by the ``list[ISA_LOOP]`` type annotation to be a list of ``ISA_LOOP`` instances.
-    A parsed message will always have an ``isa_loop`` attribute, and it will be a list.
-    An application will use ``msg.isa_loop[0]`` to refer to the first ISA loop of a given message.
+    The annotation becomes JSONSchema ``{"type": "string", "minLength": x, "maxLength": y, "format": "\d\d\d\d", "conversion": "date"}``.
+    An extension attribute, "conversion", is required to clarify the need for a conversion when serializing or deserializing.
 
-Additional information is provided in an internal class definition, always named ``Schema``, providing JSON Schema
-details. These come from the source XML (and the original IG) and represent aspects of a defintion that
-aren't **easily** incorporated into a class definition.
+:"Real" numbers:
+    ``'data_type_code': 'R'``.
 
-..  important:: The JSON Schema values should be deduced from pure Python.
+    The ``float`` type with additional sizing information to describe the source text.
+    This is ``typing.Annotated[float, MinLen(4), MaxLen(4)]``.
 
-    Here are schema attributes and how they could be defined.
+    The annotation becomes JSONSchema ``{"type": "number", "minLength": x, "maxLength": y, "format": "\d\d\d\d", "conversion": "date"}``.
 
-    :title:
-        Should be first line of the docstring
+:Numbers:
+    ``'data_type_code': 'N'``.
 
-    :description:
-        Should be the docstring with the first line removed
+    The ``int`` type with additional sizing information to describe the source text.
+    This is ``typing.Annotated[int, MinLen(4), MaxLen(4)]``.
 
-    :type:
-        Is always ``object`` for Messages, Loops, Segments, and Composites.
+    The annotation becomes JSONSchema ``{"type": "integer", "minLength": x, "maxLength": y, "format": "\d\d\d\d", "conversion": "date"}``.
+    This uses the common extension of "integer" instead of "number".
 
-    :properties:
-        Is a template that can be built from the attribute type annotations.
+:Decimal numbers:
+    Any of the various ``'data_type_code': 'Nx'`` options.
 
-    :required:
-        This isn't obvious from Python, but can be deduced from the ``| None`` annotations used for the attributes.
+    The ``Decimal`` type with additional sizing information to describe the source text.
+    Note that decimal points are *not* part of the source representation, and the `scaleb()` method
+    must be used.
+    A type of ``'data_type_code': 'N2'``, for example, this is ``typing.Annotated[decimal.Decimal, MinLen(4), MaxLen(4), Scale(2)]``.
 
-    ..  todo:: Reduce reliance on a ``Schema`` class for ``Message`` subclasses. ``Schema`` should be a property.
+    The annotation becomes JSONSchema ``{"type": "str", "minLength": x, "maxLength": y, "format": "\d\d\d\d", "conversion": "decimal", "scale": 2}``.
+    An extension attributes, "conversion" and "scale", are required to clarify the need for a conversion when serializing or deserializing.
 
+Using annotations almost eliminates the need for a separate class definition for each individual element.
+The nuanced details of the title for an element introduces a tiny complication.
+Adding ``Title("Number of Included Functional Groups")`` as part of the annotations provides a way
+to include this information in a JSON Schema document.
 
-Loops
-=========
+This permits type definitions to become first-class ``TypeAlias`` definitions.
+These can be properly re-used in segment definitions.
 
-A Loop a collection of segments (and sub-loops). It is also a namespace to distinguish reused references
-to a common segment definition. See :ref:`design.loop_namespace`.
+Data Validation
+===============
 
-The loop-as-namespace is implemented by using the loop name as a qualifier for segments that are part of the loop.
+The source data can be validated by these detailed annotations.
 
-Here's an example of a Loop definition.
+There are two tiers to validation:
 
-::
+-   **Structural**. The ``parse()`` methods all gather source text and apply the overall
+    Message, Loop, or Segment class to build an instance.
+    The structural type hints of ``x : SomeClass``, ``y: list[SomeClass]``,
+    are exploited to understand the structure of message and loop.
 
-    class ISA_LOOP(Loop):
-        class Schema:
-            json = {'type': 'array',
-             'items': {'title': 'Interchange Control Header',
-                       'usage': 'R',
-                       'description': 'xid=ISA_LOOP name=Interchange Control Header '
-                                      'type=explicit',
-                       'position': 1,
-                       'type': 'object',
-                       'properties': {'isa': {'$ref': '#/$segments/ISA_LOOP_ISA'},
-                                      'gs_loop': {'$ref': '#/$segments/GS_LOOP'},
-                                      'ta1': {'$ref': '#/$segments/ISA_LOOP_TA1'},
-                                      'iea': {'$ref': '#/$segments/ISA_LOOP_IEA'}},
-                       'required': ['isa', 'gs_loop', 'iea']}}
-        isa: ISA_LOOP_ISA
-        gs_loop: list[GS_LOOP]
-        ta1: ISA_LOOP_TA1 | None
-        iea: ISA_LOOP_IEA
+-   **Elemental**. For Composites and Elements, the ``build()`` method is used to construct
+    these foundational objects. At this level,
+    ``x: SomeTypeAlias`` becomes important for converting the text source
+    into a Python object.
 
-This Loop has four attributes.
+The Segment parsing is -- of course -- the most complicated because it's a
+mix of structural and elemental. Overall, the segment is structural: it's a sequence of individual elements or composites.
+However, each element has elemental validation and conversion rules.
 
-:isa:
-    An instance of the ISA_LOOP's ``ISA`` segment.
+..  important:: Source Text and Python Objects
 
-:gs_loop:
-    A sequence of GS_LOOP instances.
+    The ``Element`` class currenly keeps both source text and converted value.
 
-:ta1:
-    An optional instance of the  ISA_LOOP's ``TA1`` segment.
+    This is handy for tracking down a parsing problem.
+    It permits displaying a Segment that has an invalid element to provide debugging context.
 
-:iea:
-    An instance of the ISA_LOOP's ``IEA`` segment.
+    Eliminating the ``Element`` objects *also* means tracking the parsing
+    state to provide ample context for invalid data.
 
-Additional information is provided in an internal class definition, always named ``Schema``, providing JSON Schema
-details. These come from the source XML (and the original IG) and represent aspects of a defintion that
-aren't **easily** incorporated into a class definition.
-For example, the ``'usage': 'R'`` means this loop is required; this is properly an aspect of the parent message.
+The ``parse()`` methods have a ``match`` statement for the various
+type hints. Currently, there are ``case _ if issubclass(field_type, Element):``
+and ``case _ if issubclass(field_type, Composite):`` clauses that must be replaced
+with ``case _AnnotatedAlias() as p:`` to examine the annotations in detail.
 
-..  important:: The JSON Schema values should be deduced from pure Python.
+It seems easiest to have a generic ``convert(annotation: _AnnotatedAlias, source: str) -> Any``
+function. However, the first parameter of an annotation is a base type,
+permitting a ``match get_args(p)[0]:`` statement to use type-specific
+converters: ``str_convert(annotation: _AnnotatedAlias, source: str) -> str``, etc,
+for the supported ``str``, ``int``, ``float``, ``datetime.date``, ``datetime.time``, ``Decimal`` types.
 
-    Note that the description includes values taken from the XML schema (and the IG) that don't seem to be useful,
-    but are sill preserved here.
+Additional Schema Details
+=========================
 
-    ..  todo:: Reduce reliance on a ``Schema`` class for ``Message`` subclasses. ``Schema`` should be a property.
+It's not perfectly clear where supplemental data like the Segment identifier string and the "position" information
+should be carried. Should this be part of the docstring? Or should it be a separate attribute-like feature
+of the class? Or should it be an internal class stripped down to these two features?
 
-Segments
-=========
-
-Here's an example of a Segment definition.
+Here's a potential segment definition with no reuse of type information.
 
 ::
 
     class ISA_LOOP_IEA(Segment):
-        """Interchange Control Trailer"""
+        """
+        Interchange Control Trailer
+        """
         class Schema:
-            json = {'title': 'Interchange Control Trailer',
-             'usage': 'R',
-             'description': 'xid=IEA name=Interchange Control Trailer',
-             'position': 30,
-             'type': 'object',
-             'properties': {'xid': {'literal': 'IEA'},
-                            'iea01': {'$ref': '#/$elements/ISA_LOOP_IEA01'},
-                            'iea02': {'$ref': '#/$elements/ISA_LOOP_IEA02'}},
-             'required': ['iea01', 'iea02']}
-            segment_name = 'IEA'
-        iea01: ISA_LOOP_IEA01
-        iea02: ISA_LOOP_IEA02
+            segment_name = "IEA"
+            position = 30
 
-This Segment has two attributes and a segment ``xid``.
+        iea01: Annotated[Decimal, MinLen(1), MaxLen(5), Scale(0), Title("Number of Included Functional Groups")]
+        iea02: Annotated[Decimal, MinLen(9), MaxLen(9), Scale(0), Title("Interchange Control Number")]
 
-:xid:
-:segment_name:
-    The literal ``"IEA"`` to identify this segment. This is defined in the ``Schema`` object.
-    It -- perhaps -- could be a ``Literal["IEA"]`` type annotation.
-    However, the name is an immutable feature of the segment, not a mutable attribute value.
-
-:iea01:
-    An instance of the ISA_LOOP's ``IEA01`` element.
-
-:iea02:
-    An instance of the ISA_LOOP's ``IEA02`` element
-
-..  important:: The JSON Schema values should be deduced from pure Python.
-
-    Note that the description includes values taken from the XML schema (and the IG) that don't seem to be useful,
-    but are sill preserved here.
-
-    The position attribute seems to be used to sort the definitions into a proper ordering within a loop definition.
-
-    ..  todo:: Reduce reliance on a ``Schema`` class for ``Message`` subclasses. ``Schema`` should be a property.
-
-
-Elements
-=========
-
-Here's an example of an Element definition.
+Here's a potential segment definition with reuse.
 
 ::
 
-    class ISA_LOOP_IEA01(Element):
-        """Number of Included Functional Groups"""
+    N0: TypeAlias = Annotated[Decimal, Scale(0)]
+    I16: TypeAlias = Annotated[N0, MinLen(1), MaxLen(5)]
+    I12: TypeAlias = Annotated[N0, MinLen(9), MaxLen(9)]
+
+    class ISA_LOOP_IEA(Segment):
+        """
+        Interchange Control Trailer
+        """
         class Schema:
-            json = {'title': 'Number of Included Functional Groups',
-             'usage': 'R',
-             'description': 'xid=IEA01 data_ele=I16',
-             'sequence': 1,
-             'type': {'$ref': '#/$common/I16'}}
-            datatype = common.I16
-            min_len = 1
-            max_len = 5
+            segment_name = "IEA"
+            position = 30
 
-There are no attributes of an Element.  (If there were, it wouldn't be atomic, would it?)
+        iea01: Annotated[I16, Title("Number of Included Functional Groups")]
+        iea02: Annotated[I12, Title("Interchange Control Number")]
 
-The details of the value's type are provided in the XML schema definition.
-They can also be provided via a set of common type definitions that are widely reused, as well as being part of the element.
-
-In this case, the I16 definition looks like this:
-
-::
-
-    I16 = {'type': 'number', 'scale': 0, 'title': 'I16', 'data_type_code': 'N0', 'minLength': 1, 'maxLength': 5}
-
-These details were used to build the ``min_len`` and ``max_len`` attributes of the ``Schema`` object.
-These features are very important when parsing the ISA segment. The remaining details are helpful for converting source text to a Python value,
-and are used by the element's :meth:`x12.base.Element.value` method.
-
-It's not perfectly clear whether or not Element details require a separate class.
-See :ref:`design.element`.
-
-
-Composites
-==========
-
-Here's the definition of a Composite.
-
-::
-
-    class L2110D_C003(Composite):
-        class Schema:
-            json = {'title': 'Composite Medical Procedure Identifier',
-             'usage': 'S',
-             'description': 'xid=None name=Composite Medical Procedure Identifier refdes= '
-                            'data_ele=C003',
-             'sequence': 2,
-             'syntax': [],
-             'type': 'object',
-             'properties': {'eq02_01': {'title': 'Product or Service ID Qualifier',
-                                        'usage': 'R',
-                                        'description': 'xid=EQ02-01 data_ele=235',
-                                        'sequence': 1,
-                                        'type': {'allOf': [{'$ref': '#/$common/235'},
-                                                           {'enum': ['AD', 'CJ', 'HC', 'ID',
-                                                                     'IV', 'N4', 'ZZ']}]}},
-                            'eq02_02': {'title': 'Procedure Code',
-                                        'usage': 'R',
-                                        'description': 'xid=EQ02-02 data_ele=234',
-                                        'sequence': 2,
-                                        'type': {'$ref': '#/$common/234'}},
-                            'eq02_03': {'title': 'Procedure Modifier',
-                                        'usage': 'S',
-                                        'description': 'xid=EQ02-03 data_ele=1339',
-                                        'sequence': 3,
-                                        'type': {'$ref': '#/$common/1339'}},
-                            'eq02_04': {'title': 'Procedure Modifier',
-                                        'usage': 'S',
-                                        'description': 'xid=EQ02-04 data_ele=1339',
-                                        'sequence': 4,
-                                        'type': {'$ref': '#/$common/1339'}},
-                            'eq02_05': {'title': 'Procedure Modifier',
-                                        'usage': 'S',
-                                        'description': 'xid=EQ02-05 data_ele=1339',
-                                        'sequence': 5,
-                                        'type': {'$ref': '#/$common/1339'}},
-                            'eq02_06': {'title': 'Procedure Modifier',
-                                        'usage': 'S',
-                                        'description': 'xid=EQ02-06 data_ele=1339',
-                                        'sequence': 6,
-                                        'type': {'$ref': '#/$common/1339'}},
-                            'eq02_07': {'title': 'Description',
-                                        'usage': 'N',
-                                        'description': 'xid=EQ02-07 data_ele=352',
-                                        'sequence': 7,
-                                        'type': {'$ref': '#/$common/352'}}},
-             'required': ['eq02_01', 'eq02_02']}
-        eq02_01: L2110D_EQ02_01
-        eq02_02: L2110D_EQ02_02
-        eq02_03: L2110D_EQ02_03 | None
-        eq02_04: L2110D_EQ02_04 | None
-        eq02_05: L2110D_EQ02_05 | None
-        eq02_06: L2110D_EQ02_06 | None
-
-This defines six attributes; the first two are required, four are "situational", one (with ``'usage': 'N',``) is not used.
-
-The name, ``L2110D_C003``, uses the loop ``2210D`` as a namespace for composite ``C003``.
-The composite name seems to haVe been generated as part of the XML, and may not be formally defined in the IG.
+This form (with reuse) may better preserve the source document definitions.
+This may make changes somewhat simpler because definitions are not repeated.
