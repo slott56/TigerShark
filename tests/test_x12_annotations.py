@@ -43,12 +43,12 @@ def test_enumerated():
 
 def test_title_usage_position_syntax():
     class X:
-        some_var: Annotated[str, Title("Title"), Usage("R"), Position("1"), Syntax("P2P3")]
+        some_var: Annotated[str, Title("Title"), Usage("R"), Position("1"), Syntax(["P2P3"])]
     th = get_type_hints(X, include_extras=True)
-    assert get_args(th['some_var']) == (str, Title("Title"), Usage("R"), Position("1"), Syntax("P2P3"))
+    assert get_args(th['some_var']) == (str, Title("Title"), Usage("R"), Position("1"), Syntax(("P2P3",)))
     # print(repr(th['some_var']))
-    assert repr(th['some_var']) == "typing.Annotated[str, Title('Title'), Usage('R'), Position('1'), Syntax('P2P3')]"
-    assert json_schema(th['some_var']) == {'title': ('Title',), 'type': 'string', 'x-position': ('1',), 'x-syntax': ('P2P3',), 'x-usage': ('R',)}
+    assert repr(th['some_var']) == "typing.Annotated[str, Title('Title'), Usage('R'), Position('1'), Syntax(('P2P3',))]"
+    assert json_schema(th['some_var']) == {'title': 'Title', 'type': 'string', 'x-position': '1', 'x-syntax': [('P2P3',)], 'x-usage': 'R'}
 
 
 def test_required_maxItems():
@@ -64,9 +64,9 @@ def test_required_maxItems():
 
 def test_title_otherMeta():
     class X:
-        some_var: Annotated[str, OtherMeta("name", "value")]
+        some_var: Annotated[str, OtherMeta(name="value")]
     th = get_type_hints(X, include_extras=True)
-    assert get_args(th['some_var']) == (str, OtherMeta("name", "value"))
+    assert get_args(th['some_var']) == (str, OtherMeta(name="value"))
     # print(repr(th['some_var']))
-    assert repr(th['some_var']) == "typing.Annotated[str, OtherMeta('name', 'value')]"
+    assert repr(th['some_var']) == "typing.Annotated[str, OtherMeta(name='value')]"
     assert json_schema(th['some_var']) == {'name': 'value', 'type': 'string'}

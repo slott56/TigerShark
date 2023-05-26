@@ -9,13 +9,15 @@ which must be provided as JSONSchema extensions.
 """
 import re
 import decimal
+import sys
 from typing import Any, get_origin, get_args, cast
 from typing_extensions import _AnnotatedAlias
 from types import GenericAlias, UnionType
 
 class X12Annotation:
     def __init__(self, *parameters: Any) -> None:
-        self.params = parameters
+        self.params = tuple(parameters)
+        self.skip_validation = False
 
     def __repr__(self) -> str:
         match len(self.params):
@@ -32,14 +34,42 @@ class X12Annotation:
         else:
             return self.params == other.params
 
+    def __hash__(self) -> int:
+        return (hash(self.__class__) + hash(self.params))  % sys.hash_info.modulus
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return cast(dict[str, Any], {})
+
+    def invalid(self, source: str) -> str | None:
+        """
+        Returns None if valid (i.e., not invalid).
+        Returns message for ValueError if invalid.
+        ::
+
+            if msg := ann.invalid(text):
+                raise ValueError(msg)
+
+        Or. Accumulate a list of problems.
+        ::
+
+            errors = list(filter(None, (ann.invalid(text) for ann in annotations))
+            if errors:
+                raise ValueError('; '.join(errors))
+        """
+        return None
 
 class Format(X12Annotation):
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"format": self.params[0]}
+
+    def invalid(self, source: str) -> str | None:
+        if self.skip_validation:
+            return None
+        if re.match(self.params[0], source) is None:
+            return f"invalid format for {source!r}, not {self.params[0]}"
+        return None
 
 class Scale(X12Annotation):
     @property
@@ -51,35 +81,65 @@ class MinLen(X12Annotation):
     def JSONSchema(self) -> dict[str, Any]:
         return {"minLength": self.params[0]}
 
+    def invalid(self, source: str) -> str | None:
+        if self.skip_validation:
+            return None
+        if source is None:
+            return None
+        if len(source) < self.params[0]:
+            return f"invalid length for {source!r}, less than {self.params[0]}"
+        return None
+
 class MaxLen(X12Annotation):
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"maxLength": self.params[0]}
+
+    def invalid(self, source: str) -> str | None:
+        if self.skip_validation:
+            return None
+        if source is None:
+            return None
+        if len(source) > self.params[0]:
+            return f"invalid length for {source!r}, greater than than {self.params[0]}"
+        return None
 
 class Enumerated(X12Annotation):
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"enum": list(self.params)}
 
+    def invalid(self, source: str) -> str | None:
+        if self.skip_validation:
+            return None
+        if source is None:
+            return None
+        if source not in self.params:
+            return f"invalid value for {source!r}, not in {self.params}"
+        return None
+
 class Title(X12Annotation):
     @property
     def JSONSchema(self) -> dict[str, Any]:
-        return {"title": self.params}
+        return {"title": self.params[0]}
 
 class Usage(X12Annotation):
     @property
     def JSONSchema(self) -> dict[str, Any]:
-        return {"x-usage": self.params}
+        return {"x-usage": self.params[0]}
 
 class Position(X12Annotation):
     @property
     def JSONSchema(self) -> dict[str, Any]:
-        return {"x-position": self.params}
+        return {"x-position": self.params[0]}
 
 class Syntax(X12Annotation):
+    def __init__(self, *parameters: Any) -> None:
+        self.params = tuple(tuple(p) for p in parameters)
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
-        return {"x-syntax": self.params}
+        return {"x-syntax": list(self.params)}
 
 class Required(X12Annotation):
     @property
@@ -99,10 +159,20 @@ class MaxItems(X12Annotation):
         return {"maxItems": self.params[0]}
 
 class OtherMeta(X12Annotation):
+    def __init__(self, **parameters: Any) -> None:
+        self.meta_params = parameters
+        self.params = tuple(self.meta_params.items())
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
-        return {self.params[0]: self.params[1]}
+        return self.meta_params
 
+    def __repr__(self) -> str:
+        nv_text = ", ".join(
+            f"{name}={value!r}"
+            for name, value in self.meta_params.items()
+        )
+        return f"{self.__class__.__name__}({nv_text})"
 
 def json_schema(type_hint: type) -> dict[str, Any]:
     """
@@ -119,7 +189,7 @@ def json_schema(type_hint: type) -> dict[str, Any]:
         annotations = []
     # print(base, type(base), annotations)
     match base:
-        case _ if isinstance(base, _AnnotatedAlias):
+        case _AnnotatedAlias():  # type: ignore[misc]
             # Descending into something like list[Annotated[str, ...]]
             schema = json_schema(base)
         case GenericAlias():
@@ -135,16 +205,16 @@ def json_schema(type_hint: type) -> dict[str, Any]:
             else:
                 raise ValueError(f"Unsupported generic: {base!r}")
                 # schema = {"x-unsupported": repr(base)}
-        case _ if issubclass(base, str):
+        case type() if issubclass(base, str):
             schema = {"type": "string"}
-        case _ if issubclass(base, int):
+        case type() if issubclass(base, int):
             schema = {"type": "integer"}
-        case _ if issubclass(base, float):
+        case type() if issubclass(base, float):
             schema = {"type": "float"}
-        case _ if issubclass(base, decimal.Decimal):
+        case type() if issubclass(base, decimal.Decimal):
             schema = {"type": "string", "_class": "Decimal"}
         case _:
-            raise ValueError(f"Unsupported type: {base!r}")
+            raise ValueError(f"unsupported type: {base!r}")
             schema = {"x-unsupported": repr(base)}
     for ann in annotations:
         match ann:

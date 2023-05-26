@@ -1,7 +1,7 @@
 """
 Base definitions for X12 message constructs:
 
-- Element -- the atomic base value
+- Element -- the atomic base value -- A python object -- str, int, float, Decimal
 
 - Composite -- a sequence of Elements
 
@@ -17,7 +17,10 @@ Composites seem to have a component separator (varies widely, but ":" is common)
 
 Segments have a segment separator (often "~")
 
-For now, each of these classes has overall attributes defined in a ``Schema`` class definition.
+The various X12 details are implemented as ``Annotated[...]``
+type hints.
+
+The "interim" solution is to use a ``Schema`` internal class definition.
 This class has a number of individual attribute values:
 
 -   ``json``, has a JSONSchema object.
@@ -39,20 +42,46 @@ The bottom-level (Composite, Element) structures have a :meth:`build` method tha
 consumes oen or more fields of a segment. Composite will consume multiple element values.
 Element will consume a single element value.
 """
-from collections.abc import Iterator
+import code
+from collections.abc import Iterator, Callable
 import datetime
 from decimal import Decimal
+import fnmatch
+from functools import wraps
 import json
 import logging
 import sys
-from types import GenericAlias, UnionType, NoneType
+from textwrap import dedent
+from types import GenericAlias, UnionType, NoneType, FunctionType
 from typing import (
-    Any, cast, get_type_hints, get_origin, get_args, assert_type, Union, TypeAlias,
-    Annotated, Sequence
+    Any, cast,
+    get_type_hints, get_origin, get_args, assert_type,
+    Union, TypeAlias, Annotated, Sequence, Literal,
+    Optional, _SpecialForm
 )
+from typing_extensions import _AnnotatedAlias
+import warnings
+
 from .annotations import *
 
 logger = logging.getLogger("x12.base")
+
+
+# Waiting for PEP 702, to using @typing.deprecated.
+def deprecated(object):
+    if isinstance(object, FunctionType):
+        @wraps(object)
+        def deprecated_func_wrapper(*args, **kwargs):
+            warnings.warn(f"{object} is deprecated", DeprecationWarning)
+            return object(*args, **kwargs)
+        return deprecated_func_wrapper
+    else:
+        def deprecation_init(self, *args, **kwargs):
+            warnings.warn(f"{object} is deprecated", DeprecationWarning)
+            return self._old_init(*args, **kwargs)
+        object._old_init = object.__init__
+        object.__init__ = deprecation_init
+        return object
 
 
 class Source:
@@ -88,6 +117,13 @@ class Source:
         self.array_sep = array_sep  # Often ":". Sometimes "^".
         self.pos: int = 0
 
+    def consume_whitespace(self) -> None:
+        """
+        Moves ``self.pos`` past any leading whitespace.
+        """
+        while self.pos != len(self.text) and self.text[self.pos].isspace():
+            self.pos += 1
+
     def elements(self) -> list[str | list[str]]:
         """
         Unpack a Segment into a list of potential Element values.
@@ -121,9 +157,7 @@ class Source:
         """
         if not self.segment_sep:
             raise RuntimeError("no element or segment separators set")  # pragma: no cover
-        # Consume whitespace.
-        while self.pos != len(self.text) and self.text[self.pos].isspace():
-            self.pos += 1
+        self.consume_whitespace()
         # TODO: re.search() might be faster at finding the next segment separator
         start = self.pos
         while self.pos != len(self.text) and self.text[self.pos] != self.segment_sep:
@@ -132,9 +166,9 @@ class Source:
         if self.pos != len(self.text):
             self.pos += 1
         elements = self.text[start:self.pos-1].rstrip().split(self.element_sep)
-        # ISA segment? Do NOT subdivide ISA16 field's value -- it vanishes into ``["", ""]``.
+        # ISA segment? Do NOT subdivide ISA16 field's value -- it would vanish into ``["", ""]``.
         # TODO: Segment ISA parser can replace ISA16 ``["", ""]`` value with the parsed array_sep value.
-        if elements[0] == "ISA":
+        if elements[0].upper() == "ISA":
             return cast(list[str | list[str]], elements)
         return [
             val.split(self.array_sep) if self.array_sep in val else val
@@ -146,9 +180,7 @@ class Source:
         Peek ahead a fixed number of characters. This also consumes leading whitespace.
         The default peek is 106 to read a non-compressed ISA segment.
         """
-        # Consume whitespace.
-        while self.pos != len(self.text) and self.text[self.pos].isspace():
-            self.pos += 1
+        self.consume_whitespace()
         # Handle the weird case of segment separator **preceeded** by whitespace.
         end = self.pos + size
         segment = self.text[self.pos: end].rstrip()
@@ -164,9 +196,7 @@ class Source:
 
     def next_segment(self) -> str:
         """Peek at upcoming segment's header. This consumes leading whitespace."""
-        # Consume whitespace.
-        while self.pos != len(self.text) and self.text[self.pos].isspace():
-            self.pos += 1
+        self.consume_whitespace()
         if not self.element_sep:
             # Assume a 3-char prefix until we have a separator
             return self.text[self.pos: self.pos+3]
@@ -180,13 +210,220 @@ class Source:
         return f"{self.element_sep=} {self.segment_sep=} text={self.text[:self.pos]!r} && {self.text[self.pos:]!r}"
 
 
-class X12DataType:
+
+@deprecated
+class SchemaType:
+    """
+    An abstraction for the Schema embedded in a class.
+
+    ..  todo: Retire this
+
+        Replace this with Annotations...
+        ::
+
+            element: Annotation[int | str | float | decimal, details...]
+
+    The datatype values become the details. ``MinLen()``, ``MaxLen()``, ``Format()``, ``Scale()``, etc.
+
+    The codes become a detail with ``Literal[...]``
+
+    The segment name is tricky. This becomes a ``_segment_name: Literal["NAME"]`` that **must be first**.
+    """
+    json: dict[str, Any]
+    datatype: dict[str, Any] | None
+    codes: list[str] | None
+    min_len: int | None
+    max_len: int | None
+    segment_name: str | None
+
+
+Conversion: TypeAlias = Callable[[str], Any] | Callable[[str, str], Any] | type[Any]
+
+class X12TypeHelper:
+
+    @classmethod
+    def from_schema(cls, schema: type[SchemaType]) -> "X12TypeHelper":
+        """Deprecated"""
+        if hasattr(schema, "datatype") and schema.datatype:
+            type_code: str = schema.datatype['data_type_code']
+            min_len: int | None = schema.datatype.get('minLength', None)
+            max_len: int | None = schema.datatype.get('maxLength', None)
+            scale: int | None = schema.datatype.get('scale', None)
+        else:
+            # Defaults if a data type was never defined
+            type_code = "AN"
+            min_len = None
+            max_len = None
+            scale = None
+        cls = TYPE_CLASS_MAP[type_code]
+        # Apply overrides to the base definition.
+        if hasattr(schema, "min_len"):
+            if (v := getattr(schema, "min_len")) > 0:
+                min_len = v
+        if hasattr(schema, "max_len"):
+            if (v := getattr(schema, "max_len")) > 0:
+                max_len = v
+        helper = cls(min_len=min_len, max_len=max_len, scale=scale or 0)
+        return helper
+
+    @classmethod
+    def annotated(cls, type_hint: type[Any]) -> "X12TypeHelper":
+        """
+        Build an X12TypeHelper that can be injected
+        as a property into a class.
+
+        If the base type is not annotated, this raises a ValueError exception.
+        """
+        try:
+            base, *aspects = get_args(type_hint)
+        except ValueError:
+            raise ValueError(f"unexpected {type_hint} not Annotated[]")
+        match base:
+            case type() if base == str:
+                return X12TypeHelper(str, *aspects)
+            case type() if base == int:
+                return X12TypeHelper(int, *aspects)
+            case type() if base == float:
+                return X12TypeHelper(float, *aspects)
+            case type() if base == Decimal:
+                scale_aspect = [a for a in aspects if isinstance(a, Scale)]
+                if scale_aspect:
+                    scale = int(scale_aspect[0].params[0])
+                else:
+                    scale = 0
+                return X12TypeHelper(cast(Conversion, lambda x, scale=scale: Decimal(x).scaleb(-scale)), *aspects)
+            case type() if base == datetime.date:
+                # TODO: Make this sensisitve to MinLen() and MaxLen()
+                formats = ["%Y%m%d", "%y%m%d"]
+                return X12TypeHelper(lambda x, f: datetime.datetime.strptime(x, f).date(), *aspects, parse_formats=formats)
+            case type() if base == datetime.time:
+                # TODO: Make this sensisitve to MinLen() and MaxLen()
+                formats = ["%H%M", "%H%M%S"]
+                return X12TypeHelper(lambda x, f: datetime.datetime.strptime(x, f).time(), *aspects, parse_formats=formats)
+            case type() if issubclass(base, Composite):
+                return X12TypeHelper(cast(Conversion, lambda x: x), *aspects)
+            # Now it gets ugly: GenericAlias/UnionType/_AnnotatedAlias
+            case GenericAlias if get_origin(base) is list:
+                repeating, *details = get_args(base)
+                return cls.annotated(repeating)
+            case UnionType():
+                alternatives = get_args(base)
+                # Check for 2, find one which is not None.
+                return cls.annotated(alternatives[0])
+            case _AnnotatedAlias():
+                base, *details = get_args(base)
+                return cls.annotated(base)
+        raise TypeError(f"invalid {type_hint}, base class {base} unknown")
+
+    def __init__(self, conversion: Conversion, *aspects: X12Annotation, parse_formats: list[str] | None = None, format: str | None = None) -> None:
+        self.conversion = conversion
+        self.aspects = aspects
+        self.validation = [
+            a for a in self.aspects
+            if isinstance(a, (Format, MaxLen, MinLen, Enumerated))
+        ]
+        self.optional = (
+            any(
+                a.params[0] in {"N", "S"} for a in self.aspects
+                if isinstance(a, (Usage,))
+            ) or any(
+                not a.params[0] for a in self.aspects
+                if isinstance(a, (Required,))
+            )
+        )
+        self.parse_formats: list[str] = parse_formats or []
+        self.format: str | None = format
+        maxlen_aspect = [a for a in aspects if isinstance(a, MaxLen)]
+        if maxlen_aspect:
+            self.max_len = maxlen_aspect[0].params[0]
+        else:
+            self.max_len = 99
+
+    def validate(self, source: str) -> None:
+        if self.optional and (source == '' or source is None):
+            return
+        for a in self.validation:
+            if msg := a.invalid(source):
+                raise ValueError(msg)
+
+    def to_py(self, source: str) -> Any:
+        if source is None:
+            # Check ``Usage`` annotation
+            return None
+        conv_func = self.conversion
+        if self.parse_formats:
+            for fmt in self.parse_formats:
+                try:
+                    v = conv_func(source, fmt)
+                    self.format = fmt
+                    return v
+                except ValueError:
+                    pass
+            raise ValueError(f"invalid {source!r} formats {self.parse_formats}")
+        else:
+            if source == "":
+                # Assume the conversion is a type, str, int, float, Decimal
+                return cast(type[Any], conv_func)()
+            else:
+                return conv_func(source)
+
+    def to_str(self, value: Any) -> str | None:
+        if self.format:
+            return f"{value:{self.format}}"
+        else:
+            return f"{value}"
+
+@deprecated
+class X12DataType(X12TypeHelper):
+    """
+    Interim wrappers for the X12 types.
+
+    Deprecated.
+
+    Many types map directly to str, int, float, decimal.
+    The type object is also the conversion function.
+
+    Others require additional features.
+
+    -   N1 to N9 require lambda source, scale=1 to 9: decimal(source).pscale(-scale).
+
+    -   DT requires lambda source: dateteime.strptime(source, format).date()
+
+    -   TM required lambda source: datetime.strptime(source, format).time()
+
+    And. Bonus. We'd really like to preserve the original
+    formatting the rare cases of DT and TM where
+    there are multiple candidate formats.
+
+    ..  todo:: Replace schema-related parameters with ``Annotated``.
+
+        New Use Case
+        ::
+
+            hints = get_type_hints(self.__class__, include_extras=True)
+            helper['x'] = X12DataType.annotated(hints['x'])
+
+        Hybrid Use Case; built an Annotation from Schema
+        ::
+
+            base_type, *aspects = TYPE_MAP[element.Schema.data_type_name]
+            aspects.extend([Minlen(element.Schema.min_len), MaxLen(element.Schema.min_len)])
+            hint = Annotated[base_type, *aspects]
+            element.helper_function = X12DataType.annotated(hint)
+
+        Interim (Schema-only) Use Case
+        ::
+
+            element.helper_function = X12DataType.from_schema(element.Schema)
+    """
     fill = " "
 
     def __init__(self, min_len: int | None = None, max_len: int | None = None, scale: int = 0) -> None:
+        super().__init__(str)
         self.min_len = min_len
         self.max_len = max_len
         self.scale = scale
+        self.dttm_formats: list[str] = []
 
     def to_py(self, source: str | None) -> Any:
         return source
@@ -201,11 +438,6 @@ class X12DataType:
         return f"{value}"
 
 
-## TODO: Replace these with annotations.
-## TODO: Refactor the features into Segment and Composite
-## - element_parse(type, str) -> Any:
-## - element_str(type, Any) -> str:
-
 class ANType(X12DataType):
     pass
 
@@ -218,25 +450,25 @@ class DTType(X12DataType):
     def __init__(self, min_len: int | None = None, max_len: int | None = None, scale: int = 0) -> None:
         super().__init__(min_len, max_len, scale)
         if self.min_len == 6 and self.max_len == 6:
-            self.date_formats = ["%y%m%d"]
+            self.dttm_formats = ["%y%m%d"]
         elif self.min_len == 8 and self.max_len == 8:
-            self.date_formats = ["%Y%m%d"]
+            self.dttm_formats = ["%Y%m%d"]
         else:
-            self.date_formats = ["%Y%m%d", "%y%m%d"]
+            self.dttm_formats = ["%Y%m%d", "%y%m%d"]
 
     def to_py(self, source: str | None) -> Any:
         if source:
-            for d_format in self.date_formats:
+            for d_format in self.dttm_formats:
                 try:
                     return datetime.datetime.strptime(source, d_format).date()
                 except ValueError:  # pragma: no cover
                     pass
-            raise ValueError(f"could not parse DT {source=} with formats {self.date_formats}")  # pragma: no cover
+            raise ValueError(f"could not parse DT {source=} with formats {self.dttm_formats}")  # pragma: no cover
         return None
 
     def to_str(self, value: Any) -> str:
-        # print(f"DTType.to_str({value=}) {self.min_len=} {self.max_len=} {self.date_formats[0]=}")
-        return value.strftime(self.date_formats[0])
+        # print(f"DTType.to_str({value=}) {self.min_len=} {self.max_len=} {self.dttm_formats[0]=}")
+        return value.strftime(self.dttm_formats[0])
 
 
 class IDType(X12DataType):
@@ -278,34 +510,34 @@ class TMType(X12DataType):
     def __init__(self, min_len: int | None = None, max_len: int | None = None, scale: int = 0) -> None:
         super().__init__(min_len, max_len, scale)
         if self.min_len == 4 and self.max_len == 4:
-            self.time_formats = ["%H%M"]
+            self.dttm_formats = ["%H%M"]
         elif self.min_len == 4 and self.max_len == 8:
             # Some length annotations is min 4 to max 8. Unclear what the remaining 4 digits might be.
-            self.time_formats = ["%H%M", "%H%M%S",]
+            self.dttm_formats = ["%H%M", "%H%M%S",]
         elif self.min_len == 6 and self.max_len == 6:
             # Makes sense logically. No examples, though.
-            self.time_formats = ["%H%M%S"]  # pragma: no cover
+            self.dttm_formats = ["%H%M%S"]  # pragma: no cover
         else:
-            self.time_formats = ["%H%M", "%H%M%S", ]
+            self.dttm_formats = ["%H%M", "%H%M%S", ]
 
     def to_py(self, source: str | None) -> Any:
         # print(f"TMType.to_py({source=}) {self.time_formats=}")
         if source:
-            for t_format in self.time_formats:
+            for t_format in self.dttm_formats:
                 try:
                     tm = datetime.datetime.strptime(source, t_format).time()
-                    self.time_formats = [t_format]
+                    self.dttm_formats = [t_format]
                     # print(f"TMType.to_py({source=}) {self.time_formats=} {tm=}")
                     return tm
                 except ValueError:
                     pass
-            raise ValueError(f"could not parse TM {source=} with formats {self.time_formats}")  # pragma: no cover
+            raise ValueError(f"could not parse TM {source=} with formats {self.dttm_formats}")  # pragma: no cover
         return None
 
     def to_str(self, value: Any) -> str:
-        # print(f"TMType.to_str({value=}) {self.min_len=} {self.max_len=} {self.time_formats[0]=}")
+        # print(f"TMType.to_str({value=}) {self.min_len=} {self.max_len=} {self.dttm_formats[0]=}")
         if value is not None:
-            return value.strftime(self.time_formats[0])
+            return value.strftime(self.dttm_formats[0])
         return ""  # pragma: no cover
 
 
@@ -325,7 +557,6 @@ class NType(X12DataType):
             return f"{base_text:{self.fill}>{self.min_len}s}"
         else:
             return base_text
-
 
 TYPE_CLASS_MAP = {
     "AN": ANType,
@@ -348,60 +579,110 @@ TYPE_CLASS_MAP = {
 }
 
 
-class SchemaType:
-    """
-    An abstraction for the Schema embedded in a class.
-
-    .. todo: Replace this structure with an annotation.
-
-    ::
-
-        element: Annotation[int | str | float | decimal, details...]
-
-    The datatype values become the details. ``MinLen()``, ``MaxLen()``, ``Format()``, ``Scale()``, etc.
-
-    The codes become a detail with ``Literal[...]``
-
-    The segment name is tricky. This becomes a ``_segment_name: Literal["NAME"]`` that **must be first**.
-    """
-    json: dict[str, Any]
-    datatype: dict[str, Any] | None
-    codes: list[str] | None
-    min_len: int | None
-    max_len: int | None
-    segment_name: str | None
-
-def type_factory(schema: type[SchemaType]) -> X12DataType:
-    """
-    This version works with Schema and is the interim solution.
-    With Annotations, this is replaced by a generic conversion.
-    """
-    if hasattr(schema, "datatype") and schema.datatype:
-        type_code: str = schema.datatype['data_type_code']
-        min_len: int | None = schema.datatype.get('minLength', None)
-        max_len: int | None = schema.datatype.get('maxLength', None)
-        scale: int | None = schema.datatype.get('scale', None)
-    else:
-        # Defaults if the data type was never defined
-        type_code = "AN"
-        min_len = None
-        max_len = None
-        scale = None
-    cls = TYPE_CLASS_MAP[type_code]
-    # Any overrides to the base definition?
-    if hasattr(schema, "min_len"):
-        if (v := getattr(schema, "min_len")) > 0:
-            min_len = v
-    if hasattr(schema, "max_len"):
-        if (v := getattr(schema, "max_len")) > 0:
-            max_len = v
-    helper = cls(min_len=min_len, max_len=max_len, scale=scale or 0)
-    return helper
-
-
 SegmentText: TypeAlias = list[str | None | list[str | None]]
 
 
+def schema(some_type: type[Any]) -> dict[str, Any]:
+    """
+    Expands an annotated type or any of the X12 structures into a JSON Schema.
+    """
+
+    def x12_class_base_schema(some_type: type[Any]) -> dict[str, Any]:
+        hints = get_type_hints(some_type, include_extras=True)
+        properties = {
+            f: schema(field_type)
+            for f, field_type in hints.items()
+            if not (f in {"Schema"} or f.startswith("_"))
+        }
+        json_schema = {
+            "description": dedent(some_type.__doc__.strip()) if some_type.__doc__ else None,
+            "class_name": some_type.__name__ if isinstance(some_type, type) else some_type.__class__.__name__,
+            "type": "object",
+            "properties": properties,
+        }
+        return json_schema
+
+    annotations: list[X12Annotation] = []
+    match some_type:
+        case GenericAlias() if get_origin(some_type) is list:
+            repeating_type, *annotations = get_args(some_type)
+            json_schema = {
+                "type": "array",
+                "items": schema(repeating_type),
+            }
+        case _AnnotatedAlias():  # type: ignore [misc]
+            base_type, *annotations = get_args(some_type)
+            json_schema = schema(base_type)
+        case UnionType():
+            alternatives = get_args(some_type)
+            json_schema = {
+                "any": [schema(alt) for alt in alternatives]
+            }
+        case Element():
+            # Deprecated
+            return getattr(some_type.Schema, 'json', {}) | getattr(some_type.Schema, 'datatype', {})
+        case Composite() | Segment() | Loop() | Message():
+            json_schema = x12_class_base_schema(some_type)
+        case datetime.date():
+            json_schema = {"type": "string", "convert": "datetime.date", "format": "?"}
+        case datetime.time():
+            json_schema = {"type": "string", "convert": "datetime.time", "format": "?"}
+        case Decimal():
+            json_schema = {"type": "string", "convert": "Decimal", "scale": "?"}
+        case type() if issubclass(some_type, Element):
+                # Deprecated
+                json_schema = getattr(some_type.Schema, 'json', {}) | getattr(some_type.Schema, 'datatype', {})
+        case type() if issubclass(some_type, (Composite, Segment, Loop, Message)):
+                json_schema = x12_class_base_schema(some_type)
+        # Classes with built-in primitive schema.
+        case type() if some_type is str:
+                json_schema = {"type": "string"}
+        case type() if some_type == int:
+                json_schema = {"type": "integer"}
+        case type() if some_type == float:
+                json_schema = {"type": "number"}
+        case _:
+            raise ValueError(f"can't make schema for {some_type} ({type(some_type)})")
+    # Effectively a reduce(set.union, (ann.JSONSchema for ann in annotations if hasattr(ann, "JSONSchema")))
+    for ann in annotations:
+        if hasattr(ann, "JSONSchema"):
+            json_schema |= ann.JSONSchema
+    return json_schema
+
+X12Structure: TypeAlias = Union[
+    "Composite", "Segment", "Loop", "Message",
+    str, int, float, Decimal, datetime.date, datetime.time,
+    None
+]
+
+def asdict(x12_obj: X12Structure) -> dict[str, Any] | Any:
+    match x12_obj:
+        case Composite() | Segment() | Loop() | Message():
+            fields = {
+                name: getattr(x12_obj, name, None)
+                for name in get_type_hints(x12_obj)
+                if not (name in {"Schema"} or name.startswith("_"))
+            }
+            non_null_fields = {
+                name: asdict(value)
+                for name, value in fields.items()
+                if value is not None
+            }
+            parent = x12_obj.__class__
+            return {
+                '_kind': x12_obj.__class__.__mro__[1].__name__,
+                '_name': x12_obj.__class__.__name__,
+            } | non_null_fields
+        case str() | int() | float():
+            return x12_obj
+        case list(some_items):
+            return [
+                asdict(item) for item in some_items
+            ]
+        case _:
+            raise ValueError(f"can't create value for {x12_obj} ({type(x12_obj)})")
+
+@deprecated
 class Element:
     """
     An atomic element.
@@ -417,6 +698,8 @@ class Element:
     -   Those defined with a ``value`` attribute with an annotated type.
 
     This may raise ValueError exceptions for invalid data.
+
+    ..  todo: Retire this
     """
     Schema: type[SchemaType]
     logger = logging.getLogger("x12.base.Element")
@@ -427,8 +710,15 @@ class Element:
         #     self.codes = schema.codes
         # else:
         #     self.codes = None
-        self.type_helper = type_factory(schema)
+        self.type_helper = X12DataType.from_schema(schema)
+        # Validate (possibly raising ValueError)
+        self.type_helper.validate(source)
         self.value = self.type_helper.to_py(source)
+
+    def __eq__(self, other: Any) -> bool:
+        if isinstance(other, self.__class__):
+            return other.value == self.value
+        return NotImplemented
 
     @property
     def source(self) -> str | None:
@@ -437,11 +727,11 @@ class Element:
         else:
             return None
 
-    @classmethod
-    def schema(cls: type["Element"]) -> dict[str, Any]:
-        if not hasattr(cls, "Schema"):
-            raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
-        return getattr(cls.Schema, 'json', {}) | getattr(cls.Schema, 'datatype', {})
+    # @classmethod
+    # def schema(cls: type["Element"]) -> dict[str, Any]:
+    #     if not hasattr(cls, "Schema"):
+    #         raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
+    #     return getattr(cls.Schema, 'json', {}) | getattr(cls.Schema, 'datatype', {})
 
     @classmethod
     def build(cls: type["Element"], source_value: str | None) -> "Element":
@@ -451,8 +741,8 @@ class Element:
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.source!r})"
 
-    def asdict(self) -> dict[str, Any] | str | None:
-        return self.source
+    # def asdict(self) -> dict[str, Any] | str | None:
+    #     return self.source
 
 class Composite:
     """
@@ -463,26 +753,97 @@ class Composite:
 
     ..  todo:: Develop a better way to exclude "Schema" from type hints. OR. Do away with Schema.
     """
+    _composite_name: str
+    _helpers: dict[str, X12TypeHelper]
     Schema: type[SchemaType]
     logger = logging.getLogger("x12.base.Composite")
 
     def __init__(self, **arg_dict) -> None:
-        for k, v in arg_dict.items():
-            setattr(self, k, v)
+        fields = get_type_hints(self.__class__, include_extras=True)
+        unknowns = arg_dict.keys() - fields.keys()
+        if unknowns:
+            raise TypeError(f"unknown fields: {unknowns}")
+        self.__class__.make_helpers(fields)
+
+        # Ideally all missing names are also not required.
+        for name, hint in fields.items():
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            # Validate (possibly raising ValueError)
+            try:
+                self._helpers[name].validate(arg_dict.get(name))
+            except ValueError as ex:
+                raise ValueError(f"invalid {name} {ex}") from ex
+            value = self._helpers[name].to_py(arg_dict.get(name))
+            setattr(self, name, value)
 
     @classmethod
-    def schema(cls: type["Composite"]) -> dict[str, Any]:
-        if not hasattr(cls, "Schema"):
-            raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
-        assert_type(cls.Schema, type[SchemaType])
-        fields = get_type_hints(cls)
-        return cls.Schema.json | {
-            "properties": {
-                name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
-                for name, field_type in fields.items()
-                if name not in {'Schema',}
+    def make_helpers(cls, fields: dict[str, type(Any)], instance: Union["Composite", None] = None) -> None:
+        """
+        Build the element ``_helpers`` for this Composite.
+
+        Used like this ``Composite.make_helpers(fields, [self])``
+        The self is the interim solution, with a `Schema` attribnute.
+        """
+        if hasattr(cls, '_helpers'):
+            return
+
+        if instance and hasattr(instance, "Schema"):
+            # Interim explicit Schema
+            cls._helpers = {
+                name: X12TypeHelper.from_schema(instance.get(name).Schema)
+                for name in fields
+                if not (name in {"Schema"} or name.startswith("_"))
             }
-        }
+        else:
+            # NEW Annotations
+            cls._helpers = {
+                name: X12TypeHelper.annotated(hint)
+                for name, hint in fields.items()
+                if not (name in {"Schema"} or name.startswith("_"))
+            }
+
+    @classmethod
+    def composite_configure(cls, skip_validation : tuple[str, str], composite_name: str) -> None:
+        fields = get_type_hints(cls, include_extras=True)
+        cls.make_helpers(fields)
+        for name, helper in cls._helpers.items():
+            for field_match, annotation_name in skip_validation:
+                if fnmatch.fnmatch(name, field_match):
+                    annotations = get_args(fields[name])[1:]
+                    for ann in annotations:
+                        if ann.__class__.__name__ == annotation_name:
+                            ann.skip_validation = True
+
+    # @classmethod
+    # def schema(cls: type["Composite"]) -> dict[str, Any]:
+    #     """TODO: Generate from the annotations."""
+    #     if hasattr(cls, "Schema"):
+    #         assert_type(cls.Schema, type[SchemaType])
+    #         fields = get_type_hints(cls, include_extras=True)
+    #         return cls.Schema.json | {
+    #             "properties": {
+    #                 name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
+    #                 for name, field_type in fields.items()
+    #                 if name not in {'Schema',}
+    #             }
+    #         }
+    #     else:
+    #         base = {
+    #             "description": cls.__doc__,
+    #             "class_name": cls.__class__.__name__
+    #         }
+    #         fields = get_type_hints(cls, include_extras=True)
+    #         return base | {
+    #             "properties": {
+    #                 name:
+    #                     get_args(field_type)[0].schema()
+    #                     if isinstance(field_type, GenericAlias)
+    #                     else field_type.schema()
+    #                 for name, field_type in fields.items()
+    #                 if name not in {'Schema', }
+    #             }
+    #         }
 
     @classmethod
     def attr_build(cls, field_type: type, source_value: str | None) -> "Element":
@@ -493,17 +854,22 @@ class Composite:
                 if len(alternatives) != 1:
                     raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
                 return alternatives[0].build(source_value)
+            case _AnnotatedAlias():
+                value = source_value
+                return value
+            # Interim explicit Schema
             case _ if issubclass(field_type, Element):
                 return field_type.build(source_value)
         raise TypeError(f"unexpected type {field_type}")  # pragma: no cover
 
     @classmethod
     def build(cls: type["Composite"], source_value: str | None | list[str | None]) -> "Composite":
-        fields = get_type_hints(cls)
+        fields = get_type_hints(cls, include_extras=True)
         cls.logger.debug("build %s with %s", cls.__name__, fields)
+        # Expand single value to a list
         if not isinstance(source_value, list):
             source_value = [source_value]
-        num_fields = sum(1 for name in fields if name != 'Schema')
+        num_fields = sum(1 for name in fields if not (name in {'Schema'} or name.startswith("_")))
         if num_fields < len(source_value):
             # Too many values for the fields of this composite.
             raise ValueError(
@@ -516,30 +882,34 @@ class Composite:
             pass
         arg_dict = {}
         for name, field_type in fields.items():
-            if name == "Schema":
+            if name in {"Schema"} or name.startswith("_"):
                 continue
             arg_dict[name] = cls.attr_build(field_type, source_value.pop(0))
         return cls(**arg_dict)
 
-    @property
-    def source(self) -> list[str | None]:
+    def elements(self) -> list[str | None | list[str | None]]:
         fields = get_type_hints(self)
-        return [getattr(self, name).source for name in fields if name != 'Schema']
+        # Interim: return [getattr(self, name).source for name in fields if name != 'Schema']
+        return [getattr(self, name) for name in fields if not (name in {'Schema'} or name.startswith("_"))]
 
     def __repr__(self) -> str:
         fields = get_type_hints(self.__class__)
-        text = ", ".join(f"{name}={getattr(self, name)!r}" for name in fields if name != 'Schema')
+        good_names = filter(
+            lambda name: not (name in {'Schema'} or name.startswith("_")),
+            fields.keys()
+        )
+        text = ", ".join(f"{name}={getattr(self, name)!r}" for name in good_names)
         return f"{self.__class__.__name__}({text})"
 
-    def asdict(self) -> dict[str, Any] | str:
-        self.logger.debug("asdict(%r)", self)
-        fields = get_type_hints(self.__class__)
-        name_value = ((name, getattr(self, name)) for name in fields if name != 'Schema')
-        non_none_name_value = ((name, value) for name, value in name_value if value is not None)
-        return {"_kind": "Composite", "_name": self.__class__.__name__} | {
-            name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
-            for name, value in non_none_name_value
-        }
+    # def asdict(self) -> dict[str, Any] | str:
+    #     self.logger.debug("asdict(%r)", self)
+    #     fields = get_type_hints(self.__class__)
+    #     name_value = ((name, getattr(self, name)) for name in fields if name != 'Schema')
+    #     non_none_name_value = ((name, value) for name, value in name_value if value is not None)
+    #     return {"_kind": "Composite", "_name": self.__class__.__name__} | {
+    #         name: value
+    #         for name, value in non_none_name_value
+    #     }
 
 
 class Segment:
@@ -556,44 +926,170 @@ class Segment:
 
     When parsing ISA, we handle this as a distinct special case.
 
-    ..`todo:: IndexError: pop from empty list often means wrong separators.
+    ..   note:: IndexError: pop from empty list
+
+        often means wrong separators.
     """
     Schema: type[SchemaType]
+    _segment_name: str
+    _skip_validation: tuple[str, str]
+    _helpers: dict[str, X12TypeHelper]
+    # No type hint: invisible to get_type_hints() introspection
     logger = logging.getLogger("x12.base.Segment")
 
     def __init__(self, **arg_dict) -> None:
-        for k, v in arg_dict.items():
-            setattr(self, k, v)
+        fields = get_type_hints(self.__class__, include_extras=True)
+        unknowns = arg_dict.keys() - fields.keys()
+        if unknowns:
+            raise TypeError(f"unknown fields: {unknowns}")
+        if hasattr(self, "Schema"):
+            # Interim explicit Schema
+            self.__class__.make_helpers(fields, self)
+        else:
+            self.__class__.make_helpers(fields)
+        # Ideally all missing names are also not required.
+        for name, hint in fields.items():
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            if isinstance(hint, _SpecialForm) and hint._name == "TypeAlias":
+                continue  # Alias within a class.
+            # Validate (possibly raising ValueError)
+            try:
+                self._helpers[name].validate(arg_dict.get(name))
+            except ValueError as ex:
+                raise ValueError(f"{name}: {hint} {ex}") from ex
+            value = self._helpers[name].to_py(arg_dict.get(name))
+            setattr(self, name, value)
 
     @classmethod
-    def schema(cls: type["Segment"]) -> dict[str, Any]:
-        if not hasattr(cls, "Schema"):
-            raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
-        assert_type(cls.Schema, type[SchemaType])
-        fields = get_type_hints(cls)
-        return cls.Schema.json | {
-            "properties": {
-                name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
-                for name, field_type in fields.items()
-                if name not in {'Schema',}
+    def make_helpers(cls, fields: dict[str, type(Any)], instance: Union["Segment", None] = None) -> None:
+        """
+        Build the element ``_helpers`` for this Segment.
+
+        Used like this ``Segment.make_helpers(fields, [self])``
+        The self is the interim solution, with a `Schema` attribnute.
+        """
+        if hasattr(cls, '_helpers'):
+            return
+
+        if instance and hasattr(instance, "Schema"):
+            # Interim explicit Schema
+            cls._helpers = {
+                name: X12TypeHelper.from_schema(fields[name].Schema)
+                for name in fields
+                if not (name in {"Schema"} or name.startswith("_"))
             }
+            return
+
+        cls._helpers = {
+            name: X12TypeHelper.annotated(hint)
+            for name, hint in fields.items()
+            if not (
+                name in {"Schema"} or
+                name.startswith("_") or
+                (isinstance(hint, _SpecialForm) and hint._name == "TypeAlias")  # TypeAlias reference
+            )
         }
+        for name, hint in fields.items():
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            # TODO: Refactor into recursive walk through type...
+            match hint:
+                case _SpecialForm() if hint._name == "TypeAlias":
+                    pass
+                case UnionType():
+                    alterative = get_args(hint)[0]
+                    # Call recursively get to Composite or primitive
+                case GenericAlias() if get_origin(hint)[0] is list:
+                    repeating = get_args(hint)[0]
+                    # Call recursively to get to Composite or primitive
+                case _AnnotatedAlias():
+                    base = get_args(hint)[0]
+                    # Call recursively to get to Composite or primitive
+                case type() if issubclass(hint, Composite):
+                    hint.make_helpers(get_type_hints(hint, include_extras=True))
+                case type():
+                    pass  # No push down into primitives.
+                case _:
+                    raise ValueError(f"unexpected {name}: {hint} in {cls}")
+
+    # @classmethod
+    # def schema(cls: type["Segment"]) -> dict[str, Any]:
+    #     """Todo: Generate from the annotations."""
+    #     if not hasattr(cls, "Schema"):
+    #         raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
+    #     assert_type(cls.Schema, type[SchemaType])
+    #     fields = get_type_hints(cls)
+    #     return cls.Schema.json | {
+    #         "properties": {
+    #             name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
+    #             for name, field_type in fields.items()
+    #             if name not in {'Schema',}
+    #         }
+    #     }
 
     @classmethod
-    def attr_build(cls, field_type: type, source_values: list[str | None | list[str | None]]):
+    def save_validation(cls, name: str, field_type: type[Any]) -> None:
+        for field_match, annotation_name in cls._skip_validation.items():
+            if fnmatch.fnmatch(name, field_match):
+                match field_type:
+                    case UnionType():
+                        alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
+                        field_type = alternatives[0]
+                    case GenericAlias() if get_origin(field_type)[0] is list:
+                        field_type = get_args(field_type)[0]
+                    case _AnnotatedAlias():
+                        pass
+                    case type() if issubclass(field_type, Composite):
+                        pass
+                    case type():
+                        pass
+                    case _:
+                        raise TypeError(f"unexpected {name}: {field_type}")
+                annotations = get_args(field_type)[1:]
+                for ann in annotations:
+                    if ann.__class__.__name__ == annotation_name:
+                        ann.skip_validation = True
+
+    @classmethod
+    def configure(cls, skip_validation : list[str]) -> None:
+        fields = get_type_hints(cls, include_extras=True)
+        cls.make_helpers(fields)
+        rules = (
+            rule.split(":")
+            for rule in skip_validation
+        )
+        cls._skip_validation = [
+            (field_match, annotation_name)
+            for class_match, field_match, annotation_name in rules
+            if fnmatch.fnmatch(cls.__name__, class_match)
+        ]
+        cls.logger.debug("Skip Validation: %s", cls._skip_validation)
+
+        for name, helper in cls._helpers.items():
+            for field_match, annotation_name in cls._skip_validation:
+                if fnmatch.fnmatch(name, field_match):
+                    annotations = get_args(fields[name])[1:]
+                    for ann in annotations:
+                        if ann.__class__.__name__ == annotation_name:
+                            ann.skip_validation = True
+        # Propogate down to composites.
+        for name, field_type in fields.items():
+            if isinstance(field_type, _AnnotatedAlias):
+                base = get_args(field_type)[0]
+                if issubclass(base, Composite):
+                    field_type.composite_configure(cls._skip_validation, name)
+
+    @classmethod
+    def attr_build(cls, field_type: type, source_values: list[str | None | list[str | None]]) -> "Segment":
         """
         Walks type structure to create Elements and Composites.
 
         May pop source_values.
-
-        ..  todo:: Implement array -- this is a feature of an 834 message (only)
-
-            Get the PyX12 834 example with the ":"-separated value of 2100A or 2100B DMG05.
         """
         cls.logger.debug("attr_build %s from %r", field_type, source_values)
         match field_type:
-            case GenericAlias():  # list[Something]
-                assert get_origin(field_type) is list
+            case GenericAlias() if get_origin(field_type) is list: # list[Something]
                 # COMPOSITE-LIKE PROCESSING for elements that are list[Element]
                 repeating_type = get_args(field_type)[0]
                 cls.logger.debug("  parse array list[%s]", repeating_type.__name__)
@@ -607,11 +1103,19 @@ class Segment:
                 if source_values:
                     return cls.attr_build(alternatives[0], source_values)
                 return cls.attr_build(alternatives[0], [None])
-            case _ if issubclass(field_type, Element):
+            case _AnnotatedAlias():  # type: ignore [misc]
+                # NEW
                 # Consume a single value from the elements of this segment.
-                value: str = cast(str, source_values.pop(0))
+                # Either a ``Composite`` or list or some primitive type
+                base = get_args(field_type)[0]
+                value = cls.attr_build(base, source_values)
+                return value
+            case type() if issubclass(field_type, Element):
+                # Interim explicit Schema
+                # Consume a single value from the elements of this segment.
+                value = cast(str, source_values.pop(0))
                 return field_type.build(value)
-            case _ if issubclass(field_type, Composite):
+            case type() if issubclass(field_type, Composite):
                 # Next value in this segment *should* be a list.
                 # If it didn't have the component separator, we make single-element list.
                 composite_value: list[str | None]
@@ -619,8 +1123,15 @@ class Segment:
                     composite_value = cast(list[str | None], source_values.pop(0))
                 else:
                     composite_value = []
-                return field_type.build(composite_value)
-        raise TypeError(f"unexpected type {field_type} {field_type.mro()}")  # pragma: no cover
+                # print(f"Segment.attr_build() {field_type} with {composite_value}")
+                value = field_type.build(composite_value)
+                return value
+            case type():
+                if source_values:
+                    value = source_values.pop(0)
+                    return value
+                return None
+        raise TypeError(f"unexpected type {field_type} {type(field_type)} in {cls}")  # pragma: no cover
 
     @classmethod
     def parse(cls: type["Segment"], source: Source) -> Union["Segment", None]:
@@ -629,22 +1140,39 @@ class Segment:
 
         Handles ISA segments specially to extract element and segment separators.
         """
-        fields = get_type_hints(cls)
+        fields = get_type_hints(cls, include_extras=True)
         cls.logger.debug("parse %s with %s", cls.__name__, fields)
-        if not hasattr(cls, "Schema"):
-            raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
-        assert_type(cls.Schema, type[SchemaType])
-        segment_name = cls.Schema.segment_name
-        if source.next_segment() != segment_name:
+        #if not hasattr(cls, "Schema"):
+        #    raise TypeError(f"{cls} has no Schema attribute")  # pragma: no cover
+        try:
+            assert_type(cls.Schema, type[SchemaType])
+            segment_name = cls.Schema.segment_name
+        except:
+            segment_name = cls._segment_name
+        if source.next_segment().upper() != segment_name.upper():
             return None
 
         # Special case: the ISA segment can update the ``Source`` parsing state.
         # Used in the general case when ISA header not compressed.
-        if segment_name == "ISA" and not source.element_sep:
+        if segment_name.upper() == "ISA" and not source.element_sep:
             # Sum of field size + separator for each field.
             # + 3 for header "ISA"
             # + 1 for final segment separator
-            size = sum(field_type.Schema.max_len + 1 for name, field_type in fields.items() if name != 'Schema') + 4
+            # Interim explicit Schema
+            if all(hasattr(field_type, 'Schema') for field_type in fields.values()):
+                size = sum(field_type.Schema.max_len + 1 for name, field_type in fields.items() if name != 'Schema') + 4
+            # New Annotations
+            else:
+                args: list[list[X12Annotation]] = [get_args(f)[1:] for f in fields.values()]
+                max_len_params: list[int] = [
+                    ann.params[0]
+                    for arg in args
+                    if arg
+                        for ann in arg
+                        if isinstance(ann, MaxLen)
+                ]
+                # print(f"Segment.parse() {max_len_params}")
+                size = sum(p+1 for p in max_len_params) + 4
             cls.logger.debug("ISA: source.element_sep=%r, source.segment_sep=%r", source.element_sep, source.segment_sep)
             cls.logger.debug("ISA: size=%s", size)  # Should be 106 to include segment separator
             raw_text = source.peek(size)
@@ -657,11 +1185,14 @@ class Segment:
 
         flat_values = cast(list[str | None | list[str | None]], source.elements())[1:]  # Drops the segment name from the values.
         cls.logger.debug("SEGMENT %s: fields %s values %r", cls.__name__, fields, flat_values)
-
         arg_dict: dict[str, Element | Composite] = {}
+        # TODO: Refactor this loop to be a higher-order function.
         for name, field_type in fields.items():
-            if name == "Schema":
+            if name in {"Schema"} or name.startswith("_"):
                 continue
+            if isinstance(field_type, _SpecialForm) and field_type._name == "TypeAlias":
+                continue  # Alias within a class.
+            # Drill into type annotations. May recursively walk down the annotations
             arg_dict[name] = cls.attr_build(field_type, flat_values)
 
         obj = cls(**arg_dict)
@@ -676,42 +1207,49 @@ class Segment:
 
             This is **not** the same concept at all.
 
-        ..  todo:: Rename this.
+        ..  todo:: Rename this to not conflict with semantics of `Source`.
         """
         fields = get_type_hints(self.__class__)
         values: list[str | None | list[str | None]] = []
-        for name in fields:
-            if name == "Schema":
+        for name, hint in fields.items():
+            if name in {"Schema"} or name.startswith("_"):
                 continue
+            if isinstance(hint, _SpecialForm) and hint._name == "TypeAlias":
+                continue  # Alias within a class.
             field: Element | Composite | list[Composite] = getattr(self, name)
             match field:
                 case list():
-                    values.append(
-                        [cast(str | None, instance.source) for instance in field]
-                    )
-                case _ if isinstance(field, Element):
-                    self.logger.debug(f"{name}: {field} {field.type_helper.__class__.__name__} {field.schema()=} {field.source=}")
+                    values.append([v.elements() for v in field])
+                case Composite():
+                    values.append(field.elements())
+                case Element():
+                    # Interim explicit Schema
+                    self.logger.debug(f"{name}: {field} {field.type_helper.__class__.__name__} {schema(field)=} {field.source=}")
                     values.append(field.source)
-                case _ if isinstance(field, Composite):
-                    values.append(field.source)
-                case _:  # pragma: no cover
-                    raise TypeError(f"unexpected {name}: {fields[name]} {field=}")
+                case _:
+                    # New Annotated elements
+                    self.logger.debug(f"{name}: {field} {self._helpers[name]} {getattr(self, name)=}")
+                    values.append(getattr(self, name))
         return values
 
     def __repr__(self) -> str:
         fields = get_type_hints(self.__class__)
-        text = ", ".join(f"{name}={getattr(self, name)}" for name in fields if name != 'Schema')
+        good_names = filter(
+            lambda name: not (name in {'Schema'} or name.startswith("_")),
+            fields.keys()
+        )
+        text = ", ".join(f"{name}={getattr(self, name)!r}" for name in good_names)
         return f"{self.__class__.__name__}({text})"
 
-    def asdict(self) -> dict[str, Any] | str:
-        self.logger.debug("asdict(%r)", self)
-        fields = get_type_hints(self.__class__)
-        name_value = ((name, getattr(self, name)) for name in fields if name != 'Schema')
-        non_none_name_value = ((name, value) for name, value in name_value if value is not None)
-        return {"_kind": "Segment", "_name": self.__class__.__name__} | {
-            name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
-            for name, value in non_none_name_value
-        }
+    # def asdict(self) -> dict[str, Any] | str:
+    #     self.logger.debug("asdict(%r)", self)
+    #     fields = get_type_hints(self.__class__)
+    #     name_value = ((name, getattr(self, name)) for name in fields if name not in {'Schema', '_segment_name'})
+    #     non_none_name_value = ((name, value) for name, value in name_value if value is not None)
+    #     return {"_kind": "Segment", "_name": self.__class__.__name__} | {
+    #         name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
+    #         for name, value in non_none_name_value
+    #     }
 
 class Loop:
     """
@@ -726,31 +1264,60 @@ class Loop:
     logger = logging.getLogger("x12.base.Loop")
 
     def __init__(self, **arg_dict) -> None:
-        for k, v in arg_dict.items():
-            setattr(self, k, v)
+        fields = get_type_hints(self.__class__)
+        unknowns = arg_dict.keys() - fields.keys()
+        if unknowns:
+            raise TypeError(f"unknown fields: {unknowns}")
+        # Ideally all missing names are also not required.
+        for name, hint in fields.items():
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            setattr(self, name, arg_dict.get(name))
+
+    # @classmethod
+    # def schema(cls: type["Loop"]) -> dict[str, Any]:
+    #     """Todo: Generate from the annotations."""
+    #     fields = get_type_hints(cls)
+    #     return cls.Schema.json | {
+    #         "properties": {
+    #             name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
+    #             for name, field_type in fields.items()
+    #             if name not in {'Schema',}
+    #         }
+    #     }
 
     @classmethod
-    def schema(cls: type["Loop"]) -> dict[str, Any]:
+    def configure(cls, skip_validation : list[str]) -> None:
         fields = get_type_hints(cls)
-        return cls.Schema.json | {
-            "properties": {
-                name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
-                for name, field_type in fields.items()
-                if name not in {'Schema',}
-            }
-        }
+        for name, field_type in fields.items():
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            match field_type:
+                case GenericAlias() if get_origin(field_type) is list:
+                    repeating_type = get_args(field_type)[0]
+                    repeating_type.configure(skip_validation)
+                case UnionType():  # Something | None OR list[Something] | None
+                    alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
+                    alt_type = alternatives[0]
+                    alt_type.configure(skip_validation)
+                case _SpecialForm() if field_type._name == "TypeAlias":  # TypeAlias reference
+                    pass
+                case type() if issubclass(field_type, Segment):
+                    field_type.configure(skip_validation)
+                case _:
+                    raise TypeError(f"unexpected {name}: {field_type} {type(field_type)}")
 
     @classmethod
-    def attr_build(cls, field_type: type, source: Source) -> Segment | list[Segment] | None:
+    def attr_build(cls, name: str, field_type: type, source: Source) -> Segment | list[Segment] | None:
         """
         Walks type structure to create sub-loops and segments.
 
         May consume source segments.
         """
-        cls.logger.debug("attr_build %s", field_type)
+        cls.logger.debug("attr_build %s: %r", name, field_type)
         match field_type:
-            case GenericAlias():  # list[Something]
-                assert get_origin(field_type) is list
+            case GenericAlias() if get_origin(field_type) is list:
+                # list[Something]
                 repeating_type = get_args(field_type)[0]
                 cls.logger.debug("  parse list[%s]", repeating_type.__name__)
                 values: list[Segment] = []
@@ -761,24 +1328,38 @@ class Loop:
                 return values
             case UnionType():  # Something | None OR list[Something] | None
                 alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
+                # OR. Try each alternative until one works.
+                # For None supply a None instance.
                 if len(alternatives) != 1:
                     raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
                 alt_type = alternatives[0]
-                return cls.attr_build(alt_type, source)
-            case _ if issubclass(field_type, Segment):
+                return cls.attr_build(name, alt_type, source)
+            case _SpecialForm() if field_type._name == "TypeAlias":  # TypeAlias reference
+                return None
+
+            # TODO: Match support in Segment? Or. case type() if ...
+            case type() if issubclass(field_type, Segment):
+            # case Segment():
                 seg_name = source.next_segment()
                 if seg_name == "":
                     return None
-                if field_type.Schema.segment_name != seg_name:
+                if hasattr(field_type, 'Schema') and field_type.Schema.segment_name.upper() != seg_name.upper():
                     # TODO: segment with usage == "R"? Error
                     #  Else move on to next potential segment of Loop?
                     cls.logger.debug("expected field segment_name %r != next segment %r", field_type.Schema.segment_name, seg_name)
                     return None
+                elif not hasattr(field_type, 'Schema') and field_type._segment_name.upper() != seg_name.upper():
+                    cls.logger.debug("expected field segment_name %r != next segment %r", field_type._segment_name, seg_name)
+                    return None
                 return field_type.parse(source)
-            case _ if issubclass(field_type, Loop):  # pragma: no cover
+
+            # TODO: Match support in Loop
+            case type() if issubclass(field_type, Loop):  # pragma: no cover
+            # case Loop():  # pragma: no cover
                 raise RuntimeError("unexpected nested Loop: {field_type} inside {cls.__name__}")
-                # Alternative is to parse it...
+                # An alternative is to try to parse it...
                 # return field_type.parse(source)
+
         raise TypeError(f"unexpected {field_type} {type(field_type)}")  # pragma: no cover
 
     @classmethod
@@ -787,14 +1368,17 @@ class Loop:
         cls.logger.debug("parse %s with %s", cls.__name__, fields)
         arg_dict = {}
         for name, field_type in fields.items():
-            if name == "Schema":
+            if name in {"Schema"} or name.startswith("_"):
                 continue
-            loop_value = cls.attr_build(field_type, source)
+            cls.logger.debug("parse() %s: %r", name, field_type)
+            # Drill into type annotations. May recursively walk down the annotations
+            loop_value = cls.attr_build(name, field_type, source)
             if loop_value:
                 arg_dict[name] = loop_value
         if arg_dict:
             return cls(**arg_dict)
         else:
+            cls.logger.debug("Skipping %s", cls)
             return None
 
     def segment_iter(self) -> Iterator[list[str | None | list[str | None]]]:
@@ -807,7 +1391,10 @@ class Loop:
         fields = get_type_hints(self.__class__)
         self.logger.debug("segment_iter() fields=%r", fields)
         for name in fields:
-            if name == "Schema" or not hasattr(self, name):
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            if not hasattr(self, name):
+                # Type name with no value?
                 continue
             field = getattr(self, name)
             self.logger.debug("segment_iter() name=%s field=%s", name, field)
@@ -817,31 +1404,44 @@ class Loop:
                         if isinstance(instance, Loop):
                             yield from instance.segment_iter()
                         elif isinstance(instance, Segment):
-                            yield cast(list[str | None | list[str | None]], [instance.Schema.segment_name]) + instance.elements()
+                            # Interim Schema vs. New Annotated
+                            name = (
+                               instance.Schema.segment_name if hasattr(field, "Schema") else cast(Segment, instance)._segment_name
+                            )
+                            yield cast(list[str | None | list[str | None]], [name]) + instance.elements()
                         else:
                             raise TypeError(f"unexpected {name}: {fields[name]} instance {instance=}")  # pragma: no cover
-                case _ if isinstance(field, Loop):
+                case Loop(): # _ if isinstance(field, Loop):
                     # This doesn't seem to arise in practice.
                     yield from field.segment_iter()  # pragma: no cover
-                case _ if isinstance(field, Segment):
-                    yield cast(list[str | None | list[str | None]], [field.Schema.segment_name]) + field.elements()
+                case Segment(): # _ if isinstance(field, Segment):
+                    # Interim Schema vs. New Annotated
+                    name = field.Schema.segment_name if hasattr(field, "Schema") else cast(Segment, field)._segment_name
+                    yield cast(list[str | None | list[str | None]], [name]) + field.elements()
+                case None:
+                    # TypeAlias will have a value of None.
+                    pass
                 case _:  # pragma: no cover
                     raise TypeError(f"unexpected {name}: {fields[name]} {field=}")
 
     def __repr__(self) -> str:
         fields = get_type_hints(self.__class__)
-        text = ", ".join(f"{name}={getattr(self, name)}" for name in fields if name != 'Schema' and hasattr(self, name))
+        good_names = filter(
+            lambda name: not (name in {'Schema'} or name.startswith("_")),
+            fields.keys()
+        )
+        text = ", ".join(f"{name}={getattr(self, name)}" for name in good_names if hasattr(self, name))
         return f"{self.__class__.__name__}({text})"
 
-    def asdict(self) -> dict[str, Any] | str:
-        self.logger.debug("asdict(%r)", self)
-        fields = get_type_hints(self.__class__)
-        name_value = ((name, getattr(self, name)) for name in fields if name != 'Schema' and hasattr(self, name))
-        non_none_name_value = ((name, value) for name, value in name_value if value is not None)
-        return {"_kind": "Loop", "_name": self.__class__.__name__} | {
-            name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
-            for name, value in non_none_name_value
-        }
+    # def asdict(self) -> dict[str, Any] | str:
+    #     self.logger.debug("asdict(%r)", self)
+    #     fields = get_type_hints(self.__class__)
+    #     name_value = ((name, getattr(self, name)) for name in fields if name != 'Schema' and hasattr(self, name))
+    #     non_none_name_value = ((name, value) for name, value in name_value if value is not None)
+    #     return {"_kind": "Loop", "_name": self.__class__.__name__} | {
+    #         name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
+    #         for name, value in non_none_name_value
+    #     }
 
 class Message:
     """
@@ -853,31 +1453,67 @@ class Message:
     logger = logging.getLogger("x12.base.Message")
 
     def __init__(self, **arg_dict) -> None:
-        for k, v in arg_dict.items():
-            setattr(self, k, v)
+        fields = get_type_hints(self.__class__)
+        unknowns = arg_dict.keys() - fields.keys()
+        if unknowns:
+            raise TypeError(f"unknown fields: {unknowns}")
+        # Ideally all missing names are also not required.
+        for name, hint in fields.items():
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            setattr(self, name, arg_dict.get(name))
+
+    # @classmethod
+    # def schema(cls: type["Message"]) -> dict[str, Any]:
+    #     """Todo: Generate from the annotations."""
+    #     fields = get_type_hints(cls)
+    #     return cls.Schema.json | {
+    #         "properties": {
+    #             name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
+    #             for name, field_type in fields.items()
+    #             if name not in {'Schema',}
+    #         }
+    #     }
 
     @classmethod
-    def schema(cls: type["Message"]) -> dict[str, Any]:
+    def configure(cls, skip_validation : list[str]) -> None:
         fields = get_type_hints(cls)
-        return cls.Schema.json | {
-            "properties": {
-                name: get_args(field_type)[0].schema() if isinstance(field_type, GenericAlias) else field_type.schema()
-                for name, field_type in fields.items()
-                if name not in {'Schema',}
-            }
-        }
+        for name, loop_type in fields.items():
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            # Hmmm... Very similar to parse() code
+            match loop_type:
+                case GenericAlias() if get_origin(loop_type) is list:
+                    # list[Loop] structure
+                    repeating_type = get_args(loop_type)[0]
+                    repeating_type.configure(skip_validation)
+                case _SpecialForm() if loop_type._name == "TypeAlias":  # TypeAlias reference
+                    pass  # Ignore these, they're TypeAlias definitions in the Message class.
+                case type() if issubclass(loop_type, Loop):
+                    loop_type.configure(skip_validation)
+                case _:
+                    raise TypeError(f"unexpected {name}: {loop_type} {type(loop_type)}")
 
     @classmethod
-    def parse(cls: type["Message"], source: Source) -> "Message":
+    def parse(cls: type["Message"], source: Source, skip_validation : list[str] | None = None) -> "Message":
+        # Push any validation configuration down into this message's components.
+        if hasattr(cls, "Schema"):
+            # Interim
+            pass
+        else:
+            cls.configure(skip_validation or [])
+
+        # Parse the fields of this message.
         fields = get_type_hints(cls)
         cls.logger.debug("parse %s with %s", cls.__name__, fields)
         arg_dict = {}
         for name, loop_type in fields.items():
-            if name == "Schema":
+            if name in {"Schema"} or name.startswith("_"):
                 continue
+            cls.logger.debug("parse() %s: %r %s", name, loop_type, type(loop_type))
             match loop_type:
-                case GenericAlias():
-                    assert get_origin(loop_type) is list
+                case GenericAlias() if get_origin(loop_type) is list:
+                    # list[Loop] structure
                     repeating_type = get_args(loop_type)[0]
                     values = []
                     next_value = repeating_type.parse(source)
@@ -885,10 +1521,13 @@ class Message:
                         values.append(next_value)
                         next_value = repeating_type.parse(source)
                     arg_dict[name] = values
-                case _ if issubclass(loop_type, Loop):
+                case _SpecialForm() if loop_type._name == "TypeAlias":  # TypeAlias reference
+                    pass  # Ignore these, they're TypeAlias definitions in the Message class.
+                case type() if issubclass(loop_type, Loop):
                     # Stand-alone Loop without a list[Loop] framing...
-                    arg_dict[name] = loop_type.parse(source)
-                case _:  # pragma: no cover
+                    value = loop_type.parse(source)
+                    arg_dict[name] = value
+                case _:
                     raise TypeError(f"unexpected {name}: {loop_type} {type(loop_type)}")
         return cls(**arg_dict)
 
@@ -899,40 +1538,49 @@ class Message:
         """
         fields = get_type_hints(self.__class__)
         for name in fields:
-            if not hasattr(self, name) or name == "Schema":
-                # Missing entirely? Weird. But. Tolerable.
+            if name in {"Schema"} or name.startswith("_"):
+                continue
+            if not hasattr(self, name):
+                # attribute has type, but no value? Weird. But. Tolerable.
                 continue  # pragma: no cover
+            if isinstance(fields[name], _SpecialForm):
+                continue  # Skip type alias.
             loop = getattr(self, name)
             match loop:
                 case list():
-                    for instance in getattr(self, name):
+                    for instance in loop:
                         yield from instance.segment_iter()
-                case _ if isinstance(loop, Loop):
+                case Loop(): # _ if isinstance(loop, Loop):
                     yield from loop.segment_iter()
                 case _:  # pragma: no cover
                     raise TypeError(f"unexpected {name}: {fields[name]} {loop=}")
 
     def __repr__(self) -> str:
         fields = get_type_hints(self.__class__)
-        text = ", ".join(f"{name}={getattr(self, name)}" for name in fields if name != "Schema")
+        good_names = filter(
+            lambda name: not (name in {'Schema'} or name.startswith("_")),
+            fields.keys()
+        )
+        text = ", ".join(f"{name}={getattr(self, name)}" for name in good_names)
         return f"{self.__class__.__name__}({text})"
 
     def __bool__(self):
         fields = get_type_hints(self.__class__)
         return any(getattr(self, name) for name in fields if name != "Schema")
 
-    def asdict(self) -> dict[str, Any] | str:
-        self.logger.debug("asdict(%r)", self)
-        fields = get_type_hints(self.__class__)
-        name_value = ((name, getattr(self, name)) for name in fields if name != "Schema")
-        non_none_name_value = ((name, value) for name, value in name_value if value is not None)
-        return {"_kind": "Message", "_name": self.__class__.__name__} | {
-            name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
-            for name, value in non_none_name_value
-        }
+    # def asdict(self) -> dict[str, Any] | str:
+    #     self.logger.debug("asdict(%r)", self)
+    #     fields = get_type_hints(self.__class__)
+    #     name_value = ((name, getattr(self, name)) for name in fields if name != "Schema")
+    #     non_none_name_value = ((name, value) for name, value in name_value if value is not None)
+    #     return {"_kind": "Message", "_name": self.__class__.__name__} | {
+    #         name: [e.asdict() for e in value] if isinstance(value, list) else value.asdict()
+    #         for name, value in non_none_name_value
+    #     }
 
     def json(self, indent: int | None = None) -> str:
-        return json.dumps(self.asdict(), indent=indent)
+        return json.dumps(asdict(self), indent=indent)
+
 
 def demo() -> None:
     """
@@ -941,6 +1589,8 @@ def demo() -> None:
     >>> from x12.base import demo
     >>> demo()
     MSG(isa_loop=[ISA_LOOP(isa=ISA_LOOP_ISA(isa01=ISA_LOOP_ISA01('00'), isa16=ISA_LOOP_ISA16(':')))])
+
+    TODO: Rewrite to use annotations!
     """
     class ISA_LOOP_ISA01(Element):
         """Authorization Information Qualifier"""
@@ -966,6 +1616,8 @@ def demo() -> None:
         isa: ISA_LOOP_ISA
 
     class MSG(Message):
+        class Schema:
+            description = "Demonstration"
         isa_loop: list[ISA_LOOP]
 
     text = "ISA|00|:~"

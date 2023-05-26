@@ -1,33 +1,56 @@
 import datetime
 from decimal import Decimal
+from typing import Annotated, get_type_hints, TypeAlias
+
 from unittest.mock import sentinel, Mock, call
+from pytest import fixture, raises
 
-from pytest import fixture
-
+import x12
 from x12 import base
 
-def test_type_factory_defined():
-    class Schema:
-        datatype = {'type': 'string', 'title': 'I01', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
-        min_len = 2
-        max_len = 2
+def test_type_factory_schema():
+    class SomeElement:
+        class Schema:
+            datatype = {'type': 'string', 'title': 'I01', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
+            min_len = 2
+            max_len = 2
 
-    gen_type = base.type_factory(Schema)
+    gen_type = base.X12DataType.from_schema(SomeElement.Schema)
     assert isinstance(gen_type, base.IDType)
     assert gen_type.min_len == 2
     assert gen_type.scale == 0
 
 def test_type_factory_undefined():
-    class Schema:
-        pass
+    class SomeElement:
+        class Schema:
+            pass
 
-    str_type = base.type_factory(Schema)
+    str_type = base.X12DataType.from_schema(SomeElement.Schema)
     assert isinstance(str_type, base.ANType)
     assert str_type.min_len is None
     assert str_type.scale == 0
 
     assert str_type.to_py("42") == "42"
     assert str_type.to_str(42) == "42"
+
+def test_type_factory_annotated():
+    ID: TypeAlias = Annotated[str, base.Format(r"\d+")]
+
+    class SomeSegment:
+        some_element: Annotated[ID, base.Title('I01'), base.MinLen(2), base.MaxLen(2)]
+
+    hints = get_type_hints(SomeSegment, include_extras=True)
+    gen_type = base.X12DataType.annotated(hints['some_element'])
+    assert isinstance(gen_type, base.X12TypeHelper)
+
+    assert gen_type.validate('12') is None
+    with raises(ValueError):
+        gen_type.validate('ab')
+    with raises(ValueError):
+        gen_type.validate('123')
+    with raises(ValueError):
+        gen_type.validate('1')
+
 
 def test_antype():
     class Schema:

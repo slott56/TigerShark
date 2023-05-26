@@ -176,6 +176,7 @@ to locate the module that can parse a message.
 .. todo:: This version identification is not implemented
 
 """
+import abc
 from collections import deque
 from collections.abc import Iterator
 from contextlib import redirect_stdout
@@ -189,14 +190,9 @@ import sys
 from textwrap import indent
 from typing import (
     Union, TypeAlias, Any, TextIO,
-    Self, cast, Deque,
-    Annotated, Literal, ForwardRef,
-    Type
+    Self, cast, Deque, Type
 )
-from typing_extensions import _AnnotatedAlias
 from xml.etree import ElementTree as XML
-
-from x12.annotations import *
 
 
 logger = logging.getLogger("xml_extract")
@@ -212,7 +208,9 @@ class Codeset:
     """
     An enumerated set of values used to define an Element.
 
-    A JSONSchema {"type": "string", "enum": []} schema
+    A JSONSchema ``{"type": "string", "enum": []}`` schema.
+
+    No Annotation, these are ``name = [values]`` constructs in Python.
     """
     id: str
     data_ele: str
@@ -226,8 +224,6 @@ class Codeset:
     def jsonschema(self) -> JSONSchema:
         return self.values
 
-    def annotation(self) -> _AnnotatedAlias:
-        return Annotated[str, Literal[self.values], Title(self.id)]
 
 def code_reader(source: TextIO) -> Iterator[Codeset]:
     """
@@ -314,24 +310,24 @@ X12_TYPE_SCHEMA: dict[str, JSONSchema] = {
     "N9": {"type": "number", "scale": 9},
 }
 
-X12_TYPE_ANNOTATION: dict[str, type | object] = {
-    "AN": str,  # AlphaNumeric
-    "B": str,  # Binary?
-    "DT": datetime.date,  # Annotation will add MinLen(6-8), MaxLen(6-8), Format(r"\d{6}{8}") details
-    "ID": Annotated[str, Format(r"\d+")],  # Identifier, numeric string.
-    "R": float,  # Real
-    "TM": datetime.time,  # Annotation will add MinLen(4-6), MaxLen(4-6), Format(r"\d{4}{6}") details
-    "N": int,  # Number (integer?)
-    "N0": Annotated[Decimal, Scale(0)],  # 0 decimal places
-    "N1": Annotated[Decimal, Scale(1)],
-    "N2": Annotated[Decimal, Scale(2)],  # 2 decimal places, i.e. currency.
-    "N3": Annotated[Decimal, Scale(3)],
-    "N4": Annotated[Decimal, Scale(4)],
-    "N5": Annotated[Decimal, Scale(5)],
-    "N6": Annotated[Decimal, Scale(6)],
-    "N7": Annotated[Decimal, Scale(7)],
-    "N8": Annotated[Decimal, Scale(8)],
-    "N9": Annotated[Decimal, Scale(9)],
+X12_TYPE_ANNOTATION: dict[str, str] = {
+    "AN": "str",  # AlphaNumeric
+    "B": "str",  # Binary?
+    "DT": "datetime.date",  # Annotation will add MinLen(6-8), MaxLen(6-8), Format(r"\d{6}{8}") details
+    "ID": "str",  # Identifier, often (but not always) a numeric string.
+    "R": "float",  # Real
+    "TM": "datetime.time",  # Annotation will add MinLen(4-6), MaxLen(4-6), Format(r"\d{4}{6}") details
+    "N": "int",  # Number (integer?)
+    "N0": "Annotated[Decimal, Scale(0)]",  # 0 decimal places
+    "N1": "Annotated[Decimal, Scale(1)]",
+    "N2": "Annotated[Decimal, Scale(2)]",  # 2 decimal places, i.e. currency.
+    "N3": "Annotated[Decimal, Scale(3)]",
+    "N4": "Annotated[Decimal, Scale(4)]",
+    "N5": "Annotated[Decimal, Scale(5)]",
+    "N6": "Annotated[Decimal, Scale(6)]",
+    "N7": "Annotated[Decimal, Scale(7)]",
+    "N8": "Annotated[Decimal, Scale(8)]",
+    "N9": "Annotated[Decimal, Scale(9)]",
 }
 
 
@@ -347,6 +343,10 @@ class DataElement:
     min_len: str | None
     max_len: str | None
     name: str
+
+    @property
+    def class_name(self) -> str:
+        return f'{pythonify(self.ele_num, "D_")}'
 
     @property
     def int_min_len(self) -> int | None:
@@ -378,22 +378,22 @@ class DataElement:
                 schema["format"] = f"\\d{{{self.min_len},{self.max_len}}}"
         return schema
 
-    def annotation(self) -> _AnnotatedAlias:
-        base = cast(dict[str, _AnnotatedAlias], X12_TYPE_ANNOTATION[self.data_type])
-        extensions = [base, Title(self.name)]
-        # OR... extensions = Annotated[base, Title(self.name)]
+    def annotation(self) -> tuple[str, str]:
+        base = X12_TYPE_ANNOTATION[self.data_type]
+        extensions = [base, f"Title({self.name!r})"]
         if self.min_len is not None:
-            extensions.append(MinLen(int(self.min_len)))
-            # OR... extensions = Annotated[base, MinLen(int(self.min_len))]
+            extensions.append(f"MinLen({int(self.min_len)})")
         if self.max_len is not None:
-            extensions.append(MaxLen(int(self.max_len)))
-            # OR... extensions = Annotated[base, MaxLen(int(self.max_len))]
+            extensions.append(f"MaxLen({int(self.max_len)})")
         if self.data_type in {"DT", "TM"}:
             if self.min_len == self.max_len:
-                extensions.append(Format(f"\\d{self.min_len}"))
+                extensions.append(f'Format("\\d{self.min_len}")')
             else:
-                extensions.append(Format(f"\\d{self.min_len,self.max_len}"))
-        return Annotated[*extensions]
+                extensions.append(f'Format("\\d{self.min_len,self.max_len}")')
+        return (
+            f"{self.class_name}: TypeAlias = Annotated[{', '.join(extensions)}]",
+            ""
+        )
 
 def element_reader(source: TextIO) -> Iterator[DataElement]:
     """
@@ -561,13 +561,13 @@ class Element:
             }
         return schema
 
-    def annotation(self) -> _AnnotatedAlias:
+    def annotation(self) -> tuple[str, str]:
         """
         Some Segment or Composite will have
 
         ::
 
-            item: Annotated[DT, Title("Item"), Usage("R"), Sequence("1")]
+            name: Annotated[DT, Title("Item"), Usage("R"), Sequence("1")]
 
         The ``DT`` type alias is ``Annotated[datetime.date, ...]``.
 
@@ -577,26 +577,32 @@ class Element:
 
         ::
 
-            item: Annotated[list[Annotated[DT, title("Item"), ...]], MaxItems(4)]
+            ItemName: TypeAlias = Annotated[DT, title("Item"), ...]
+            name: Annotated[list[ItemName], MaxItems(4)]
 
         The list -- as a whole -- and the items both have annotations.
         The over-all ``list[]`` has a ``MaxItems()`` annotation.
         The Element within the list has the detailed annotations for this element.
-        This flattens nicely to ``list[datetime.date]``.
         """
-        # While this works, mypy can't figure it out.
-        base = Annotated[  # type: ignore [valid-type]
-            ForwardRef(self.data_ele), Title(self.name), Usage(self.usage), Position(self.seq)
-        ]
+        base = [pythonify(self.data_ele, 'D_'), f"Title({self.name!r})",  f"Usage({self.usage!r})", f"Position({int(self.seq)})"]
         if self.codes:
-            base = Annotated[base, Literal[self.codes]]
-        if self.common_def:
-            base = Annotated[base, Enumerated(self.common_def)]
+            base.append(f"Enumerated(*{self.codes})")
+        # if self.common_def:
+        #     base.append(f"Enumerated(*data_element[{self.common_def}])")
         if self.external:
-            base = Annotated[base, Enumerated(self.external)]
+            base.append(f"Enumerated(*{self.external})")
+        type_str = f"Annotated[{', '.join(base)}]"
         if self.repeat:
-            base = Annotated[list[base], MaxItems(int(self.repeat))]  # type: ignore [valid-type]
-        return base
+            annotations = (
+                f"Item{self.attr_name.title()}: TypeAlias = {type_str}",
+                f"{self.attr_name}: Annotated[list[Item{self.attr_name.title()}], MaxItems({int(self.repeat)})]"
+            )
+        else:
+            annotations = (
+                "",
+                f"{self.attr_name}: {type_str}"
+            )
+        return annotations
 
 @dataclass
 class Composite:
@@ -656,16 +662,22 @@ class Composite:
             }
         return schema
 
-    def annotation(self) -> _AnnotatedAlias:
-        # While this works, mypy can't figure it out.
-        base = Annotated[  # type: ignore [valid-type]
-            ForwardRef(self.data_ele), Title(self.name), Usage(self.usage), Position(self.seq)
-        ]
+    def annotation(self) -> tuple[str, str]:
+        base = [self.class_name or pythonify(self.data_ele, 'D_'), f"Title({self.name!r})", f"Usage({self.usage!r})", f"Position({int(self.seq)})"]
         if self.required:
-            base = Annotated[base, Required(True)]
+            base.append("Required(True)")
+        type_str = f"Annotated[{', '.join(base)}]"
         if self.repeat:
-            base = Annotated[list[base], MaxItems(int(self.repeat))]  # type: ignore [valid-type]
-        return base
+            annotations = (
+                f"Item{self.attr_name.title()}: TypeAlias = {type_str}",
+                f"{self.attr_name}: Annotated[list[Item{self.attr_name.title()}], MaxItems({int(self.repeat)})]"
+            )
+        else:
+            annotations = (
+                "",
+                f"{self.attr_name}: {type_str}"
+            )
+        return annotations
 
 @dataclass
 class Segment:
@@ -729,7 +741,7 @@ class Segment:
                 schema['maxItems'] = int(self.max_use)
         return schema
 
-    def annotation(self) -> _AnnotatedAlias:
+    def annotation(self) -> tuple[str, str]:
         """
         Some Message or Loop will have
 
@@ -743,23 +755,35 @@ class Segment:
 
         ::
 
-            segment: Annotated[list[Annotated[Loop_Seg_Class, title("Segnment"), ...]], MaxItems(4)]
+            ItemSegment: TypeAlias = Annotated[Loop_Seg_Class, title("Segnment"), ...]
+            segment: Annotated[list[ItemSegment], MaxItems(4)]
 
         The list -- as a whole -- and the items both have annotations.
         List annotations are small (MaxItems).
         The Segment in the list has more complex annotations.
         """
         # While this works, mypy can't figure it out.
-        base = Annotated[  # type: ignore [valid-type]
-            ForwardRef(self.class_name), Title(self.name), Usage(self.usage), Position(self.pos)
-        ]
+        base = [self.class_name, f"Title({self.name!r})", f"Usage({self.usage!r})", f"Position({int(self.pos)})"]
         if self.syntax:
-            base = Annotated[base, Syntax(self.syntax)]
+            base.append(f"Syntax({self.syntax})")
         if self.required:
-            base = Annotated[base, Required(True)]
+            base.append("Required(True)")
+        type_str = f"Annotated[{', '.join(base)}]"
         if self.repeat:
-            base = Annotated[list[base], MaxItems(int(self.max_use))]  # type: ignore [valid-type]
-        return base
+            if self.max_use.startswith(">"):
+                min_max = f"MinItems({int(self.max_use[1:])})"
+            else:
+                min_max = f"MaxItems({int(self.max_use)})"
+            annotations = (
+                f"Item{self.attr_name.title()}: TypeAlias = {type_str}",
+                f"{self.attr_name}: Annotated[list[Item{self.attr_name.title()}], {min_max}]"
+            )
+        else:
+            annotations = (
+                "",
+                f"{self.attr_name}: {type_str}"
+            )
+        return annotations
 
 @dataclass
 class Loop:
@@ -813,24 +837,35 @@ class Loop:
                 schema['maxItems'] = int(self.repeat)
         return schema
 
-    def annotation(self) -> _AnnotatedAlias:
-        # While this works, mypy can't figure it out.
-        base = Annotated[  # type: ignore [valid-type]
-            ForwardRef(self.class_name), Title(self.name), Usage(self.usage), Position(self.pos)
-        ]
+    def annotation(self) -> tuple[str, str]:
+        base = [self.class_name, f"Title({self.name!r})", f"Usage({self.usage!r})", f"Position({int(self.pos)})"]
         if self.required:
-            base = Annotated[cast(type, base), Required(True)]
+            base.append("Required(True)")
+        type_str = f"Annotated[{', '.join(base)}]"
         if self.repeat:
             if self.repeat.startswith('>'):
-                base = Annotated[list[base], MinItems(int(self.repeat[1:]))]  # type: ignore [valid-type]
+                min_items = f"MinItems({int(self.repeat[1:])})"
             else:
-                base = Annotated[list[base], MaxItems(int(self.repeat))]  # type: ignore [valid-type]
-        return base
+                min_items = f"MinItems({int(self.repeat)})"
+            annotations = (
+                f"Item{self.attr_name.title()}: TypeAlias = {type_str}",
+                f"{self.attr_name}: Annotated[list[Item{self.class_name.title()}], {min_items}]"
+            )
+        else:
+            annotations = (
+                "",
+                f"{self.attr_name}: {type_str}"
+            )
+        return annotations
 
 @dataclass
 class Message:
     """
     A Complete Message.
+
+    No annotation for a message as a whole,
+    it's a collection of Loops, wrapped
+    in a ``class`` statement.
     """
     xid: str
     name: str
@@ -1104,6 +1139,25 @@ class MessageVisitor:
     def __init__(self) -> None:
         self.source_name = ""
         self.path: Deque[tuple[str, str]] = deque()
+        self.codes: dict[str, Codeset]
+        self.types: dict[str, DataElement]
+        self.type_names: set[str]
+
+    def codesets(self, c: dict[str, Codeset]) -> Self:
+        """Setter for codesets."""
+        self.codes = c
+        return self
+
+    def data_elements(self, d: dict[str, DataElement]) -> Self:
+        """Setter for data elements."""
+        self.types = d
+        return self
+
+    def dump_codesets(self) -> None:
+        pass
+
+    def dump_data_elements(self) -> None:
+        pass
 
     def visit(self, component: Component) -> None:
         match component:
@@ -1160,30 +1214,17 @@ class EmitPython_Interim(MessageVisitor):
     This is "Interim", which uses an explicit ``Schema``
     internal class definition.
 
-    The classes created will be extension subclasses to definitions in ``x12.base``.
+    The classes written will be extension subclasses to definitions in ``x12.base``.
     """
-    def __init__(self) -> None:
-        super().__init__()
-        self.codes: dict[str, Codeset]
-        self.types: dict[str, DataElement]
-
-    def codesets(self, c: dict[str, Codeset]) -> Self:
-        """Setter for codesets."""
-        self.codes = c
-        return self
-
-    def data_elements(self, d: dict[str, DataElement]) -> Self:
-        """Setter for data elements."""
-        self.types = d
-        return self
-
-    def dump_codesets(self):
+    def dump_codesets(self) -> None:
         for id in self.codes:
             print(f"{pythonify(id, 'C_')} = {self.codes[id].jsonschema()}")
 
-    def dump_data_elements(self):
+    def dump_data_elements(self) -> None:
+        self.type_names = set()
         for name in self.types:
             print(f"{pythonify(name, 'D_')} = {self.types[name].jsonschema()}")
+            self.type_names.add(pythonify(name, 'D_'))
 
     def element(self, element: Element) -> None:
         print("\n")
@@ -1276,16 +1317,13 @@ class EmitPython_Interim(MessageVisitor):
             print(f"    {elt.attr_name}: {type_text}")
 
 
-def text_annotation(annotation: _AnnotatedAlias) -> str:
-    return repr(annotation).replace("typing.", "")
-
-
 class EmitPython_Annotated(MessageVisitor):
     """
     Message visitor to emit Pythonic definitions for
     Elements, Composites, Segments, Loops, and Messages.
 
-    This is "Annotated", which uses only annotations.
+    This is "Annotated". Elements don't have a separate class,
+    their annotations are part of the containing Segment or Composite.
 
     The classes created will be extension subclasses to definitions in ``x12.base``.
     """
@@ -1302,51 +1340,84 @@ class EmitPython_Annotated(MessageVisitor):
         self.types = d
         return self
 
-    def dump_codesets(self):
-        for id, values in self.codes.items():
-            annotation = Annotated[str, Literal[*values]]
-            print(f"{pythonify(id, 'C_')}: TypeAlias = {text_annotation(annotation)}")
+    def dump_codesets(self) -> None:
+        for id, codeset in self.codes.items():
+            # annotation = f"Annotated[str, Enumerated(*{codeset.values})]"
+            print(f"{pythonify(id, 'C_')} = {codeset.values!r}")
 
-    def dump_data_elements(self):
+    def dump_data_elements(self) -> None:
+        self.type_names = set()
         for name, base_def in X12_TYPE_ANNOTATION.items():
-            print(f"{name}: TypeAlias = {text_annotation(base_def)}")
+            print(f"{name}: TypeAlias = {base_def}")
         for name, de_def in self.types.items():
             assert de_def.data_type in X12_TYPE_ANNOTATION, f"Data type {de_def.data_type!r} unknown"
-            base = str(de_def.data_type)
+            base = [str(de_def.data_type)]
             if de_def.min_len:
-                base = Annotated[base, MinLen(de_def.min_len)]
+                base.append(f"MinLen({de_def.min_len})")
             if de_def.max_len:
-                base = Annotated[base, MaxLen(de_def.max_len)]
+                base.append(f"MaxLen({de_def.max_len})")
             print(
-                f"{pythonify(name, 'D_')}: TypeAlias = {text_annotation(base)}"
+                f"{pythonify(name, 'D_')}: TypeAlias = Annotated[{', '.join(base)}]"
             )
+            self.type_names.add(pythonify(name, 'D_'))
 
     def element(self, element: Element) -> None:
         pass  # Not a separate class in the Python.
 
+    def composite(self, composite: Composite) -> None:
+        print("\n")
+        # print(f"# {self.path}")
+        print(f'class {composite.class_name}(Composite):\n    """{composite.name}"""')
+        if composite.elements:
+            for elt in composite.elements:
+                # if elt.usage == "N":
+                #    continue
+                alias, annotation = elt.annotation()
+                # Not sure we can make optional attributes work via Union[]
+                # if elt.attr_name not in composite.required:
+                #     name, _, annotation = annotation.partition(":")
+                #     annotation = f"{name}: Union[{annotation}, None]"
+                print(f"    {alias}")
+                print(f"    {annotation}")
+        else:
+            print("    pass")
+
     def segment(self, segment: Segment) -> None:
         print("\n")
         # print(f"# {self.path}")
-        print(f'class {segment.class_name}(Segment):\n    """{segment.name}"""')
-        for elt in segment.children:
-            # if elt.usage == "N":
-            #    continue
-            annotation = elt.annotation()
-            if elt.attr_name not in segment.required:
-                annotation = Union[annotation, None]
-            print(f"    {elt.attr_name}: {text_annotation(annotation)}")
+        print(f'class {segment.class_name}(Segment):\n    """{segment.name}"""\n    _segment_name = {segment.attr_name.upper()!r}')
+        if segment.children:
+            for elt in segment.children:
+                if elt.usage == "N":
+                    if isinstance(elt,Composite) and len(elt.elements) == 0:
+                        continue
+                alias, annotation = elt.annotation()
+                # Not sure we can make optional attributes work via Union[]
+                # if elt.attr_name not in segment.required:
+                #     name, _, annotation = annotation.partition(":")
+                #     annotation = f"{name}: Union[{annotation}, None]"
+                print(f"    {alias}")
+                print(f"    {annotation}")
+        else:
+            print("    pass")
 
     def loop(self, loop: Loop) -> None:
         print("\n")
         # print(f"# {self.path}")
         print(f'class {loop.class_name}(Loop):')
-        for elt in loop.children:
-            # if elt.usage == "N":
-            #    continue
-            annotation = elt.annotation()
-            if elt.attr_name not in loop.required:
-                annotation = Union[annotation, None]
-            print(f"    {elt.attr_name}: {text_annotation(annotation)}")
+        if loop.children:
+            for elt in loop.children:
+                # if elt.usage == "N":
+                #    continue
+                alias, annotation = elt.annotation()
+                # Not sure we can make optional attributes work via Union[]
+                # if elt.attr_name not in loop.required:
+                #     name, _, annotation = annotation.partition(":")
+                #     annotation = f"{name}: Union[{annotation}, None]"
+                print(f"    {alias}")
+                print(f"    {annotation}")
+        else:
+            print("    pass")
 
     def message(self, message: Message) -> None:
         print("\n")
@@ -1354,103 +1425,131 @@ class EmitPython_Annotated(MessageVisitor):
         for elt in message.loops:
             # if elt.usage == "N":
             #    continue
-            annotation = elt.annotation()
-            if elt.attr_name not in message.required:
-                annotation = Union[annotation, None]
-            print(f"    {elt.attr_name}: {text_annotation(annotation)}")
+            alias, annotation = elt.annotation()
+            # Not sure we can make optional attributes work via Union[]
+            # if elt.attr_name not in message.required:
+            #     name, _, annotation = annotation.partition(":")
+            #     annotation = f"{name}: Union[{annotation}, None]"
+            print(f"    {alias}")
+            print(f"    {annotation}")
 
-def make_common_module(
-        codesets: dict[str, Codeset],
-        data_elements: dict[str, DataElement],
-        target_package: Path
-) -> None:
-    """
-    Emits common module with definitions of common data types.
+class PythonMaker:
+    visitor_class: Type[MessageVisitor]
 
-    Depends on ``EmitPython_Interim`` class.
-    """
-    target_path = (target_package / "common").with_suffix(".py")
+    def make_common_module(
+            self,
+            codesets: dict[str, Codeset],
+            data_elements: dict[str, DataElement],
+            target_package: Path
+    ) -> None:
+        """
+        Emits common module with definitions of common data types.
 
-    code_writer = EmitPython_Interim().data_elements(data_elements).codesets(codesets)
+        Depends on ``EmitPython_Interim`` class.
+        """
+        target_path = (target_package / "common").with_suffix(".py")
 
-    with target_path.open('w') as target_file:
-        with redirect_stdout(target_file):
-            print('"""')
-            print(f"Created {datetime.datetime.now()}")
-            print('"""')
-            print()
-            print("from typing import TypeAlias, Literal, Annotated")
-            print("from x12.annotations import *")
-            code_writer.dump_codesets()
-            code_writer.dump_data_elements()
-            # for id in codesets:
-            #     print(f"{pythonify(id, 'C_')} = {codesets[id].jsonschema()}")
-            # for name in data_elements:
-            #     print(f"{pythonify(name, 'D_')} = {data_elements[name].jsonschema()}")
+        cls = self.visitor_class
+        code_writer = cls().data_elements(data_elements).codesets(codesets)
 
-def make_message_module(
-        codesets: dict[str, Codeset],
-        data_elements: dict[str, DataElement],
-        source_path: Path,
-        target_package: Path
-) -> None:
-    """
-    Emits a module to parse a message.
+        with target_path.open('w') as target_file:
+            with redirect_stdout(target_file):
+                print('"""')
+                print(f"Created {datetime.datetime.now()}")
+                print('"""')
+                print()
+                print("from typing import TypeAlias, Annotated")
+                print("import datetime")
+                print("from decimal import Decimal")
+                print("from x12.annotations import *")
+                code_writer.dump_codesets()
+                code_writer.dump_data_elements()
+                # for id in codesets:
+                #     print(f"{pythonify(id, 'C_')} = {codesets[id].jsonschema()}")
+                # for name in data_elements:
+                #     print(f"{pythonify(name, 'D_')} = {data_elements[name].jsonschema()}")
 
-    Depends on ``EmitPython_Interim`` class.
-    """
-    target_stem = f'msg_{source_path.stem.replace(".", "_")}'
-    target_path = (target_package / target_stem).with_suffix(".py")
-    logger.info("%s -> %s", source_path.name, target_path.name)
+    def make_message_module(
+            self,
+            codesets: dict[str, Codeset],
+            data_elements: dict[str, DataElement],
+            source_path: Path,
+            target_package: Path
+    ) -> None:
+        """
+        Emits a module to parse a message.
 
-    with source_path.open() as source:
-        msg = message_reader(source)
+        Depends on ``EmitPython_Interim`` class.
+        """
+        target_stem = f'msg_{source_path.stem.replace(".", "_")}'
+        target_path = (target_package / target_stem).with_suffix(".py")
+        logger.info("%s -> %s", source_path.name, target_path.name)
 
-    code_writer = EmitPython_Interim().data_elements(data_elements).codesets(codesets)
-    code_writer.source_name = source_path.stem
+        with source_path.open() as source:
+            msg = message_reader(source)
 
-    with target_path.open('w') as target_file:
-        with redirect_stdout(target_file):
-            print('"""')
-            print(source_path.stem)
-            print(f"Created {datetime.datetime.now()}")
-            # print(msg)
-            print('"""')
-            print("from .base import *\nfrom . import common")
-            code_writer.visit(msg)
+        cls = self.visitor_class
+        code_writer = cls().data_elements(data_elements).codesets(codesets)
+        code_writer.source_name = source_path.stem
+
+        with target_path.open('w') as target_file:
+            with redirect_stdout(target_file):
+                print('"""')
+                print(source_path.stem)
+                print(f"Created {datetime.datetime.now()}")
+                # print(msg)
+                print('"""')
+                print("from .base import *")
+                print("from .common import *")
+                code_writer.visit(msg)
 
 
-def make_python(base: Path, target: Path) -> None:
-    """
-    Extract from XML schema, creating Python.
+    def make_python(self, base: Path, target: Path) -> None:
+        """
+        Extract from XML schema, creating Python.
 
-    Each message becomes a separate module in an overall "x12" package.
-    """
-    with (base / "codes.xml").open() as source:
-        logger.info("Reading %s", source.name)
-        codesets = {
-            codeset.id: codeset
-            for codeset in code_reader(source)
-        }
-    with (base / "dataele.xml").open() as source:
-        logger.info("Reading %s", source.name)
-        data_elements = {
-            data_element.ele_num: data_element
-            for data_element in element_reader(source)
-        }
-    make_common_module(codesets, data_elements, x12_package)
+        Each message becomes a separate module in an overall "x12" package.
 
-    for source_path in sorted(base.glob("x12.control.*.xml")):
-        make_message_module(codesets, data_elements, source_path, x12_package)
+        Depends on EmitPython_Interim
+        """
+        with (base / "codes.xml").open() as source:
+            logger.info("Reading %s", source.name)
+            codesets = {
+                codeset.id: codeset
+                for codeset in code_reader(source)
+            }
+        with (base / "dataele.xml").open() as source:
+            logger.info("Reading %s", source.name)
+            data_elements = {
+                data_element.ele_num: data_element
+                for data_element in element_reader(source)
+            }
+        names = self.make_common_module(codesets, data_elements, x12_package)
 
-    for source_path in sorted(base.glob("[0-9][0-9][0-9]*.xml")):
-        make_message_module(codesets, data_elements, source_path, x12_package)
+        for source_path in sorted(base.glob("x12.control.*.xml")):
+            self.make_message_module(codesets, data_elements, source_path, x12_package)
 
-    with (base / "maps.xml").open() as source:
-        maps = list(map_reader(source))
+        for source_path in sorted(base.glob("[0-9][0-9][0-9]*.xml")):
+            self.make_message_module(codesets, data_elements, source_path, x12_package)
 
-    # TODO: Emit the mapping objects.
+        with (base / "maps.xml").open() as source:
+            maps = list(map_reader(source))
 
+        # TODO: Emit the mapping objects.
+        # self.make_mapper(maps, message_modules)
+
+
+class InterimPythonMaker(PythonMaker):
+    """Make Python using Schema constructs."""
+    visitor_class = EmitPython_Interim
+
+
+class AnnotatedPythonMaker(PythonMaker):
+    """Make Python using Annotated definitions."""
+    visitor_class = EmitPython_Annotated
+
+
+## TODO: Combine make_message_schema() and  make_jsonschema() into a class
 
 def make_message_schema(
         codesets: dict[str, Codeset],
@@ -1473,7 +1572,7 @@ def make_message_schema(
     print(msg.jsonschema())
 
 
-def make_jsonschema(base: Path, target: Path) -> None:
+def make_schema(base: Path, target: Path) -> None:
     """
     Extract from XML schema, creating JSON Schema.
 
@@ -1500,25 +1599,41 @@ def make_jsonschema(base: Path, target: Path) -> None:
         make_message_schema(codesets, data_elements, source_path, x12_package)
 
 
-def main(base: Path, x12_package: Path | None, json_dir: Path | None) -> None:
+def make_python(maker: PythonMaker, base: Path, x12_package: Path) -> None:
     """
     Extract from XML schema and make Python modules for parsing messages.
-
-    Making JSON Schema is possible.
-    JSON Schema **should** be created from the Python, not from the XML.
     """
     logger.info("Source %s", base)
-    if x12_package:
-        logger.info("Creating %s", x12_package)
-        make_python(base, x12_package)
-    if json_dir:
-        logger.info("Creating %s", json_dir)
-        make_jsonschema(base, json_dir)
+    logger.info("Creating %s", x12_package)
+    # maker = InterimPythonMaker()
+    # maker = AnnotatedPythonMaker()
+    maker.make_python(base, x12_package)
+
+def make_jsonschema(base: Path, json_dir: Path) -> None:
+    """
+    Making JSON Schema is possible.
+    JSON Schema **should** be created from the Python, not directly from the XML.
+    """
+    logger.info("Source %s", base)
+    logger.info("Creating %s", json_dir)
+    make_schema(base, json_dir)
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
+
     base = Path.home() / "github" / "pyx12" / "pyx12" / "map"
-    x12_package = Path.cwd().parent / "x12"
-    main(base, x12_package, None)
+    output = "python"
+
+    if output == "python":
+        x12_package = Path.cwd().parent / "x12"
+        make_python(AnnotatedPythonMaker(), base, x12_package)
+    elif output == "schema-python":
+        x12_package = Path.cwd().parent / "x12"
+        make_python(InterimPythonMaker(), base, x12_package)
+    elif output == "json":
+        json_dir = Path.cwd() / "json"
+        make_jsonschema(base, json_dir)
+    else:
+        raise ValueError("unknown output option, {output}")
     logging.shutdown()

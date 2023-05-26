@@ -5,7 +5,7 @@ Test tools/xml_extract
 """
 import ast
 from io import StringIO
-from typing import Annotated, Literal
+from typing import Annotated
 from types import UnionType
 
 from pytest import fixture, CaptureFixture, mark
@@ -44,7 +44,7 @@ def test_code_reader(mock_codes_xml: StringIO) -> None:
     assert codes[0].values == ["NC"]
 
 def test_dataelement() -> None:
-    d = xml_extract.DataElement(sentinel.ELE_NUM, "AN", "3", "5", sentinel.NAME)
+    d = xml_extract.DataElement('42', "AN", "3", "5", sentinel.NAME)
     assert d.jsonschema() == {
         "title": sentinel.NAME,
         "type": "string",
@@ -52,7 +52,7 @@ def test_dataelement() -> None:
         "minLength": 3,
         "maxLength": 5,
     }
-    assert d.annotation() == Annotated[str, ann.Title(sentinel.NAME), ann.MinLen(3), ann.MaxLen(5)]
+    assert d.annotation() == ('D_42: TypeAlias = Annotated[str, Title(sentinel.NAME), MinLen(3), MaxLen(5)]', "")
 
 @fixture
 def mock_elements_xml() -> StringIO:
@@ -373,6 +373,17 @@ def mock_message() -> xml_extract.Message:
     return m
 
 
+class ClassVisitor(ast.NodeVisitor):
+    def __init__(self) -> None:
+        self.names = []
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+        # print(node.body)
+        # TODO: Visit the body. They're all very similar.
+        # optional ast.Expr (the docstring)
+        # internal ast.ClassDef (name == "Schema")
+        # the fields are the remaining ast.AnnAssign statments
+        self.names.append(node.name)
+
 def test_emit_python_interim(mock_message: xml_extract.Message, capsys: CaptureFixture) -> None:
     data_elements = {"I01": Mock(name="Mock DataElement", min_len="2", max_len="2", int_min_len=2, int_max_len=2)}
     codes = {}
@@ -383,32 +394,21 @@ def test_emit_python_interim(mock_message: xml_extract.Message, capsys: CaptureF
     # Assert the code is valid
     module = ast.parse(python_source, filename="__test__", mode="exec")
 
-    class ClassVisitor(ast.NodeVisitor):
-        def __init__(self) -> None:
-            self.names = []
-        def visit_ClassDef(self, node: ast.ClassDef) -> None:
-            # print(node.body)
-            # TODO: Visit the body. They're all very similar.
-            # optional ast.Expr (the docstring)
-            # internal ast.ClassDef (name == "Schema")
-            # the fields are the remaining ast.AnnAssign statments
-            self.names.append(node.name)
-
-    # Check the structure of the code
+    # TODO: Check the structure of the code more closely
     cv = ClassVisitor()
     cv.visit(module)
     assert cv.names == ['ISA_LOOP_ISA01', 'ISA_LOOP_ISA', 'ISA_LOOP', 'MSG999']
 
 def test_emit_python_annotated_codesets(mock_message: xml_extract.Message, capsys: CaptureFixture) -> None:
     data_elements = {"I01": Mock(name="Mock DataElement", min_len="2", max_len="2", int_min_len=2, int_max_len=2)}
-    codes = {'CS': ["4", "2"]}
+    codes = {'CS': Mock(name="mock_Codeset", values=["4", "2"])}
     ep = xml_extract.EmitPython_Annotated().data_elements(data_elements).codesets(codes)
 
     ep.dump_codesets()
     python_source, _ = capsys.readouterr()
     # print(python_source.splitlines())
     assert python_source.splitlines() == [
-        "CS: TypeAlias = Annotated[str, Literal['4', '2']]"
+        "CS = ['4', '2']"
     ]
 
 def test_emit_python_annotated_data_elements(mock_message: xml_extract.Message, capsys: CaptureFixture) -> None:
@@ -420,24 +420,24 @@ def test_emit_python_annotated_data_elements(mock_message: xml_extract.Message, 
     python_source, _ = capsys.readouterr()
     # print(python_source.splitlines())
     assert python_source.splitlines() == [
-        "AN: TypeAlias = <class 'str'>",
-        "B: TypeAlias = <class 'str'>",
-        "DT: TypeAlias = <class 'datetime.date'>",
-        "ID: TypeAlias = Annotated[str, Format('\\\\d+')]",
-        "R: TypeAlias = <class 'float'>",
-        "TM: TypeAlias = <class 'datetime.time'>",
-        "N: TypeAlias = <class 'int'>",
-        'N0: TypeAlias = Annotated[decimal.Decimal, Scale(0)]',
-        'N1: TypeAlias = Annotated[decimal.Decimal, Scale(1)]',
-        'N2: TypeAlias = Annotated[decimal.Decimal, Scale(2)]',
-        'N3: TypeAlias = Annotated[decimal.Decimal, Scale(3)]',
-        'N4: TypeAlias = Annotated[decimal.Decimal, Scale(4)]',
-        'N5: TypeAlias = Annotated[decimal.Decimal, Scale(5)]',
-        'N6: TypeAlias = Annotated[decimal.Decimal, Scale(6)]',
-        'N7: TypeAlias = Annotated[decimal.Decimal, Scale(7)]',
-        'N8: TypeAlias = Annotated[decimal.Decimal, Scale(8)]',
-        'N9: TypeAlias = Annotated[decimal.Decimal, Scale(9)]',
-        "I01: TypeAlias = Annotated[ForwardRef('N2'), MinLen('2'), MaxLen('2')]"
+        "AN: TypeAlias = str",
+        "B: TypeAlias = str",
+        "DT: TypeAlias = datetime.date",
+        'ID: TypeAlias = str',
+        "R: TypeAlias = float",
+        "TM: TypeAlias = datetime.time",
+        "N: TypeAlias = int",
+        'N0: TypeAlias = Annotated[Decimal, Scale(0)]',
+        'N1: TypeAlias = Annotated[Decimal, Scale(1)]',
+        'N2: TypeAlias = Annotated[Decimal, Scale(2)]',
+        'N3: TypeAlias = Annotated[Decimal, Scale(3)]',
+        'N4: TypeAlias = Annotated[Decimal, Scale(4)]',
+        'N5: TypeAlias = Annotated[Decimal, Scale(5)]',
+        'N6: TypeAlias = Annotated[Decimal, Scale(6)]',
+        'N7: TypeAlias = Annotated[Decimal, Scale(7)]',
+        'N8: TypeAlias = Annotated[Decimal, Scale(8)]',
+        'N9: TypeAlias = Annotated[Decimal, Scale(9)]',
+        "I01: TypeAlias = Annotated[N2, MinLen(2), MaxLen(2)]"
     ]
 
 
@@ -451,3 +451,12 @@ def test_emit_python_annotated_message(mock_message: xml_extract.Message, capsys
 
     # Assert the code is valid
     module = ast.parse(python_source, filename="__test__", mode="exec")
+
+    # TODO: Check the structure of the code more closely
+    cv = ClassVisitor()
+    cv.visit(module)
+    assert cv.names == ['ISA_LOOP_ISA', 'ISA_LOOP', 'MSG999']
+
+    # TODO:
+    # exec() the module.
+    # evaluate the module.MSG999.parse("ISA|01~\\n") method.
