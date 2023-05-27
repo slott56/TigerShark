@@ -3,9 +3,9 @@
 
 [x] Mark `Schema` references in `base` and `tools` as deprecated. 
 
-[ ] Add `skip_validation` parameter to `Message.parse()`, `Segment.parse()` and `Composite.parse()`.
+[x] Add `skip_validation` parameter to `Message.parse()`, `Segment.parse()` and `Composite.parse()`.
 
-[ ] Test with these skips
+[x] Test with these skips
 
    a. Skip *_ISA:*:MinLen check  -- This is Universal -- Always needed.
    
@@ -13,25 +13,12 @@
    
    c. Skip *_HL:hl03:Enumerated check -- This is a debugging special case.
 
+[x] Move skip_validation OUT of annotation and composite and keep it in Segment. Change Exception raised in Annotation to include Annotation class name.
+
+[x] Create "class_fields" function (with @cache decorator) to provide the list of fields with _SpecialForm's removed.
+
+[ ] Remove Schema Interim solution.
+
 [ ] Add new annotation-based features
 
-
-# How validation overrides are injected
-
-The validation happens 
-in `Segment.parse()` and `Composite.parse()` methods.
-These tailor the helpers used by the `__init__()` methods.
-
-The `Message.parse()`  and `Loop.parse()` get `["*_ISA:*:MinLen"]`.
-They passe `[":*:MinLen"]` to Segments
-with names matching `'*_ISA'`. The `Segment.parse()` passes 
-this down to `Composite.parse()`.
-
-`SomeSegment.parse(text, skip_validation=[":*:MinLen", etc.])`
-
-The generic `Segment.parse()` and `Composite.parse()` methods
-can uses the name and skip option with the named field's
-helper object construction.
-
-The `__init__()` will then have the proper special-cases.
 
