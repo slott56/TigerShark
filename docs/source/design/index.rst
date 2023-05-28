@@ -15,3 +15,4 @@ The following design notes are details of the software design.
     Type Hints <type_hints>
     Element Types and Annotations <annotations>
     Generating Annotations <xml_extract>
+    Validation Configuration <optional_validation>

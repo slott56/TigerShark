@@ -16,7 +16,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Implementation" href="../implementation/index.html" />
+    <link rel="next" title="Creating New Modules with Annotations" href="xml_extract.html" />
     <link rel="prev" title="Type Hints and JSON Schema" href="type_hints.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -36,7 +36,7 @@
             
   <section id="element-types-and-annotations">
 <span id="design-annotations"></span><h1>Element Types and Annotations<a class="headerlink" href="#element-types-and-annotations" title="Permalink to this heading">¶</a></h1>
-<p>Currently, the <a class="reference internal" href="../implementation/x12.html#x12.base.Element" title="x12.base.Element"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base.Element</span></code></a> class defines individual, atomic elements.
+<p>Currently, the <code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base.Element</span></code> class defines individual, atomic elements.
 Is this necessary? Or can we approach it without the added overhead of these classes?
 Can we replace them with type annotations and focus on the
 collections (i.e. Composites and Segments)?</p>
@@ -48,8 +48,8 @@ collections (i.e. Composites and Segments)?</p>
 </ul>
 <section id="essential-schema-details">
 <h2>Essential Schema Details<a class="headerlink" href="#essential-schema-details" title="Permalink to this heading">¶</a></h2>
-<p>We have the XML source files with the definition
-of the schema. These appear to be derived from the
+<p>The XML source files have the definitionof the schema.
+These appear to be derived from the
 source .SEF files, which we don’t have.</p>
 <p>The schema details in the XML source files include the following:</p>
 <dl class="field-list">
@@ -101,7 +101,7 @@ A type of <code class="docutils literal notranslate"><span class="pre">'data_typ
 An extension attributes, “conversion” and “scale”, are required to clarify the need for a conversion when serializing or deserializing.</p>
 </dd>
 </dl>
-<p>Using annotations almost eliminates the need for a separate class definition for each element.
+<p>Using annotations almost eliminates the need for a separate class definition for each individual element.
 The nuanced details of the title for an element introduces a tiny complication.
 Adding <code class="docutils literal notranslate"><span class="pre">Title(&quot;Number</span> <span class="pre">of</span> <span class="pre">Included</span> <span class="pre">Functional</span> <span class="pre">Groups&quot;)</span></code> as part of the annotations provides a way
 to include this information in a JSON Schema document.</p>
@@ -215,6 +215,7 @@ This may make changes somewhat simpler because definitions are not repeated.</p>
 <li class="toctree-l2"><a class="reference internal" href="parsing.html">Parsing Algorithm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="type_hints.html">Type Hints</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Element Types and Annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xml_extract.html">Generating Annotations</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
@@ -227,7 +228,7 @@ This may make changes somewhat simpler because definitions are not repeated.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Design Notes</a><ul>
       <li>Previous: <a href="type_hints.html" title="previous chapter">Type Hints and JSON Schema</a></li>
-      <li>Next: <a href="../implementation/index.html" title="next chapter">Implementation</a></li>
+      <li>Next: <a href="xml_extract.html" title="next chapter">Creating New Modules with Annotations</a></li>
   </ul></li>
   </ul></li>
 </ul>

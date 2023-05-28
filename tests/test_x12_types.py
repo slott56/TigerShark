@@ -1,178 +1,148 @@
+"""
+Test base X12TypeHelper
+and the various Annotations that are used.
+"""
 import datetime
 from decimal import Decimal
 from typing import Annotated, get_type_hints, TypeAlias
 
 from unittest.mock import sentinel, Mock, call
-from pytest import fixture, raises
+from pytest import fixture, raises, mark
 
 import x12
 from x12 import base
 
-def test_type_factory_schema():
-    class SomeElement:
-        class Schema:
-            datatype = {'type': 'string', 'title': 'I01', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
-            min_len = 2
-            max_len = 2
-
-    gen_type = base.X12DataType.from_schema(SomeElement.Schema)
-    assert isinstance(gen_type, base.IDType)
-    assert gen_type.min_len == 2
-    assert gen_type.scale == 0
-
-def test_type_factory_undefined():
-    class SomeElement:
-        class Schema:
-            pass
-
-    str_type = base.X12DataType.from_schema(SomeElement.Schema)
-    assert isinstance(str_type, base.ANType)
-    assert str_type.min_len is None
-    assert str_type.scale == 0
-
-    assert str_type.to_py("42") == "42"
-    assert str_type.to_str(42) == "42"
 
 def test_type_factory_annotated():
     ID: TypeAlias = Annotated[str, base.Format(r"\d+")]
 
     class SomeSegment:
         some_element: Annotated[ID, base.Title('I01'), base.MinLen(2), base.MaxLen(2)]
+        another_element: str
 
     hints = get_type_hints(SomeSegment, include_extras=True)
-    gen_type = base.X12DataType.annotated(hints['some_element'])
-    assert isinstance(gen_type, base.X12TypeHelper)
+    gen_type_some = base.X12TypeHelper.annotated(hints['some_element'])
+    assert isinstance(gen_type_some, base.X12TypeHelper)
 
-    assert gen_type.validate('12') is None
+    assert gen_type_some.validate('12') is None
     with raises(ValueError):
-        gen_type.validate('ab')
+        gen_type_some.validate('ab')
     with raises(ValueError):
-        gen_type.validate('123')
+        gen_type_some.validate('123')
     with raises(ValueError):
-        gen_type.validate('1')
+        gen_type_some.validate('1')
+
+    gen_type_another = base.X12TypeHelper.annotated(hints['another_element'])
+    assert isinstance(gen_type_some, base.X12TypeHelper)
+
+    assert gen_type_another.validate('12') is None
 
 
-def test_antype():
-    class Schema:
-        datatype = {'type': 'string', 'title': 'I01', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
-        min_len = 2
-        max_len = 2
-    an = base.ANType(Schema.min_len)
+def test_annotated_antype():
+    AN: TypeAlias = str
+    class SomeSegment:
+        an_element: Annotated[AN, base.Title('an_element'), base.MinLen(2), base.MaxLen(2)]
+    hints = get_type_hints(SomeSegment, include_extras=True)
+
+    an = base.X12TypeHelper.annotated(hints['an_element'])
     assert an.to_py("01") == "01"
     assert an.to_str('1') == "1 "
-    assert an.to_str('1') == "1 "
 
-def test_btype():
-    class Schema:
-        datatype = {'type': 'string', 'title': 'I01', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
-        min_len = 2
-        max_len = 2
-    b = base.BType(Schema.min_len)
+
+def test_annotated_btype():
+    B: TypeAlias = str
+    class SomeSegment:
+        b_element: Annotated[B, base.Title('b_element'), base.MinLen(2), base.MaxLen(2)]
+    hints = get_type_hints(SomeSegment, include_extras=True)
+
+    b = base.X12TypeHelper.annotated(hints['b_element'])
     assert b.to_py("01") == "01"
     assert b.to_str('1') == "1 "
 
-def test_dttype():
-    class Schema:
-        datatype = {'type': 'string', 'format': '\\d\\d\\d\\d\\d\\d\\d\\d', 'title': 'I08', 'data_type_code': 'DT', 'minLength': 6, 'maxLength': 6}
-        min_len = 8
-        max_len = 8
-    dt = base.DTType(Schema.min_len)
+
+def test_annotated_dttype():
+    DT: TypeAlias = datetime.date
+    class SomeSegment:
+        dt_element: Annotated[DT, base.Title('dt_element'), base.MinLen(8), base.MaxLen(8), base.Format(r"\d{8}")]
+    hints = get_type_hints(SomeSegment, include_extras=True)
+
+    dt = base.X12TypeHelper.annotated(hints['dt_element'])
     assert dt.to_py("20230203") == datetime.date(2023, 2, 3)
     assert dt.to_str(datetime.date(2023, 2, 3)) == "20230203"
 
     assert dt.to_py(None) is None
 
-def test_idtype():
-    class Schema:
-        datatype = {'type': 'string', 'title': 'I01', 'data_type_code': 'ID', 'minLength': 2, 'maxLength': 2}
-        min_len = 2
-        max_len = 2
-    id_obj = base.IDType(Schema.min_len)
+    # Edge case of no input to provide a preferred format.
+    dt2 = base.X12TypeHelper.annotated(hints['dt_element'])
+    assert dt2.to_str(datetime.date(2023, 2, 3)) == "230203"
+
+
+def test_annotated_idtype():
+    ID: TypeAlias = str
+    class SomeSegment:
+        id_element: Annotated[ID, base.Title('id_element'), base.MinLen(2), base.MaxLen(2)]
+    hints = get_type_hints(SomeSegment, include_extras=True)
+
+    id_obj = base.X12TypeHelper.annotated(hints['id_element'])
     assert id_obj.to_py("1") == "1"
-    assert id_obj.to_str(1) == "01"
-
-def test_idtype_nominlen():
-    class Schema:
-        datatype = {'type': 'string', 'title': 'I01', 'data_type_code': 'ID'}
-        min_len = None
-        max_len = None
-    id_obj = base.IDType(Schema.min_len)
-    assert id_obj.to_py("1") == "1"
-    assert id_obj.to_str(1) == "1"
+    assert id_obj.to_str("1") == "1 "
 
 
-def test_rtype():
-    class Schema:
-        datatype = {'type': 'number', 'title': 'Rate', 'data_type_code': 'R', 'minLength': 1, 'maxLength': 9}
-        min_len = 1
-        max_len = 9
-    r = base.RType(Schema.min_len)
+def test_annotated_rtype():
+    R: TypeAlias = float
+    class SomeSegment:
+        r_element: Annotated[R, base.Title('r_element'), base.MinLen(2), base.MaxLen(6)]
+    hints = get_type_hints(SomeSegment, include_extras=True)
+
+    r = base.X12TypeHelper.annotated(hints['r_element'])
     assert r.to_py("42") == 42.0
     assert r.to_str(42.0) == "42"
 
     assert r.to_py(None) is None
 
-def test_rtype_nominlen():
-    class Schema:
-        datatype = {'type': 'number', 'title': 'Rate', 'data_type_code': 'R'}
-        min_len = None
-        max_len = None
-    r = base.RType(Schema.min_len)
-    assert r.to_py("42") == 42.0
-    assert r.to_str(42.0) == "42"
 
+def test_annotated_tmtype():
+    TM: TypeAlias = datetime.time
+    class SomeSegment:
+        tm_element: Annotated[TM, base.Title('dt_element'), base.MinLen(4), base.MaxLen(4), base.Format(r"\d{4}")]
+    hints = get_type_hints(SomeSegment, include_extras=True)
 
-def test_tmtype():
-    class Schema:
-        datatype = {'type': 'string', 'format': '\\d\\d\\d\\d', 'title': 'I09', 'data_type_code': 'TM', 'minLength': 4, 'maxLength': 4}
-        min_len = 4
-        max_len = 4
-    tm = base.TMType(Schema.min_len)
+    tm = base.X12TypeHelper.annotated(hints['tm_element'])
     assert tm.to_py("1317") == datetime.time(13, 17)
     assert tm.to_str(datetime.time(13, 17)) == "1317"
 
     assert tm.to_py(None) is None
 
-def test_ntype():
-    e = Mock(name="mock Element", source="42")
-    class Schema:
-        datatype = {'type': 'number', 'title': 'I12', 'data_type_code': 'N', 'minLength': 9, 'maxLength': 9}
-        min_len = 9
-        max_len = 9
-    dt = base.NType(Schema.min_len)
-    assert dt.to_py(e.source) == Decimal('42')
-    assert dt.to_str(42) == "000000042"
 
-def test_ntype_nominlen():
-    e = Mock(name="mock Element", source="42")
-    class Schema:
-        datatype = {'type': 'number', 'title': 'I12', 'data_type_code': 'N'}
-        min_len = None
-        max_len = None
-    n = base.NType(Schema.min_len)
-    assert n.to_py(e.source) == Decimal('42')
-    assert n.to_str(42) == "42"
+def test_annotated_ntype():
+    N: TypeAlias = int
+    class SomeSegment:
+        n_element: Annotated[N, base.Title('n_element'), base.MinLen(9), base.MaxLen(9)]
+    hints = get_type_hints(SomeSegment, include_extras=True)
 
-    assert n.to_py(None) is None
+    n = base.X12TypeHelper.annotated(hints['n_element'])
+    assert n.to_py("42") == Decimal('42')
+    assert n.to_str(42) == "000000042"
 
 
-def test_n0type():
-    e = Mock(name="mock Element", source="42", value=Decimal('42'))
-    class Schema:
-        datatype = {'type': 'number', 'scale': 0, 'title': 'I12', 'data_type_code': 'N0', 'minLength': 9, 'maxLength': 9}
-        min_len = 9
-        max_len = 9
-    dt = base.NType(Schema.min_len)
-    assert dt.to_py(e.source) == Decimal('42')
-    assert dt.to_str(Decimal(42)) == "000000042"
+def test_annotated_n0type():
+    N0: TypeAlias = Annotated[Decimal, base.Scale(0)]
+    class SomeSegment:
+        n0_element: Annotated[N0, base.Title('n0_element'), base.MinLen(9), base.MaxLen(9)]
+    hints = get_type_hints(SomeSegment, include_extras=True)
+
+    n0 = base.X12TypeHelper.annotated(hints['n0_element'])
+    assert n0.to_py("42") == Decimal('42')
+    assert n0.to_str(Decimal('42')) == "000000042"
 
 
-def test_n2type():
-    e = Mock(name="mock Element", source="4200")
-    class Schema:
-        datatype = {'type': 'number', 'scale': 2, 'title': 'Amount', 'data_type_code': 'N2', 'minLength': 1, 'maxLength': 15}
-        min_len = 1
-        max_len = 15
-    dt = base.NType(Schema.min_len, scale=Schema.datatype.get('scale', 0))
-    assert dt.to_py(e.source) == Decimal('42')
-    assert dt.to_str(Decimal('42.00')) == "4200"
+def test_annotated_n2type():
+    N2: TypeAlias = Annotated[Decimal, base.Scale(2)]
+    class SomeSegment:
+        n2_element: Annotated[N2, base.Title('n2_element'), base.MinLen(1), base.MaxLen(15)]
+    hints = get_type_hints(SomeSegment, include_extras=True)
+
+    n2 = base.X12TypeHelper.annotated(hints['n2_element'])
+    assert n2.to_py("4200") == Decimal('42')
+    assert n2.to_str(Decimal('42.00')) == "4200"
+

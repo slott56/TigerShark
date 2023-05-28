@@ -15,9 +15,10 @@ from typing_extensions import _AnnotatedAlias
 from types import GenericAlias, UnionType
 
 class X12Annotation:
+    validation = False  # Should this be used for validation?
+
     def __init__(self, *parameters: Any) -> None:
         self.params = tuple(parameters)
-        self.skip_validation = False
 
     def __repr__(self) -> str:
         match len(self.params):
@@ -60,13 +61,13 @@ class X12Annotation:
         return None
 
 class Format(X12Annotation):
+    validation = True
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"format": self.params[0]}
 
     def invalid(self, source: str) -> str | None:
-        if self.skip_validation:
-            return None
         if re.match(self.params[0], source) is None:
             return f"invalid format for {source!r}, not {self.params[0]}"
         return None
@@ -77,13 +78,13 @@ class Scale(X12Annotation):
         return {"x-scale": self.params[0]}
 
 class MinLen(X12Annotation):
+    validation = True
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"minLength": self.params[0]}
 
     def invalid(self, source: str) -> str | None:
-        if self.skip_validation:
-            return None
         if source is None:
             return None
         if len(source) < self.params[0]:
@@ -91,13 +92,13 @@ class MinLen(X12Annotation):
         return None
 
 class MaxLen(X12Annotation):
+    validation = True
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"maxLength": self.params[0]}
 
     def invalid(self, source: str) -> str | None:
-        if self.skip_validation:
-            return None
         if source is None:
             return None
         if len(source) > self.params[0]:
@@ -105,13 +106,13 @@ class MaxLen(X12Annotation):
         return None
 
 class Enumerated(X12Annotation):
+    validation = True
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"enum": list(self.params)}
 
     def invalid(self, source: str) -> str | None:
-        if self.skip_validation:
-            return None
         if source is None:
             return None
         if source not in self.params:

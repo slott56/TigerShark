@@ -20,8 +20,8 @@ We have the following considerations:
 Essential Schema Details
 ========================
 
-We have the XML source files with the definition
-of the schema. These appear to be derived from the
+The XML source files have the definitionof the schema.
+These appear to be derived from the
 source .SEF files, which we don't have.
 
 The schema details in the XML source files include the following:
@@ -87,7 +87,7 @@ The schema details in the XML source files include the following:
     The annotation becomes JSONSchema ``{"type": "str", "minLength": x, "maxLength": y, "format": "\d\d\d\d", "conversion": "decimal", "scale": 2}``.
     An extension attributes, "conversion" and "scale", are required to clarify the need for a conversion when serializing or deserializing.
 
-Using annotations almost eliminates the need for a separate class definition for each element.
+Using annotations almost eliminates the need for a separate class definition for each individual element.
 The nuanced details of the title for an element introduces a tiny complication.
 Adding ``Title("Number of Included Functional Groups")`` as part of the annotations provides a way
 to include this information in a JSON Schema document.
