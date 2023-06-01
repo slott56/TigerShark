@@ -19,16 +19,16 @@ We'll explore the type hints with a series of examples.
 
 -   `Segments`_. These are collections of Elements and Composites.
 
--   `Elements`_. These are atomic.
-
 -   `Composites`_. These are collections of Elements.
+
+-   `Elements`_. These are atomic, and can be treated as Python objects.
 
 The objective is to provide a pure-Python definition of the X12 EDI structure.
 This can make it easier to examine and analyze messages.
 It can also make it somewhat easier to define alternative syntax for messages
 to further facilitate analysis and processing.
 
-..  important:: The JSON Schema is a work in progress
+..   note:: The JSON Schema is a work in progress
 
     The JSON Schema output seems reasonable, but has not really been implemented fully.
 
@@ -36,9 +36,6 @@ to further facilitate analysis and processing.
 
     These definitions are based on the PyX12 project.
     TigerShark may have introduced bugs or complications.
-
-The JSON Schema **should** be more tightly integrated into the Python definitions.
-An explicit ``Schema`` internal class should be removed.
 
 Messages
 =========

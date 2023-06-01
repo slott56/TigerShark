@@ -5,47 +5,19 @@ The TODO List
 Annotations
 ===========
 
-Central to making this (somewhat) simpler is
-to replace **all** the JSON Schema hooks with Annotations.
-
-See :ref:`design.type_hints` and :ref:`design.annotations`.
-
-This breaks down into several steps.
-
-1.  Expand Annotations to replace the "iterim" ``Schema`` internal class.
-    A :meth:`Schema` property interrogates the annotations
-    to build a valid JSON Schema ``dict[str, Any]`` object
-    from the type Annotations.
-
-2.  Replace the :py:class:`x12.base.X12DataType` with a variant
-    that works with Annotations instead of JSON Schema.
-    (The :meth:`Schema` property, however, permits the interim solution to continue to work.)
-
-    This means an ``Element`` subclass will have one
-    mandatory field, ``value`` with an annotated type.
-    This replaces the ``Schema`` and the implied pair of fields,
-    ``value`` and ``source``.
-
-    In the long run, this Element wrapper is not needed.
-
-3.  Write an integration test cases for the JSON Schema
+1.  Write an integration test cases for the JSON Schema
     to be sure (1) a validator can be built, and (2) it validates
     the JSON output.
 
-4.  Expand the ``tools/xml_extract.py`` application to emit annotations from the XML-defined schema.
+2.  Unify the various "Peel the Onion" algorithms.
 
-5.  Rebuild all the message definitions.
+3.  Cleanup type hints to the extent possible.
+    Specifically, ``error: Expected type in class pattern; found "Any"  [misc]``
+    occurs so often, it looks like a badly-formed ``case`` pattern.
+    Yet, it seems to work.
 
-This is the highest priority. Some other things to do
+Some other things to do
 are captured in these documents, and annotated in the code.
-
-Remove Element class
-=============================
-
-The ``Element`` class is needless overhead.
-It wraps up data conversion functionality
-that is better handled by ``Segment`` and ``Composite``
-parsing and dumping.
 
 From the Documentation
 ======================
@@ -57,25 +29,65 @@ Things to do, from the documentation.
 From the code
 =============
 
-tools/xml_extract.py:        # TODO: DRY issue. The segment_walker (above) is given the class_name value from the Loop class (below).
+::
 
-tools/xml_extract.py:    # TODO: Emit the mapping objects.
+    % find tigershark3 -name '*.py' -exec grep -Hn -i todo {} \;
 
-x12/base.py:    TODO: Consider str | TextIO | Path as ``text`` parameter type.
 
-x12/base.py:        # TODO: re.search() might be faster at finding the next segment separator
+tigershark3/tools/xml_extract.py:176:.. todo:: This version identification is not implemented
 
-x12/base.py:        # TODO: re.search() might be faster at finding the next element separator
+tigershark3/tools/xml_extract.py:886:        ..  todo:: properly flatten the message to emit $loop, $segment, $composite, and $element definitions.
 
-x12/base.py:## TODO: Replace these with annotations.
+tigershark3/tools/xml_extract.py:1100:        # TODO: DRY issue. The segment_walker (above) is given the class_name value from the Loop class (below).
 
-x12/base.py:## TODO: Refactor to_py(Element, type hint with annotation)
+tigershark3/tools/xml_extract.py:1538:        # TODO: Emit the mapping objects.
 
-x12/base.py:## TODO: Refactor to_str(object, type hint with annotation)
+tigershark3/tools/xml_extract.py:1552:## TODO: Combine make_message_schema() and  make_jsonschema() into a class
 
-x12/base.py:    TODO: Replace this with pure annotations.
+tigershark3/tools/xml_extract.py:1563:    ..  todo:: Include the "$ref" data types and code sets.
 
-x12/base.py:        # TODO: Validate with self.type_helper...
+tigershark3/x12/annotations.py:183:    ..  todo:: Handle Union[T | None].
 
-x12/base.py:                    # TODO: segment with usage == "R"? Error
+tigershark3/x12/base.py:78:    ..  todo:: Consider str | TextIO | Path as ``text`` parameter types.
 
+tigershark3/x12/base.py:126:        ..  todo:: Optimize the field and composite splitting to avoid creating multiple lists.
+
+tigershark3/x12/base.py:131:        # TODO: re.search() might be faster at finding the next segment separator
+
+tigershark3/x12/base.py:140:        # TODO: Segment ISA parser can replace ISA16 ``["", ""]`` value with the parsed array_sep value.
+
+tigershark3/x12/base.py:173:        # TODO: re.search() might be faster at finding the next element separator
+
+tigershark3/x12/base.py:207:    ..  TODO: Should be a  hierarchy of classes.
+
+tigershark3/x12/base.py:222:                # TODO: Create a X | Y | None to_py construct.
+
+tigershark3/x12/base.py:230:                # TODO: Create A "list[X]" to_py that checks MaxItems (and MinItems)
+
+tigershark3/x12/base.py:276:                # TODO: Make this sensisitve to MinLen() and MaxLen()
+
+tigershark3/x12/base.py:284:                # TODO: Make this sensisitve to MinLen() and MaxLen()
+
+tigershark3/x12/base.py:297:        # TODO: Seems to be a silly optimization.
+
+tigershark3/x12/base.py:338:            # TODO: Check ``Usage`` and ``Required`` annotations
+
+tigershark3/x12/base.py:433:            # TODO: X12ElementHelper has formats.
+
+tigershark3/x12/base.py:550:        ..  todo:: Remove ``instance`` parameter
+
+tigershark3/x12/base.py:693:            # TODO: Refactor into recursive walk through type...
+
+tigershark3/x12/base.py:694:            # TODO: PEEL THE ONION...
+
+tigershark3/x12/base.py:744:            # TODO: PEEL THE ONION
+
+tigershark3/x12/base.py:870:        ..  todo:: Rename this to not conflict with semantics of `Source`.
+
+tigershark3/x12/base.py:915:            # TODO: PEEL THE ONION...
+
+tigershark3/x12/base.py:971:                # TODO: segment with usage == "R"? Error
+
+tigershark3/x12/base.py:1060:            # TODO: PEEL THE ONION.
+
+tigershark3/__main__.py:66:    TODO: Output is "json" format.

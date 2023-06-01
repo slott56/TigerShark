@@ -76,45 +76,21 @@ customer's Implementation Guide.
 -   The SEF files. These seem to be a proprietary product of TIBCO.
 
 The TigerShark tools can transform the ``.xml`` files
-into JSON Schema and Python class definitions.
+into Python class definitions. These can be further refined
+into JSON Schema.
 
 
 Application Perspective
 =============================
 
 An X12 Message is what the application uses.
-It's a collection of X12 Segments.
+It's a collection of X12 Loops, Segments, Composites and Elements.
 The segment names are often reused, meaning
 that a segment only has meaning in the context
 of a specific Loop.
 
 This leads to fairly complex navigation through the Loop/Segment/Composite hierarchy
 within a message.
-
-This navigation can lead to creation of properties to access specific attributes deeply nested within a message.
-Because the message class definition is built from the XML (or SEF) source files, any
-a property definitions added to the class could be lost.
-
-A sensible solution is to make the class definitions "mixin-aware".
-
-The :mod:`tools.xml_extract` tool should rely on a configuration file to look for messages that have additional
-definitions, and include these definitions as mixins to the class.
-
-This could lead to
-
-::
-
-    class MSG270(M270_Nav, Message):
-        """HIPAA Health Care Eligibility Inquiry X092A1-270"""
-        class Schema:
-            json = {'title': 'HIPAA Health Care Eligibility Inquiry X092A1-270',
-             'description': 'xid=270 name=HIPAA Health Care Eligibility Inquiry X092A1-270',
-             'type': 'object',
-             'properties': {'isa_loop': {'$ref': '#/$loops/ISA_LOOP'}},
-             'required': ['isa_loop']}
-        isa_loop: list[ISA_LOOP]
-
-Where the ``M270_Nav`` mixin provides properties for navigation into the "2000" loops buried in the body of the message.
 
 Container View
 ^^^^^^^^^^^^^^^
@@ -131,17 +107,18 @@ The component packaging breaks into two major areas.
     package x12 {
         component base {
             component Source
-            component Element
             component Composite
             component Segment
             component Loop
             component Message
         }
         [common]
+        [annotations]
         [msg_xxx_yyyy_zzz]
 
         msg_xxx_yyyy_zzz --> base
         msg_xxx_yyyy_zzz --> common
+        msg_xxx_yyyy_zzz --> annotations
     }
 
     package your_app {
@@ -155,6 +132,8 @@ Here are some more details on the Python packages and modules.
 
 -   :mod:`x12`. This is a package for handling the serializing and
     deserializing of X12 messages.
+
+    -   :mod:`x12.annotations`. This has classes that define annotations to collect the details of an Element (or Composite).
 
     -   :mod:`x12.base`. This has the abstract base class definitions for all messages.
 
@@ -182,7 +161,7 @@ There are several kinds of processing that are part of TigerShark.
     -   `Dumping`_ builds a message in Exchange format or JSON from Python objects.
 
 -   `JSON Schema`_ describes the JSON Schema formalization of the structure.
-    This is how messages are described.
+    This is how messages in JSON notation can be described.
 
 Loading
 =============
@@ -293,6 +272,19 @@ This structure avoids deeply-nested constructs.
 It permits reuse of the data types and codes.
 It provides a loop namespace to disambiguate segments,
 and their composites and elements.
+
+Currently, the internal message classes
+can be turned into JSON Schema.
+The :py:func:`base.schema` function does *not* structure
+the JSON Schema with the base and common definitions
+clearly separated like this. Instead it coughs out
+deeply-nested JSON Schema with redudant copies
+of base definitions.
+
+However, the :mod:`tools.xml_extract` makes an effort
+to provide a flatter structure that reflects the source
+definitions in XML. (These, in turn, likely reflect the
+original specification files.)
 
 Appendix I
 ^^^^^^^^^^

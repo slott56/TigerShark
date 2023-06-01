@@ -10,7 +10,7 @@ Each segment definition is unique to a loop,
 making the loop definition a kind of namespace
 for the segments, composites, and elements that are part of the loop.
 
-Using a Loop definition as a namespace presents a
+Using a ``Loop`` definition as a namespace presents a
 potential complication.
 There are several potential ways to implement a namespace.
 
@@ -86,15 +86,12 @@ The idea is to have the following structure
         import common
 
         class ISA_Loop(Loop):
-            class ISA01(Element):
-                class Schema:
-                    datatype = common.I01
-
             class ISA(Segment):
-                isa01: ISA01
+                isa01: common.I01
                 etc.
 
             class IEA(Segment):
+                iea01: common.I01
                 etc.
 
             isa: ISA
@@ -135,15 +132,12 @@ The idea is to have the following structure
         from base import Message,Loop,Segment,Composite,Element
         import common
 
-        class ISA_Loop_ISA01(Element):
-            class Schema:
-                datatype = common.I01
-
         class ISA_Loop_ISA(Segment):
-            isa01: ISA_Loop_ISA01
+            isa01: common.I01
             etc.
 
         class ISA_Loop_IEA(Segment):
+            iea01: common.I01
             etc.
 
         class ISA_Loop(Loop):

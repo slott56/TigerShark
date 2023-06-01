@@ -92,37 +92,19 @@ customer’s Implementation Guide.</p>
 <li><p>The SEF files. These seem to be a proprietary product of TIBCO.</p></li>
 </ul>
 <p>The TigerShark tools can transform the <code class="docutils literal notranslate"><span class="pre">.xml</span></code> files
-into JSON Schema and Python class definitions.</p>
+into Python class definitions. These can be further refined
+into JSON Schema.</p>
 </section>
 </section>
 <section id="application-perspective">
 <h3>Application Perspective<a class="headerlink" href="#application-perspective" title="Permalink to this heading">¶</a></h3>
 <p>An X12 Message is what the application uses.
-It’s a collection of X12 Segments.
+It’s a collection of X12 Loops, Segments, Composites and Elements.
 The segment names are often reused, meaning
 that a segment only has meaning in the context
 of a specific Loop.</p>
 <p>This leads to fairly complex navigation through the Loop/Segment/Composite hierarchy
 within a message.</p>
-<p>This navigation can lead to creation of properties to access specific attributes deeply nested within a message.
-Because the message class definition is built from the XML (or SEF) source files, any
-a property definitions added to the class could be lost.</p>
-<p>A sensible solution is to make the class definitions “mixin-aware”.</p>
-<p>The <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool should rely on a configuration file to look for messages that have additional
-definitions, and include these definitions as mixins to the class.</p>
-<p>This could lead to</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MSG270</span><span class="p">(</span><span class="n">M270_Nav</span><span class="p">,</span> <span class="n">Message</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;HIPAA Health Care Eligibility Inquiry X092A1-270&quot;&quot;&quot;</span>
-    <span class="k">class</span> <span class="nc">Schema</span><span class="p">:</span>
-        <span class="n">json</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="s1">&#39;HIPAA Health Care Eligibility Inquiry X092A1-270&#39;</span><span class="p">,</span>
-         <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;xid=270 name=HIPAA Health Care Eligibility Inquiry X092A1-270&#39;</span><span class="p">,</span>
-         <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>
-         <span class="s1">&#39;properties&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;isa_loop&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;$ref&#39;</span><span class="p">:</span> <span class="s1">&#39;#/$loops/ISA_LOOP&#39;</span><span class="p">}},</span>
-         <span class="s1">&#39;required&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;isa_loop&#39;</span><span class="p">]}</span>
-    <span class="n">isa_loop</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ISA_LOOP</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>Where the <code class="docutils literal notranslate"><span class="pre">M270_Nav</span></code> mixin provides properties for navigation into the “2000” loops buried in the body of the message.</p>
 </section>
 </section>
 <section id="container-view">
@@ -133,20 +115,21 @@ definitions, and include these definitions as mixins to the class.</p>
 <h2>Component View<a class="headerlink" href="#component-view" title="Permalink to this heading">¶</a></h2>
 <p>The component packaging breaks into two major areas.</p>
 <p class="plantuml">
-<img src="_images/plantuml-a8f67ce262317a8a4acbe445d143829b105290f1.png" alt="package x12 {
+<img src="_images/plantuml-a799b61dd429b42e310e503f9990e9a0a371bb50.png" alt="package x12 {
     component base {
         component Source
-        component Element
         component Composite
         component Segment
         component Loop
         component Message
     }
     [common]
+    [annotations]
     [msg_xxx_yyyy_zzz]
 
     msg_xxx_yyyy_zzz --&gt; base
     msg_xxx_yyyy_zzz --&gt; common
+    msg_xxx_yyyy_zzz --&gt; annotations
 }
 
 package your_app {
@@ -160,6 +143,7 @@ some_app --&gt; msg_xxx_yyyy_zzz"/>
 <li><p><a class="reference internal" href="implementation/x12.html#module-x12" title="x12"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12</span></code></a>. This is a package for handling the serializing and
 deserializing of X12 messages.</p>
 <ul>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.annotations</span></code>. This has classes that define annotations to collect the details of an Element (or Composite).</p></li>
 <li><p><a class="reference internal" href="implementation/x12.html#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a>. This has the abstract base class definitions for all messages.</p></li>
 <li><p><a class="reference internal" href="implementation/x12.html#module-x12.common" title="x12.common"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code></a>. This has common data element and code definitions. This is built by the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching this is unwise.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">msg_mmm_vvvv_Xxxx...py</span></code> modules with message definitions. These are built by the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching these is unwise.</p></li>
@@ -185,7 +169,7 @@ JSON and Python notation.</p>
 </ul>
 </li>
 <li><p><a class="reference internal" href="#json-schema">JSON Schema</a> describes the JSON Schema formalization of the structure.
-This is how messages are described.</p></li>
+This is how messages in JSON notation can be described.</p></li>
 </ul>
 <section id="loading">
 <h3>Loading<a class="headerlink" href="#loading" title="Permalink to this heading">¶</a></h3>
@@ -282,6 +266,17 @@ defined as follows:</p>
 It permits reuse of the data types and codes.
 It provides a loop namespace to disambiguate segments,
 and their composites and elements.</p>
+<p>Currently, the internal message classes
+can be turned into JSON Schema.
+The <code class="xref py py-func docutils literal notranslate"><span class="pre">base.schema()</span></code> function does <em>not</em> structure
+the JSON Schema with the base and common definitions
+clearly separated like this. Instead it coughs out
+deeply-nested JSON Schema with redudant copies
+of base definitions.</p>
+<p>However, the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> makes an effort
+to provide a flatter structure that reflects the source
+definitions in XML. (These, in turn, likely reflect the
+original specification files.)</p>
 </section>
 </section>
 <section id="appendix-i">

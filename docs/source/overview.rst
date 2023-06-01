@@ -11,7 +11,7 @@ This package helps to create Plain Old Python Objects (POPO) which contain
 to X12 structures.  No intermediate XML or other notation is used.
 This can simplify X12 message parsing because the resulting structure is a Python object.
 
-Additionally, JSON Schema definitions can be used
+Additionally, JSON Schema definitions can be created
 to describe the X12 messages for processing outside EDI software.
 This can provide a handy representation for X12 data that can be processed by a wide variety of tools.
 
