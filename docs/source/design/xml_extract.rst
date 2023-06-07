@@ -5,12 +5,14 @@ Creating New Modules with Annotations
 There are two strategies for defining
 the annotations.
 
--   Build the Annotations. Write them to the Python module.
+-   Build the Annotations as internal data structures
+    using the ``typing`` module constructs.
+    Serialize this object in Python notation to the Python module.
 
 -   Build text source code for the Annotations.
 
 Building ``Annotation`` objects
-and *seems* sensible because the :py:func`str`
+and *seems* sensible because the :py:func:`str`
 for an ``Annotation`` is a source-code string.
 However, it doesn't work out well.
 
@@ -33,14 +35,15 @@ In ordinary Python syntax, we'd write this:
 
     some_object: Annotated[some_type, SomeAnotation()] | None
 
-The underlying type definition is hard to build from primitives.
+The underlying type definition is hard to build from primitive class definitions
+in the ``typing`` module. It's much easier to write as pure source text.
 
 Building text seems indirect, and -- potentially --
 frought with problems. However, annotation objects
 aren't meant to be built by code.
 They're meant to be written by people and parsed into annotation objects.
 
-This means the code generator can use this:
+This means the code generator can use code like this to write Python code:
 
 ::
 

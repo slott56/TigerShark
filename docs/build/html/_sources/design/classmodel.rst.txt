@@ -13,6 +13,7 @@ The objective is to have a definition somewhat like the following:
 
     class ISA_LOOP_ISA(Segment):
         """Interchange Control Header"""
+        _segment_name = "ISA"
         isa01: common.I01
         isa02: common.I02
         isa03: common.I03
@@ -46,13 +47,11 @@ defined through type annotations.
 
 The :mod:`x12.base` module provides class definitions on which the other defintions depend.
 
-The  :mod:`x12.common` module would include the following:
+The  :mod:`x12.common` module has type aliases. It would include the following:
 
 ::
 
     I01: TypeAlias = Annotated[str, Title("I01"), MinLen(2), MaxLen(2)]
-
-This :mod:`x12.common` module has type aliases for the data elements.
 
 The built-in :mod:`inspect` module provides a handy :func:`get_annotations`
 function that examines the attributes of the class

@@ -5,13 +5,12 @@ Context: Use Cases
 ##########################
 
 C4 suggests we look at Context, Container, Component, Code.
+(See https://c4model.com).
 
-This chapter describes the `Actors`_
+This section defines the context by describing the `Actors`_
 and their `Use Case Scenarios`_.
 
 The `Data Model`_ section provides an overview of some of the key data entities.
-
-The `Dependencies`_ section identifies key dependencies.
 
 For details on the Containers and Components, see :ref:`architecture`.
 
@@ -265,20 +264,3 @@ This leads to the following data model consideration:
 
 This then leads to questions on how best to implement
 this "loop-as-namespace". This is the topic of the :ref:`design.loop_namespace` design note.
-
-Dependencies
-^^^^^^^^^^^^
-
-The tools depend on the PyX12 prohject.
-The PyX12 project has XML files built from from IG's.
-See https://github.com/azoner/pyx12/tree/master/pyx12/map
-
-This schema repository contains three types of XML files.
-
--   :file:`270.4010.X092.A1.xml` message definition
-
--   :file:`codes.xml`
-
--   :file:`dataele.xml`
-
--   :file:`maps.xml`

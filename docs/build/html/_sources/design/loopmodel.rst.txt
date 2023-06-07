@@ -5,12 +5,12 @@ Loops as Namespaces
 ###################
 
 Within a message, a number of loops can reuse
-segment names, providing alternative definitions.
+segment names, providing alternative definitions for the segment.
 Each segment definition is unique to a loop,
 making the loop definition a kind of namespace
 for the segments, composites, and elements that are part of the loop.
 
-Using a ``Loop`` definition as a namespace presents a
+Using a Loop definition as a namespace presents a
 potential complication.
 There are several potential ways to implement a namespace.
 
@@ -29,7 +29,7 @@ and elements of each message. With this, the schema is required
 at all levels to make sense of the exchange message text.
 
 This design uses the `Qualified name prefixes`_ tecchnique.
-Names like ``L2000_HL`` and ``L2100_HL`` define an ``HL`` segment that's part of two distinct loops,
+Names like ``L2000_HL`` and ``L2100_HL`` define two ``HL`` segments that are part of two distinct loops,
 ``L2000`` and ``L2100``.
 
 
@@ -111,11 +111,6 @@ should be limited to elements, segments and composites
 within a containing loop.
 
 Loop names are unique and reflect the loop nesting.
-For example, Loop 2100 is a sub-loop of Loop 2000.
-The prefix of "Loop_2100" is sufficient to express
-the conceptual nesting of the loops.
-Very deeply-nested declarations are not required.
-
 A sequence of loop definitions can be used by
 containing loops and the overall message.
 
@@ -161,6 +156,6 @@ to build composites, segments, loops, and the overall message.
 
 Loop names are unique and reflect the loop nesting.
 For example, Loop 2100 is a sub-loop of Loop 2000.
-The prefix of "Loop_2100" is sufficient to express
-the conceptual nesting of the loops.
-Long prefixes are not required.
+The prefix of ``Loop_2100_`` is sufficient to express
+the reuse of a segment within separate loops.
+Longer prefixes are not required.

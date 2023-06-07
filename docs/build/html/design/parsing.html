@@ -16,7 +16,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Type Hints" href="annotations.html" />
+    <link rel="next" title="Type Hints and JSON Schema" href="type_hints.html" />
     <link rel="prev" title="Loops as Namespaces" href="loopmodel.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -73,17 +73,24 @@ The remaining values are assigned to elements and composites of the segment.</p>
 <p>There’s a subtlety to the separators.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>The three separator characters can be found at the end of the ISA segment.</p>
+<p>The separator characters are defined in the ISA segment.</p>
 </div>
-<p>This could mean we have to read the ISA segment to figure
+<p>This means we have to read the ISA segment to figure
 out what separators define the structure of the ISA segment.</p>
 <p>The are two relevant conventions that seem to break the circularity of parsing the ISA to find the punctuation required to parse the ISA segment.</p>
 <ol class="arabic simple">
 <li><p>The last three characters of the ISA segment will have the three punctuation marks.
-The final element is the component separator character, which has an element separator in front
-of it and the segment separator after it.</p></li>
-<li><p>The ISA segment is generally uncompressed, and is 106 characters long. Characters 103, 104, and 105 just happen to
-have the three separators in a consistent, easy-to-find position.</p></li>
+The final element of this segment is the component separator character.
+This will have an element separator in front of it and the segment separator after it.</p></li>
+<li><p>The ISA segment is generally uncompressed, and is 106 characters long.
+With an uncompressed ISA, the relevant values are here:</p>
+<ul class="simple">
+<li><p>Position 103: Element separator in front of the final element.</p></li>
+<li><p>Position 104: “Component” separator. This is one character of data. It is used when an element is really an array of values.
+It varies widely based on the text values actually present in the message.</p></li>
+<li><p>Position 105: Segment separator. Is the end of every segment.</p></li>
+</ul>
+</li>
 </ol>
 <p>If the ISA is compressed, then we don’t know where it ends and what the segment separator is.
 Then we have two fallback strategies:</p>
@@ -94,13 +101,6 @@ Then we have two fallback strategies:</p>
 The element separator is position 3. The component separaror is the 16th element. (Yucky, but, sometimes necessary.)</p></li>
 </ul>
 </div></blockquote>
-<p>There seem to be three separators around the “Component Element Separator” field, ISA16, with common type I15 (which is nominally 1 position.)
-With an uncompressed ISA, the relevant values are here:</p>
-<ul class="simple">
-<li><p>Position 103: Element separator in front of it.</p></li>
-<li><p>Position 104: “Component” separator. This is one character of data. It appears to be used when an element is really an array of values.</p></li>
-<li><p>Position 105: Segment separator. Is the end of every segment.</p></li>
-</ul>
 </section>
 <section id="message-parsing">
 <h2>Message Parsing<a class="headerlink" href="#message-parsing" title="Permalink to this heading">¶</a></h2>
@@ -160,15 +160,10 @@ to be made.</p>
 <span class="n">segment_class</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span><span class="o">.</span><span class="n">build_attrs</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>However. It appears that some elements are not really
-atomic.
-See, specifically the <code class="docutils literal notranslate"><span class="pre">834</span></code> message.
-Loops <code class="docutils literal notranslate"><span class="pre">2100A</span></code> and <code class="docutils literal notranslate"><span class="pre">2100B</span></code> have <code class="docutils literal notranslate"><span class="pre">DMG</span></code> Segments.
-The <code class="docutils literal notranslate"><span class="pre">DMG05</span></code> Element is a sequence of “components” (?).</p>
-<p>The type is <cite>list[DMG05]</cite>, something that appears unique
-to this message.</p>
-<p>This means each field value containing the component separator character
-can be decomposed into a list of values.</p>
+<p>Elements are not <em>actually</em> atomic.
+This means a value separated by element separators
+can contain component separator characters.
+It can be decomposed into a list of values.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">component_separator</span><span class="p">)</span> <span class="k">if</span> <span class="n">component_separator</span> <span class="ow">in</span> <span class="n">val</span> <span class="k">else</span> <span class="n">val</span>
     <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">fields</span>
@@ -176,7 +171,7 @@ can be decomposed into a list of values.</p>
 </pre></div>
 </div>
 <p>An important consequence is the Component Separator <strong>must</strong> be provided
-separately, and can be unique for each message.
+separately in the ISA16. Further, it can be unique for each message.
 This avoids having to escape the component separator when it occurs in a value.</p>
 <p>It appears that the software encoding a message must pick a
 component separator character based on the values present
@@ -208,16 +203,17 @@ the separator might be “^” or “\”.</p>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../operation.html">Using TigerShark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usecase.html">Context: Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="classmodel.html">Message Schema as Class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="element.html">Element Definitions as Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loopmodel.html">Loops as Namespace</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">Parsing Algorithm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annotations.html">Type Annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type_hints.html">Type Hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotations.html">Element Types and Annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xml_extract.html">Generating Annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optional_validation.html">Validation Configuration</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
@@ -230,7 +226,7 @@ the separator might be “^” or “\”.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Design Notes</a><ul>
       <li>Previous: <a href="loopmodel.html" title="previous chapter">Loops as Namespaces</a></li>
-      <li>Next: <a href="annotations.html" title="next chapter">Type Hints</a></li>
+      <li>Next: <a href="type_hints.html" title="next chapter">Type Hints and JSON Schema</a></li>
   </ul></li>
   </ul></li>
 </ul>

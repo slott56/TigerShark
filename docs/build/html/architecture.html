@@ -37,6 +37,7 @@
   <section id="architecture-and-design">
 <span id="architecture"></span><h1>Architecture and Design<a class="headerlink" href="#architecture-and-design" title="Permalink to this heading">¶</a></h1>
 <p>C4 suggests we look at Context, Container, Component, Code.
+(See <a class="reference external" href="https://c4model.com">https://c4model.com</a>).
 For more information on the Context, see <a class="reference internal" href="usecase.html#context"><span class="std std-ref">Context: Use Cases</span></a>.</p>
 <p>This chapter provides an <a class="reference internal" href="#architecture-summary">Architecture Summary</a> with an overview of the
 architectural principles.</p>
@@ -44,7 +45,8 @@ architectural principles.</p>
 <p>The <a class="reference internal" href="#component-view">Component View</a> section provides an overview of the package structure
 underlying the application software.</p>
 <p>The <a class="reference internal" href="#processing-model">Processing Model</a> section provides an overview of the various kinds of processing that occur.</p>
-<p><a class="reference internal" href="#appendix-i">Appendix I</a> contains the 57 distinct segment types.</p>
+<p>The <a class="reference internal" href="#dependencies">Dependencies</a> section identifies an important implementation dependency: the PyX12 project.</p>
+<p><a class="reference internal" href="#appendix-segments">Appendix: Segments</a> contains the 57 distinct segment types.</p>
 <p>The details of Code are covered in <a class="reference internal" href="design/index.html#design"><span class="std std-ref">Design Notes</span></a>.</p>
 <section id="architecture-summary">
 <h2>Architecture Summary<a class="headerlink" href="#architecture-summary" title="Permalink to this heading">¶</a></h2>
@@ -56,32 +58,36 @@ This defines X12 message types as Plain Old Python Object (POPO) classes.</p>
 </dd>
 <dt class="field-even">Application<span class="colon">:</span></dt>
 <dd class="field-even"><p>A message is implemented as class in a module.
-The class is used to load and dump (other terms are parse, deserialize, unmarshall) the text of messages in a variety of formats.
-Often, this is “exchange” format to Python and Python to JSON conversions to parse a message and persist an easy-to-use copy.
-It can also be JSON to Python and Python back to “exchange” format to create messages usable by other EDI applications.</p>
+The class is used to load and dump (other terms are parse/unparse, deserialize/serialize, unmarshall/marshall) the text of messages in a variety of formats.</p>
 </dd>
 </dl>
+<p>The most common use case is loading an  “exchange” format message to create Python objects.
+From here, Python to JSON conversions can persist an easy-to-use copy of the message.</p>
 <section id="developer-s-perspective">
 <h3>Developer’s Perspective<a class="headerlink" href="#developer-s-perspective" title="Permalink to this heading">¶</a></h3>
-<p>The X12 standard is defined via <code class="file docutils literal notranslate"><span class="pre">.SEF</span></code> files; additional
-meta-definitions are used to manage the complexity.
-These files are proprietary, and not freely available.</p>
-<p>The PyX12 project has XML versions of these message definitions.</p>
-<p>An X12 message can have a complicated structure of loops, segments, composites and elements.
-This makes it difficult to define a message type, and parse text that serializes an instance
-of a message type.</p>
-<p>See <a class="reference internal" href="design/classmodel.html#design-class"><span class="std std-ref">Class Model</span></a> and <a class="reference internal" href="design/parsing.html#design-parsing"><span class="std std-ref">Parsing An Exchange-Format Message</span></a> for more on solutions.</p>
-<p>There are several steps in the interpretation of a message:</p>
+<p>An X12 message has a complicated structure of loops, segments, composites and elements.
+This is reflected in the message type definition,
+which depends on loop, segment, and composite definitions.</p>
+<p>There are several layers in the interpretation of a message:</p>
 <ol class="arabic simple">
-<li><p>The exchange format representation of a message. This is a big block of text.</p></li>
-<li><p>X12 Segments. It’s relatively easy to decompose an X12 message into
-a sequence of segments and elements.</p></li>
+<li><p>Exchange Format. This is a big block of text, sometimes with additional <code class="docutils literal notranslate"><span class="pre">\n</span></code> inserted after each segment separator.</p></li>
+<li><p>X12 Segment Format. The segment separator can be used to decompose the exchange format into
+a sequence of segments. Each segment is a sequence of element and composite values.
+Note that the loop structure is not an explicit part of this representation.</p></li>
 <li><p>The application’s view of a Message that may be a Claim or Eligibility Request.
 This is a Python object definition that reflects the
 loops, segments, composites, and elements of the message.</p></li>
 </ol>
+<p>It’s common practice to define common sets of code values,
+and common data types outside the messages. This is reflected
+in a <a class="reference internal" href="implementation/x12.html#module-x12.common" title="x12.common"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code></a> module with these definitions.</p>
+<p>See <a class="reference internal" href="design/classmodel.html#design-class"><span class="std std-ref">Class Model</span></a> and <a class="reference internal" href="design/parsing.html#design-parsing"><span class="std std-ref">Parsing An Exchange-Format Message</span></a> for more on solutions.</p>
 <section id="x12-message-definitions">
 <h4>X12 Message Definitions<a class="headerlink" href="#x12-message-definitions" title="Permalink to this heading">¶</a></h4>
+<p>The X12 standard is defined via <code class="file docutils literal notranslate"><span class="pre">.SEF</span></code> files; additional
+meta-definitions are used to manage the exchange of messages,
+versioning, and other considerations.
+These files are proprietary, and not freely available.</p>
 <p>There are two sources for X12 message definitions, in addition to the
 customer’s Implementation Guide.</p>
 <ul class="simple">
@@ -89,34 +95,41 @@ customer’s Implementation Guide.</p>
 <code class="docutils literal notranslate"><span class="pre">.xml</span></code> files that seem to be reasonably complete.</p></li>
 </ul>
 <ul class="simple">
-<li><p>The SEF files. These seem to be a proprietary product of TIBCO.</p></li>
+<li><p>The .SEF files. These seem to be a proprietary product of TIBCO.</p></li>
 </ul>
-<p>The TigerShark tools can transform the <code class="docutils literal notranslate"><span class="pre">.xml</span></code> files
-into Python class definitions. These can be further refined
-into JSON Schema.</p>
+<p>The TigerShark <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool can transform the <code class="docutils literal notranslate"><span class="pre">.xml</span></code> files
+into Python class definitions.
+A class definition can emit JSON Schema for messages of that class.</p>
 </section>
 </section>
 <section id="application-perspective">
 <h3>Application Perspective<a class="headerlink" href="#application-perspective" title="Permalink to this heading">¶</a></h3>
-<p>An X12 Message is what the application uses.
-It’s a collection of X12 Loops, Segments, Composites and Elements.
+<p>An X12 <a class="reference internal" href="implementation/x12.html#x12.base.Message" title="x12.base.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">x12.base.Message</span></code></a> object is what an application uses.
+It’s a collection of X12 Loops, Segments, Composites, and Elements.
 The segment names are often reused, meaning
 that a segment only has meaning in the context
 of a specific Loop.</p>
-<p>This leads to fairly complex navigation through the Loop/Segment/Composite hierarchy
-within a message.</p>
+<p>This leads to a naming convention for classes where a segment name
+is prefixed with the loop that uses that segment.
+For example <code class="docutils literal notranslate"><span class="pre">ISA_LOOP_ISA</span></code> has a loop name of <code class="docutils literal notranslate"><span class="pre">ISA_LOOP</span></code>,
+and a segment name of <code class="docutils literal notranslate"><span class="pre">ISA</span></code> in the context of the ISA Loop.</p>
 </section>
 </section>
 <section id="container-view">
 <h2>Container View<a class="headerlink" href="#container-view" title="Permalink to this heading">¶</a></h2>
-<p>This is more-or-less a single container application. It parses messages and builds messages.</p>
+<p>The applications are more-or-less a single container applications.
+The <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> reads XML definitions and creates
+message class definitions.</p>
+<p>An application that parses messages is most often going to be
+a single container to extract useful content from messages
+for deeper analysis.</p>
 </section>
 <section id="component-view">
 <h2>Component View<a class="headerlink" href="#component-view" title="Permalink to this heading">¶</a></h2>
 <p>The component packaging breaks into two major areas.</p>
 <p class="plantuml">
-<img src="_images/plantuml-a799b61dd429b42e310e503f9990e9a0a371bb50.png" alt="package x12 {
-    component base {
+<img src="_images/plantuml-67781a4213eb1d2a8d86de0fce8bebe0e05d7e70.png" alt="package x12 {
+    package base {
         component Source
         component Composite
         component Segment
@@ -181,8 +194,8 @@ This is how messages in JSON notation can be described.</p></li>
 <p>See <a class="reference internal" href="usecase.html#marshall"><span class="std std-ref">Serialize A Message</span></a>.</p>
 <p>Each Message object handles serialization into X12 text
 or JSON.
-A <code class="xref py py-meth docutils literal notranslate"><span class="pre">dump()</span></code> method handles X12 “exchange format”.
-A <code class="xref py py-meth docutils literal notranslate"><span class="pre">json()</span></code> method handles JSON.</p>
+A <code class="xref py py-meth docutils literal notranslate"><span class="pre">dump()</span></code> method emits the content in X12 “exchange format”.
+A <code class="xref py py-meth docutils literal notranslate"><span class="pre">json()</span></code> method emits the content in JSON notation.</p>
 </section>
 <section id="json-schema">
 <h3>JSON Schema<a class="headerlink" href="#json-schema" title="Permalink to this heading">¶</a></h3>
@@ -279,8 +292,21 @@ definitions in XML. (These, in turn, likely reflect the
 original specification files.)</p>
 </section>
 </section>
-<section id="appendix-i">
-<h2>Appendix I<a class="headerlink" href="#appendix-i" title="Permalink to this heading">¶</a></h2>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this heading">¶</a></h2>
+<p>The tools depend on the PyX12 prohject.
+The PyX12 project has XML files built from from IG’s.
+See <a class="reference external" href="https://github.com/azoner/pyx12/tree/master/pyx12/map">https://github.com/azoner/pyx12/tree/master/pyx12/map</a></p>
+<p>This schema repository contains three types of XML files.</p>
+<ul class="simple">
+<li><p><code class="file docutils literal notranslate"><span class="pre">270.4010.X092.A1.xml</span></code> message definition</p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">codes.xml</span></code></p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">dataele.xml</span></code></p></li>
+<li><p><code class="file docutils literal notranslate"><span class="pre">maps.xml</span></code></p></li>
+</ul>
+</section>
+<section id="appendix-segments">
+<h2>Appendix: Segments<a class="headerlink" href="#appendix-segments" title="Permalink to this heading">¶</a></h2>
 <p>The following table identifies the 57 distinct segment ID’s and how they are
 used. When a segment ID has a list of segment types that indicates that the
 segment appears in a number of distinct loops, often within a single message.</p>
@@ -489,7 +515,6 @@ segment appears in a number of distinct loops, often within a single message.</p
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="operation.html">Using TigerShark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase.html">Context: Use Cases</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Architecture and Design</a><ul>
@@ -497,7 +522,8 @@ segment appears in a number of distinct loops, often within a single message.</p
 <li class="toctree-l2"><a class="reference internal" href="#container-view">Container View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#component-view">Component View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#processing-model">Processing Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#appendix-i">Appendix I</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#appendix-segments">Appendix: Segments</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="design/index.html">Design Notes</a></li>

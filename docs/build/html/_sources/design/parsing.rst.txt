@@ -49,19 +49,27 @@ General Parsing
 
 There's a subtlety to the separators.
 
-..  important:: The three separator characters can be found at the end of the ISA segment.
+..  important:: The separator characters are defined in the ISA segment.
 
-This could mean we have to read the ISA segment to figure
+This means we have to read the ISA segment to figure
 out what separators define the structure of the ISA segment.
 
 The are two relevant conventions that seem to break the circularity of parsing the ISA to find the punctuation required to parse the ISA segment.
 
 1.  The last three characters of the ISA segment will have the three punctuation marks.
-    The final element is the component separator character, which has an element separator in front
-    of it and the segment separator after it.
+    The final element of this segment is the component separator character.
+    This will have an element separator in front of it and the segment separator after it.
 
-2.  The ISA segment is generally uncompressed, and is 106 characters long. Characters 103, 104, and 105 just happen to
-    have the three separators in a consistent, easy-to-find position.
+2.  The ISA segment is generally uncompressed, and is 106 characters long.
+    With an uncompressed ISA, the relevant values are here:
+
+    -   Position 103: Element separator in front of the final element.
+
+    -   Position 104: "Component" separator. This is one character of data. It is used when an element is really an array of values.
+        It varies widely based on the text values actually present in the message.
+
+    -   Position 105: Segment separator. Is the end of every segment.
+
 
 If the ISA is compressed, then we don't know where it ends and what the segment separator is.
 Then we have two fallback strategies:
@@ -71,14 +79,6 @@ Then we have two fallback strategies:
     -   Eyeball the data, figure out what the segment separator is, and provide this "manually."
         The element separator is position 3. The component separaror is the 16th element. (Yucky, but, sometimes necessary.)
 
-There seem to be three separators around the "Component Element Separator" field, ISA16, with common type I15 (which is nominally 1 position.)
-With an uncompressed ISA, the relevant values are here:
-
--   Position 103: Element separator in front of it.
-
--   Position 104: "Component" separator. This is one character of data. It appears to be used when an element is really an array of values.
-
--   Position 105: Segment separator. Is the end of every segment.
 
 Message Parsing
 ===============
@@ -146,17 +146,10 @@ Conceptually, the Segment parsing algorithm uses approach similar to the followi
     identifier, *fields = segment_text.split(element_separator)
     segment_class[identifier].build_attrs(fields)
 
-However. It appears that some elements are not really
-atomic.
-See, specifically the ``834`` message.
-Loops ``2100A`` and ``2100B`` have ``DMG`` Segments.
-The ``DMG05`` Element is a sequence of "components" (?).
-
-The type is `list[DMG05]`, something that appears unique
-to this message.
-
-This means each field value containing the component separator character
-can be decomposed into a list of values.
+Elements are not *actually* atomic.
+This means a value separated by element separators
+can contain component separator characters.
+It can be decomposed into a list of values.
 
 ::
 
@@ -166,7 +159,7 @@ can be decomposed into a list of values.
     ]
 
 An important consequence is the Component Separator **must** be provided
-separately, and can be unique for each message.
+separately in the ISA16. Further, it can be unique for each message.
 This avoids having to escape the component separator when it occurs in a value.
 
 It appears that the software encoding a message must pick a

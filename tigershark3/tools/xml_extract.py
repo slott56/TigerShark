@@ -1153,11 +1153,11 @@ class MessageVisitor:
         self.types = d
         return self
 
-    def dump_codesets(self) -> None:
-        pass
+    def dump_codesets(self) -> set[str]:
+        return set()
 
-    def dump_data_elements(self) -> None:
-        pass
+    def dump_data_elements(self) -> set[str]:
+        return set()
 
     def visit(self, component: Component) -> None:
         match component:
@@ -1216,15 +1216,21 @@ class EmitPython_Interim(MessageVisitor):
 
     The classes written will be extension subclasses to definitions in ``x12.base``.
     """
-    def dump_codesets(self) -> None:
+    def dump_codesets(self) -> set[str]:
+        names: set[str] = set()
         for id in self.codes:
-            print(f"{pythonify(id, 'C_')} = {self.codes[id].jsonschema()}")
+            name = pythonify(id, 'C_')
+            print(f"{name} = {self.codes[id].jsonschema()}")
+            names.add(name)
+        return names
 
-    def dump_data_elements(self) -> None:
+    def dump_data_elements(self) -> set[str]:
         self.type_names = set()
         for name in self.types:
-            print(f"{pythonify(name, 'D_')} = {self.types[name].jsonschema()}")
-            self.type_names.add(pythonify(name, 'D_'))
+            name = pythonify(name, 'D_')
+            print(f"{name} = {self.types[name].jsonschema()}")
+            self.type_names.add(name)
+        return self.type_names
 
     def element(self, element: Element) -> None:
         print("\n")
@@ -1340,12 +1346,16 @@ class EmitPython_Annotated(MessageVisitor):
         self.types = d
         return self
 
-    def dump_codesets(self) -> None:
+    def dump_codesets(self) -> set[str]:
+        names: set[str] = set()
         for id, codeset in self.codes.items():
             # annotation = f"Annotated[str, Enumerated(*{codeset.values})]"
-            print(f"{pythonify(id, 'C_')} = {codeset.values!r}")
+            name = pythonify(id, 'C_')
+            print(f"{name} = {codeset.values!r}")
+            names.add(name)
+        return names
 
-    def dump_data_elements(self) -> None:
+    def dump_data_elements(self) -> set[str]:
         self.type_names = set()
         for name, base_def in X12_TYPE_ANNOTATION.items():
             print(f"{name}: TypeAlias = {base_def}")
@@ -1356,10 +1366,12 @@ class EmitPython_Annotated(MessageVisitor):
                 base.append(f"MinLen({de_def.min_len})")
             if de_def.max_len:
                 base.append(f"MaxLen({de_def.max_len})")
+            name = pythonify(name, 'D_')
             print(
-                f"{pythonify(name, 'D_')}: TypeAlias = Annotated[{', '.join(base)}]"
+                f"{name}: TypeAlias = Annotated[{', '.join(base)}]"
             )
-            self.type_names.add(pythonify(name, 'D_'))
+            self.type_names.add(name)
+        return self.type_names
 
     def element(self, element: Element) -> None:
         pass  # Not a separate class in the Python.
@@ -1441,7 +1453,7 @@ class PythonMaker:
             codesets: dict[str, Codeset],
             data_elements: dict[str, DataElement],
             target_package: Path
-    ) -> None:
+    ) -> set[str]:
         """
         Emits common module with definitions of common data types.
 
@@ -1451,6 +1463,7 @@ class PythonMaker:
 
         cls = self.visitor_class
         code_writer = cls().data_elements(data_elements).codesets(codesets)
+        names: set[str] = set()
 
         with target_path.open('w') as target_file:
             with redirect_stdout(target_file):
@@ -1462,12 +1475,9 @@ class PythonMaker:
                 print("import datetime")
                 print("from decimal import Decimal")
                 print("from x12.annotations import *")
-                code_writer.dump_codesets()
-                code_writer.dump_data_elements()
-                # for id in codesets:
-                #     print(f"{pythonify(id, 'C_')} = {codesets[id].jsonschema()}")
-                # for name in data_elements:
-                #     print(f"{pythonify(name, 'D_')} = {data_elements[name].jsonschema()}")
+                names.union(code_writer.dump_codesets())
+                names.union(code_writer.dump_data_elements())
+        return names
 
     def make_message_module(
             self,

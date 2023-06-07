@@ -9,8 +9,8 @@ We do not use it as a test case.
 import datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import TextIO
 from pprint import pprint
+from textwrap import dedent
 
 from pytest import fixture, mark
 
@@ -138,12 +138,13 @@ def test_271_dependent_benefits() -> None:
     ]
     assert list(msg.segment_iter()) == expected
 
-def test_271_example() -> None:
+def test_271_example(capsys) -> None:
     example = EXAMPLES / "271-example.txt"
     document = Source(example.read_text())
     msg = msg_271_4010_X092_A1.MSG271.parse(document)
     # print(list(msg.segment_iter()))
-    expected = [['ISA', '00', '          ', '00', '          ', 'ZZ', 'ZIRMED         ', 'ZZ', '12345          ', datetime.date(2012, 6, 5), datetime.time(23, 24), 'U', '00401', Decimal('50033'), '1', 'P', '^'],
+    expected = [
+        ['ISA', '00', '          ', '00', '          ', 'ZZ', 'ZIRMED         ', 'ZZ', '12345          ', datetime.date(2012, 6, 5), datetime.time(23, 24), 'U', '00401', Decimal('50033'), '1', 'P', '^'],
         ['GS', 'HB', 'ZIRMED', '12345', datetime.date(2012, 6, 5), datetime.time(23, 24), Decimal('50025'), 'X', '004010X092A1'],
         ['ST', '271', '0001'],
         ['BHT', '0022', '11', '11111', datetime.date(2012, 6, 5), datetime.time(23, 24, 23), None],
@@ -166,6 +167,523 @@ def test_271_example() -> None:
         ['IEA', Decimal('1'), Decimal('50033')]]
     assert list(msg.segment_iter()) == expected
 
+    print(msg.json(indent=2))
+    json_text, _ = capsys.readouterr()
+    assert json_text == dedent("""\
+        {
+          "_kind": "Message",
+          "_name": "MSG271",
+          "isa_loop": [
+            {
+              "_kind": "Loop",
+              "_name": "ISA_LOOP",
+              "isa": {
+                "_kind": "Segment",
+                "_name": "ISA_LOOP_ISA",
+                "isa01": "00",
+                "isa02": "          ",
+                "isa03": "00",
+                "isa04": "          ",
+                "isa05": "ZZ",
+                "isa06": "ZIRMED         ",
+                "isa07": "ZZ",
+                "isa08": "12345          ",
+                "isa09": {
+                  "date": "20120605",
+                  "_format": "%Y%m%d"
+                },
+                "isa10": {
+                  "time": "2324",
+                  "_format": "%H%M"
+                },
+                "isa11": "U",
+                "isa12": "00401",
+                "isa13": "50033",
+                "isa14": "1",
+                "isa15": "P",
+                "isa16": "^"
+              },
+              "gs_loop": [
+                {
+                  "_kind": "Loop",
+                  "_name": "GS_LOOP",
+                  "gs": {
+                    "_kind": "Segment",
+                    "_name": "GS_LOOP_GS",
+                    "gs01": "HB",
+                    "gs02": "ZIRMED",
+                    "gs03": "12345",
+                    "gs04": {
+                      "date": "20120605",
+                      "_format": "%Y%m%d"
+                    },
+                    "gs05": {
+                      "time": "2324",
+                      "_format": "%H%M"
+                    },
+                    "gs06": "50025",
+                    "gs07": "X",
+                    "gs08": "004010X092A1"
+                  },
+                  "st_loop": [
+                    {
+                      "_kind": "Loop",
+                      "_name": "ST_LOOP",
+                      "st": {
+                        "_kind": "Segment",
+                        "_name": "ST_LOOP_ST",
+                        "st01": "271",
+                        "st02": "0001"
+                      },
+                      "header": [
+                        {
+                          "_kind": "Loop",
+                          "_name": "HEADER",
+                          "bht": {
+                            "_kind": "Segment",
+                            "_name": "HEADER_BHT",
+                            "bht01": "0022",
+                            "bht02": "11",
+                            "bht03": "11111",
+                            "bht04": {
+                              "date": "20120605",
+                              "_format": "%Y%m%d"
+                            },
+                            "bht05": {
+                              "time": "2324",
+                              "_format": "%H%M"
+                            }
+                          }
+                        }
+                      ],
+                      "detail": [
+                        {
+                          "_kind": "Loop",
+                          "_name": "DETAIL",
+                          "l2000a": [
+                            {
+                              "_kind": "Loop",
+                              "_name": "L2000A",
+                              "hl": {
+                                "_kind": "Segment",
+                                "_name": "L2000A_HL",
+                                "hl01": "1",
+                                "hl02": "",
+                                "hl03": "20",
+                                "hl04": "1"
+                              },
+                              "l2100a": [
+                                {
+                                  "_kind": "Loop",
+                                  "_name": "L2100A",
+                                  "nm1": {
+                                    "_kind": "Segment",
+                                    "_name": "L2100A_NM1",
+                                    "nm101": "PR",
+                                    "nm102": "2",
+                                    "nm103": "Health Net Inc",
+                                    "nm104": "",
+                                    "nm105": "",
+                                    "nm106": "",
+                                    "nm107": "",
+                                    "nm108": "PI",
+                                    "nm109": "10385"
+                                  }
+                                }
+                              ],
+                              "l2000b": [
+                                {
+                                  "_kind": "Loop",
+                                  "_name": "L2000B",
+                                  "hl": {
+                                    "_kind": "Segment",
+                                    "_name": "L2000B_HL",
+                                    "hl01": "2",
+                                    "hl02": "1",
+                                    "hl03": "21",
+                                    "hl04": "1"
+                                  },
+                                  "l2100b": [
+                                    {
+                                      "_kind": "Loop",
+                                      "_name": "L2100B",
+                                      "nm1": {
+                                        "_kind": "Segment",
+                                        "_name": "L2100B_NM1",
+                                        "nm101": "1P",
+                                        "nm102": "2",
+                                        "nm103": "DR. ACULA",
+                                        "nm104": "",
+                                        "nm105": "",
+                                        "nm106": "",
+                                        "nm107": "",
+                                        "nm108": "XX",
+                                        "nm109": "1111111111"
+                                      }
+                                    }
+                                  ],
+                                  "l2000c": [
+                                    {
+                                      "_kind": "Loop",
+                                      "_name": "L2000C",
+                                      "hl": {
+                                        "_kind": "Segment",
+                                        "_name": "L2000C_HL",
+                                        "hl01": "3",
+                                        "hl02": "2",
+                                        "hl03": "22",
+                                        "hl04": "0"
+                                      },
+                                      "trn": [
+                                        {
+                                          "_kind": "Segment",
+                                          "_name": "L2000C_TRN",
+                                          "trn01": "1",
+                                          "trn02": "222222222",
+                                          "trn03": "9ZIRMEDCOM",
+                                          "trn04": "ELR ID"
+                                        },
+                                        {
+                                          "_kind": "Segment",
+                                          "_name": "L2000C_TRN",
+                                          "trn01": "2",
+                                          "trn02": "333333333",
+                                          "trn03": "9ZIRMEDCOM",
+                                          "trn04": "ELI ID"
+                                        },
+                                        {
+                                          "_kind": "Segment",
+                                          "_name": "L2000C_TRN",
+                                          "trn01": "1",
+                                          "trn02": "4444444444",
+                                          "trn03": "9MEDDATACO"
+                                        }
+                                      ],
+                                      "l2100c": [
+                                        {
+                                          "_kind": "Loop",
+                                          "_name": "L2100C",
+                                          "nm1": {
+                                            "_kind": "Segment",
+                                            "_name": "L2100C_NM1",
+                                            "nm101": "IL",
+                                            "nm102": "1",
+                                            "nm103": "",
+                                            "nm104": "",
+                                            "nm105": "",
+                                            "nm106": "",
+                                            "nm107": "",
+                                            "nm108": "MI",
+                                            "nm109": "R11111111"
+                                          },
+                                          "aaa": [
+                                            {
+                                              "_kind": "Segment",
+                                              "_name": "L2100C_AAA",
+                                              "aaa01": "N",
+                                              "aaa02": "",
+                                              "aaa03": "72",
+                                              "aaa04": "C"
+                                            },
+                                            {
+                                              "_kind": "Segment",
+                                              "_name": "L2100C_AAA",
+                                              "aaa01": "N",
+                                              "aaa02": "",
+                                              "aaa03": "73",
+                                              "aaa04": "C"
+                                            },
+                                            {
+                                              "_kind": "Segment",
+                                              "_name": "L2100C_AAA",
+                                              "aaa01": "N",
+                                              "aaa02": "",
+                                              "aaa03": "73",
+                                              "aaa04": "C"
+                                            },
+                                            {
+                                              "_kind": "Segment",
+                                              "_name": "L2100C_AAA",
+                                              "aaa01": "N",
+                                              "aaa02": "",
+                                              "aaa03": "58",
+                                              "aaa04": "C"
+                                            }
+                                          ],
+                                          "dtp": [
+                                            {
+                                              "_kind": "Segment",
+                                              "_name": "L2100C_DTP",
+                                              "dtp01": "291",
+                                              "dtp02": "D8",
+                                              "dtp03": "20120408"
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "se": {
+                        "_kind": "Segment",
+                        "_name": "ST_LOOP_SE",
+                        "se01": "17",
+                        "se02": "0001"
+                      }
+                    }
+                  ],
+                  "ge": {
+                    "_kind": "Segment",
+                    "_name": "GS_LOOP_GE",
+                    "ge01": "1",
+                    "ge02": "50025"
+                  }
+                }
+              ],
+              "iea": {
+                "_kind": "Segment",
+                "_name": "ISA_LOOP_IEA",
+                "iea01": "1",
+                "iea02": "50033"
+              }
+            }
+          ]
+        }
+    """)
+
+    dict_msg = msg.asdict()
+    assert dict_msg == {
+        '_kind': 'Message',
+         '_name': 'MSG271',
+         'isa_loop': [{'_kind': 'Loop',
+                       '_name': 'ISA_LOOP',
+                       'gs_loop': [{'_kind': 'Loop',
+                                    '_name': 'GS_LOOP',
+                                    'ge': {'_kind': 'Segment',
+                                           '_name': 'GS_LOOP_GE',
+                                           'ge01': '1',
+                                           'ge02': '50025'},
+                                    'gs': {'_kind': 'Segment',
+                                           '_name': 'GS_LOOP_GS',
+                                           'gs01': 'HB',
+                                           'gs02': 'ZIRMED',
+                                           'gs03': '12345',
+                                           'gs04': {'_format': '%Y%m%d',
+                                                    'date': '20120605'},
+                                           'gs05': {'_format': '%H%M', 'time': '2324'},
+                                           'gs06': '50025',
+                                           'gs07': 'X',
+                                           'gs08': '004010X092A1'},
+                                    'st_loop': [{'_kind': 'Loop',
+                                                 '_name': 'ST_LOOP',
+                                                 'detail': [{'_kind': 'Loop',
+                                                             '_name': 'DETAIL',
+                                                             'l2000a': [{'_kind': 'Loop',
+                                                                         '_name': 'L2000A',
+                                                                         'hl': {'_kind': 'Segment',
+                                                                                '_name': 'L2000A_HL',
+                                                                                'hl01': '1',
+                                                                                'hl02': '',
+                                                                                'hl03': '20',
+                                                                                'hl04': '1'},
+                                                                         'l2000b': [{'_kind': 'Loop',
+                                                                                     '_name': 'L2000B',
+                                                                                     'hl': {'_kind': 'Segment',
+                                                                                            '_name': 'L2000B_HL',
+                                                                                            'hl01': '2',
+                                                                                            'hl02': '1',
+                                                                                            'hl03': '21',
+                                                                                            'hl04': '1'},
+                                                                                     'l2000c': [{'_kind': 'Loop',
+                                                                                                 '_name': 'L2000C',
+                                                                                                 'hl': {'_kind': 'Segment',
+                                                                                                        '_name': 'L2000C_HL',
+                                                                                                        'hl01': '3',
+                                                                                                        'hl02': '2',
+                                                                                                        'hl03': '22',
+                                                                                                        'hl04': '0'},
+                                                                                                 'l2100c': [
+                                                                                                     {'_kind': 'Loop',
+                                                                                                      '_name': 'L2100C',
+                                                                                                      'aaa': [{
+                                                                                                                  '_kind': 'Segment',
+                                                                                                                  '_name': 'L2100C_AAA',
+                                                                                                                  'aaa01': 'N',
+                                                                                                                  'aaa02': '',
+                                                                                                                  'aaa03': '72',
+                                                                                                                  'aaa04': 'C'},
+                                                                                                              {
+                                                                                                                  '_kind': 'Segment',
+                                                                                                                  '_name': 'L2100C_AAA',
+                                                                                                                  'aaa01': 'N',
+                                                                                                                  'aaa02': '',
+                                                                                                                  'aaa03': '73',
+                                                                                                                  'aaa04': 'C'},
+                                                                                                              {
+                                                                                                                  '_kind': 'Segment',
+                                                                                                                  '_name': 'L2100C_AAA',
+                                                                                                                  'aaa01': 'N',
+                                                                                                                  'aaa02': '',
+                                                                                                                  'aaa03': '73',
+                                                                                                                  'aaa04': 'C'},
+                                                                                                              {
+                                                                                                                  '_kind': 'Segment',
+                                                                                                                  '_name': 'L2100C_AAA',
+                                                                                                                  'aaa01': 'N',
+                                                                                                                  'aaa02': '',
+                                                                                                                  'aaa03': '58',
+                                                                                                                  'aaa04': 'C'}],
+                                                                                                      'dtp': [{
+                                                                                                                  '_kind': 'Segment',
+                                                                                                                  '_name': 'L2100C_DTP',
+                                                                                                                  'dtp01': '291',
+                                                                                                                  'dtp02': 'D8',
+                                                                                                                  'dtp03': '20120408'}],
+                                                                                                      'nm1': {
+                                                                                                          '_kind': 'Segment',
+                                                                                                          '_name': 'L2100C_NM1',
+                                                                                                          'nm101': 'IL',
+                                                                                                          'nm102': '1',
+                                                                                                          'nm103': '',
+                                                                                                          'nm104': '',
+                                                                                                          'nm105': '',
+                                                                                                          'nm106': '',
+                                                                                                          'nm107': '',
+                                                                                                          'nm108': 'MI',
+                                                                                                          'nm109': 'R11111111'}}],
+                                                                                                 'trn': [
+                                                                                                     {'_kind': 'Segment',
+                                                                                                      '_name': 'L2000C_TRN',
+                                                                                                      'trn01': '1',
+                                                                                                      'trn02': '222222222',
+                                                                                                      'trn03': '9ZIRMEDCOM',
+                                                                                                      'trn04': 'ELR '
+                                                                                                               'ID'},
+                                                                                                     {'_kind': 'Segment',
+                                                                                                      '_name': 'L2000C_TRN',
+                                                                                                      'trn01': '2',
+                                                                                                      'trn02': '333333333',
+                                                                                                      'trn03': '9ZIRMEDCOM',
+                                                                                                      'trn04': 'ELI '
+                                                                                                               'ID'},
+                                                                                                     {'_kind': 'Segment',
+                                                                                                      '_name': 'L2000C_TRN',
+                                                                                                      'trn01': '1',
+                                                                                                      'trn02': '4444444444',
+                                                                                                      'trn03': '9MEDDATACO'}]}],
+                                                                                     'l2100b': [{'_kind': 'Loop',
+                                                                                                 '_name': 'L2100B',
+                                                                                                 'nm1': {'_kind': 'Segment',
+                                                                                                         '_name': 'L2100B_NM1',
+                                                                                                         'nm101': '1P',
+                                                                                                         'nm102': '2',
+                                                                                                         'nm103': 'DR. '
+                                                                                                                  'ACULA',
+                                                                                                         'nm104': '',
+                                                                                                         'nm105': '',
+                                                                                                         'nm106': '',
+                                                                                                         'nm107': '',
+                                                                                                         'nm108': 'XX',
+                                                                                                         'nm109': '1111111111'}}]}],
+                                                                         'l2100a': [{'_kind': 'Loop',
+                                                                                     '_name': 'L2100A',
+                                                                                     'nm1': {'_kind': 'Segment',
+                                                                                             '_name': 'L2100A_NM1',
+                                                                                             'nm101': 'PR',
+                                                                                             'nm102': '2',
+                                                                                             'nm103': 'Health '
+                                                                                                      'Net '
+                                                                                                      'Inc',
+                                                                                             'nm104': '',
+                                                                                             'nm105': '',
+                                                                                             'nm106': '',
+                                                                                             'nm107': '',
+                                                                                             'nm108': 'PI',
+                                                                                             'nm109': '10385'}}]}]}],
+                                                 'header': [{'_kind': 'Loop',
+                                                             '_name': 'HEADER',
+                                                             'bht': {'_kind': 'Segment',
+                                                                     '_name': 'HEADER_BHT',
+                                                                     'bht01': '0022',
+                                                                     'bht02': '11',
+                                                                     'bht03': '11111',
+                                                                     'bht04': {'_format': '%Y%m%d',
+                                                                               'date': '20120605'},
+                                                                     'bht05': {'_format': '%H%M',
+                                                                               'time': '2324'}}}],
+                                                 'se': {'_kind': 'Segment',
+                                                        '_name': 'ST_LOOP_SE',
+                                                        'se01': '17',
+                                                        'se02': '0001'},
+                                                 'st': {'_kind': 'Segment',
+                                                        '_name': 'ST_LOOP_ST',
+                                                        'st01': '271',
+                                                        'st02': '0001'}}]}],
+                       'iea': {'_kind': 'Segment',
+                               '_name': 'ISA_LOOP_IEA',
+                               'iea01': '1',
+                               'iea02': '50033'},
+                       'isa': {'_kind': 'Segment',
+                               '_name': 'ISA_LOOP_ISA',
+                               'isa01': '00',
+                               'isa02': '          ',
+                               'isa03': '00',
+                               'isa04': '          ',
+                               'isa05': 'ZZ',
+                               'isa06': 'ZIRMED         ',
+                               'isa07': 'ZZ',
+                               'isa08': '12345          ',
+                               'isa09': {'_format': '%Y%m%d', 'date': '20120605'},
+                               'isa10': {'_format': '%H%M', 'time': '2324'},
+                               'isa11': 'U',
+                               'isa12': '00401',
+                               'isa13': '50033',
+                               'isa14': '1',
+                               'isa15': 'P',
+                               'isa16': '^'}}]
+    }
+
+    repr_msg = repr(msg)
+    assert repr_msg == (
+        "MSG271(isa_loop=[ISA_LOOP(isa=ISA_LOOP_ISA(isa01='00', isa02='          ', "
+         "isa03='00', isa04='          ', isa05='ZZ', isa06='ZIRMED         ', "
+         "isa07='ZZ', isa08='12345          ', isa09=datetime.date(2012, 6, 5), "
+         "isa10=datetime.time(23, 24), isa11='U', isa12='00401', "
+         "isa13=Decimal('50033'), isa14='1', isa15='P', isa16='^'), "
+         "gs_loop=[GS_LOOP(gs=GS_LOOP_GS(gs01='HB', gs02='ZIRMED', gs03='12345', "
+         'gs04=datetime.date(2012, 6, 5), gs05=datetime.time(23, 24), '
+         "gs06=Decimal('50025'), gs07='X', gs08='004010X092A1'), "
+         "st_loop=[ST_LOOP(st=ST_LOOP_ST(st01='271', st02='0001'), "
+         "header=[HEADER(bht=HEADER_BHT(bht01='0022', bht02='11', bht03='11111', "
+         'bht04=datetime.date(2012, 6, 5), bht05=datetime.time(23, 24, 23), '
+         "bht06=None))], detail=[DETAIL(l2000a=[L2000A(hl=L2000A_HL(hl01='1', hl02='', "
+         "hl03='20', hl04='1'), aaa=None, l2100a=[L2100A(nm1=L2100A_NM1(nm101='PR', "
+         "nm102='2', nm103='Health Net Inc', nm104='', nm105='', nm106='', nm107='', "
+         "nm108='PI', nm109='10385', nm110=None, nm111=None), ref=None, per=None, "
+         "aaa=None)], l2000b=[L2000B(hl=L2000B_HL(hl01='2', hl02='1', hl03='21', "
+         "hl04='1'), l2100b=[L2100B(nm1=L2100B_NM1(nm101='1P', nm102='2', nm103='DR. "
+         "ACULA', nm104='', nm105='', nm106='', nm107='', nm108='XX', "
+         "nm109='1111111111', nm110=None, nm111=None), ref=None, aaa=None)], "
+         "l2000c=[L2000C(hl=L2000C_HL(hl01='3', hl02='2', hl03='22', hl04='0'), "
+         "trn=[L2000C_TRN(trn01='1', trn02='222222222', trn03='9ZIRMEDCOM', trn04='ELR "
+         "ID'), L2000C_TRN(trn01='2', trn02='333333333', trn03='9ZIRMEDCOM', "
+         "trn04='ELI ID'), L2000C_TRN(trn01='1', trn02='4444444444', "
+         "trn03='9MEDDATACO', trn04=None)], l2100c=[L2100C(nm1=L2100C_NM1(nm101='IL', "
+         "nm102='1', nm103='', nm104='', nm105='', nm106='', nm107='', nm108='MI', "
+         "nm109='R11111111', nm110=None, nm111=None), ref=None, n3=None, n4=None, "
+         "per=None, aaa=[L2100C_AAA(aaa01='N', aaa02='', aaa03='72', aaa04='C'), "
+         "L2100C_AAA(aaa01='N', aaa02='', aaa03='73', aaa04='C'), "
+         "L2100C_AAA(aaa01='N', aaa02='', aaa03='73', aaa04='C'), "
+         "L2100C_AAA(aaa01='N', aaa02='', aaa03='58', aaa04='C')], dmg=None, ins=None, "
+         "dtp=[L2100C_DTP(dtp01='291', dtp02='D8', dtp03='20120408')], l2110c=None)], "
+         "l2000d=None)])])])], footer=None, se=ST_LOOP_SE(se01=Decimal('17'), "
+         "se02='0001'))], ge=GS_LOOP_GE(ge01=Decimal('1'), ge02=Decimal('50025')))], "
+         "ta1=None, iea=ISA_LOOP_IEA(iea01=Decimal('1'), iea02=Decimal('50033')))])")
 
 def test_271_example_2() -> None:
     example = EXAMPLES / "271-example-2.txt"

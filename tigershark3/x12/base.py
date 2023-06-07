@@ -40,10 +40,10 @@ import logging
 import sys
 from textwrap import dedent
 from types import GenericAlias, UnionType, NoneType, FunctionType
-from typing import (  # typing: ignore [attr-defined]
-    Any, cast,
-    get_type_hints, get_origin, get_args, assert_type,
+from typing import (  # type: ignore [attr-defined]
+    Any, cast, Protocol, overload,
     Union, TypeAlias, Annotated, Optional, DefaultDict,
+    get_type_hints, get_origin, get_args, assert_type,
     _SpecialForm,
     _UnionGenericAlias,
 )
@@ -182,8 +182,17 @@ class Source:
     def __repr__(self) -> str:
         return f"{self.element_sep=} {self.segment_sep=} text={self.text[:self.pos]!r} && {self.text[self.pos:]!r}"
 
+# Many overloaded forms for conversions...
+class ConversionCallable(Protocol):
+    @overload
+    def __call__(self, value: str, format: str) -> Any: ...
+    @overload
+    def __call__(self, value: str, scale: int) -> Any: ...
+    @overload
+    def __call__(self, value: str | None = None, extra: str | None = None) -> Any: ...
 
-Conversion: TypeAlias = Callable[[str], Any] | Callable[[str, str], Any] | Callable[[], Any]
+Conversion: TypeAlias = ConversionCallable | type[Any]
+
 Formatter: TypeAlias = Callable[["X12ElementHelper", Any], str]
 
 
@@ -211,6 +220,13 @@ class X12ElementHelper:
 
         The "format" feature should be subclasses not method plug-ins.
     """
+    @staticmethod
+    def _date(source: str, format: str) -> Any:
+        return datetime.datetime.strptime(source, format).date()
+
+    @staticmethod
+    def _time(source: str, format: str) -> Any:
+        return datetime.datetime.strptime(source, format).time()
 
     @classmethod
     def annotated(cls, type_hint: type[Any]) -> Union["X12ElementHelper", None]:
@@ -226,11 +242,11 @@ class X12ElementHelper:
         base: type[Any]
         aspects: list[X12Annotation]
         match type_hint:
-            case UnionType() | _UnionGenericAlias():
+            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
                 return None
             case GenericAlias() if get_origin(type_hint) is list:
                 return None
-            case _AnnotatedAlias():
+            case _AnnotatedAlias():  # type: ignore[misc]
                 # An "Annotated[X]" -- extract the annotation aspects
                 base, *aspects = get_args(type_hint)
                 # Continues in second match step, below.
@@ -243,46 +259,49 @@ class X12ElementHelper:
                 raise TypeError(f"invalid {type_hint}")  # pragma: no cover
 
         # For Annotated[X] or bare X, create a helper
-        match base:
-            case type() if issubclass(base, Composite):
-                return X12ElementHelper(cast(Conversion, lambda x: x), *aspects)
-            case type() if base == str:
-                return X12ElementHelper(str, *aspects, formatter=cls.str_fmt)
-            case type() if base == int:
-                return X12ElementHelper(int, *aspects, formatter=cls.int_fmt)
-            case type() if base == float:
-                return X12ElementHelper(float, *aspects, formatter=cls.float_fmt)
-            case type() if base == Decimal:
-                scale_aspect = [a for a in aspects if isinstance(a, Scale)]
-                if scale_aspect:
-                    scale = int(scale_aspect[0].params[0])
-                else:  # pragma: no cover
-                    scale = 0
-                decimal_conversion: Conversion = cast(
-                        Conversion,
-                        lambda to_decimal=None, scale=scale: (Decimal(to_decimal) if to_decimal else Decimal()).scaleb(-scale)
-                )
-                return X12ElementHelper(
-                    decimal_conversion,
-                    *aspects,
-                    formatter=cls.dec_fmt
-                )
-            case type() if base == datetime.date:
-                # TODO: Make this sensisitve to MinLen() and MaxLen()
-                return X12ElementHelper(
-                    lambda x, f: datetime.datetime.strptime(x, f).date(),
-                    *aspects,
-                    parse_formats=["%y%m%d", "%Y%m%d",],
-                    formatter=cls.dttm_fmt
-                )
-            case type() if base == datetime.time:
-                # TODO: Make this sensisitve to MinLen() and MaxLen()
-                return X12ElementHelper(
-                    lambda x, f: datetime.datetime.strptime(x, f).time(),
-                    *aspects,
-                    parse_formats=["%H%M", "%H%M%S",],
-                    formatter=cls.dttm_fmt
-                )
+        # These don't seem to work well with ``match``.
+        if issubclass(base, datetime.date):
+            # TODO: Make this sensisitve to MinLen() and MaxLen()
+            return X12ElementHelper(
+                cast(Conversion, cls._date),
+                *aspects,
+                parse_formats=["%y%m%d", "%Y%m%d", ],
+                formatter=cls.dttm_fmt
+            )
+        elif issubclass(base, datetime.time):
+            # TODO: Make this sensisitve to MinLen() and MaxLen()
+            return X12ElementHelper(
+                cast(Conversion, cls._time),
+                *aspects,
+                parse_formats=["%H%M", "%H%M%S", ],
+                formatter=cls.dttm_fmt
+            )
+        else:
+            match base():
+                case Composite():  # type() if issubclass(base, Composite):
+                    return X12ElementHelper(cast(Conversion, lambda x: x), *aspects)
+                case str():  # type() if base == str:
+                    return X12ElementHelper(cast(Conversion, str), *aspects, formatter=cls.str_fmt)
+                case int():  # type() if base == int:
+                    return X12ElementHelper(cast(Conversion, int), *aspects, formatter=cls.int_fmt)
+                case float():  # type() if base == float:
+                    return X12ElementHelper(cast(Conversion, float), *aspects, formatter=cls.float_fmt)
+                case Decimal():  # type() if base == Decimal:
+                    scale_aspect = [a for a in aspects if isinstance(a, Scale)]
+                    if scale_aspect:
+                        scale = int(scale_aspect[0].params[0])
+                    else:  # pragma: no cover
+                        scale = 0
+                    # Bind scale into a decimal conversion function
+                    decimal_conversion_partial: Conversion = cast(
+                            Conversion,
+                            lambda to_decimal=None, scale=scale: (Decimal(to_decimal) if to_decimal else Decimal()).scaleb(-scale)
+                    )
+                    return X12ElementHelper(
+                        decimal_conversion_partial,
+                        *aspects,
+                        formatter=cls.dec_fmt
+                    )
 
         # Silently tolerate other structures.
         return None
@@ -388,7 +407,7 @@ class X12ElementHelper:
         return f"{value:{self.dttm_format}}"
 
 
-SegmentText: TypeAlias = list[str | None | list[str | None | list[str | None]]]
+SegmentText: TypeAlias = list[str | None | list[str | None]]
 
 
 def schema(some_type: type[Any]) -> dict[str, Any]:
@@ -420,31 +439,34 @@ def schema(some_type: type[Any]) -> dict[str, Any]:
         case _AnnotatedAlias():  # type: ignore [misc]
             base_type, *annotations = get_args(some_type)
             json_schema = schema(base_type)
-        case UnionType() | _UnionGenericAlias():
+        case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
             alternatives = get_args(some_type)
             json_schema = {
                 "any": [schema(alt) for alt in alternatives]
             }
-        case type() if issubclass(some_type, (Composite, Segment, Loop, Message)):
-            json_schema = x12_class_base_schema(some_type)
-        # Classes with built-in primitive schema.
-        case type() if some_type is str:
-            json_schema = {"type": "string"}
-        case type() if some_type == int:
-            json_schema = {"type": "integer"}
-        case type() if some_type == float:
-            json_schema = {"type": "number"}
-        case type() if some_type == datetime.date:
-            # TODO: X12ElementHelper has formats.
-            json_schema = {"type": "string", "convert": "datetime.date", "pyformat": "%Y%m%d"}
-        case type() if some_type == datetime.time:
-            json_schema = {"type": "string", "convert": "datetime.time", "pyformat": "%h%m"}
-        case type() if some_type == Decimal:
-            json_schema = {"type": "string", "convert": "Decimal", "scale": "?"}
-        case type() if some_type is NoneType:
-            json_schema = {"type": "null"}
-        case _:  # pragma: no cover
-            raise ValueError(f"can't make schema for {some_type} ({type(some_type)})")
+        case _:
+            if issubclass(some_type, datetime.date):
+                # TODO: X12ElementHelper has formats.
+                json_schema = {"type": "string", "convert": "datetime.date", "pyformat": "%Y%m%d"}
+            elif issubclass(some_type, datetime.time):
+                json_schema = {"type": "string", "convert": "datetime.time", "pyformat": "%h%m"}
+            else:
+                match some_type():
+                    case Composite() | Segment() | Loop() | Message():
+                        json_schema = x12_class_base_schema(some_type)
+                    # Classes with built-in primitive schema.
+                    case str():
+                        json_schema = {"type": "string"}
+                    case int():
+                        json_schema = {"type": "integer"}
+                    case float():
+                        json_schema = {"type": "number"}
+                    case Decimal():
+                        json_schema = {"type": "string", "convert": "Decimal", "scale": "?"}
+                    case None:
+                        json_schema = {"type": "null"}
+                    case _:  # pragma: no cover
+                        raise ValueError(f"can't make schema for {some_type} ({type(some_type)})")
     # Effectively a reduce(set.union, (ann.JSONSchema for ann in annotations if hasattr(ann, "JSONSchema")))
     for ann in annotations:
         if hasattr(ann, "JSONSchema"):
@@ -476,6 +498,14 @@ def asdict(x12_obj: X12Structure) -> dict[str, Any] | Any:
             } | non_null_fields
         case str() | int() | float():
             return x12_obj
+        case Decimal():
+            return str(x12_obj)
+        case datetime.date():
+            format = "%Y%m%d"
+            return {"date": x12_obj.strftime(format), "_format": format}
+        case datetime.time():
+            format = "%H%M"
+            return {"time": x12_obj.strftime(format), "_format": format}
         case list(some_items):
             return [
                 asdict(item) for item in some_items
@@ -509,7 +539,7 @@ class FieldInspector:
         x_special = (
             (name, field_type)
             for name, field_type in x_schema_hidden
-            if not (isinstance(field_type, _SpecialForm) and field_type._name == "TypeAlias")
+            if not (isinstance(field_type, _SpecialForm) and field_type._name == "TypeAlias")  # type: ignore[attr-defined]
         )
         return x_special
 
@@ -595,10 +625,10 @@ class Composite:
     def attr_build(cls, field_type: type, source_value: str | None) -> Any:
         """Populate Element's field value"""
         match field_type:
-            case _AnnotatedAlias():
+            case _AnnotatedAlias():  # type: ignore[misc]
                 # Annotated[X, ...]
                 return source_value
-            case UnionType() | _UnionGenericAlias():
+            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
                 # Usually, X | None
                 return source_value
             case type():
@@ -633,7 +663,7 @@ class Composite:
         }
         return cls(**arg_dict)
 
-    def elements(self) -> list[str | None | list[str | None]]:
+    def elements(self) -> list[str | None | list[str | None | list[str | None]]]:
         fields = get_type_hints(self)
         return [getattr(self, name) for name, type_hint in class_fields(self.__class__)]
 
@@ -726,7 +756,7 @@ class Segment:
         TODO: Reified with :py:meth:`X12ElementHelper.annotated`
         """
         match hint:
-            case UnionType() | _UnionGenericAlias():
+            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
                 # # TODO: Create a X | Y | None to_py construct.
                 # # If a validate() works, that's the result, None.
                 # # If none of the validate()'s work, and there's a None, that's it.
@@ -749,8 +779,8 @@ class Segment:
                     lambda some_list: [item_helper.to_py(v) for v in some_list]
                 )
                 return X12ElementHelper(list_conversion, *aspects)
-            case _AnnotatedAlias():
-                # Annotated. Create a
+            case _AnnotatedAlias():  # type: ignore[misc]
+                # Annotated. Create a helper
                 helper = X12ElementHelper.annotated(hint)
                 if helper is None:
                     # Something more elaborate than a primitive.
@@ -802,10 +832,10 @@ class Segment:
             # TODO: PEEL THE ONION
             while type(field_type) is not type:
                 match field_type:
-                    case _AnnotatedAlias():
+                    case _AnnotatedAlias():  # type: ignore[misc]
                         # Annotated[f, ...]
                         field_type = get_args(field_type)[0]
-                    case UnionType() | _UnionGenericAlias():
+                    case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
                         # f | None
                         alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
                         if len(alternatives) != 1:
@@ -830,14 +860,14 @@ class Segment:
         """
         cls.logger.debug("attr_build %s from %r", field_type, source_values)
         match field_type:
-            case UnionType() | _UnionGenericAlias():  # Something | None
+            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
                 alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
                 if len(alternatives) != 1:
                     raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
                 if source_values:
                     return cls.attr_build(alternatives[0], source_values)
                 return cls.attr_build(alternatives[0], [None])
-            case _AnnotatedAlias():
+            case _AnnotatedAlias():  # type: ignore[misc]
                 # Consume a single value from the elements of this segment.
                 # Either a ``Composite`` or list or some primitive type
                 base = get_args(field_type)[0]
@@ -927,14 +957,14 @@ class Segment:
 
         ..  todo:: Rename this to not conflict with semantics of `Source`.
         """
-        values: list[SegmentText] = []
+        values: SegmentText = []
         for name, hint in class_fields(self.__class__):
             field: Composite | list[Composite] = getattr(self, name)
             match field:
                 case list():
-                    values.append([v.elements() for v in field])
+                    values.append(cast(list[str | None], [v.elements() for v in field]))
                 case Composite():
-                    values.append(field.elements())
+                    values.append(cast(list[str | None], field.elements()))
                 case _:
                     # Annotated fields
                     self.logger.debug(f"{name}: {field} {self._helpers[name]} {getattr(self, name)=}")
@@ -976,11 +1006,11 @@ class Loop:
                     case GenericAlias() if get_origin(field_type) is list:
                         # list[X]
                         field_type = get_args(field_type)[0]
-                    case UnionType() | _UnionGenericAlias():
+                    case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
                         # Something | None OR list[Something] | None
                         alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
                         field_type = alternatives[0]
-                    case _AnnotatedAlias():
+                    case _AnnotatedAlias():  # type: ignore[misc]
                         field_type = get_args(field_type)[0]
                     case _:  # pragma: no cover
                         raise ValueError(f"unexpected {name}: {field_type} {type(field_type)=} {get_origin(field_type)=} in {cls}")
@@ -1010,7 +1040,8 @@ class Loop:
                     values.append(next_value)
                     next_value = repeating_type.parse(source)
                 return values
-            case UnionType() | _UnionGenericAlias():  # Something | None OR list[Something] | None
+            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
+                # Something | None OR list[Something] | None
                 alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
                 # OR. Try each alternative until one works.
                 # For None supply a None instance.
@@ -1018,7 +1049,8 @@ class Loop:
                     raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
                 alt_type = alternatives[0]
                 return cls.attr_build(name, alt_type, source)
-            case _AnnotatedAlias():  # Annotated[base, ...]
+            case _AnnotatedAlias():  # type: ignore[misc]
+                # Annotated[base, ...]
                 base_type = get_args(field_type)[0]
                 return cls.attr_build(name, base_type, source)
 
@@ -1118,12 +1150,13 @@ class Message:
             # TODO: PEEL THE ONION.
             while type(loop_type) is not type:
                 match loop_type:
-                    case GenericAlias() if get_origin(loop_type) is list:
+                    case GenericAlias() if get_origin(loop_type) is list:  # type: ignore[misc]
                         loop_type = get_args(loop_type)[0]
-                    case UnionType() | _UnionGenericAlias():  # Something | None OR list[Something] | None
+                    case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
+                        # Something | None OR list[Something] | None
                         alternatives = list(filter(lambda t: t is not NoneType, get_args(loop_type)))
                         loop_type = alternatives[0]
-                    case _AnnotatedAlias():
+                    case _AnnotatedAlias():  # type: ignore[misc]
                         loop_type = get_args(loop_type)[0]
                     case _:  # pragma: no cover
                         raise TypeError(f"unexpected {name}: {loop_type} {type(loop_type)}")  # pragma: no cover
@@ -1133,7 +1166,7 @@ class Message:
                 raise TypeError(f"unexpected {name}: {loop_type} {type(loop_type)}")  # pragma: no cover
 
     @classmethod
-    def attr_build(cls, name: str, loop_type: type, source: Source) -> Segment | list[Segment] | None:
+    def attr_build(cls, name: str, loop_type: type, source: Source) -> Loop | list[Loop] | None:
         match loop_type:
             case GenericAlias() if get_origin(loop_type) is list:
                 # list[Loop] structure
@@ -1144,10 +1177,11 @@ class Message:
                     values.append(next_value)
                     next_value = repeating_type.parse(source)
                 return values
-            case _AnnotatedAlias():
+            case _AnnotatedAlias():  # type: ignore[misc]
                 base_type = get_args(loop_type)[0]
                 return cls.attr_build(name, base_type, source)
-            case UnionType() | _UnionGenericAlias():  # Something | None OR list[Something] | None
+            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
+                # Something | None OR list[Something] | None
                 alternatives = list(filter(lambda t: t is not NoneType, get_args(loop_type)))
                 loop_type = alternatives[0]
                 return cls.attr_build(name, loop_type, source)
@@ -1197,6 +1231,8 @@ class Message:
     def json(self, indent: int | None = None) -> str:
         return json.dumps(asdict(self), indent=indent)
 
+    def asdict(self) -> dict[str, Any]:
+        return asdict(self)
 
 def demo() -> None:
     """

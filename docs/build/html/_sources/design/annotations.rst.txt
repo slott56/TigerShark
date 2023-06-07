@@ -94,7 +94,7 @@ These can be properly re-used in segment definitions.
 
 There two kinds of repeating or composite objects:
 
-:list[X]:
+-   ``list[X]``.
     These have a repeat count or a Usage of "R".
     These are ``Annotated[list[Annotated[t, etc.], MaxItems(n)]``
     The repeating type is, itself, an annotated type.
@@ -105,7 +105,7 @@ There two kinds of repeating or composite objects:
         ItemType: TypeAlias = Annotated[t, etc.]
         item: Annotatedp[list[ItemType], MaxItems(n)]
 
-:Union[Annotated[t, etc.], None]:
+-   ``Union[Annotated[t, etc.], None]``.
     These are optional items with a Usage or "S" (Situational.)
     This is not (currently) validated.
 

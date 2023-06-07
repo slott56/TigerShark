@@ -5,6 +5,7 @@ Architecture and Design
 ########################################
 
 C4 suggests we look at Context, Container, Component, Code.
+(See https://c4model.com).
 For more information on the Context, see :ref:`context`.
 
 This chapter provides an `Architecture Summary`_ with an overview of the
@@ -17,7 +18,9 @@ underlying the application software.
 
 The `Processing Model`_ section provides an overview of the various kinds of processing that occur.
 
-`Appendix I`_ contains the 57 distinct segment types.
+The `Dependencies`_ section identifies an important implementation dependency: the PyX12 project.
+
+`Appendix: Segments`_ contains the 57 distinct segment types.
 
 The details of Code are covered in :ref:`design`.
 
@@ -32,38 +35,43 @@ There are two distinct "levels" or "views" to this application.
 
 :Application:
     A message is implemented as class in a module.
-    The class is used to load and dump (other terms are parse, deserialize, unmarshall) the text of messages in a variety of formats.
-    Often, this is "exchange" format to Python and Python to JSON conversions to parse a message and persist an easy-to-use copy.
-    It can also be JSON to Python and Python back to "exchange" format to create messages usable by other EDI applications.
+    The class is used to load and dump (other terms are parse/unparse, deserialize/serialize, unmarshall/marshall) the text of messages in a variety of formats.
+
+The most common use case is loading an  "exchange" format message to create Python objects.
+From here, Python to JSON conversions can persist an easy-to-use copy of the message.
 
 Developer's Perspective
 =======================
 
-The X12 standard is defined via :file:`.SEF` files; additional
-meta-definitions are used to manage the complexity.
-These files are proprietary, and not freely available.
+An X12 message has a complicated structure of loops, segments, composites and elements.
+This is reflected in the message type definition,
+which depends on loop, segment, and composite definitions.
 
-The PyX12 project has XML versions of these message definitions.
+There are several layers in the interpretation of a message:
 
-An X12 message can have a complicated structure of loops, segments, composites and elements.
-This makes it difficult to define a message type, and parse text that serializes an instance
-of a message type.
+1.  Exchange Format. This is a big block of text, sometimes with additional ``\n`` inserted after each segment separator.
 
-See :ref:`design.class` and :ref:`design.parsing` for more on solutions.
-
-There are several steps in the interpretation of a message:
-
-1.  The exchange format representation of a message. This is a big block of text.
-
-2.  X12 Segments. It's relatively easy to decompose an X12 message into
-    a sequence of segments and elements.
+2.  X12 Segment Format. The segment separator can be used to decompose the exchange format into
+    a sequence of segments. Each segment is a sequence of element and composite values.
+    Note that the loop structure is not an explicit part of this representation.
 
 3.  The application's view of a Message that may be a Claim or Eligibility Request.
     This is a Python object definition that reflects the
     loops, segments, composites, and elements of the message.
 
+It's common practice to define common sets of code values,
+and common data types outside the messages. This is reflected
+in a :py:mod:`x12.common` module with these definitions.
+
+See :ref:`design.class` and :ref:`design.parsing` for more on solutions.
+
 X12 Message Definitions
 -----------------------
+
+The X12 standard is defined via :file:`.SEF` files; additional
+meta-definitions are used to manage the exchange of messages,
+versioning, and other considerations.
+These files are proprietary, and not freely available.
 
 There are two sources for X12 message definitions, in addition to the
 customer's Implementation Guide.
@@ -73,29 +81,37 @@ customer's Implementation Guide.
 
 ..  _`PyX12`: https://github.com/azoner/pyx12
 
--   The SEF files. These seem to be a proprietary product of TIBCO.
+-   The .SEF files. These seem to be a proprietary product of TIBCO.
 
-The TigerShark tools can transform the ``.xml`` files
-into Python class definitions. These can be further refined
-into JSON Schema.
+The TigerShark :py:mod:`tools.xml_extract` tool can transform the ``.xml`` files
+into Python class definitions.
+A class definition can emit JSON Schema for messages of that class.
 
 
 Application Perspective
 =============================
 
-An X12 Message is what the application uses.
-It's a collection of X12 Loops, Segments, Composites and Elements.
+An X12 :py:class:`x12.base.Message` object is what an application uses.
+It's a collection of X12 Loops, Segments, Composites, and Elements.
 The segment names are often reused, meaning
 that a segment only has meaning in the context
 of a specific Loop.
 
-This leads to fairly complex navigation through the Loop/Segment/Composite hierarchy
-within a message.
+This leads to a naming convention for classes where a segment name
+is prefixed with the loop that uses that segment.
+For example ``ISA_LOOP_ISA`` has a loop name of ``ISA_LOOP``,
+and a segment name of ``ISA`` in the context of the ISA Loop.
 
 Container View
 ^^^^^^^^^^^^^^^
 
-This is more-or-less a single container application. It parses messages and builds messages.
+The applications are more-or-less a single container applications.
+The :py:mod:`tools.xml_extract` reads XML definitions and creates
+message class definitions.
+
+An application that parses messages is most often going to be
+a single container to extract useful content from messages
+for deeper analysis.
 
 Component View
 ^^^^^^^^^^^^^^^
@@ -105,7 +121,7 @@ The component packaging breaks into two major areas.
 ..  uml::
 
     package x12 {
-        component base {
+        package base {
             component Source
             component Composite
             component Segment
@@ -177,8 +193,8 @@ See :ref:`marshall`.
 
 Each Message object handles serialization into X12 text
 or JSON.
-A :meth:`dump` method handles X12 "exchange format".
-A :meth:`json` method handles JSON.
+A :meth:`dump` method emits the content in X12 "exchange format".
+A :meth:`json` method emits the content in JSON notation.
 
 JSON Schema
 ===========
@@ -286,8 +302,26 @@ to provide a flatter structure that reflects the source
 definitions in XML. (These, in turn, likely reflect the
 original specification files.)
 
-Appendix I
-^^^^^^^^^^
+
+Dependencies
+^^^^^^^^^^^^
+
+The tools depend on the PyX12 prohject.
+The PyX12 project has XML files built from from IG's.
+See https://github.com/azoner/pyx12/tree/master/pyx12/map
+
+This schema repository contains three types of XML files.
+
+-   :file:`270.4010.X092.A1.xml` message definition
+
+-   :file:`codes.xml`
+
+-   :file:`dataele.xml`
+
+-   :file:`maps.xml`
+
+Appendix: Segments
+^^^^^^^^^^^^^^^^^^^
 
 The following table identifies the 57 distinct segment ID's and how they are
 used. When a segment ID has a list of segment types that indicates that the

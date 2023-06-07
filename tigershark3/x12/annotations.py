@@ -8,7 +8,7 @@ There are distinctive annotations, unique to X12,
 which must be provided as JSONSchema extensions.
 """
 import re
-import decimal
+from decimal import Decimal
 import sys
 from typing import Any, get_origin, get_args, cast
 from typing_extensions import _AnnotatedAlias
@@ -189,30 +189,25 @@ def json_schema(type_hint: type) -> dict[str, Any]:
         base = type_hint
         annotations = []
     # print(base, type(base), annotations)
-    match base:
+    match base():
         case _AnnotatedAlias():  # type: ignore[misc]
             # Descending into something like list[Annotated[str, ...]]
             schema = json_schema(base)
-        case GenericAlias():
+        case []:
             origin = get_origin(base)
-            if origin == list:
-                item_type, *error = get_args(base)
-                assert error == []
-                schema = {"type": "array", "items": json_schema(item_type)}
-            elif origin == dict:
-                # Not sure what this might mean in JSON Schema.
-                # Without further advice on values for propertyNames. we can't do much.
-                schema = {"type": "object"}
-            else:
-                raise ValueError(f"Unsupported generic: {base!r}")
-                # schema = {"x-unsupported": repr(base)}
-        case type() if issubclass(base, str):
+            item_type, *error = get_args(base)
+            assert error == []
+            schema = {"type": "array", "items": json_schema(item_type)}
+        case {}:
+            # Not clear where the details might be for this.
+            schema = {"type": "object"}
+        case str():
             schema = {"type": "string"}
-        case type() if issubclass(base, int):
+        case int():
             schema = {"type": "integer"}
-        case type() if issubclass(base, float):
+        case float():
             schema = {"type": "float"}
-        case type() if issubclass(base, decimal.Decimal):
+        case Decimal():
             schema = {"type": "string", "_class": "Decimal"}
         case _:
             raise ValueError(f"unsupported type: {base!r}")

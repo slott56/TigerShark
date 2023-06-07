@@ -105,9 +105,9 @@ to include this information in a JSON Schema document.</p>
 <p>This permits the foundational type definitions to become first-class <code class="docutils literal notranslate"><span class="pre">TypeAlias</span></code> definitions.
 These can be properly re-used in segment definitions.</p>
 <p>There two kinds of repeating or composite objects:</p>
-<dl class="field-list">
-<dt class="field-odd">list[X]<span class="colon">:</span></dt>
-<dd class="field-odd"><p>These have a repeat count or a Usage of “R”.
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">list[X]</span></code>.
+These have a repeat count or a Usage of “R”.
 These are <code class="docutils literal notranslate"><span class="pre">Annotated[list[Annotated[t,</span> <span class="pre">etc.],</span> <span class="pre">MaxItems(n)]</span></code>
 The repeating type is, itself, an annotated type.</p>
 <p>To keep the syntax readable, it’s slightly nicer to
@@ -116,12 +116,11 @@ decompose this into two parts:</p>
 <span class="n">item</span><span class="p">:</span> <span class="n">Annotatedp</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="n">ItemType</span><span class="p">],</span> <span class="n">MaxItems</span><span class="p">(</span><span class="n">n</span><span class="p">)]</span>
 </pre></div>
 </div>
-</dd>
-<dt class="field-even">Union[Annotated[t, etc.], None]<span class="colon">:</span></dt>
-<dd class="field-even"><p>These are optional items with a Usage or “S” (Situational.)
-This is not (currently) validated.</p>
-</dd>
-</dl>
+</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Union[Annotated[t,</span> <span class="pre">etc.],</span> <span class="pre">None]</span></code>.
+These are optional items with a Usage or “S” (Situational.)
+This is not (currently) validated.</p></li>
+</ul>
 <p>These two constructs define a hierarchy of validation.
 A list, for example, must have each element validated,
 then the list – as a whole – can be validated.</p>
@@ -240,7 +239,6 @@ while relying on Annotations to carry element definitions.</p>
 
 <h3>Navigation</h3>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../operation.html">Using TigerShark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usecase.html">Context: Use Cases</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
