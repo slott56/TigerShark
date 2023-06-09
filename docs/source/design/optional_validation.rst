@@ -1,6 +1,6 @@
 #####################################
 How Validation Works
-######################################
+#####################################
 
 The validation happens in the :py:class:`Segment` and :py:class:`Composite`
 classes. The :py:meth:`__init__`  methods validate each

@@ -74,8 +74,8 @@
 </div>
 <p>The content of each level of the Message/Loop/Segment/Composite/Element structure is
 defined through type annotations.</p>
-<p>The <a class="reference internal" href="../implementation/x12.html#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a> module provides class definitions on which the other defintions depend.</p>
-<p>The  <a class="reference internal" href="../implementation/x12.html#module-x12.common" title="x12.common"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code></a> module has type aliases. It would include the following:</p>
+<p>The <a class="reference internal" href="../implementation/x12_base.html#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a> module provides class definitions on which the other defintions depend.</p>
+<p>The  <code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code> module has type aliases. It would include the following:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">I01</span><span class="p">:</span> <span class="n">TypeAlias</span> <span class="o">=</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Title</span><span class="p">(</span><span class="s2">&quot;I01&quot;</span><span class="p">),</span> <span class="n">MinLen</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">MaxLen</span><span class="p">(</span><span class="mi">2</span><span class="p">)]</span>
 </pre></div>
 </div>

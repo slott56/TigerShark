@@ -3,22 +3,13 @@ x12
 ====
 
 The bulk of this package is defined by extraction from other sources.
-Specifically the :mod:`tools.xml_extract` module.
+Specifically the :py:mod:`tools.xml_extract` module.
 
-The message definition all rely on the :mod:`x12.base` module.
+The message definition all rely on the :py:mod:`x12.base`
+and :py:mod:`x12.annotations` modules.
 
-x12.base
---------
-
-..  automodule:: x12.base
-    :members:
-
-x12.common
-----------
-
-..  automodule:: x12.common
-    :members:
-
+The tools build an :py:mod:`x12.common` module.
+Each message is parsed by a separate module.
 """
 
 from .base import Source

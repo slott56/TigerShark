@@ -16,7 +16,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="tools Package" href="tools.html" />
+    <link rel="next" title="X12.annotations Module" href="x12_annotations.html" />
     <link rel="prev" title="Implementation" href="index.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -39,292 +39,11 @@
 <section id="x12">
 <h2>x12<a class="headerlink" href="#x12" title="Permalink to this heading">¶</a></h2>
 <p>The bulk of this package is defined by extraction from other sources.
-Specifically the <a class="reference internal" href="tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> module.</p>
-<p>The message definition all rely on the <a class="reference internal" href="#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a> module.</p>
-<section id="module-x12.base">
-<span id="x12-base"></span><h3>x12.base<a class="headerlink" href="#module-x12.base" title="Permalink to this heading">¶</a></h3>
-<p>Base definitions for X12 message constructs:</p>
-<ul class="simple">
-<li><p>Element – the atomic base value – A python object – str, int, float, Decimal</p></li>
-<li><p>Composite – a sequence of Elements</p></li>
-<li><p>Segment – a sequence of [Composite | Element] with a prefix code (e.g., “ISA”, “IEA”)</p></li>
-<li><p>Loop – a sequence of [Loop | Segment]</p></li>
-<li><p>Message – a sequence of Loop</p></li>
-</ul>
-<p>Elements have an element separator (often “|”)</p>
-<p>Composites seem to have a component separator (varies widely, but “:” is common)</p>
-<p>Segments have a segment separator (often “~”)</p>
-<p>The various X12 details are implemented as <code class="docutils literal notranslate"><span class="pre">Annotated[...]</span></code>
-type hints.</p>
-<section id="design">
-<h4>Design<a class="headerlink" href="#design" title="Permalink to this heading">¶</a></h4>
-<p>The top-level (Message, Loop, Segment) structures all have a <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> method
-to parse a <a class="reference internal" href="#x12.base.Source" title="x12.base.Source"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Source()</span></code></a> instance. This consumes whole segments.</p>
-<p>The bottom-level (Composite) structure has a <code class="xref py py-meth docutils literal notranslate"><span class="pre">build()</span></code> method that
-consumes oen or more field values from a parsed segment.</p>
-<dl class="py class">
-<dt class="sig sig-object py" id="x12.base.Composite">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Composite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">arg_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.Composite" title="Permalink to this definition">¶</a></dt>
-<dd><p>A composite of values separated the “array_sep”.</p>
-<p>Souce may have <code class="docutils literal notranslate"><span class="pre">value|comp:osite|value</span></code>
-where the composite will be parsed into <code class="docutils literal notranslate"><span class="pre">[&quot;comp&quot;,</span> <span class="pre">&quot;osite&quot;]</span></code></p>
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Composite.attr_build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attr_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span></span></span><a class="headerlink" href="#x12.base.Composite.attr_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Populate Element’s field value</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Composite.make_helpers">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_helpers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">instance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#x12.base.Composite" title="x12.base.Composite"><span class="pre">Composite</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#x12.base.Composite.make_helpers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build the element <code class="docutils literal notranslate"><span class="pre">_helpers</span></code> for this Composite.</p>
-<p>Used like this <code class="docutils literal notranslate"><span class="pre">Composite.make_helpers(fields)</span></code></p>
-<div class="admonition-todo admonition" id="id1">
-<p class="admonition-title">Todo</p>
-<p>Remove <code class="docutils literal notranslate"><span class="pre">instance</span></code> parameter</p>
-</div>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="x12.base.ConversionCallable">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">ConversionCallable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.ConversionCallable" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="x12.base.FieldInspector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">FieldInspector</span></span><a class="headerlink" href="#x12.base.FieldInspector" title="Permalink to this definition">¶</a></dt>
-<dd><p>Filtered subset of type hints for a class (Message, Loop, Segment, Composite).</p>
-<p>Excludes “Schema” as a special attribute name.</p>
-<p>Excludes all names starting with “_”.</p>
-<p>Excludes any TypeAlias lines in the class.</p>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="x12.base.Loop">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Loop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">arg_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.Loop" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Loop is a collection of <code class="docutils literal notranslate"><span class="pre">Loop</span> <span class="pre">|</span> <span class="pre">Segment</span></code>.</p>
-<p>Loops and Segments can repeat, and may be optional.</p>
-<p>We need to examine the loop’s structure of segments
-and sub-loops to match the segment prefix.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Loop.attr_build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attr_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#x12.base.Source" title="x12.base.Source"><span class="pre">Source</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#x12.base.Segment" title="x12.base.Segment"><span class="pre">x12.base.Segment</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#x12.base.Segment" title="x12.base.Segment"><span class="pre">x12.base.Segment</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#x12.base.Loop.attr_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Walks type structure to create sub-loops and segments.</p>
-<p>May consume source segments.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Loop.segment_iter">
-<span class="sig-name descname"><span class="pre">segment_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Loop.segment_iter" title="Permalink to this definition">¶</a></dt>
-<dd><p>A flat sequence of segment values in this Loop and all sub Loops.
-This is the basis for the exchange format.</p>
-<p>This <strong>also</strong> does an <code class="docutils literal notranslate"><span class="pre">attr_build()</span></code> style type walk.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="x12.base.Message">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">arg_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.Message" title="Permalink to this definition">¶</a></dt>
-<dd><p>A top-level message, a collection of Loop.</p>
-<p>Loops can (and often do) repeat.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Message.segment_iter">
-<span class="sig-name descname"><span class="pre">segment_iter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Message.segment_iter" title="Permalink to this definition">¶</a></dt>
-<dd><p>A flat sequence of segments in a Message.
-This is the basis for the exchange format.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="x12.base.Segment">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Segment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">arg_dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.Segment" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Segment is a collection of <code class="docutils literal notranslate"><span class="pre">Elements</span> <span class="pre">|</span> <span class="pre">Composite</span></code>.</p>
-<p>Composites have array_sep separators.
-The lexical scanner turns these into sub-lists of the element value list.
-So <code class="docutils literal notranslate"><span class="pre">element1|comp:osite|element3</span></code> is three element
-values: <code class="docutils literal notranslate"><span class="pre">[&quot;element1&quot;,</span> <span class="pre">[&quot;comp&quot;,</span> <span class="pre">&quot;osite&quot;],</span> <span class="pre">&quot;element3&quot;]</span></code>.</p>
-<p>The ISA Segment is special. It’s generally fixed-length, and it defines the element and segment separators
-used everywhere else.</p>
-<p>When parsing ISA, we handle this as a distinct special case.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>IndexError: pop from empty list</p>
-<p>often means wrong separators.</p>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Segment.attr_build">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">attr_build</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="#x12.base.Composite" title="x12.base.Composite"><span class="pre">x12.base.Composite</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="headerlink" href="#x12.base.Segment.attr_build" title="Permalink to this definition">¶</a></dt>
-<dd><p>Walks type structure to create Elements and Composites.</p>
-<p>May pop source_values.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Segment.elements">
-<span class="sig-name descname"><span class="pre">elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Segment.elements" title="Permalink to this definition">¶</a></dt>
-<dd><p>The segment as a list of Element source values.
-The segment text is the basis for the exchange format: a sequence of Segments.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Confusing overlap of names with the Source class.</p>
-<p>This is <strong>not</strong> the same concept at all.</p>
-</div>
-<div class="admonition-todo admonition" id="id2">
-<p class="admonition-title">Todo</p>
-<p>Rename this to not conflict with semantics of <cite>Source</cite>.</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Segment.make_helpers">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">make_helpers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#x12.base.Segment.make_helpers" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build the element <code class="docutils literal notranslate"><span class="pre">_helpers</span></code> for this Segment.</p>
-<p>Used like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="n">SomeSegment</span><span class="p">,</span> <span class="n">include_extras</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">SomeSegment</span><span class="o">.</span><span class="n">make_helpers</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Segment.parse">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#x12.base.Source" title="x12.base.Source"><span class="pre">Source</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#x12.base.Segment" title="x12.base.Segment"><span class="pre">Segment</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Segment.parse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses segments in general.</p>
-<p>Handles ISA segments specially to extract element and segment separators.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="x12.base.Source">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">Source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element_sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">segment_sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">array_sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.Source" title="Permalink to this definition">¶</a></dt>
-<dd><p>The source text used to parse a message in “Exchange format.”</p>
-<p>High-level client’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> method will consume an entire segment, up to the segment separator.
-This applies to <code class="xref py py-class docutils literal notranslate"><span class="pre">Method</span></code>, <a class="reference internal" href="#x12.base.Loop" title="x12.base.Loop"><code class="xref py py-class docutils literal notranslate"><span class="pre">Loop</span></code></a>, and <a class="reference internal" href="#x12.base.Segment" title="x12.base.Segment"><code class="xref py py-class docutils literal notranslate"><span class="pre">Segment</span></code></a>.
-The <a class="reference internal" href="#x12.base.Source.next_segment" title="x12.base.Source.next_segment"><code class="xref py py-meth docutils literal notranslate"><span class="pre">next_segment()</span></code></a> method lets a client peek at the prefix to the next segment.</p>
-<p>Low-level client’s <code class="xref py py-meth docutils literal notranslate"><span class="pre">build()</span></code> method will consume element values from a segment.
-The <a class="reference internal" href="#x12.base.Source.elements" title="x12.base.Source.elements"><code class="xref py py-meth docutils literal notranslate"><span class="pre">elements()</span></code></a> method decomposes the current segment, and advances to the next segment.</p>
-<p>State invariant: <code class="docutils literal notranslate"><span class="pre">self.text[self.pos]</span></code> is the start of a segment.</p>
-<p>When parsing the initial ISA segment, there’s no defined <code class="docutils literal notranslate"><span class="pre">element_sep</span></code>.
-During parsing the ISA, the <code class="docutils literal notranslate"><span class="pre">element_sep</span></code> and <code class="docutils literal notranslate"><span class="pre">segment_sep</span></code> can be located,
-and used for all following segments. The <code class="docutils literal notranslate"><span class="pre">array_sep</span></code> (or component separator) is explicitly
-provided in the ISA segment; this is used to decompose composites.</p>
-<p>In some rare cases, the ISA is already compressed. The element and segment
-separation characters must be provided separately.</p>
-<div class="admonition-todo admonition" id="id3">
-<p class="admonition-title">Todo</p>
-<p>Consider str | TextIO | Path as <code class="docutils literal notranslate"><span class="pre">text</span></code> parameter types.</p>
-</div>
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Source.consume_whitespace">
-<span class="sig-name descname"><span class="pre">consume_whitespace</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#x12.base.Source.consume_whitespace" title="Permalink to this definition">¶</a></dt>
-<dd><p>Moves <code class="docutils literal notranslate"><span class="pre">self.pos</span></code> past any leading whitespace.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Source.elements">
-<span class="sig-name descname"><span class="pre">elements</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.Source.elements" title="Permalink to this definition">¶</a></dt>
-<dd><p>Unpack a Segment into a list of potential Element values.
-This consumes whitespace.
-It consumes the segment up to (and including) the segment_sep character.</p>
-<p>Note the initial ISA segment is fixed length, not compressed. Separators aren’t defined yet.
-The initial ISA segment’s text is returned as a single string for parsing by the segment.</p>
-<p>Most elements are atomic with two notable exceptions:</p>
-<ul class="simple">
-<li><p>There array array-like elements that leverage
-the ISA16 Component Separator character, called the
-<code class="docutils literal notranslate"><span class="pre">array_sep</span></code> here.</p></li>
-<li><p>Composites are punctuated by the ISA16 Component Separator character.</p></li>
-</ul>
-<p>We choose to parse these non-atomic elements here by looking at the values
-and splitting any that have the separator character.</p>
-<p>Conceptually:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="s2">&quot;field|comp:osite|field~&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">segments</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="n">segments</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;|&quot;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">v</span> <span class="k">else</span> <span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fields</span>
-<span class="go">[&#39;field&#39;, [&#39;comp&#39;, &#39;osite&#39;], &#39;field&#39;]</span>
-</pre></div>
-</div>
-<div class="admonition-todo admonition" id="id4">
-<p class="admonition-title">Todo</p>
-<p>Optimize the field and composite splitting to avoid creating multiple lists.</p>
-</div>
-<div class="admonition-todo admonition" id="id5">
-<p class="admonition-title">Todo</p>
-<p>re.search() might be faster at finding segment separators than the <code class="docutils literal notranslate"><span class="pre">while</span></code> loop.</p>
-</div>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Source.next_segment">
-<span class="sig-name descname"><span class="pre">next_segment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#x12.base.Source.next_segment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Peek at upcoming segment’s header. This consumes leading whitespace.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.Source.peek">
-<span class="sig-name descname"><span class="pre">peek</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">106</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="headerlink" href="#x12.base.Source.peek" title="Permalink to this definition">¶</a></dt>
-<dd><p>Peek ahead a fixed number of characters. This also consumes leading whitespace.
-The default peek is 106 to read a non-compressed ISA segment.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="x12.base.X12ElementHelper">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">X12ElementHelper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conversion</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#x12.base.ConversionCallable" title="x12.base.ConversionCallable"><span class="pre">x12.base.ConversionCallable</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">aspects</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">X12Annotation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parse_formats</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">formatter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">collections.abc.Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#x12.base.X12ElementHelper" title="x12.base.X12ElementHelper"><span class="pre">x12.base.X12ElementHelper</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#x12.base.X12ElementHelper" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper to convert element values from source text
-to Python objects, and Python back to source text.</p>
-<p>Don’t create these directly. Use the <code class="docutils literal notranslate"><span class="pre">annotated</span></code> method.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hints</span> <span class="o">=</span> <span class="n">get_type_hints</span><span class="p">(</span><span class="n">SomeSegment</span><span class="p">,</span> <span class="n">include_extras</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">some_helper</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">X12ElementHelper</span><span class="o">.</span><span class="n">annotated</span><span class="p">(</span><span class="n">hints</span><span class="p">[</span><span class="s1">&#39;some_element&#39;</span><span class="p">])</span>
-</pre></div>
-</div>
-<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">validate()</span></code> method raises a <code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code>
-exception  with two parameters:</p>
-<ul class="simple">
-<li><p>The usual message.</p></li>
-<li><p>The Annotation class name that failed validation.</p></li>
-</ul>
-<dl class="py method">
-<dt class="sig sig-object py" id="x12.base.X12ElementHelper.annotated">
-<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">annotated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_hint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#x12.base.X12ElementHelper" title="x12.base.X12ElementHelper"><span class="pre">X12ElementHelper</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.X12ElementHelper.annotated" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build an <a class="reference internal" href="#x12.base.X12ElementHelper" title="x12.base.X12ElementHelper"><code class="xref py py-class docutils literal notranslate"><span class="pre">X12ElementHelper</span></code></a> instance to convert an element’s text to Python objects,
-and python objects back to text.</p>
-<p>This does <em>not</em> handle List[X] and Union[X, None].</p>
-<p>TODO: Reified with <code class="xref py py-meth docutils literal notranslate"><span class="pre">Segment._make_helper()</span></code>.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="x12.base.demo">
-<span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">demo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="headerlink" href="#x12.base.demo" title="Permalink to this definition">¶</a></dt>
-<dd><p>A minimal demonstration of some features of the base classes.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">x12.base</span> <span class="kn">import</span> <span class="n">demo</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">demo</span><span class="p">()</span>
-<span class="go">MSG(isa_loop=[ISA_LOOP(isa=ISA_LOOP_ISA(isa01=ISA_LOOP_ISA01(&#39;00&#39;), isa16=ISA_LOOP_ISA16(&#39;:&#39;)))])</span>
-</pre></div>
-</div>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="x12.base.schema">
-<span class="sig-prename descclassname"><span class="pre">x12.base.</span></span><span class="sig-name descname"><span class="pre">schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">some_type</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">type</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#x12.base.schema" title="Permalink to this definition">¶</a></dt>
-<dd><p>Expands an annotated type or any of the X12 structures into a JSON Schema.</p>
-</dd></dl>
-
-</section>
-</section>
-<section id="module-x12.common">
-<span id="x12-common"></span><h3>x12.common<a class="headerlink" href="#module-x12.common" title="Permalink to this heading">¶</a></h3>
-<p>Created 2023-05-19 10:17:35.809913</p>
-</section>
+Specifically the <a class="reference internal" href="tools_xml_extract.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> module.</p>
+<p>The message definition all rely on the <a class="reference internal" href="x12_base.html#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a>
+and <a class="reference internal" href="x12_annotations.html#module-x12.annotations" title="x12.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.annotations</span></code></a> modules.</p>
+<p>The tools build an <code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code> module.
+Each message is parsed by a separate module.</p>
 </section>
 </section>
 
@@ -355,7 +74,10 @@ and python objects back to text.</p>
 <li class="toctree-l1"><a class="reference internal" href="../design/index.html">Design Notes</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Implementation</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="x12_annotations.html"><code class="docutils literal notranslate"><span class="pre">X12.annotations</span></code> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="x12_base.html"><code class="docutils literal notranslate"><span class="pre">X12.base</span></code> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tools.html"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html"><code class="docutils literal notranslate"><span class="pre">tools.xml_extract</span></code> Application</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
@@ -367,7 +89,7 @@ and python objects back to text.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Implementation</a><ul>
       <li>Previous: <a href="index.html" title="previous chapter">Implementation</a></li>
-      <li>Next: <a href="tools.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a></li>
+      <li>Next: <a href="x12_annotations.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">X12.annotations</span></code> Module</a></li>
   </ul></li>
   </ul></li>
 </ul>

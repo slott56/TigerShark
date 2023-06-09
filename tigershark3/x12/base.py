@@ -11,23 +11,55 @@ Base definitions for X12 message constructs:
 
 - Message -- a sequence of Loop
 
-Elements have an element separator (often "|")
+The :py:class:`Source` class defines a parser
+for the message in "Exchange" format.
 
-Composites seem to have a component separator (varies widely, but ":" is common)
+-   Elements have an element separator (often "|")
 
-Segments have a segment separator (often "~")
+-   Composites have a component separator (varies widely, but ":" is common)
 
-The various X12 details are implemented as ``Annotated[...]``
+-   Segments have a segment separator (often "~")
+
+The various X12 structures are subclasses of :py:class:`Message`,
+:py:class:`Loop`, :py:class:`Segment`, and :py:class:`Composite`.
+The details of each element are implemented as ``Annotated[...]``
 type hints.
 
-Design
-======
+Parsing
+=======
 
 The top-level (Message, Loop, Segment) structures all have a :meth:`parse` method
 to parse a :meth:`Source` instance. This consumes whole segments.
 
 The bottom-level (Composite) structure has a :meth:`build` method that
-consumes oen or more field values from a parsed segment.
+consumes one or more field values from a parsed segment.
+
+JSON Schema
+===========
+
+The :py:func:`schema` function will
+emit a class definition as JSON Schema.
+This can be used with :func:`json.dumps` to present
+a JSON dump of a schema.
+
+JSON Output
+===========
+
+The :py:func:`asdict` function will
+emit an object as a dictionary.
+This can be used with :func:`json.dumps` to present
+a JSON dump of a message.
+
+The :py:meth:`Message.json` method does this
+for a message.
+
+Message Segments
+================
+
+The :py:meth:`Message.segment_iter` method
+yields the sequence of segments.
+This is similar to exchange format for a message.
+
 """
 from collections import defaultdict
 from collections.abc import Iterator, Callable, Hashable
@@ -57,7 +89,7 @@ logger = logging.getLogger("x12.base")
 
 class Source:
     """
-    The source text used to parse a message in "Exchange format."
+    The Source class consumes the text used to parse a message in "Exchange format."
 
     High-level client's :meth:`parse` method will consume an entire segment, up to the segment separator.
     This applies to :class:`Method`, :class:`Loop`, and :class:`Segment`.
@@ -78,9 +110,17 @@ class Source:
 
     ..  todo:: Consider str | TextIO | Path as ``text`` parameter types.
     """
-    logger = logging.getLogger("x12.base.Source")
+    logger = logging.getLogger("x12.base.Source")  #: Logger for this class
 
     def __init__(self, text: str, element_sep: str = "", segment_sep: str = "", array_sep: str = "") -> None:
+        """
+        Build a Source to be used for parsing a message.
+
+        :param text: the Exchange-format document
+        :param element_sep: Optional element separator character. This can be deduced by parsing the ISA segment.
+        :param segment_sep: Optional segment separator character. This can be deduced by parsing the ISA segment.
+        :param array_sep: Optional component separator character. This is generally found in the ISA16 element of the ISA segment.
+        """
         self.text = text
         self.element_sep = element_sep  # Often "|", might be "*".
         self.segment_sep = segment_sep  # Often "~".
@@ -182,8 +222,8 @@ class Source:
     def __repr__(self) -> str:
         return f"{self.element_sep=} {self.segment_sep=} text={self.text[:self.pos]!r} && {self.text[self.pos:]!r}"
 
-# Many overloaded forms for conversions...
 class ConversionCallable(Protocol):
+    """A protocol for verious kinds of conversions."""
     @overload
     def __call__(self, value: str, format: str) -> Any: ...
     @overload
@@ -198,25 +238,26 @@ Formatter: TypeAlias = Callable[["X12ElementHelper", Any], str]
 
 class X12ElementHelper:
     """
-    Helper to convert element values from source text
+    An X12ElementHelper
+    provides methos to convert element values from source text
     to Python objects, and Python back to source text.
 
-    Don't create these directly. Use the ``annotated`` method.
+    Don't create an :py:mod:`X12ElementHelper` directly. Use the :py:meth:`X12ElementHelper.annotated` method.
 
-    ::
+    For example::
 
         hints = get_type_hints(SomeSegment, include_extras=True)
         some_helper = base.X12ElementHelper.annotated(hints['some_element'])
 
 
-    The :py:meth:`validate` method raises a :exc:`ValueError`
+    The :py:meth:`X12ElementHelper.validate` method raises a :exc:`ValueError`
     exception  with two parameters:
 
     -   The usual message.
 
     -   The Annotation class name that failed validation.
 
-    ..  TODO: A hierarchy of classes can handle primitives better.
+    ..  TODO: A hierarchy of classes can handle primitive formatting methods better.
 
         The "format" feature should be subclasses not method plug-ins.
     """
@@ -235,8 +276,6 @@ class X12ElementHelper:
         and python objects back to text.
 
         This does *not* handle List[X] and Union[X, None].
-
-        TODO: Reified with :py:meth:`Segment._make_helper`.
         """
         # Wrapped classes: list[X], X | None, Annotated[X, ...]
         base: type[Any]
@@ -413,6 +452,9 @@ SegmentText: TypeAlias = list[str | None | list[str | None]]
 def schema(some_type: type[Any]) -> dict[str, Any]:
     """
     Expands an annotated type or any of the X12 structures into a JSON Schema.
+
+    :param some_type: Any kind of type. A subclass of :py:class:`Message` is typical.
+    :returns: JSON Schema.
     """
 
     def x12_class_base_schema(some_type: type[Any]) -> dict[str, Any]:
@@ -480,6 +522,12 @@ X12Structure: TypeAlias = Union[
 ]
 
 def asdict(x12_obj: X12Structure) -> dict[str, Any] | Any:
+    """
+    Given an X12 object (i.e., Message, Loop, Segment, Composite), emit a dictionary.
+
+    :param x12_obj: Any X12 structure.
+    :returns: a dictionary, suitable for JSON output.
+    """
     match x12_obj:
         case Composite() | Segment() | Loop() | Message():
             fields = {
@@ -516,13 +564,18 @@ def asdict(x12_obj: X12Structure) -> dict[str, Any] | Any:
 
 class FieldInspector:
     """
-    Filtered subset of type hints for a class (Message, Loop, Segment, Composite).
+    A ``FieldInspector`` walks the definition of fields in an X12 structure,
+    providing those not excluded by a few rules:
 
-    Excludes "Schema" as a special attribute name.
+    -   Excludes "Schema" as a special attribute name.
 
-    Excludes all names starting with "_".
+    -   Excludes all names starting with "_".
 
-    Excludes any TypeAlias lines in the class.
+    -   Excludes any ``TypeAlias`` lines in the class.
+
+    The result of scanning a structure is a list of (name, hint) tuples.
+
+    The :py:func:`class_fields` function is the useful instance of this class.
     """
     def __init__(self) -> None:
         self.cache: dict[type[Any], list[tuple[str, type[Any]]]] = {}
@@ -550,22 +603,47 @@ class FieldInspector:
 
 cached_field_inspector = FieldInspector()
 
-class_fields = cached_field_inspector.field_list
+class_fields = cached_field_inspector.field_list  #: Function to use a :py:class:`FieldInspector` on a class, returns all non-excluded fields.
 
 
 class Composite:
     """
-    A composite of values separated the "array_sep".
+    A Composite is a collection of elements.
 
-    Souce may have ``value|comp:osite|value``
-    where the composite will be parsed into ``["comp", "osite"]``
+    In the exchange format, they're separated the "array_sep".
+    For example, the ``array_sep=":"`` and
+    The :py:class:`Source` may have text ``value|comp:osite|value``.
+    The composite will be parsed into ``["comp", "osite"]``
+
+    Composites are often defined as follows.
+
+    ::
+
+        class Loop_Seg_Comp(Composite):
+            field_2_1: Annotated[...]
+            field_2_2: Annotated[...]
+            etc.
+
+        class Loop_Seg(Segment):
+            field_1: Annotated[...]
+            field_2: Loop_Seg_Comp
+            etc.
+
+    A Composite is generally built using the :py:meth:`composite.build` method and sequence of values.
     """
-    _composite_name: str
-    _helpers: dict[str, X12ElementHelper | None]
-    _skip_validation: DefaultDict[str, list[str]]
-    logger = logging.getLogger("x12.base.Composite")
+    _composite_name: str  #: Name of the composite
+    _helpers: dict[str, X12ElementHelper | None]  #: X12ElementHelpers for element conversion and validation
+    _skip_validation: DefaultDict[str, list[str]]  #: Elements not to be validated
+    # No type hint: invisible to get_type_hints() introspection
+    logger = logging.getLogger("x12.base.Composite")  #: Class Logger
 
     def __init__(self, **arg_dict) -> None:
+        """
+        Create a Composite instance by providing keyword argument values
+        for each field.
+
+        This will validate each value provided.
+        """
         fields = get_type_hints(self.__class__, include_extras=True)
         unknowns = arg_dict.keys() - fields.keys()
         if unknowns:
@@ -594,13 +672,20 @@ class Composite:
             setattr(self, name, value)
 
     @classmethod
-    def make_helpers(cls, fields: dict[str, type[Any]], instance: Union["Composite", None] = None) -> None:
+    def make_helpers(cls, fields: dict[str, type[Any]]) -> None:
         """
         Build the element ``_helpers`` for this Composite.
 
-        Used like this ``Composite.make_helpers(fields)``
+        Used like this::
 
-        ..  todo:: Remove ``instance`` parameter
+            class XYZ(Composite):
+                x01: float
+                x02: float
+
+            fields = get_type_hints(XYZ, include_extras=True)
+            XYZ.make_helpers(fields)
+
+        This updates the class with detailed helpers for each field.
         """
         if hasattr(cls, '_helpers'):
             return
@@ -613,6 +698,9 @@ class Composite:
 
     @classmethod
     def composite_configure(cls, skip_validation : DefaultDict[str, list[str]], segment_rules: list[tuple[str, str]], composite_name: str) -> None:
+        """
+        Provide the skip_validation configuration to the elements of this Composite.
+        """
         cls._skip_validation = skip_validation
         fields = get_type_hints(cls, include_extras=True)
         cls.make_helpers(fields)
@@ -623,7 +711,9 @@ class Composite:
 
     @classmethod
     def attr_build(cls, field_type: type, source_value: str | None) -> Any:
-        """Populate Element's field value"""
+        """
+        Populate Element's field value from a text value.
+        """
         match field_type:
             case _AnnotatedAlias():  # type: ignore[misc]
                 # Annotated[X, ...]
@@ -637,6 +727,14 @@ class Composite:
 
     @classmethod
     def build(cls: type["Composite"], source_value: str | None | list[str | None]) -> "Composite":
+        """
+        Builds an instance of this Composite using a
+        collection of source values extracted from parent Segment's Exchange format text.
+
+        :param cls: the ``Composite`` subclass to build.
+        :param source_value: the source values to use.
+        :returns: an instance of this ``Composite`` subclass.
+        """
         fields = get_type_hints(cls, include_extras=True)
         cls.logger.debug("build %s with %s", cls.__name__, fields)
         # Expand single value to a list
@@ -664,6 +762,13 @@ class Composite:
         return cls(**arg_dict)
 
     def elements(self) -> list[str | None | list[str | None | list[str | None]]]:
+        """
+        Returns the list of values for this composite.
+
+        ..  note:: Confusing overlap of this elements() method with :py:class:`Source.elements` method.
+
+            This is **not** the same concept at all.
+        """
         fields = get_type_hints(self)
         return [getattr(self, name) for name, type_hint in class_fields(self.__class__)]
 
@@ -677,27 +782,44 @@ class Segment:
     """
     A Segment is a collection of ``Elements | Composite``.
 
-    Composites have array_sep separators.
+    Segments have the element_sep separators;
+    any contained composites use the array_sep separtors.
+
     The lexical scanner turns these into sub-lists of the element value list.
-    So ``element1|comp:osite|element3`` is three element
-    values: ``["element1", ["comp", "osite"], "element3"]``.
+    So ``seg|element1|comp:osite|element3`` will become the following list of
+    values: ``["seg", "element1", ["comp", "osite"], "element3"]``.
 
     The ISA Segment is special. It's generally fixed-length, and it defines the element and segment separators
     used everywhere else.
 
-    When parsing ISA, we handle this as a distinct special case.
+    Segments are defined as a list of elements.
+
+    ::
+
+        class Loop_Segment(Segment):
+            field_1: Annotated[str, MinLen(2), MaxLen(2)]
+            field_2: Annotated[Decimal, Scale(2)]
+            etc.
+
+    When parsing the ISA segment, we handle this as a distinct special case.
 
     ..   note:: IndexError: pop from empty list
 
         often means wrong separators.
     """
-    _segment_name: str
-    _skip_validation: DefaultDict[str, list[str]]
-    _helpers: dict[str, X12ElementHelper | None]
+    _segment_name: str  #: String name to match to parse this segment
+    _helpers: dict[str, X12ElementHelper | None]  #: X12ElementHelper for field conversion and validation
+    _skip_validation: DefaultDict[str, list[str]]  #: Elements not to be validated
     # No type hint: invisible to get_type_hints() introspection
-    logger = logging.getLogger("x12.base.Segment")
+    logger = logging.getLogger("x12.base.Segment")  #: Class Logger
 
     def __init__(self, **arg_dict) -> None:
+        """
+        Create a Segment instance by providing keyword argument values
+        for each field.
+
+        This will validate each value provided.
+        """
         fields = get_type_hints(self.__class__, include_extras=True)
         unknowns = arg_dict.keys() - fields.keys()
         if unknowns:
@@ -752,8 +874,6 @@ class Segment:
         """
         This class creates helper wrappers for List[X] and Union[X, None].
         Otherwise, use :py:class:`X12ElementHelper` for primitives.
-
-        TODO: Reified with :py:meth:`X12ElementHelper.annotated`
         """
         match hint:
             case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
@@ -802,6 +922,9 @@ class Segment:
 
     @classmethod
     def configure(cls, skip_validation : list[str]) -> None:
+        """
+        Provide the skip_validation configuration to the elements of this Segment.
+        """
         fields = get_type_hints(cls, include_extras=True)
         cls.make_helpers(fields)
         all_rules = (
@@ -856,7 +979,7 @@ class Segment:
         """
         Walks type structure to create Elements and Composites.
 
-        May pop source_values.
+        May pop source_values as part of building the instance.
         """
         cls.logger.debug("attr_build %s from %r", field_type, source_values)
         match field_type:
@@ -901,9 +1024,16 @@ class Segment:
     @classmethod
     def parse(cls: type["Segment"], source: Source) -> Union["Segment", None]:
         """
-        Parses segments in general.
+        Parses the Exchange format text for this Segment subclass.
 
         Handles ISA segments specially to extract element and segment separators.
+
+        If the next segment in the :py:class:`Source` matches
+        this segment's ``_segment_name`` attribute, then the segment
+        will be consumed. Each element and composite will be validated.
+
+        If the next segment does not match the ``_segment_name`` attribute,
+        this segment's value will be ``None``.
         """
         fields = get_type_hints(cls, include_extras=True)
         cls.logger.debug("parse %s with %s", cls.__name__, fields)
@@ -951,7 +1081,7 @@ class Segment:
         The segment as a list of Element source values.
         The segment text is the basis for the exchange format: a sequence of Segments.
 
-        .. note:: Confusing overlap of names with the Source class.
+        ..  note:: Confusing overlap of this elements() method with :py:class:`Source.elements` method.
 
             This is **not** the same concept at all.
 
@@ -979,16 +1109,23 @@ class Segment:
 
 class Loop:
     """
-    A Loop is a collection of ``Loop | Segment``.
+    A Loop is a collection of ``Loop | Segment`` instances.
 
-    Loops and Segments can repeat, and may be optional.
+    Loops (and their Segments) can repeat, or may be optional.
 
     We need to examine the loop's structure of segments
-    and sub-loops to match the segment prefix.
+    and sub-loops my matching segment prefixes to see
+    which segment can be parsed.
     """
-    logger = logging.getLogger("x12.base.Loop")
+    logger = logging.getLogger("x12.base.Loop")  #: Class Logger
 
     def __init__(self, **arg_dict) -> None:
+        """
+        Create a Loop instance by providing keyword argument values
+        for each segment or nested loop.
+
+        The Segments and Composites will validate any values provided.
+        """
         fields = get_type_hints(self.__class__)
         unknowns = arg_dict.keys() - fields.keys()
         if unknowns:
@@ -999,6 +1136,9 @@ class Loop:
 
     @classmethod
     def configure(cls, skip_validation : list[str]) -> None:
+        """
+        Provide the skip_validation configuration to the Segments of this Loop.
+        """
         for name, field_type in class_fields(cls):
             # TODO: PEEL THE ONION...
             while type(field_type) is not type:
@@ -1022,11 +1162,11 @@ class Loop:
                 raise TypeError(f"unexpected {name}: {field_type} {type(field_type)}")  # pragma: no cover
 
     @classmethod
-    def attr_build(cls, name: str, field_type: type, source: Source) -> Segment | list[Segment] | None:
+    def attr_build(cls: type["Loop"], name: str, field_type: type, source: Source) -> Segment | list[Segment] | None:
         """
-        Walks type structure to create sub-loops and segments.
+        Walks type structure to create sub-Loops and Segments.
 
-        May consume source segments.
+        May consume source Segments.
         """
         cls.logger.debug("attr_build %s: %r", name, field_type)
         match field_type:
@@ -1074,6 +1214,9 @@ class Loop:
 
     @classmethod
     def parse(cls: type["Loop"], source: Source) -> Union["Loop", None]:
+        """
+        Parses the Exchange format text for this Loop subclass.
+        """
         cls.logger.debug("parse %s", cls.__name__)
         arg_dict = {}
         for name, field_type in class_fields(cls):
@@ -1092,8 +1235,6 @@ class Loop:
         """
         A flat sequence of segment values in this Loop and all sub Loops.
         This is the basis for the exchange format.
-
-        This **also** does an ``attr_build()`` style type walk.
         """
         for name, hint in class_fields(self.__class__):
             field = getattr(self, name)
@@ -1128,14 +1269,19 @@ class Loop:
 
 class Message:
     """
-    A top-level message, a collection of Loop.
+    A top-level message, a collection of Loop instances.
 
     Loops can (and often do) repeat.
     """
-    # Schema: type[SchemaType]
-    logger = logging.getLogger("x12.base.Message")
+    logger = logging.getLogger("x12.base.Message")  #: Class Logger
 
     def __init__(self, **arg_dict) -> None:
+        """
+        Create a Message instance by providing keyword argument values
+        for each Loop.
+
+        The Segments and Composites will validate any values provided.
+        """
         fields = get_type_hints(self.__class__)
         unknowns = arg_dict.keys() - fields.keys()
         if unknowns:
@@ -1146,6 +1292,9 @@ class Message:
 
     @classmethod
     def configure(cls, skip_validation : list[str]) -> None:
+        """
+        Provide the skip_validation configuration to the Segments of this Loop.
+        """
         for name, loop_type in class_fields(cls):
             # TODO: PEEL THE ONION.
             while type(loop_type) is not type:
@@ -1167,6 +1316,11 @@ class Message:
 
     @classmethod
     def attr_build(cls, name: str, loop_type: type, source: Source) -> Loop | list[Loop] | None:
+        """
+        Walks type structure to create sub-Loops and Segments.
+
+        May consume source Segments.
+        """
         match loop_type:
             case GenericAlias() if get_origin(loop_type) is list:
                 # list[Loop] structure
@@ -1193,6 +1347,12 @@ class Message:
 
     @classmethod
     def parse(cls: type["Message"], source: Source, skip_validation : list[str] | None = None) -> "Message":
+        """
+        Parses the Exchange format text for this Message subclass.
+
+        This will provide the skip_validation value to all of the Loops and Segments
+        within this Message structure.
+        """
         cls.configure(skip_validation or [])
 
         # Parse the fields of this message.
@@ -1238,9 +1398,12 @@ def demo() -> None:
     """
     A minimal demonstration of some features of the base classes.
 
-    >>> from x12.base import demo
-    >>> demo()
-    MSG(isa_loop=[ISA_LOOP(isa=ISA_LOOP_ISA(isa01=ISA_LOOP_ISA01('00'), isa16=ISA_LOOP_ISA16(':')))])
+    ::
+
+        >>> from x12.base import demo
+        >>> demo()
+        MSG(isa_loop=[ISA_LOOP(isa=ISA_LOOP_ISA(isa01='00', isa16=':'))])
+        MSG(isa_loop=[ISA_LOOP(isa=ISA_LOOP_ISA(isa01='00', isa16=':'))])
     """
 
     ID: TypeAlias = str

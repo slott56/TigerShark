@@ -80,7 +80,7 @@ loops, segments, composites, and elements of the message.</p></li>
 </ol>
 <p>It’s common practice to define common sets of code values,
 and common data types outside the messages. This is reflected
-in a <a class="reference internal" href="implementation/x12.html#module-x12.common" title="x12.common"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code></a> module with these definitions.</p>
+in a <code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code> module with these definitions.</p>
 <p>See <a class="reference internal" href="design/classmodel.html#design-class"><span class="std std-ref">Class Model</span></a> and <a class="reference internal" href="design/parsing.html#design-parsing"><span class="std std-ref">Parsing An Exchange-Format Message</span></a> for more on solutions.</p>
 <section id="x12-message-definitions">
 <h4>X12 Message Definitions<a class="headerlink" href="#x12-message-definitions" title="Permalink to this heading">¶</a></h4>
@@ -97,14 +97,14 @@ customer’s Implementation Guide.</p>
 <ul class="simple">
 <li><p>The .SEF files. These seem to be a proprietary product of TIBCO.</p></li>
 </ul>
-<p>The TigerShark <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool can transform the <code class="docutils literal notranslate"><span class="pre">.xml</span></code> files
+<p>The TigerShark <a class="reference internal" href="implementation/tools_xml_extract.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool can transform the <code class="docutils literal notranslate"><span class="pre">.xml</span></code> files
 into Python class definitions.
 A class definition can emit JSON Schema for messages of that class.</p>
 </section>
 </section>
 <section id="application-perspective">
 <h3>Application Perspective<a class="headerlink" href="#application-perspective" title="Permalink to this heading">¶</a></h3>
-<p>An X12 <a class="reference internal" href="implementation/x12.html#x12.base.Message" title="x12.base.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">x12.base.Message</span></code></a> object is what an application uses.
+<p>An X12 <a class="reference internal" href="implementation/x12_base.html#x12.base.Message" title="x12.base.Message"><code class="xref py py-class docutils literal notranslate"><span class="pre">x12.base.Message</span></code></a> object is what an application uses.
 It’s a collection of X12 Loops, Segments, Composites, and Elements.
 The segment names are often reused, meaning
 that a segment only has meaning in the context
@@ -118,7 +118,7 @@ and a segment name of <code class="docutils literal notranslate"><span class="pr
 <section id="container-view">
 <h2>Container View<a class="headerlink" href="#container-view" title="Permalink to this heading">¶</a></h2>
 <p>The applications are more-or-less a single container applications.
-The <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> reads XML definitions and creates
+The <a class="reference internal" href="implementation/tools_xml_extract.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> reads XML definitions and creates
 message class definitions.</p>
 <p>An application that parses messages is most often going to be
 a single container to extract useful content from messages
@@ -156,10 +156,10 @@ some_app --&gt; msg_xxx_yyyy_zzz"/>
 <li><p><a class="reference internal" href="implementation/x12.html#module-x12" title="x12"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12</span></code></a>. This is a package for handling the serializing and
 deserializing of X12 messages.</p>
 <ul>
-<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.annotations</span></code>. This has classes that define annotations to collect the details of an Element (or Composite).</p></li>
-<li><p><a class="reference internal" href="implementation/x12.html#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a>. This has the abstract base class definitions for all messages.</p></li>
-<li><p><a class="reference internal" href="implementation/x12.html#module-x12.common" title="x12.common"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code></a>. This has common data element and code definitions. This is built by the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching this is unwise.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">msg_mmm_vvvv_Xxxx...py</span></code> modules with message definitions. These are built by the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching these is unwise.</p></li>
+<li><p><a class="reference internal" href="implementation/x12_annotations.html#module-x12.annotations" title="x12.annotations"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.annotations</span></code></a>. This has classes that define annotations to collect the details of an Element (or Composite).</p></li>
+<li><p><a class="reference internal" href="implementation/x12_base.html#module-x12.base" title="x12.base"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base</span></code></a>. This has the abstract base class definitions for all messages.</p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.common</span></code>. This has common data element and code definitions. This is built by the <a class="reference internal" href="implementation/tools_xml_extract.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching this is unwise.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">msg_mmm_vvvv_Xxxx...py</span></code> modules with message definitions. These are built by the <a class="reference internal" href="implementation/tools_xml_extract.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> tool. Touching these is unwise.</p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="implementation/tools.html#module-tools" title="tools"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools</span></code></a>. This package has applications to help define the message classes.</p>
@@ -286,7 +286,7 @@ the JSON Schema with the base and common definitions
 clearly separated like this. Instead it coughs out
 deeply-nested JSON Schema with redudant copies
 of base definitions.</p>
-<p>However, the <a class="reference internal" href="implementation/tools.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> makes an effort
+<p>However, the <a class="reference internal" href="implementation/tools_xml_extract.html#module-tools.xml_extract" title="tools.xml_extract"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tools.xml_extract</span></code></a> makes an effort
 to provide a flatter structure that reflects the source
 definitions in XML. (These, in turn, likely reflect the
 original specification files.)</p>

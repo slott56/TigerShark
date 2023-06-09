@@ -2,19 +2,51 @@
 The TODO List
 #############
 
+General Design
+==============
+
+Refactor parsing to separate it from
+the ``Message``, ``Loop``, ``Segment``, ``Composite``
+class structure.
+
+Ideally, an instance of ``Parse`` should be able to fill in classes
+defined with **Pydantic**.
+
+::
+
+    class X12Parser:
+        """
+            Walks the structure of the annotated components,
+            parses the Segment text blocks.
+        """
+        def parse(self, cls: type[Message], source: Source, skip_validation : list[str] | None = None) -> Message:
+            ...
+        def msg_attr_build(self, cls: type[Message], name: str, loop_type: type, source: Source) -> Loop | list[Loop] | None:
+            ...
+        def loop_parse(self, cls: type[Loop], source: Source) -> Union[Loop, None]:
+            ...
+        def loop_attr_build(self, cls: type[Loop], name: str, field_type: type, source: Source) -> Segment | list[Segment] | None:
+            ...
+        def segment_parse(self, cls: type[Segment], source: Source) -> Union[Segment, None]:
+            ...
+        def segment_attr_build(self, cls: type[Segment], field_type: type, source_values: list[str | None | list[str | None]]) -> Any | list[Any] | Composite | None:
+            ...
+        def composite_build(self, cls: type[Composite], source_value: str | None | list[str | None]) -> Composite:
+            ...
+        def composite_attr_build(self, cls: type[Composite], field_type: type, source_value: str | None) -> Any:
+            ...
+
 Annotations
 ===========
 
-1.  Write an integration test cases for the JSON Schema
-    to be sure (1) a validator can be built, and (2) it validates
-    the JSON output.
+1.  Write an integration test cases for the JSON Schema output from a class.
+    Confirm (1) a validator can be built, and (2) it validates
+    the JSON output from the class.
 
 2.  Unify the various "Peel the Onion" algorithms.
 
 3.  Cleanup type hints to the extent possible.
-    Specifically, ``error: Expected type in class pattern; found "Any"  [misc]``
-    occurs so often, it looks like a badly-formed ``case`` pattern.
-    Yet, it seems to work.
+    A large number of ``type: ignore[misc]`` comments are present.
 
 Some other things to do
 are captured in these documents, and annotated in the code.

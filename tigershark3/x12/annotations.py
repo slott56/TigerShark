@@ -2,10 +2,31 @@
 Base annotations used to decorate types
 with X12 Schema attributes.
 
-These seem to overlap (to an extent) with JSON Schema.
+The X12 requirements overlap with JSON Schema, and
+the :py:func:`json_schema` function emits
+an annotation into JSON Schema format.
 
-There are distinctive annotations, unique to X12,
-which must be provided as JSONSchema extensions.
+This is not a complete set of annotations
+for all possible JSON Schema features.
+This is the minimum set of anntations that
+seem required for X12 message definitions.
+
+::
+
+    >>> from x12.annotations import *
+    >>> from typing import Annotated
+
+    >>> class XY:
+    ...     x: Annotated[str, MinLen(2), MaxLen(3)]
+    ...     y: Annotated[str, Format(r"\d+{2,3}")]
+
+    >>> from typing import get_type_hints
+    >>> hints = get_type_hints(XY, include_extras=True)
+    >>> json_schema(hints['x'])
+    {'type': 'string', 'minLength': 2, 'maxLength': 3}
+    >>> json_schema(hints['y'])
+    {'type': 'string', 'format': '\\\\d+{2,3}'}
+
 """
 import re
 from decimal import Decimal
@@ -15,7 +36,11 @@ from typing_extensions import _AnnotatedAlias
 from types import GenericAlias, UnionType
 
 class X12Annotation:
-    validation = False  # Should this be used for validation?
+    """
+    Superclass for X12 annotations.
+    Each Annotation instance is part of the ``Annotated[]`` definition in the :py:mod:`typing` module.
+    """
+    validation = False  #: Should this be used for validation?
 
     def __init__(self, *parameters: Any) -> None:
         self.params = tuple(parameters)
@@ -40,6 +65,7 @@ class X12Annotation:
 
     @property
     def JSONSchema(self) -> dict[str, Any]:
+        """Emits the JSON Schema for this annnotation."""
         return cast(dict[str, Any], {})
 
     def invalid(self, source: str) -> str | None:
@@ -61,6 +87,9 @@ class X12Annotation:
         return None
 
 class Format(X12Annotation):
+    """
+    The Format(...) annotation. The parameter is a regular expression that is checked.
+    """
     validation = True
 
     @property
@@ -73,11 +102,25 @@ class Format(X12Annotation):
         return None
 
 class Scale(X12Annotation):
+    """
+    The Scale(...) annotation for decimal numbers.
+    The parameter is the number of decimal places to impose on a string of digits.
+
+    ::
+
+        x: Annnotated[Decimal, Scale(2)]
+
+    Will convert ``'4200'`` to ``Decimal('42.00')``.
+    """
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"x-scale": self.params[0]}
 
 class MinLen(X12Annotation):
+    """
+    The MinLen(...) nnotation for strings.
+    """
     validation = True
 
     @property
@@ -92,6 +135,9 @@ class MinLen(X12Annotation):
         return None
 
 class MaxLen(X12Annotation):
+    """
+    The MaxLen(...) annotation for strings.
+    """
     validation = True
 
     @property
@@ -106,6 +152,11 @@ class MaxLen(X12Annotation):
         return None
 
 class Enumerated(X12Annotation):
+    """
+    The Enumerated(...) annotation for strings.
+
+    This is similar to ``typing.Literal[]``.
+    """
     validation = True
 
     @property
@@ -120,21 +171,36 @@ class Enumerated(X12Annotation):
         return None
 
 class Title(X12Annotation):
+    """
+    A Title("Name of the field") annotation.
+    """
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"title": self.params[0]}
 
 class Usage(X12Annotation):
+    """
+    A Usage("R"|"S"|"N") annotation.
+    """
+
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"x-usage": self.params[0]}
 
 class Position(X12Annotation):
+    """
+    A Position(n) annotation.
+    """
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"x-position": self.params[0]}
 
 class Syntax(X12Annotation):
+    """
+    A Syntax() annotation with a collection of
+    strings to define some more complex validation rules.
+    """
     def __init__(self, *parameters: Any) -> None:
         self.params = tuple(tuple(p) for p in parameters)
 
@@ -143,6 +209,12 @@ class Syntax(X12Annotation):
         return {"x-syntax": list(self.params)}
 
 class Required(X12Annotation):
+    """
+    A Reqired(True | False) annotation.
+
+    This repeats the :py:class:`Usage` annotation.
+    It's often a derived value.
+    """
     @property
     def JSONSchema(self) -> dict[str, Any]:
         if self.params:
@@ -150,16 +222,26 @@ class Required(X12Annotation):
         return {"x-required": True}
 
 class MinItems(X12Annotation):
+    """
+    The MinItems(...) annotation for arrays.
+    """
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"min Items": self.params[0]}
 
 class MaxItems(X12Annotation):
+    """
+    The MaxItems(...) annotation for arrays.
+    """
     @property
     def JSONSchema(self) -> dict[str, Any]:
         return {"maxItems": self.params[0]}
 
 class OtherMeta(X12Annotation):
+    """
+    A placeholder for additional JSON Schema
+    attributes.
+    """
     def __init__(self, **parameters: Any) -> None:
         self.meta_params = parameters
         self.params = tuple(self.meta_params.items())
@@ -179,6 +261,9 @@ def json_schema(type_hint: type) -> dict[str, Any]:
     """
     Given a type hint (from ``typing.get_type_hints()``)
     return an equivalent JSON Schema.
+
+    :param type_hint: the type hint to expand into JSON Schema notation.
+    :returns: a dictionary with the JSON Schema for the given hint.
 
     ..  todo:: Handle Union[T | None].
     """

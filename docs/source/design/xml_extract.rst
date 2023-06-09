@@ -56,13 +56,16 @@ this works out well enough.
 Nesting
 =======
 
-It appears that nested annotations is not a good idea.
+It appears that deeply-nested annotations are not a good idea.
 
 For example::
 
     attr_name = Annotated[list[Annotated[str, ...]], MaxItems(1)]
 
-Seems to wind up with some internal structural issues.
+This seem to wind up with some internal structural issues.
+It's difficult to get a ``match`` statement with proper ``case``
+clauses.
+
 This needs to be done as follows:
 
 ::

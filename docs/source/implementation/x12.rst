@@ -3,3 +3,5 @@
 ===================
 
 ..  automodule:: x12
+   :members:
+   :undoc-members:

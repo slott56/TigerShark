@@ -1,76 +1,117 @@
 """
-Read the schema from the PYx12 project's XML-based schema definitions.
+The ``xml_extract`` application converts the schema from the PyX12 project's XML-based schema definitions
+into Python class definitions using Annotated types.
+
+
+SYNOPSIS
+===========
+
+::
+
+    python tools/xml_extract.py
+
+DESCRIPTION
+============
+
+This application creates subclasses of :py:class:`x12.base.Composite`, :py:class:`x12.base.Segment`, :py:class:`x12.base.Loop`, and :py:class:`x12.base.Message` definitions.
+This writes a module file with the class definitions for each message.
+
+It also creates a :py:mod:`x12.common` module with base
+types and reused type definitions.
+
+
+OPTIONS
+=======
+
+Currently, there are no command-line options. The ``__main__`` section sets
+two global variables::
+
+:base:
+
+    This has default value of ``Path.home() / "github" / "pyx12" / "pyx12" / "map"``
+    It's the location of the GitHub checked out of the PyX12 project.
+
+:output:
+    This is the format of the output. The default  value is ``"python"``.
+        Other choices include ``"schema-python"`` and ``"json"``.
+
+The results are written to the ``../x12`` or the ``../json`` directory.
+For python and schema-python options, the output goes to ``../x12``.
+The ``"json"`` output is written to ``../x12``.
+
+EXIT STATUS
+============
+
+:0:
+    if it worked.
+
+:2:
+    if it raises an exception. This is often because of unparsable XML input or unwritable output directories.
+
+
+ENVIRONMENT
+===========
+
+TBD
+
+
+FILES
+=======
 
 See https://github.com/azoner/pyx12
 
 See https://github.com/azoner/pyx12/tree/master/pyx12/map for the message definitions.
 
-This application extracts the Element, Composite, Segment, Loop, and Message schemas from these definitions.
-
-The idea is to create two useful documents:
-
-- A JSONSchema definition as a common structure to describe the EDI messages.
-
-- This package's X12 modules with class definitions for each message based on an ``x12.base`` module's
-  parent classes.
-
-Source
-=======
-
 Several sources of data are integrated to create the full schema.
 
-1. The nnn.nnnn.xnnnn...xml files. Example 270.4010.X092.A1.xml. These have the message definitions.
+1. The :file:`nnn.nnnn.xnnnn...xml` files. Example :file:`270.4010.X092.A1.xml`. These have the message definitions.
 
-2. The codes.xml, detaele.xml with additional data to support the data type definitions.
+2. The :file:`codes.xml` file, and :file:`detaele.xml` file with additional data to support the data type definitions.
 
-3. The x12.control.00401.xml and x12.control.00501.xml with core structural information
-   used to map a message to the specific message definition.
+3. The :file:`x12.control.00401.xml` and :file:`x12.control.00501.xml` with core structural information
+   used to map a message to the specific version of a message definition.
 
-It's not perfectly clear that maps.xml is *required*, but it seems useful for creating
+It's not perfectly clear that the :file:`maps.xml` file is *required*, but it seems useful for creating
 a declarative set of X12 messages.
 
-The complication here is that within a given message definition,
-the Element, Segment, Loop, Message structure is unique, but the names are reused.
-This means the message -- as a whole -- is a kind of namespace around the structural elements.
-
-The class definitions here are *only* used to extract the XML-based schema information.
-They're not related in any way to processing X12 EDI messages.
+NOTES
+==========
 
 X12 Schema
-==========
+-----------
 
 The X12 schema definitions created here depend on an ``x12.base`` module to provide
 the superclass definitions of Element, Composite, Segment, Loop, and Message.
 
 This app writes a collection of message-specific modules
-with subclass definitions for all of the elements, etc., that are part of that message.
+with class definitions for all of the elements, etc., that are part of that message.
 Reuse is not considered at this point.
-In many cases, the Control segments (ISA, IEA, GS, GE, etc.) are reusable,
-and should not be repeated in each module.
+In many cases, the Control segment definitions (ISA, IEA, GS, GE, etc.) are reusable.
+They're repeated in each module, however.
 
 Structure and Naming
-=====================
+---------------------
 
-Names of Segments and Elements are reused extensively.
-The Loop is the context in which Segment, Composite, and Element names are understood.
+One complication here is that within a given message definition,
+the ``Element``, ``Segment``, ``Loop``, and ``Message`` structure is unique, but subsidiary structure names are reused.
+This means the message -- as a whole -- is a kind of namespace around the structural elements.
+This means Segment names are qualified by the Loop that contains the Segment.
 
-The idea of exposing the Segments as if they are dataclass-like records
+The idea of exposing a Segment class as if it is a dataclass-like record
 is made challenging by way Segments are reused in distinct Loops.
 
-The overall "mapping" from source text to message is a separate capability
-This uses generic x12.control.* module generic definitions to locate the correct module to process a message.
-
 Type Definitions
-=================
+-----------------
 
-The Data Element definitions, used to create Elements, are heavily reused.
-These become a module of Schema details used to build the final schema
-for a given Element.
+The Element definitions, used to define the atomic elements of Segments and Composites, are heavily reused.
+These become a module of common definitions.
 
-The Data Type attribute is -- apparently -- the base
-Python type, only.
+The X12 Data Type attribute is defines the base Python type.
+These include numerous string types (``AN``, ``ID``),
+integer types (``N``), float types (``R``), Decimal types (``Nx``),
+datetime.date (``DT``) and datetime.time (``TM``).
 
-There are 3 variations on DT:
+There are 3 variations on DT formatting:
 
 -   ``<data_ele ele_num="I08" data_type="DT" min_len="6" max_len="6" name="I08"/>``
 
@@ -80,22 +121,21 @@ There are 3 variations on DT:
 
 This means there are three underlying data element definitions
 
-:I08:
-    ``{"type": "string", "minLength": 6, "maxLength": 6, "format": "\\d{6}", "x-datetime": "%y%m%d"}``
+::
 
-:D373:
-    ``{"type": "string", "minLength": 8, "maxLength": 8, "format": "\\d{8}", "x-datetime": "%Y%m%d"}``
+    DT: TypeAlias = datetime.date
 
-:D29:
-    ``{"type": "string", "minLength": 6, "maxLength": 8, "format": "\\d{6,8}", "x-datetime": ["%Y%m%d", "%y%m%d"]}``
-
-Where the ``x-datetime`` field is an extension to provide the conversion format for :py:func:`datetime.datetime.strptime`
+    I08: TypeAlias = Annotated[DT, MinLen(6), MaxLen(6)]
+    D_373: TypeAlias = Annotated[DT, MinLen(8), MaxLen(8)]
+    D_29: TypeAlias = Annotated[DT, MinLen(6), MaxLen(8)]
 
 The Code definitions, similarly, are part of the module of schema details.
-These are incorporated explicitly into the JSON Schema.
+These are enumerations of all valid code values.
+The raw values are in the common module. From these an :py:class:`x12.annotations.Enumerated`
+annotation is built.
 
-In JSON Schema, a "$ref" path of the form "#/$common/some_code" or "#/$common/some_element_schema",
-provides a reference to the reusable data element definitions.
+In a JSON Schema, a "$ref" path of the form "#/$common/some_code" or "#/$common/some_element_schema",
+can provide a reference to the reusable data element definitions.
 This parallels the Python ``x12.common`` module which has these definitions.
 
 Using "#" implies  the "$common" section is part of each message's overall JSONSchema definition.
@@ -122,17 +162,18 @@ A data type, then, has the following definition aspects:
 -   Base ``data_type_code`` ("AN", "ID", "DT", "TM", etc.)
     These are -- generally -- mappings to a Python type.
     For the ``Nx``, it includes the decimal scale factor.
-    For ``DT`` and ``TM``, the length is required, also.
+    For ``DT`` and ``TM``, a length is required, also.
 
 -   Annotations with common definition details (minLength, maxLength, title) from ``common.xml``.
     A "format" value is implied by the length for ``DT``, ``TM``, ``Nx``, ``N``, and ``R``.
 
 -   Enumerated literals come either from a ``codes.xml`` or from the element definition.
 
+
 Type Extensions
 ---------------
 
-Some messages will have AN fields with a type and a value.
+Some messages will have two AN fields. One with a type and the second with a value.
 This extra type detail is one of the following:
 
 -   D8 (yyyymmdd),
@@ -144,33 +185,18 @@ This extra type detail is one of the following:
 -   TM (hhmm)
 
 These are types **outside** the X12 definitions.
-They're application-specific, and depend on
-two adjacent fields to work.
-
-Schema and Annotations
-======================
-
-There are two approaches to defining the type details.
-
--   JSON Schema structures. This is called the "interim" solution.
-    It leverages an explicit class for each Element to carry
-    the schema details.
-
--   Type Annotations. This is the goal.
-    All of the schema information is carried
-    through Annotations.
-
-The transition is tricky because
-the ``xml_extract`` application must generate
-both variants, making it rather complicated.
+They're application-specific.
 
 X12 Message Version Mapping
-===========================
+---------------------------
+
+The overall "mapping" from source text to message is a separate capability
+This can use ``x12.control.*`` module generic definitions to locate the correct module to process a message.
 
 The base mapping superclass permits a subclass to provide a rule
 for disambiguating messages.
 
-A mapping search class uses the collection of mapping objects
+A mapping search class could use the collection of mapping objects
 to locate the module that can parse a message.
 
 .. todo:: This version identification is not implemented

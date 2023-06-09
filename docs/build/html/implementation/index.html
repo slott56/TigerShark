@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="X12 Package" href="x12.html" />
-    <link rel="prev" title="Common Practice" href="../design/optional_validation.html" />
+    <link rel="prev" title="How Validation Works" href="../design/optional_validation.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -36,15 +36,34 @@
             
   <section id="implementation">
 <h1>Implementation<a class="headerlink" href="#implementation" title="Permalink to this heading">¶</a></h1>
-<p>The API documentation defines the implementation.</p>
+<p>The implementation is a few foundational
+packages and a large number of message definitions.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="x12.html"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="x12.html#x12">x12</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="x12_annotations.html"><code class="docutils literal notranslate"><span class="pre">X12.annotations</span></code> Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="x12_base.html"><code class="docutils literal notranslate"><span class="pre">X12.base</span></code> Module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="x12_base.html#parsing">Parsing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="x12_base.html#json-schema">JSON Schema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="x12_base.html#json-output">JSON Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="x12_base.html#message-segments">Message Segments</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tools.html"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="tools.html#tools">Tools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tools_xml_extract.html"><code class="docutils literal notranslate"><span class="pre">tools.xml_extract</span></code> Application</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html#synopsis">SYNOPSIS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html#description">DESCRIPTION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html#options">OPTIONS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html#exit-status">EXIT STATUS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html#environment">ENVIRONMENT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html#files">FILES</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html#notes">NOTES</a></li>
 </ul>
 </li>
 </ul>
@@ -78,7 +97,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../design/index.html">Design Notes</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Implementation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="x12.html"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="x12_annotations.html"><code class="docutils literal notranslate"><span class="pre">X12.annotations</span></code> Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="x12_base.html"><code class="docutils literal notranslate"><span class="pre">X12.base</span></code> Module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="tools.html"><code class="docutils literal notranslate"><span class="pre">tools</span></code> Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools_xml_extract.html"><code class="docutils literal notranslate"><span class="pre">tools.xml_extract</span></code> Application</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
@@ -88,7 +110,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="../design/optional_validation.html" title="previous chapter">Common Practice</a></li>
+      <li>Previous: <a href="../design/optional_validation.html" title="previous chapter">How Validation Works</a></li>
       <li>Next: <a href="x12.html" title="next chapter"><code class="docutils literal notranslate"><span class="pre">X12</span></code> Package</a></li>
   </ul></li>
 </ul>

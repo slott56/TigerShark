@@ -62,7 +62,7 @@ Version 3.0
 
 A foundational rewrite. This uses Python type annotations to define message structure.
 The ``tools/xml_extract.py`` tool converts PyX12 XML message definitions into
-pure Python classes.  
+pure Python classes simply and directly.
 
 It can emit a JSON Schema description of messages, also.
 This permits transforming raw data to JSON for analysis and processing.

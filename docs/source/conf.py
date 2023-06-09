@@ -68,3 +68,9 @@ plantuml_syntax_error_image = True
 # -- Options for TODO -------
 
 todo_include_todos = True
+
+
+# -- Options for autodoc -----
+
+autodoc_member_order = 'bysource'
+autoclass_content = 'both'
