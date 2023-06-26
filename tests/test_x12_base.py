@@ -75,8 +75,15 @@ def test_schema():
 def test_composite_padding_annotations():
     class SomeComposite(base.Composite):
         se: Annotated[str, Title("Some Element"), MinLen(2), MaxLen(2)]
+    class SomeSegment(base.Segment):
+        c: SomeComposite
+    class SomeLoop(base.Loop):
+        s: SomeSegment
+    class SomeMessage(base.Message):
+        l: SomeLoop
 
-    c = SomeComposite.build(["01"])
+    p = base.X12Parser(SomeMessage)
+    c = p.composite_build(SomeComposite, ["01"])
     assert repr(c) == "SomeComposite(se='01')"
     assert c.se == "01"
     assert c.elements() == ['01']
@@ -100,8 +107,15 @@ def test_composite_build_2():
     class SomeComposite(base.Composite):
         se: Annotated[str, Title("Some Element"), MinLen(2), MaxLen(2)] | None
         be: int
+    class SomeSegment(base.Segment):
+        c: SomeComposite
+    class SomeLoop(base.Loop):
+        s: SomeSegment
+    class SomeMessage(base.Message):
+        l: SomeLoop
 
-    c = SomeComposite.build(["01", "42"])
+    p = base.X12Parser(SomeMessage)
+    c = p.composite_build(SomeComposite, ["01", "42"])
 
     assert repr(c) == "SomeComposite(se='01', be=42)"
     assert c.se == "01"
@@ -131,10 +145,16 @@ def test_composite_build_2():
 def test_composite_validation():
     class SomeComposite(base.Composite):
         se: Annotated[str, Title("Some Element"), MinLen(2), MaxLen(2), Enumerated("WX", "YZ")]
+    class SomeSegment(base.Segment):
+        c: SomeComposite
+    class SomeLoop(base.Loop):
+        s: SomeSegment
+    class SomeMessage(base.Message):
+        l: SomeLoop
 
-    SomeComposite.composite_configure({}, [], "SomeComposite")
+    p = base.X12Parser(SomeMessage)
     with raises(ValueError) as info:
-        c = SomeComposite.build(["AB"])
+        c = p.composite_build(SomeComposite, ["AB"])
     assert info.value.args == ("invalid SomeComposite.se: typing.Annotated[str, Title('Some Element'), "
          'MinLen(2), MaxLen(2), Enumerated(\'WX\', \'YZ\')] ("invalid value for '
          '\'AB\', not in (\'WX\', \'YZ\')", \'Enumerated\')',)
@@ -142,18 +162,30 @@ def test_composite_validation():
 def test_composite_skipvalidation_ok():
     class SomeComposite(base.Composite):
         se: Annotated[str, Title("Some Element"), MinLen(2), MaxLen(2), Enumerated("WX", "YZ")]
+    class SomeSegment(base.Segment):
+        c: SomeComposite
+    class SomeLoop(base.Loop):
+        s: SomeSegment
+    class SomeMessage(base.Message):
+        l: SomeLoop
 
-    SomeComposite.composite_configure({"se": ["Enumerated"]}, [("se", "Enumerated")], "SomeComposite")
-    c = SomeComposite.build(["AB"])
+    p = base.X12Parser(SomeMessage, skip_validation=["SomeSegment:se:Enumerated"])
+    c = p.composite_build(SomeComposite, ["AB"])
     assert c.se == "AB"
 
 def test_composite_skipvalidation_notok():
     class SomeComposite(base.Composite):
         se: Annotated[str, Title("Some Element"), MinLen(2), MaxLen(2), Enumerated("WX", "YZ")]
+    class SomeSegment(base.Segment):
+        c: SomeComposite
+    class SomeLoop(base.Loop):
+        s: SomeSegment
+    class SomeMessage(base.Message):
+        l: SomeLoop
 
-    SomeComposite.composite_configure({"se": ["MinLen"]}, [("se", "MinLen")], "SomeComposite")
+    p = base.X12Parser(SomeMessage, skip_validation=["SomeSegment:se:MinLen"])
     with raises(ValueError) as info:
-        c = SomeComposite.build(["AB"])
+        c = p.composite_build(SomeComposite, ["AB"])
     assert info.value.args == ("invalid SomeComposite.se: typing.Annotated[str, Title('Some Element'), "
          'MinLen(2), MaxLen(2), Enumerated(\'WX\', \'YZ\')] ("invalid value for '
          '\'AB\', not in (\'WX\', \'YZ\')", \'Enumerated\')',)

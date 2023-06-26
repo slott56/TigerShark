@@ -5,16 +5,9 @@ The TODO List
 General Design
 ==============
 
-1.  Refactor parsing to separate it from
-    the ``Message``, ``Loop``, ``Segment``, ``Composite``
-    class structure.
+1.  Unify the various "Peel the Onion" algorithms.
 
-    Ideally, an instance of ``X12Parse`` should be able to fill in classes
-    defined with **Pydantic**.
-
-2.  Unify the various "Peel the Onion" algorithms.
-
-3.  Cleanup type hints to the extent possible.
+2.  Cleanup type hints to the extent possible.
     A large number of ``type: ignore[misc]`` comments are present.
 
 JSON Schema

@@ -711,58 +711,6 @@ class Composite:
                 if fnmatch.fnmatch(name, field_match):
                     cls._skip_validation[name].append(annotation_name)
 
-    @classmethod
-    def attr_build(cls, field_type: type, source_value: str | None) -> Any:
-        """
-        Populate Element's field value from a text value.
-        """
-        match field_type:
-            case _AnnotatedAlias():  # type: ignore[misc]
-                # Annotated[X, ...]
-                return source_value
-            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
-                # Usually, X | None
-                return source_value
-            case type():
-                return source_value
-        raise TypeError(f"unexpected type {field_type}")  # pragma: no cover
-
-    @classmethod
-    def build(cls: type["Composite"], source_value: str | None | list[str | None]) -> "Composite":
-        """
-        Builds an instance of this Composite using a
-        collection of source values extracted from parent Segment's Exchange format text.
-
-        :param cls: the ``Composite`` subclass to build.
-        :param source_value: the source values to use.
-        :returns: an instance of this ``Composite`` subclass.
-        """
-        fields = get_type_hints(cls, include_extras=True)
-        cls.logger.debug("build %s with %s", cls.__name__, fields)
-        # Expand single value to a list
-        if not isinstance(source_value, list):
-            source_value = [source_value]
-
-        # Pad with None instances?
-        num_fields = sum(1 for name in class_fields(cls))
-        if num_fields < len(source_value):
-            # Too many values for the fields of this composite.
-            raise ValueError(
-                f"wrong number of values {cls.__name__} needs {num_fields} provided {len(source_value)}"
-            )  # pragma: no cover
-        elif num_fields > len(source_value):
-            source_value.extend([None] * (num_fields - len(source_value)))
-        else:
-            # assert num_fields == len(source_value)
-            pass
-
-        # Build the object
-        arg_dict = {
-            name: cls.attr_build(field_type, source_value.pop(0))
-            for name, field_type in class_fields(cls)
-        }
-        return cls(**arg_dict)
-
     def elements(self) -> list[str | None | list[str | None | list[str | None]]]:
         """
         Returns the list of values for this composite.
@@ -976,108 +924,6 @@ class Segment:
             if issubclass(field_type, Composite):
                 field_type.composite_configure(cls._skip_validation, segment_rules, name)
 
-    @classmethod
-    def attr_build(cls, field_type: type, source_values: list[str | None | list[str | None]]) -> Any | list[Any] | Composite | None:
-        """
-        Walks type structure to create Elements and Composites.
-
-        May pop source_values as part of building the instance.
-        """
-        cls.logger.debug("attr_build %s from %r", field_type, source_values)
-        match field_type:
-            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
-                alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
-                if len(alternatives) != 1:
-                    raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
-                if source_values:
-                    return cls.attr_build(alternatives[0], source_values)
-                return cls.attr_build(alternatives[0], [None])
-            case _AnnotatedAlias():  # type: ignore[misc]
-                # Consume a single value from the elements of this segment.
-                # Either a ``Composite`` or list or some primitive type
-                base = get_args(field_type)[0]
-                value = cls.attr_build(base, source_values)
-                return value
-            case GenericAlias() if get_origin(field_type) is list: # list[Something]
-                # COMPOSITE-LIKE PROCESSING for elements that are list[Element]
-                repeating_type = get_args(field_type)[0]
-                cls.logger.debug("  parse array list[%s]", repeating_type.__name__)
-                source_array = cast(list[str], source_values.pop(0))
-                values = [repeating_type.build(item) for item in source_array]
-                return values
-            case type() if issubclass(field_type, Composite):
-                # Next value in this segment *should* be a list.
-                # If it didn't have the component separator, we make single-element list.
-                composite_value: list[str | None]
-                if source_values:
-                    composite_value = cast(list[str | None], source_values.pop(0))
-                else:
-                    composite_value = []
-                # print(f"Segment.attr_build() {field_type} with {composite_value}")
-                value = field_type.build(composite_value)
-                return value
-            case type():
-                if source_values:
-                    raw_value = cast(str, source_values.pop(0))
-                    return raw_value
-                return None
-        raise TypeError(f"unexpected type {field_type} {type(field_type)} in {cls}")  # pragma: no cover
-
-    @classmethod
-    def parse(cls: type["Segment"], source: Source) -> Union["Segment", None]:
-        """
-        Parses the Exchange format text for this Segment subclass.
-
-        Handles ISA segments specially to extract element and segment separators.
-
-        If the next segment in the :py:class:`Source` matches
-        this segment's ``_segment_name`` attribute, then the segment
-        will be consumed. Each element and composite will be validated.
-
-        If the next segment does not match the ``_segment_name`` attribute,
-        this segment's value will be ``None``.
-        """
-        fields = get_type_hints(cls, include_extras=True)
-        cls.logger.debug("parse %s with %s", cls.__name__, fields)
-        if source.next_segment().upper() != cls._segment_name.upper():
-            return None
-
-        # Special case: the ISA segment can update the ``Source`` parsing state.
-        # Used in the general case when ISA header not compressed.
-        if cls._segment_name.upper() == "ISA" and not source.element_sep:
-            # Sum of field size + separator for each field.
-            # + 3 for header "ISA"
-            # + 1 for final segment separator
-            args: list[tuple[X12Annotation]] = cast(list[tuple[X12Annotation]], [get_args(hint)[1:] for name, hint in class_fields(cls)])
-            max_len_params: list[int] = [
-                ann.params[0]
-                for arg in args
-                if arg
-                    for ann in arg
-                    if isinstance(ann, MaxLen)
-            ]
-            # print(f"Segment.parse() {max_len_params}")
-            size = sum(p+1 for p in max_len_params) + 4
-            cls.logger.debug("ISA: source.element_sep=%r, source.segment_sep=%r", source.element_sep, source.segment_sep)
-            cls.logger.debug("ISA: size=%s", size)  # Should be 106 to include segment separator
-            raw_text = source.peek(size)
-            cls.logger.debug("ISA: text=%r, separators text[-3:]=%r", raw_text, raw_text[-3:])
-            # ISA16 has the composite separator.
-            # It's preceeded by an element separator and followed by the segment separator.
-            source.element_sep = raw_text[-3]
-            source.array_sep = raw_text[-2]
-            source.segment_sep = raw_text[-1]
-
-        flat_values = cast(list[str | None | list[str | None]], source.elements())[1:]  # Drops the segment name from the values.
-        cls.logger.debug("SEGMENT %s: fields %s values %r", cls.__name__, fields, flat_values)
-
-        arg_dict: dict[str, Any] = {
-            name: cls.attr_build(field_type, flat_values)
-            for name, field_type in class_fields(cls)
-        }
-        obj = cls(**arg_dict)
-        return obj
-
     def elements(self) -> SegmentText:
         """
         The segment as a list of Element source values.
@@ -1163,76 +1009,6 @@ class Loop:
             else:
                 raise TypeError(f"unexpected {name}: {field_type} {type(field_type)}")  # pragma: no cover
 
-    @classmethod
-    def attr_build(cls: type["Loop"], name: str, field_type: type, source: Source) -> Segment | list[Segment] | None:
-        """
-        Walks type structure to create sub-Loops and Segments.
-
-        May consume source Segments.
-        """
-        cls.logger.debug("attr_build %s: %r", name, field_type)
-        match field_type:
-            case GenericAlias() if get_origin(field_type) is list:
-                # list[Something]
-                repeating_type = get_args(field_type)[0]
-                cls.logger.debug("  parse list[%s]", repeating_type.__name__)
-                values: list[Segment] = []
-                next_value = repeating_type.parse(source)
-                while next_value:
-                    values.append(next_value)
-                    next_value = repeating_type.parse(source)
-                return values
-            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
-                # Something | None OR list[Something] | None
-                alternatives = list(filter(lambda t: t is not NoneType, get_args(field_type)))
-                # OR. Try each alternative until one works.
-                # For None supply a None instance.
-                if len(alternatives) != 1:
-                    raise NotImplementedError(f"not supported {field_type}; too many {alternatives}")  # pragma: no cover
-                alt_type = alternatives[0]
-                return cls.attr_build(name, alt_type, source)
-            case _AnnotatedAlias():  # type: ignore[misc]
-                # Annotated[base, ...]
-                base_type = get_args(field_type)[0]
-                return cls.attr_build(name, base_type, source)
-
-            case type() if issubclass(field_type, Segment):
-                seg_name = source.next_segment()
-                if seg_name == "":
-                    return None
-                # TODO: segment with usage == "R"? Error
-                #  Else move on to next potential segment of Loop?
-                if field_type._segment_name.upper() != seg_name.upper():
-                    cls.logger.debug("expected field segment_name %r != next segment %r", field_type._segment_name, seg_name)
-                    return None
-                return field_type.parse(source)
-
-            case type() if issubclass(field_type, Loop):  # pragma: no cover
-                raise RuntimeError("unexpected nested Loop: {field_type} inside {cls.__name__}")
-                # An alternative is to try to parse it...
-                # return field_type.parse(source)
-
-        raise TypeError(f"unexpected {field_type} {type(field_type)}")  # pragma: no cover
-
-    @classmethod
-    def parse(cls: type["Loop"], source: Source) -> Union["Loop", None]:
-        """
-        Parses the Exchange format text for this Loop subclass.
-        """
-        cls.logger.debug("parse %s", cls.__name__)
-        arg_dict = {}
-        for name, field_type in class_fields(cls):
-            cls.logger.debug("parse() %s: %r", name, field_type)
-            # Drill into type annotations. May recursively walk down the annotations
-            loop_value = cls.attr_build(name, field_type, source)
-            if loop_value:
-                arg_dict[name] = loop_value
-        if arg_dict:
-            return cls(**arg_dict)
-        else:
-            cls.logger.debug("Skipping %s", cls)
-            return None
-
     def segment_iter(self) -> Iterator[SegmentText]:
         """
         A flat sequence of segment values in this Loop and all sub Loops.
@@ -1316,56 +1092,6 @@ class Message:
             else:
                 raise TypeError(f"unexpected {name}: {loop_type} {type(loop_type)}")  # pragma: no cover
 
-    @classmethod
-    def attr_build(cls, name: str, loop_type: type, source: Source) -> Loop | list[Loop] | None:
-        """
-        Walks type structure to create sub-Loops and Segments.
-
-        May consume source Segments.
-        """
-        match loop_type:
-            case GenericAlias() if get_origin(loop_type) is list:
-                # list[Loop] structure
-                repeating_type = get_args(loop_type)[0]
-                values = []
-                next_value = repeating_type.parse(source)
-                while next_value:
-                    values.append(next_value)
-                    next_value = repeating_type.parse(source)
-                return values
-            case _AnnotatedAlias():  # type: ignore[misc]
-                base_type = get_args(loop_type)[0]
-                return cls.attr_build(name, base_type, source)
-            case UnionType() | _UnionGenericAlias():  # type: ignore[misc]
-                # Something | None OR list[Something] | None
-                alternatives = list(filter(lambda t: t is not NoneType, get_args(loop_type)))
-                loop_type = alternatives[0]
-                return cls.attr_build(name, loop_type, source)
-            case type() if issubclass(loop_type, Loop):
-                # Stand-alone Loop without a list[Loop] framing...
-                value = loop_type.parse(source)
-                return value
-        raise TypeError(f"unexpected {name}: {loop_type} {type(loop_type)}")  # pragma: no cover
-
-    @classmethod
-    def parse(cls: type["Message"], source: Source, skip_validation : list[str] | None = None) -> "Message":
-        """
-        Parses the Exchange format text for this Message subclass.
-
-        This will provide the skip_validation value to all of the Loops and Segments
-        within this Message structure.
-        """
-        cls.configure(skip_validation or [])
-
-        # Parse the fields of this message.
-        cls.logger.debug("parse %s", cls.__name__)
-        arg_dict = {}
-        for name, loop_type in class_fields(cls):
-            cls.logger.debug("parse() %s: %r %s", name, loop_type, type(loop_type))
-            arg_dict[name] = cls.attr_build(name, loop_type, source)
-
-        return cls(**arg_dict)
-
     def segment_iter(self) -> Iterator[list[str | None | list[str | None]]]:
         """
         A flat sequence of segments in a Message.
@@ -1396,10 +1122,22 @@ class Message:
     def asdict(self) -> dict[str, Any]:
         return asdict(self)
 
+
 class X12Parser:
     """
-        Walks the structure of the annotated components in a given class.
-        parses the Segment text blocks.
+    Walks the structure of the annotated components in a given class.
+    parses the Segment text blocks.
+
+    This handles the various annotation cases supported by X12 messages:
+
+    -   Optional[_T] == Union[_T, None]
+
+    -   list[_T]
+
+    -   Annotated[_T, ...]
+
+    -   _T
+
     """
     def __init__(self, message_class: type[Message], skip_validation : list[str] | None = None) -> None:
         self.cls = message_class
@@ -1432,9 +1170,6 @@ class X12Parser:
         match loop_type:
             case GenericAlias() if get_origin(loop_type) is list:
                 # list[Loop] structure
-
-                # TODO: list[Annotated[Loop]]?
-
                 repeating_type = get_args(loop_type)[0]
                 values: list[Loop | list[Any] | None] = []
                 next_value = self.msg_attr_build(cls, name, repeating_type, source)
@@ -1514,10 +1249,6 @@ class X12Parser:
                     return None
                 # TODO: segment with usage == "R"? Error
                 # Else move on to next potential segment of Loop?
-                # TODO: Redundant Check.
-                if field_type._segment_name.upper() != seg_name.upper():
-                    cls.logger.debug("expected field segment_name %r != next segment %r", field_type._segment_name, seg_name)
-                    return None
                 return self.segment_parse(field_type, source)
             case type() if issubclass(field_type, Loop):  # pragma: no cover
                 # raise RuntimeError("unexpected nested Loop: {field_type} inside {cls.__name__}")
@@ -1607,7 +1338,7 @@ class X12Parser:
                 repeating_type = get_args(field_type)[0]
                 self.logger.debug("  list[%s]", repeating_type.__name__)
                 source_array = cast(list[str], source_values.pop(0))
-                values = [repeating_type.build(item) for item in source_array]
+                values = [self.segment_attr_build(cls, name, repeating_type, [item]) for item in source_array]
                 return values
             case type() if issubclass(field_type, Composite):
                 # Next value in this segment *should* be a list.
@@ -1705,7 +1436,9 @@ def demo() -> None:
 
     text = "ISA|00|:~"
     logger.info("Building from %r", text)
-    parsed_m = MSG.parse(Source(text, element_sep="|", segment_sep="~"))
+    parser = X12Parser(MSG)
+    source = Source(text, element_sep="|", segment_sep="~")
+    parsed_m = parser.parse(source)
     print(parsed_m)
 
     built_m = MSG(
@@ -1720,6 +1453,7 @@ def demo() -> None:
         ]
     )
     print(built_m)
+
 
 if __name__ == "__main__":  # pragma: no cover
     logging.basicConfig(level=logging.DEBUG, stream=sys.stderr)

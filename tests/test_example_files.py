@@ -134,20 +134,7 @@ expected_271_dependent_benefits = [
     ['IEA', Decimal('1'), Decimal('90132')]
 ]
 
-@mark.bundledparser
 def test_271_dependent_benefits() -> None:
-    example = EXAMPLES / "271-dependent-benefits.txt"
-    document = Source(example.read_text())
-    msg = msg_271_4010_X092_A1.MSG271.parse(document)
-    # print(msg.isa_loop[0].gs_loop[0].st_loop[0].detail[0].l2000a[0].hl)
-    # print(msg.isa_loop[0].gs_loop[0].st_loop[0].detail[0].l2000a[0].hl.hl01)
-    # print(msg.isa_loop[0].gs_loop[0].st_loop[0].detail[0].l2000a[0].hl.hl03)
-    # print(msg.isa_loop[0].gs_loop[0].st_loop[0].detail[0].l2000a[0].hl.hl04)
-    # print(list(msg.segment_iter()))
-    assert list(msg.segment_iter()) == expected_271_dependent_benefits
-
-@mark.x12parser
-def test_271_dependent_benefits_x12parser() -> None:
     example = EXAMPLES / "271-dependent-benefits.txt"
     document = Source(example.read_text())
     parser = X12Parser(msg_271_4010_X092_A1.MSG271)
@@ -182,16 +169,7 @@ expected_271_example = [
     ['GE', Decimal('1'), Decimal('50025')],
     ['IEA', Decimal('1'), Decimal('50033')]]
 
-@mark.bundledparser
-def test_271_example() -> None:
-    example = EXAMPLES / "271-example.txt"
-    document = Source(example.read_text())
-    msg = msg_271_4010_X092_A1.MSG271.parse(document)
-    # print(list(msg.segment_iter()))
-    assert list(msg.segment_iter()) == expected_271_example
-
-@mark.x12parser
-def test_271_example_x12parser(capsys) -> None:
+def test_271_example(capsys) -> None:
     example = EXAMPLES / "271-example.txt"
     document = Source(example.read_text())
     parser = X12Parser(msg_271_4010_X092_A1.MSG271)
@@ -869,19 +847,7 @@ expected_271_example_2 = [
     ['IEA', Decimal('1'), Decimal('418')],
 ]
 
-@mark.bundledparser
 def test_271_example_2() -> None:
-    example = EXAMPLES / "271-example-2.txt"
-    document = Source(example.read_text())
-    msg = msg_271_4010_X092_A1.MSG271.parse(document)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_271_example_2
-
-@mark.x12parser
-def test_271_example_2_x12parser() -> None:
     example = EXAMPLES / "271-example-2.txt"
     document = Source(example.read_text())
     parser = X12Parser(msg_271_4010_X092_A1.MSG271)
@@ -921,19 +887,8 @@ expected_271_dependent_rejection = [
     ['IEA', Decimal('1'), Decimal('59247')],
 ]
 
-@mark.bundledparser
-def test_271_dependent_rejection() -> None:
-    example = EXAMPLES / "271-example-dependent-rejection.txt"
-    document = Source(example.read_text())
-    msg = msg_271_4010_X092_A1.MSG271.parse(document)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_271_dependent_rejection
 
-@mark.x12parser
-def test_271_dependent_rejection_x12parser() -> None:
+def test_271_dependent_rejection() -> None:
     example = EXAMPLES / "271-example-dependent-rejection.txt"
     document = Source(example.read_text())
     parser = X12Parser(msg_271_4010_X092_A1.MSG271)
@@ -1013,19 +968,8 @@ expected_271_related_entity = [
     ['IEA', Decimal('1'), Decimal('89573')],
 ]
 
-@mark.bundledparser
-def test_271_related_entity() -> None:
-    example = EXAMPLES / "271-related-entity.txt"
-    document = Source(example.read_text())
-    msg = msg_271_4010_X092_A1.MSG271.parse(document)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_271_related_entity
 
-@mark.x12parser
-def test_271_related_entity_x12parser() -> None:
+def test_271_related_entity() -> None:
     example = EXAMPLES / "271-related-entity.txt"
     document = Source(example.read_text())
     parser = X12Parser(msg_271_4010_X092_A1.MSG271)
@@ -1064,22 +1008,8 @@ expected_834_example = [
     ['IEA', Decimal('1'), Decimal('676048320')],
 ]
 
-@mark.bundledparser
-def test_834_example() -> None:
-    example = EXAMPLES / "834-example.txt"
-    document = Source(example.read_text())
-    # A few validation errors.
-    # Bad example? Wrong message class definition? Don't know.
-    errors_here = ["*_N1:n101:Enumerated", "*_INS:ins06_01:MaxLen", "*_INS:ins06_01:Enumerated", "*_REF:ref01:Enumerated", "*_DMG:dmg06:Enumerated"]
-    msg = msg_834_5010_X220_A1.MSG834A1.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_834_example
 
-@mark.x12parser
-def test_834_example_x12parser() -> None:
+def test_834_example() -> None:
     example = EXAMPLES / "834-example.txt"
     document = Source(example.read_text())
     # A few validation errors.
@@ -1185,23 +1115,8 @@ expected_834_example_2 = [
     ['IEA', Decimal('1'), Decimal('000701336')],
 ]
 
-@mark.bundledparser
-def test_834_example_2() -> None:
-    example = EXAMPLES / "834-example-2.txt"
-    document = Source(example.read_text())
-    errors_here = [
-        "*_N1:n101:Enumerated",
-        "*_REF:ref01:Enumerated",
-    ]
-    msg = msg_834_5010_X220_A1.MSG834A1.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_834_example_2
 
-@mark.x12parser
-def test_834_example_2_x12parser() -> None:
+def test_834_example_2() -> None:
     example = EXAMPLES / "834-example-2.txt"
     document = Source(example.read_text())
     errors_here = [
@@ -1270,24 +1185,8 @@ expected_835_example = [
     ['IEA', Decimal('1'), Decimal('000015442')],
 ]
 
-@mark.bundledparser
-def test_835_example() -> None:
-    example = EXAMPLES / "835-example.txt"
-    document = Source(example.read_text())
-    # Bad example? Wrong message class definition? Don't know.
-    errors_here = [
-        "*_N1:n101:Enumerated", "*_N1:n103:Enumerated", "*_REF:ref01:Enumerated",
-        "*_NM1:nm101:Enumerated", "*_NM1:nm102:Enumerated", "*_NM1:nm108:Enumerated"
-    ]
-    msg = msg_835_4010_X091_A1.MSG835.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_835_example
 
-@mark.x12parser
-def test_835_example_x12parser() -> None:
+def test_835_example() -> None:
     example = EXAMPLES / "835-example.txt"
     document = Source(example.read_text())
     # Bad example? Wrong message class definition? Don't know.
@@ -1369,29 +1268,8 @@ expected_835_example_2 = [
     ['IEA', Decimal('1'), Decimal('000015442')],
 ]
 
-@mark.bundledparser
-def test_835_example_2() -> None:
-    example = EXAMPLES / "835-example-2.txt"
-    document = Source(example.read_text())
-    # Bad example? Wrong message class definition? Don't know.
-    errors_here = [
-        "*_N1:n101:Enumerated",
-        "*_N1:n102:MaxLen",
-        "*_N1:n103:Enumerated",
-        "*_REF:ref01:Enumerated",
-        "*_NM1:nm101:Enumerated",
-        "*_NM1:nm102:Enumerated",
-        "*_NM1:nm108:Enumerated",
-    ]
-    msg = msg_835_4010_X091_A1.MSG835.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_835_example_2
 
-@mark.x12parser
-def test_835_example_2_x12parser() -> None:
+def test_835_example_2() -> None:
     example = EXAMPLES / "835-example-2.txt"
     document = Source(example.read_text())
     # Bad example? Wrong message class definition? Don't know.
@@ -1445,29 +1323,8 @@ expected_837_example = [
     ['IEA', Decimal('1'), Decimal('000000002')],
 ]
 
-@mark.bundledparser
-def test_837_example() -> None:
-    """File with a 'compressed' ISA header."""
-    example = EXAMPLES / "837-example.txt"
-    document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
-    # Handle compressed ISA header by skipping validation.
-    # Other errors could be message definitions or examples.
-    errors_here = [
-        "*_ISA:*:MinLen",  # Compressed ISA header
-        "*_NM1:nm101:Enumerated",
-        "*_NM1:nm108:Enumerated",
-        "*_DTP:dtp01:Enumerated",
-        "*_REF:ref01:Enumerated",
-    ]
-    msg = msg_837_4010_X098_A1.MSG837.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_837_example
 
-@mark.x12parser
-def test_837_example_x12parser() -> None:
+def test_837_example() -> None:
     """File with a 'compressed' ISA header."""
     example = EXAMPLES / "837-example.txt"
     document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
@@ -1546,37 +1403,8 @@ expected_837I_patient_notsubscriber = [
     ['IEA', Decimal('1'), Decimal('1')]
 ]
 
-@mark.bundledparser
-def test_837I_patient_notsubscriber() -> None:
-    """File with a 'compressed' ISA header. Special source setup."""
-    example = EXAMPLES / "837I-Patient-NotSubscriber.txt"
-    document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
-    # Handle compressed ISA header by skipping validation.
-    # Other errors could be message definitions or examples.
-    errors_here = [
-        "*_ISA:*:MinLen",  # Compressed ISA header.
-        "*_NM1:nm101:Enumerated",
-        "*_NM1:nm103:MinLen",
-        "*_NM1:nm108:Enumerated",
-        "*_CLM:clm18:MinLen",
-        "*_CLM:clm18:Enumerated",
-        "*_CLM:clm19:MinLen",
-        "*_DTP:dtp01:Enumerated",
-        "*_DTP:dtp02:Enumerated",
-        "*_REF:ref01:Enumerated",
-        "*_HI:hi12_01:Enumerated",
-        "*_SV2:sv202_01:MinLen",
-        "*_SV2:sv202_01:Enumerated",
-    ]
-    msg = msg_837_4010_X096_A1.MSG837.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_837I_patient_notsubscriber
 
-@mark.x12parser
-def test_837I_patient_notsubscriber_x12parser() -> None:
+def test_837I_patient_notsubscriber() -> None:
     """File with a 'compressed' ISA header. Special source setup."""
     example = EXAMPLES / "837I-Patient-NotSubscriber.txt"
     document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
@@ -1672,36 +1500,8 @@ expected_837I_patient_notsubscriber2 = [
     ['IEA', Decimal('1'), Decimal('1')]
 ]
 
-@mark.bundledparser
-def test_837I_patient_notsubscriber2() -> None:
-    """File with a 'compressed' ISA header. Special source setup."""
-    example = EXAMPLES / "837I-Patient-NotSubscriber2.txt"
-    document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
-    # Handle compressed ISA header by skipping validation.
-    # Other errors could be message definitions or examples.
-    errors_here = [
-        "*_ISA:*:MinLen",  # Compressed ISA header.
-        "*_AMT:amt01:Enumerated",
-        "*_NM1:nm101:Enumerated",
-        "*_NM1:nm103:MinLen",
-        "*_NM1:nm108:Enumerated",
-        "*_CLM:clm18:MinLen",
-        "*_CLM:clm19:MinLen",
-        "*_DTP:dtp01:Enumerated",
-        "*_DTP:dtp02:Enumerated",
-        "*_REF:ref01:Enumerated",
-        "*_HI:hi12_01:Enumerated",
-        "*_SV2:sv202_01:MinLen",
-    ]
-    msg = msg_837_4010_X096_A1.MSG837.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_837I_patient_notsubscriber2
 
-@mark.x12parser
-def test_837I_patient_notsubscriber2_x12parser() -> None:
+def test_837I_patient_notsubscriber2() -> None:
     """File with a 'compressed' ISA header. Special source setup."""
     example = EXAMPLES / "837I-Patient-NotSubscriber2.txt"
     document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
@@ -1773,35 +1573,8 @@ expected_837I_patient_subscriber = [
     ['IEA', Decimal('1'), Decimal('1')]
 ]
 
-@mark.bundledparser
-def test_837I_patient_subscriber() -> None:
-    """File with a 'compressed' ISA header."""
-    example = EXAMPLES / "837I-Patient-Subscriber.txt"
-    document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
-    # Handle compressed ISA header by skipping validation.
-    # Other errors could be message definitions or examples.
-    errors_here = [
-        "*_ISA:*:MinLen",  # Compressed ISA header.
-        "*_NM1:nm101:Enumerated",
-        "*_REF:ref01:Enumerated",
-        "*_NM1:nm108:Enumerated",
-        "*_CLM:clm18:MinLen",
-        "*_CLM:clm19:MinLen",
-        "*_DTP:dtp01:Enumerated",
-        "*_DTP:dtp02:Enumerated",
-        "*_HI:hi12_01:Enumerated",
-        "*_SV2:sv202_01:MinLen",
-        # "*_AMT:amt01:Enumerated",
-    ]
-    msg = msg_837_4010_X096_A1.MSG837.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_837I_patient_subscriber
 
-@mark.x12parser
-def test_837I_patient_subscriber_x12parser() -> None:
+def test_837I_patient_subscriber() -> None:
     """File with a 'compressed' ISA header."""
     example = EXAMPLES / "837I-Patient-Subscriber.txt"
     document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
@@ -1962,43 +1735,8 @@ expected_837I_examples = [
     ['IEA', Decimal('1'), Decimal('49')],
 ]
 
-@mark.bundledparser
-def test_837I_examples() -> None:
-    """
-    The source file seems damaged.
-    The first section ends abruptly with a DTP
-    and then picks up with a new ISA.
-    """
-    example = EXAMPLES / "837I-Examples.txt"
-    document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
-    # Handle compressed ISA header by skipping validation.
-    # Other errors could be message definitions or examples.
-    errors_here = [
-        "*_ISA:*:MinLen",  # Compressed ISA header.
-        "*_PRV:prv01:Enumerated",
-        "*_NM1:nm101:Enumerated",
-        "*_NM1:nm102:Enumerated",
-        "*_NM1:nm108:Enumerated",
-        "*_SVD:svd03_01:MinLen",
-        "*_SVD:svd03_01:Enumerated",
-        "*_REF:ref01:Enumerated",
-        "*_CLM:clm18:MinLen",
-        "*_CLM:clm19:MinLen",
-        "*_DTP:dtp01:Enumerated",
-        "*_DTP:dtp02:Enumerated",
-        "*_AMT:amt01:Enumerated",
-        "*_HI:hi12_01:Enumerated",
-        "*_SV2:sv202_01:MinLen",
-    ]
-    msg = msg_837_4010_X096_A1.MSG837.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_837I_examples
 
-@mark.x12parser
-def test_837I_examples_x12parser() -> None:
+def test_837I_examples() -> None:
     """
     The source file seems damaged.
     The first section ends abruptly with a DTP
@@ -2136,22 +1874,7 @@ expected_276_txns = [
     ['IEA', Decimal('1'), Decimal('247238')],
 ]
 
-@mark.bundledparser
-def test_276_txns() -> None:
-    """
-    Transaction set, Multiple messages in a single file.
-    File with a 'compressed' ISA header.
-    """
-    example = EXAMPLES / "TEST 276 TXNs.txt"
-    document = Source(example.read_text(), element_sep="*", array_sep=":", segment_sep="~")
-    msg = msg_276_4010_X093_A1.MSG276.parse(document)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_276_txns
 
-@mark.x12parser
 def test_276_txns_x12parse() -> None:
     """
     Transaction set, Multiple messages in a single file.
@@ -2314,34 +2037,8 @@ expected_278_13_txns = [
     ['IEA', Decimal('1'), Decimal('32679')],
 ]
 
-@mark.bundledparser
-def test_278_13_txns() -> None:
-    """
-    Transaction set, Multiple messages in a single file.
-    File with a 'compressed' ISA header.
-    """
-    example = EXAMPLES / "TEST 278_13 TXNS.txt"
-    document = Source(example.read_text())
-    # Bad example? Wrong message class definition? Don't know.
-    errors_here = [
-        "*_HL:hl03:Enumerated",
-        "*_NM1:nm101:Enumerated",
-        "*_REF:ref01:Enumerated",
-        "*_UM:um04_01:MinLen",
-        "*_UM:um05_01:MinLen",
-        "*_UM:um05_01:Enumerated",
-        "*_DTP:dtp01:Enumerated",
-        "*_DTP:dtp02:Enumerated",
-    ]
-    msg = msg_278_4010_X094_A1.MSG278.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_278_13_txns
 
-@mark.x12parser
-def test_278_13_txns_x12parser() -> None:
+def test_278_13_txns() -> None:
     """
     Transaction set, Multiple messages in a single file.
     File with a 'compressed' ISA header.
@@ -2463,44 +2160,8 @@ expected_278_28_txns_soa = [
     ['IEA', Decimal('1'), Decimal('246782')],
 ]
 
-@mark.bundledparser
+
 def test_278_28_txns_soa() -> None:
-    """
-    Transaction set, Multiple messages in a single file.
-
-    We don't seem to have the proper definition
-    for this particular set of transactions.
-
-    It seems to require msg_278_4010_X059.
-    """
-    example = EXAMPLES / "TEST 278_28 TXNS_SOA.txt"
-    document = Source(example.read_text())
-    # Requires msg_278_4010_X059, which we don't seem to have source for.
-    errors_here = [
-        "*_GS:gs08:Enumerated",  # Bypass version check.
-        # Bypass other incompatibilities in version??
-        "*_BHT:bht01:Enumerated",
-        "*_BHT:bht02:Enumerated",
-        "*_HL:hl03:Enumerated",
-        "*_HL:hl04:Enumerated",
-        "*_NM1:nm101:Enumerated",
-        "*_NM1:nm102:Enumerated",
-        "*_NM1:nm108:Enumerated",
-        "*_REF:ref01:Enumerated",
-        "*_UM:um02:MinLen",
-        "*_UM:um02:Enumerated",
-        "*_UM:um04_01:MinLen",
-        "*_DTP:dtp01:Enumerated",
-    ]
-    msg = msg_278_4010_X094_27_A1.MSG278.parse(document, skip_validation=errors_here)
-    # print("[")
-    # for s in msg.segment_iter():
-    #     print(f"    {s},")
-    # print("]")
-    assert list(msg.segment_iter()) == expected_278_28_txns_soa
-
-@mark.x12parser
-def test_278_28_txns_soa_x12parser() -> None:
     """
     Transaction set, Multiple messages in a single file.
 
