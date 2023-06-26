@@ -54,6 +54,35 @@ cd tigershar3/tools
 PYTHONPATH=.. python xml_extract.py
 ```
 
+Testing
+=======
+
+Complete test:
+
+```shell
+tox
+```
+
+Run marked tests with detailed logging.
+Very handy for debugging.
+
+```shell
+PYTHONPATH=tigershark3 pytest -m x12parser --log-cli-level=DEBUG tests
+```
+
+Dependencies
+============
+
+This project uses [pip-tools](https://pypi.org/project/pip-tools/)
+to create a detailed `requirements-dev.txt` 
+from the `pyproject.toml`
+
+```shell
+pip-compile --extra=dev --extra=test -o requirements-dev.txt
+```
+
+
+
 State of the Project
 ====================
 

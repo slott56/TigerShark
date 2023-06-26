@@ -12,7 +12,7 @@ from pytest import fixture, CaptureFixture, mark
 from unittest.mock import sentinel, Mock, call
 
 from tools import xml_extract
-from x12 import annotations as ann
+from x12 import base
 
 
 def test_codeset() -> None:
@@ -368,7 +368,7 @@ def mock_message() -> xml_extract.Message:
     m = xml_extract.Message(
         xid="999",
         name="Test Case 999",
-        loops = [l]
+        loops=[l]
     )
     return m
 
@@ -450,13 +450,22 @@ def test_emit_python_annotated_message(mock_message: xml_extract.Message, capsys
     python_source, _ = capsys.readouterr()
 
     # Assert the code is valid
-    module = ast.parse(python_source, filename="__test__", mode="exec")
+    module_ast = ast.parse(python_source, filename="__test__", mode="exec")
 
-    # TODO: Check the structure of the code more closely
+    # TODO: Check the structure of the code more closely.
     cv = ClassVisitor()
-    cv.visit(module)
+    cv.visit(module_ast)
     assert cv.names == ['ISA_LOOP_ISA', 'ISA_LOOP', 'MSG999']
 
-    # TODO:
-    # exec() the module.
-    # evaluate the module.MSG999.parse("ISA|01~\\n") method.
+    # Check the Usability of the generated code.
+    module_locals = {}
+    exec("from x12.base import *", module_locals, module_locals)
+    # TODO: Should create temp common.py module from `data_elements`
+    exec("from x12.common import *", module_locals, module_locals)
+    # print(module_locals)
+
+    exec(python_source, module_locals, module_locals)
+    p = base.X12Parser(module_locals['MSG999'])
+    src = base.Source("ISA|00~\n", element_sep="|", array_sep=":", segment_sep="~")
+    msg = p.parse(src)
+    assert list(msg.segment_iter()) == [['ISA', '00']]

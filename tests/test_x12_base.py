@@ -159,6 +159,7 @@ def test_composite_skipvalidation_notok():
          '\'AB\', not in (\'WX\', \'YZ\')", \'Enumerated\')',)
 
 def test_segment_annotated():
+    # Given
     class SomeSegment(base.Segment):
         """
         Some Segment
@@ -166,9 +167,16 @@ def test_segment_annotated():
         _segment_name = "SS"
         e01: Annotated[str, Title("I01"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="ID")]
         e02: Annotated[str, Title("I02"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="AN")]
-
+    class SomeLoop(base.Loop):
+        s01: SomeSegment
+    class SomeMsg(base.Message):
+        l01: SomeLoop
     src = base.Source("SS|01|02|:~", element_sep="|", array_sep=":", segment_sep="~")
-    s = SomeSegment.parse(src)
+    # When
+    # s = SomeSegment.parse(src)
+    p = base.X12Parser(SomeMsg)
+    s = p.segment_parse(SomeSegment, src)
+    # Then
     assert s.e01 == "01"
     assert s.e02 == "02"
     assert s.elements() == ['01', '02']
@@ -185,7 +193,6 @@ def test_segment_annotated():
         }
     }
 
-
 def test_segment_validation():
     class SomeSegment(base.Segment):
         """
@@ -194,11 +201,17 @@ def test_segment_validation():
         _segment_name = "SS"
         e01: Annotated[str, Title("I01"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="ID")]
         e02: Annotated[str, Title("I02"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="AN")]
+    class SomeLoop(base.Loop):
+        s01: SomeSegment
+    class SomeMsg(base.Message):
+        l01: SomeLoop
+    src = base.Source("SS|01tooLong|x|:~", element_sep="|", array_sep=":", segment_sep="~")
 
-    SomeSegment.configure([])
+    # SomeSegment.configure([])
+    p = base.X12Parser(SomeMsg)
     with raises(ValueError) as info:
-        src = base.Source("SS|01tooLong|x|:~", element_sep="|", array_sep=":", segment_sep="~")
-        s = SomeSegment.parse(src)
+        # s = SomeSegment.parse(src)
+        s = p.segment_parse(SomeSegment, src)
     assert info.value.args == ("invalid SomeSegment.e01: typing.Annotated[str, Title('I01'), MinLen(2), "
          'MaxLen(2), OtherMeta(data_type_code=\'ID\')] ("invalid length for '
          '\'01tooLong\', greater than than 2", \'MaxLen\')',)
@@ -212,10 +225,18 @@ def test_segment_skipvalidation_ok():
         _segment_name = "SS"
         e01: Annotated[str, Title("I01"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="ID")]
         e02: Annotated[str, Title("I02"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="AN")]
-
-    SomeSegment.configure(["SomeSegment:e01:MaxLen", "SomeSegment:e02:MinLen"])
+    class SomeLoop(base.Loop):
+        s01: SomeSegment
+    class SomeMsg(base.Message):
+        l01: SomeLoop
     src = base.Source("SS|01tooLong|x|:~", element_sep="|", array_sep=":", segment_sep="~")
-    s = SomeSegment.parse(src)
+    skip_validation = ["SomeSegment:e01:MaxLen", "SomeSegment:e02:MinLen"]
+
+    # SomeSegment.configure(skip_validation)
+    p = base.X12Parser(SomeMsg, skip_validation)
+    # s = SomeSegment.parse(src)
+    s = p.segment_parse(SomeSegment, src)
+
     assert s.e01 == "01tooLong"
     assert s.e02 == "x"
 
@@ -227,11 +248,18 @@ def test_segment_skipvalidation_notok():
         _segment_name = "SS"
         e01: Annotated[str, Title("I01"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="ID")]
         e02: Annotated[str, Title("I02"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="AN")]
+    class SomeLoop(base.Loop):
+        s01: SomeSegment
+    class SomeMsg(base.Message):
+        l01: SomeLoop
+    src = base.Source("SS|01tooLong|x|:~", element_sep="|", array_sep=":", segment_sep="~")
+    skip_validation = ["SomeSegment:e01:Enumerated", "SomeSegment:e02:Enumerated"]
 
-    SomeSegment.configure(["SomeSegment:e01:Enumerated", "SomeSegment:e02:Enumerated"])
+    # SomeSegment.configure(skip_validation)
+    p = base.X12Parser(SomeMsg, skip_validation)
     with raises(ValueError) as info:
-        src = base.Source("SS|01tooLong|x|:~", element_sep="|", array_sep=":", segment_sep="~")
-        s = SomeSegment.parse(src)
+        # s = SomeSegment.parse(src)
+        s = p.segment_parse(SomeSegment, src)
     assert info.value.args == ("invalid SomeSegment.e01: typing.Annotated[str, Title('I01'), MinLen(2), "
          'MaxLen(2), OtherMeta(data_type_code=\'ID\')] ("invalid length for '
          '\'01tooLong\', greater than than 2", \'MaxLen\')',)
@@ -255,8 +283,14 @@ def test_segment_make_helpers_annotated():
         e98: int
         e97: SomeComposite
         e96: list[int]
+    class SomeLoop(base.Loop):
+        s01: SomeSegment
+    class SomeMsg(base.Message):
+        l01: SomeLoop
 
-    SomeSegment.configure([])
+    # SomeSegment.configure([])
+    p = base.X12Parser(SomeMsg)
+
     assert list(SomeSegment._helpers.keys()) == ['e01', 'e08', 'e16', 'e99', 'e98', 'e97', 'e96']
 
 def test_segment_attr_build_union():
@@ -266,10 +300,17 @@ def test_segment_attr_build_union():
         """
         _segment_name = "SS"
         e01: Annotated[str, Title("I01"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="ID")] | None
-
-    SomeSegment.configure([])
+    class SomeLoop(base.Loop):
+        s01: SomeSegment
+    class SomeMsg(base.Message):
+        l01: SomeLoop
     src = base.Source("SS|01~", element_sep="|", array_sep=":", segment_sep="~")
-    s = SomeSegment.parse(src)
+
+    # SomeSegment.configure([])
+    p = base.X12Parser(SomeMsg)
+
+    # s = SomeSegment.parse(src)
+    s = p.segment_parse(SomeSegment, src)
     assert s.e01 == "01"
 
 
@@ -280,10 +321,20 @@ def test_segment_attr_build_union_empty():
         """
         _segment_name = "SS"
         e01: Annotated[str, Title("I01"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="ID")] | None
+    class SomeLoop(base.Loop):
+        s01: SomeSegment
+    class SomeMsg(base.Message):
+        l01: SomeLoop
 
-    SomeSegment.configure([])
+    # SomeSegment.configure([])
+    p = base.X12Parser(SomeMsg)
+
+    # values = [
+    #     SomeSegment.attr_build(field_type, [])
+    #     for name, field_type in base.class_fields(SomeSegment)
+    # ]
     values = [
-        SomeSegment.attr_build(field_type, [])
+        p.segment_attr_build(SomeSegment, name, field_type, [])
         for name, field_type in base.class_fields(SomeSegment)
     ]
     assert values == [None]
@@ -299,10 +350,17 @@ def test_segment_attr_build_composite():
         _segment_name = "SS"
         comp: SomeComposite
         e02: Annotated[str, Title("I01"), MinLen(2), MaxLen(2), OtherMeta(data_type_code="ID")] | None
-
-    SomeSegment.configure([])
+    class SomeLoop(base.Loop):
+        s01: SomeSegment
+    class SomeMsg(base.Message):
+        l01: SomeLoop
     src = base.Source("SS|01|02~", element_sep="|", array_sep=":", segment_sep="~")
-    s = SomeSegment.parse(src)
+
+    # SomeSegment.configure([])
+    p = base.X12Parser(SomeMsg)
+
+    # s = SomeSegment.parse(src)
+    s = p.segment_parse(SomeSegment, src)
     assert s.e02 == "02"
     assert s.comp.c01 == "01"
 
@@ -361,9 +419,15 @@ def test_loop_annotated():
     class SomeLoop(base.Loop):
         """Some Loop"""
         some_segment: SomeSegment
-
+    class SomeMsg(base.Message):
+        l01: SomeLoop
     src = base.Source("SS|01|:~", element_sep="|", array_sep=":", segment_sep="~")
-    l = SomeLoop.parse(src)
+
+    p = base.X12Parser(SomeMsg)
+
+    # l = SomeLoop.parse(src)
+    l = p.loop_parse(SomeLoop, src)
+
     assert l.some_segment.e01 == "01"
     assert list(l.segment_iter()) == [['SS', '01'], ]
     assert repr(l) == "SomeLoop(some_segment=SomeSegment(e01='01'))"
@@ -402,13 +466,20 @@ def test_loop_attr_build_union():
         """Some Loop"""
         opt_seg_1: OptSegment1 | None
         opt_seg_2: Annotated[OptSegment2, Title("Opt2")] | None
+    class SomeMsg(base.Message):
+        l01: SomeLoop
+    src = base.Source("OS1|01~\nOS2|02~\n", element_sep="|", segment_sep="~", array_sep="^")
 
-    SomeLoop.configure([])
+    p = base.X12Parser(SomeMsg)
+    # SomeLoop.configure([])
+
     assert OptSegment1._helpers
     assert OptSegment2._helpers
-    source = base.Source("OS1|01~\nOS2|02~\n", element_sep="|", segment_sep="~", array_sep="^")
-    loop = SomeLoop.parse(source)
-    assert loop
+    # loop = SomeLoop.parse(source)
+    l = p.loop_parse(SomeLoop, src)
+    assert l.opt_seg_1
+    assert l.opt_seg_2
+    assert list(l.segment_iter()) ==  [['OS1', '01'], ['OS2', '02']]
 
 def test_message_annotated_1():
     class SomeSegment(base.Segment):
@@ -431,7 +502,9 @@ def test_message_annotated_1():
         another_loop: AnotherLoop | None
 
     src = base.Source("SS|01~\nAS|02~\n", element_sep="|", array_sep=":", segment_sep="~")
-    m = TheMessage.parse(src)
+    p = base.X12Parser(TheMessage)
+    # m = TheMessage.parse(src)
+    m = p.parse(src)
     assert m
     assert m.some_loop[0].some_segment.e01 == "01"
     assert list(m.segment_iter()) == [['SS', '01'], ['AS', '02']]
