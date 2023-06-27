@@ -1,7 +1,7 @@
 ..  _`design.loop_namespace`:
 
 ###################
-Loops as Namespaces
+Loops as Namespace
 ###################
 
 Within a message, a number of loops can reuse

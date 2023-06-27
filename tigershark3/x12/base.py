@@ -1130,13 +1130,15 @@ class X12Parser:
 
     This handles the various annotation cases supported by X12 messages:
 
-    -   Optional[_T] == Union[_T, None]
+    -   Optional[_T] == Union[_T, None].
 
     -   list[_T]
 
     -   Annotated[_T, ...]
 
     -   _T
+
+    It also honors the nesting structure of messages, loops, segments, composites, and elements.
 
     """
     def __init__(self, message_class: type[Message], skip_validation : list[str] | None = None) -> None:
@@ -1148,8 +1150,7 @@ class X12Parser:
         """
         Parses the Exchange format text for this Message subclass.
 
-        This will provide the skip_validation value to all of the Loops and Segments
-        within this Message structure.
+        Locates all Loops; each Loop will consume one or more Segments.
         """
         self.logger.debug("parse(%s, source)", self.cls.__name__)
         arg_dict = {}
@@ -1160,11 +1161,11 @@ class X12Parser:
 
     def msg_attr_build(self, cls: type[Message], name: str, loop_type: type, source: Source) -> Loop | list[Any] | None:
         """
-        Walks type structure to create sub-Loops and Segments.
+        Walks type structure to create Message of Loop instances.
 
         May consume source Segments.
 
-        Return type is a tricky recursive structure; we use list[Any]
+        Return type can be a tricky recursive structure; we use list[Any]
         """
         self.logger.debug("msg_attr_build cls=%s, %s: %s", cls, name, loop_type)
         match loop_type:
@@ -1199,19 +1200,19 @@ class X12Parser:
         arg_dict = {}
         for name, field_type in class_fields(cls):
             self.logger.debug("loop_parse %s: %r", name, field_type)
-            # Drill into type annotations. May recursively walk down the annotations
             loop_value = self.loop_attr_build(cls, name, field_type, source)
+            # Implicitly treat a loop as "Situational": ignore it if it contains no Segments.
             if loop_value:
                 arg_dict[name] = loop_value
         if arg_dict:
             return cls(**arg_dict)
         else:
-            self.logger.debug("Skipping %s", cls)
+            self.logger.debug("Skipping empty loop %s", cls)
             return None
 
     def loop_attr_build(self, cls: type[Loop], name: str, field_type: type, source: Source) -> Loop | Segment | list[Any] | None:
         """
-        Walks type structure to create sub-Loops and Segments.
+        Walks type structure to create Loop of Loops and Segments.
 
         May consume source Segments.
 
@@ -1261,6 +1262,9 @@ class X12Parser:
         Parses the Exchange format text for this Segment subclass.
 
         Handles ISA segments specially to extract element and segment separators.
+        If the ISA is uncompressed, then the separator characters for the :py:class`Source` can be deduced;
+        this updates the state of the :py:class`Source`, and all subsequent segments can be compressed.
+        If the ISA is compressed, then the separator characters must be provided before parsing can start.
 
         If the next segment in the :py:class:`Source` matches
         this segment's ``_segment_name`` attribute, then the segment
@@ -1275,7 +1279,8 @@ class X12Parser:
             return None
 
         # Special case: the ISA segment can update the ``Source`` parsing state.
-        # Used in the general case when ISA header not compressed.
+        # Used in the case when ISA header not compressed.
+        # If the ISA header is compressed, the separators must be provided "manually" to the :py:class:`Source` instance.
         if cls._segment_name.upper() == "ISA" and not source.element_sep:
             # Sum of field size + separator for each field.
             # + 3 for header "ISA"
@@ -1314,7 +1319,7 @@ class X12Parser:
 
     def segment_attr_build(self, cls: type[Segment], name: str, field_type: type[Segment], source_values: list[str | None | list[str | None]]) -> Any | list[Any] | Composite | None:
         """
-        Walks type structure to create Elements and Composites.
+        Walks type structure to create Elements and Composites. The Element's are ``Any`` type.
 
         May pop source_values as part of building the instance.
         """
@@ -1352,6 +1357,7 @@ class X12Parser:
                 value = self.composite_build(field_type, composite_value)
                 return value
             case type():
+                # Atomic elements.
                 if source_values:
                     raw_value = cast(str, source_values.pop(0))
                     return raw_value
@@ -1431,13 +1437,13 @@ def demo() -> None:
         isa: ISA_LOOP_ISA
 
     class MSG(Message):
-        """Demonstration"""
+        """Demonstration Message"""
         isa_loop: list[ISA_LOOP]
 
     text = "ISA|00|:~"
     logger.info("Building from %r", text)
-    parser = X12Parser(MSG)
     source = Source(text, element_sep="|", segment_sep="~")
+    parser = X12Parser(MSG)
     parsed_m = parser.parse(source)
     print(parsed_m)
 

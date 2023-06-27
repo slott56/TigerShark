@@ -49,6 +49,8 @@ The following use cases are explored in detail:
 Other use cases are combinations of these. For example,
 deserializing a message to change the date and serializing the resulting message.
 
+..  _`schema`:
+
 Define An X12 Structure
 =================================
 
@@ -78,21 +80,27 @@ slightly different element names, based on the loop context.
 Deserialize A Message
 =====================
 
-An application imports a module with message
-definition classes.
-
-The application uses the class definitions
+An application should be able to import a module containing a message
+definition class.
+The application can then use the class definitions
 to parse a message, creating an instance
 of the class.
 
-..  doctest::
 
-    >>> from x12 import msg_271_4010_X092_A1, Source
-    >>> from pathlib import Path
+The idea is
 
-    >>> source_path = Path.cwd().parent / "tests" / "271-example.txt"
-    >>> source = Source(source_path.read_text())
-    >>> msg = msg_271_4010_X092_A1.MSG271.parse(source)
+::
+
+    import MessageClass
+    from x12 import Source, X12Parser
+
+    source = Source(some_path.read_text())
+    parser = X12Parser(MessageClass)
+    msg = parser.parse(source)
+
+The source is a wrapper around the input text to provide a "look-ahead" capability.
+The parser walks through the :py:class:`MessageClass` definition to locate the structure
+and map source text to the structure.
 
 The resulting ``msg`` object is an instance of a subclass of ``Message``
 with attributes based on the loop/segment/composite/element structure of the specific message type.
@@ -105,73 +113,16 @@ Serialize A Message
 An application imports the module with message
 definition classes.
 
-The application creates the message object.
-
-..  doctest::
-
-    >>> from x12.msg_270_4010_X092_A1 import *
-
-    >>> msg = MSG270(
-    ...    isa_loop=[
-    ...         ISA_LOOP(
-    ...             isa=ISA_LOOP_ISA(
-    ...                 isa01=ISA_LOOP_ISA01('00'),
-    ...                 # etc. for this segment ...
-    ...                 isa16=ISA_LOOP_ISA16(':'),
-    ...             ),
-    ...             gs_loop=[
-    ...             # etc. for this loop of segments...
-    ...             ],
-    ...             st_loop=[
-    ...                 ST_LOOP(
-    ...                     st=ST_LOOP_ST(
-    ...                         st01=ST_LOOP_ST01("271"), st02=ST_LOOP_ST02("0001")
-    ...                     ),
-    ...                     header=[
-    ...                         HEADER(
-    ...                             bht=HEADER_BHT(
-    ...                                 bht01=HEADER_BHT01("0022"),
-    ...                                 bht02=HEADER_BHT02("11"),
-    ...                                 bht03=HEADER_BHT03("11111"),
-    ...                                 bht04=HEADER_BHT04("20120605"),
-    ...                                 bht05=HEADER_BHT05("232423"),
-    ...                             )
-    ...                         )
-    ...                     ],
-    ...                     # etc.
-    ...                )
-    ...             ],
-    ...         )
-    ...     ]
-    ... )
+The application creates a message object as a (long) Python statement.
+Or, an application converts some intermediate representation in JSON notation
+into a message object.
 
 When testing healthcare applications,
-EDI messages are oten tweaked to change the date of submission.
+EDI messages are oten tweaked to change an attribute, for example, the date of submission.
 
-..  doctest::
+The intent is to locate eacn instance of the various containing loops, and
+then change an element value of a named segment within a loop.
 
-    >>> msg.isa_loop[0].st_loop[0].header[0].bht04 = "20230223"
-
-The intent is to locate instances of the various nested loops, and
-then change element values of segments within a loop.
-Loops repeat and require indexing.
-
-The application can then dump the message in X12 ("exchange") notation.
-
-..  doctest::
-
-    >>> source_path = Path.cwd() / "changed_for_today.txt"
-    >>> with source_path.open('w') as destination:
-    ...     msg.dump(destination)
-
-The message can also be dumped in JSON notation.
-
-..  doctest::
-
-    >>> print(msg.json())
-
-The :py:meth:`json` method is similar to the one
-offered by the **pydantic** class definitions.
         
 Data Model
 ^^^^^^^^^^
@@ -260,7 +211,9 @@ based on the distinct context.
 
 This leads to the following data model consideration:
 
-    A Loop is a namespace
+    A Loop is a Namespace
 
-This then leads to questions on how best to implement
-this "loop-as-namespace". This is the topic of the :ref:`design.loop_namespace` design note.
+This then leads to questions on how best to implement "loop-as-namespace".
+This is the topic of the :ref:`design.loop_namespace` design note.
+
+The short answer is we create long names like ``LOOP_1_SEGMENT_X`` and `LOOP_2_SEGMENT_X`` to distinguish the two names.

@@ -1,15 +1,16 @@
 ..  _architecture:
 
 ########################################
-Architecture and Design
+Architecture: Containers and Components
 ########################################
 
 C4 suggests we look at Context, Container, Component, Code.
 (See https://c4model.com).
 For more information on the Context, see :ref:`context`.
 
-This chapter provides an `Architecture Summary`_ with an overview of the
-architectural principles.
+This chapter provides Container and Component views.
+
+The `Architecture Summary`_ has an overview of the architectural principles.
 
 The `Container View`_ is pretty small. This is a simple set of applications to run on a desktop computer.
 
@@ -20,9 +21,7 @@ The `Processing Model`_ section provides an overview of the various kinds of pro
 
 The `Dependencies`_ section identifies an important implementation dependency: the PyX12 project.
 
-`Appendix: Segments`_ contains the 57 distinct segment types.
-
-The details of Code are covered in :ref:`design`.
+An overview of the Code is covered in :ref:`design`. Details are in :ref:`implementation`.
 
 Architecture Summary
 ^^^^^^^^^^^^^^^^^^^^
@@ -35,7 +34,8 @@ There are two distinct "levels" or "views" to this application.
 
 :Application:
     A message is implemented as class in a module.
-    The class is used to load and dump (other terms are parse/unparse, deserialize/serialize, unmarshall/marshall) the text of messages in a variety of formats.
+    The class is used to load and dump the text of messages in a variety of formats.
+    (Other terms are parse/unparse, deserialize/serialize, unmarshall/marshall.)
 
 The most common use case is loading an  "exchange" format message to create Python objects.
 From here, Python to JSON conversions can persist an easy-to-use copy of the message.
@@ -43,10 +43,7 @@ From here, Python to JSON conversions can persist an easy-to-use copy of the mes
 Developer's Perspective
 =======================
 
-An X12 message has a complicated structure of loops, segments, composites and elements.
-This is reflected in the message type definition,
-which depends on loop, segment, and composite definitions.
-
+An X12 message has a complicated, nested structure of loops, segments, composites and elements.
 There are several layers in the interpretation of a message:
 
 1.  Exchange Format. This is a big block of text, sometimes with additional ``\n`` inserted after each segment separator.
@@ -55,15 +52,14 @@ There are several layers in the interpretation of a message:
     a sequence of segments. Each segment is a sequence of element and composite values.
     Note that the loop structure is not an explicit part of this representation.
 
-3.  The application's view of a Message that may be a Claim or Eligibility Request.
-    This is a Python object definition that reflects the
-    loops, segments, composites, and elements of the message.
+3.  The application's view of a Message. For example, a Claim or Eligibility Request.
+    This is a Python object with the loops, segments, composites, and elements of the message.
 
-It's common practice to define common sets of code values,
-and common data types outside the messages. This is reflected
-in a :py:mod:`x12.common` module with these definitions.
+The PyX12 project defines common sets of code values,
+and common data types outside the messages.
+This is reflected in a :py:mod:`x12.common` module with these definitions.
 
-See :ref:`design.class` and :ref:`design.parsing` for more on solutions.
+Before we look at the application use of message, we'll look at message definitions in general.
 
 X12 Message Definitions
 -----------------------
@@ -73,20 +69,16 @@ meta-definitions are used to manage the exchange of messages,
 versioning, and other considerations.
 These files are proprietary, and not freely available.
 
-There are two sources for X12 message definitions, in addition to the
-customer's Implementation Guide.
-
--   The Python-based `PyX12`_ package. This package defines X12 messages using
-    ``.xml`` files that seem to be reasonably complete.
+Instead, we rely on the Python-based `PyX12`_ package.
+This package defines X12 messages using ``.xml`` files that seem to be reasonably complete.
 
 ..  _`PyX12`: https://github.com/azoner/pyx12
-
--   The .SEF files. These seem to be a proprietary product of TIBCO.
 
 The TigerShark :py:mod:`tools.xml_extract` tool can transform the ``.xml`` files
 into Python class definitions.
 A class definition can emit JSON Schema for messages of that class.
 
+Ideally, it would be preferrable to work directly  with the :file:`.SEF` files.
 
 Application Perspective
 =============================
@@ -101,12 +93,13 @@ This leads to a naming convention for classes where a segment name
 is prefixed with the loop that uses that segment.
 For example ``ISA_LOOP_ISA`` has a loop name of ``ISA_LOOP``,
 and a segment name of ``ISA`` in the context of the ISA Loop.
+See the :ref:`design.loop_namespace` design note.
 
 Container View
 ^^^^^^^^^^^^^^^
 
-The applications are more-or-less a single container applications.
-The :py:mod:`tools.xml_extract` reads XML definitions and creates
+Any applications are typically single container applications.
+For example, the :py:mod:`tools.xml_extract` reads XML definitions and creates
 message class definitions.
 
 An application that parses messages is most often going to be
@@ -123,6 +116,7 @@ The component packaging breaks into two major areas.
     package x12 {
         package base {
             component Source
+            component X12Parser
             component Composite
             component Segment
             component Loop
@@ -152,6 +146,7 @@ Here are some more details on the Python packages and modules.
     -   :mod:`x12.annotations`. This has classes that define annotations to collect the details of an Element (or Composite).
 
     -   :mod:`x12.base`. This has the abstract base class definitions for all messages.
+        It also includes the :mod:`x12.base.Source` and :mod:`x12.base.X12Parser` classes used to parse wire-format messages.
 
     -   :mod:`x12.common`. This has common data element and code definitions. This is built by the :mod:`tools.xml_extract` tool. Touching this is unwise.
 
@@ -182,28 +177,127 @@ There are several kinds of processing that are part of TigerShark.
 Loading
 =============
 
-See :ref:`unmarshall`.
+See the :ref:`unmarshall` use case.
 
-An message class has a :meth:`parse` method for loading (or deserializing or parsing) text to create Plain Old Python Objects.
+There are three ways to load messages:
+
+-   From "exchange format" text.
+
+-   From a JSON dump of the objects.
+
+-   Using Python code to build a message.
+
+Exchange Format Parsing
+-----------------------
+
+A :py:class:`base.Message` class has a :meth:`base.Message.parse` method for loading (or deserializing or parsing) text to create Plain Old Python Objects.
+
+This class processes text that's wrapped in the :py:class:`base.Source` class definition.
+This wrapper leverages the segment, element, and component separator characters required
+to decompose a message.
+
+
+..  doctest::
+
+    >>> from x12 import msg_271_4010_X092_A1, Source, X12Parser
+    >>> from pathlib import Path
+
+    >>> source_path = Path.cwd().parent / "tests" / "271-example.txt"
+    >>> source = Source(source_path.read_text())
+    >>> parser = X12Parser(msg_271_4010_X092_A1.MSG271)
+    >>> msg = parser.parse(source)
+
+
+JSON Load
+---------
+
+Not currently implemented.
+
+Python Code
+-----------
+
+A message can be build using ordinary class constructors of the various
+Message, Loop, Segment, and Composite classes that define the message.
+
+..  doctest::
+
+    >>> from x12.msg_271_4010_X092_A1 import *
+
+    >>> m = MSG271(
+    ...     isa_loop=[
+    ...         ISA_LOOP(
+    ...             isa=ISA_LOOP_ISA(
+    ...                 isa01="00",
+    ...                 isa02="          ",
+    ...                 isa03="00",
+    ...                 isa04="          ",
+    ...                 isa05="ZZ",
+    ...                 isa06="ZIRMED         ",
+    ...                 isa07="ZZ",
+    ...                 isa08="12345          ",
+    ...                 isa09="120605",
+    ...                 isa10="2324",
+    ...                 isa11="U",
+    ...                 isa12="00401",
+    ...                 isa13="000050033",
+    ...                 isa14="1",
+    ...                 isa15="P",
+    ...                 isa16="^",
+    ...             ),
+    ...             gs_loop=[
+    ...             # etc. for all of the various loops inside the GS
+    ...             ],
+    ...             iea=ISA_LOOP_IEA(
+    ...                 iea01="1", iea02="000050033"
+    ...             ),
+    ...         )
+    ...     ]
+    ... )
 
 Dumping
 ===========
 
-See :ref:`marshall`.
+See the :ref:`marshall` use case.
+
+An application must load (or build) a message.
+It may also tweak the message
+
+This means
+
+..  doctest::
+
+    >>> msg.isa_loop[0].st_loop[0].header[0].bht04 = "20230223"
 
 Each Message object handles serialization into X12 text
 or JSON.
 A :meth:`dump` method emits the content in X12 "exchange format".
 A :meth:`json` method emits the content in JSON notation.
 
+
+The application can then dump the message.
+This can be in X12 ("exchange") notation.
+
+..  doctest::
+
+    >>> source_path = Path.cwd() / "changed_for_today.txt"
+    >>> with source_path.open('w') as destination:
+    ...     msg.dump(destination)
+
+The message can also be dumped in JSON notation.
+
+..  doctest::
+
+    >>> print(msg.json())
+
+The :py:meth:`json` method is similar to the one
+offered by the **pydantic** class definitions.
+
 JSON Schema
 ===========
 
-The ``tools/xml_extract.py`` application, specifically,
-reads XML files from the PyX12 project and creates modules with Python class definitions.
-The Python can be used to build JSON Schema definitions.
+See the :ref:`schema` use case.
 
-The JSON Schema description of a message can be defined as
+Conceptually, the JSON Schema description of a message can be defined as
 
 ::
 
@@ -215,7 +309,9 @@ The JSON Schema description of a message can be defined as
             loop2:
                 $ref: #/$loops/loop2
 
-A loop can refer to segments using a more complex path
+Each loop definition is provided in a ``$loops`` section of the overall schema definition.
+
+A loop definition  needs to refer to segments using a more complex path.
 
 ::
 
@@ -231,16 +327,15 @@ A loop can refer to segments using a more complex path
                 segmentX:
                     $ref: #/$segments/loop2/segmentX
 
-The ordinary nesting of referenced elements assures
-the distinct definitions of a reused segment.
+Each segment definition is provided in a ``$segments`` section of the overall schema definition.
+The path, however, includes the containing loop.
+This permits the distinct definitions of a reused segment in multiple loop contexts.
 
 The JSON Schema representation of the message
-definitions is handled via a large number of "$ref" references
-from the overall structure to the definitions of loops, segements,
-composites, elements, codes, and data element definitions.
+definitions is handled via a large number of ``{"$ref": ...}`` references.
+This permits a relatively flat structure that parallels the Python class definitions.
 
-The idea is that an overall message is generally
-defined as follows:
+The complete message is generally defined as follows:
 
 ::
 
@@ -286,12 +381,10 @@ defined as follows:
 
 This structure avoids deeply-nested constructs.
 It permits reuse of the data types and codes.
-It provides a loop namespace to disambiguate segments,
-and their composites and elements.
+It provides a loop namespace to disambiguate segments, and their composites and elements.
 
-Currently, the internal message classes
-can be turned into JSON Schema.
-The :py:func:`base.schema` function does *not* structure
+Currently, the internal message classes can be turned into JSON Schema.
+The :py:func:`x12.base.schema` function does *not* structure
 the JSON Schema with the base and common definitions
 clearly separated like this. Instead it coughs out
 deeply-nested JSON Schema with redudant copies
@@ -319,74 +412,3 @@ This schema repository contains three types of XML files.
 -   :file:`dataele.xml`
 
 -   :file:`maps.xml`
-
-Appendix: Segments
-^^^^^^^^^^^^^^^^^^^
-
-The following table identifies the 57 distinct segment ID's and how they are
-used. When a segment ID has a list of segment types that indicates that the
-segment appears in a number of distinct loops, often within a single message.
-
-The worst case is the ``REF`` segment, which is used in a vast number of distinct loops and messages.
-
-=== ==================================================================================
-ID  Segment Types
-=== ==================================================================================
-AMT Patient Estimated Amount Due , Patient Paid Amount , Sales Tax Amount , Coordination of Benefits (COB) Patient Responsibility Amount , Coordination of Benefits (COB) Total Medicare Paid Amount , Coordination of Benefits (COB) Total Denied Amount , Coordination of Benefits (COB) Total Submitted Charges , Coordination of Benefits (COB) Total Allowed Amount , Facility Tax Amount , Coordination of Benefits (COB) Discount Amount , Coordination of Benefits (COB) Medicare B Trust Fund Paid Amount , Postage Claimed Amount , Service Tax Amount , Diagnostic Related Group (DRG) Outlier Amount , Coordination of Benefits (COB) Allowed Amount , Coordination of Benefits (COB) Covered Amount , Payer Prior Payment , Patient Amount Paid , Coordination of Benefits (COB) Medicare A Trust Fund Paid Amount , Coordination of Benefits (COB) Total Non-Covered Amount , Coordination of Benefits (COB) Tax Amount , Coordination of Benefits (COB) Approved Amount , Coordination of Benefits (COB) Patient Paid Amount , Coordination of Benefits (COB) Payer Paid Amount , Coordination of Benefits (COB) Per Day Limit Amount , Payer Estimated Amount Due , Coordination of Benefits (COB) Total Claim Before Taxes Amount , Credit/Debit Card - Maximum Amount , Medicare Paid Amount - 100% , Medicare Paid Amount - 80% , Total Purchased Service Amount , Approved Amount , Credit/Debit Card Maximum Amount
-BHT Beginning of Hierarchical Transaction
-CAS Claim Adjustment , Claim Level Adjustment , Line Adjustment , Service Line Adjustment , Claim Level Adjustments , Service Adjustment
-CL1 Institutional Claim Code
-CLM Claim Information
-CN1 Contract Information
-CR1 Ambulance Transport Information
-CR2 Spinal Manipulation Service Information
-CR3 Durable Medical Equipment Certification
-CR5 Home Oxygen Therapy Information
-CR6 Home Health Care Information
-CR7 Home Health Care Plan Information
-CRC EPSDT Referral , Home Health Activities Permitted , DMERC Condition Indicator , Homebound Indicator , Ambulance Certification , Hospice Employee Indicator , Home Health Functional Limitations , Patient Condition Information: Vision , Home Health Mental Status
-CTP Drug Pricing
-CUR Foreign Currency Information
-DMG Subscriber Demographic Information , Patient Demographic Information , Other Insured Demographic Information , Other Subscriber Demographic Information
-DN1 Orthodontic Total Months of Treatment
-DN2 Tooth Status
-DTP Service Line Date , Date - Onset of Current Symptom/Illness , Assessment Date , Claim Adjudication Date , Date - Last X-Ray , Date - Initial Treatment , Date - Acute Manifestation , Date - Last Certification Date , Date - Last Menstrual Period , Date - Date Last Seen , Date - Disability Begin , Date - Appliance Placement , Date - Test , Date - Assumed and Relinquished Care Dates , Line Adjudication Date , Claim Paid Date , Date - Authorized Return to Work , Date - Last Worked , Date - Oxygen Saturation/Arterial Blood Gas Test , Date - Shipped , Date - Similar Illness/Symptom Onset , Service Adjudication Date , Date - Referral , Date - Service , Date - Service Date , Date - Prior Placement , Date - Disability End , Date - Begin Therapy Date , Date - Replacement , Date - Accident , Date - Discharge , Date - Certification Revision Date , Date - Last X-ray , Statement Dates , Admission Date/Hour , Date - Admission , Date - Hearing and Vision Prescription Date , Date - Onset of Current Illness/Symptom , Discharge Hour
-FRM Supporting Documentation
-GE  Functional Group Trailer
-GS  Functional Group Header
-HCP Claim Pricing/Repricing Information , Line Pricing/Repricing Information
-HI  Other Diagnosis Information , Value Information , Occurrence Span Information , Health Care Diagnosis Code , Condition Information , Principal, Admitting, E-Code and Patient Reason for Visit Diagnosis Information , Principal Procedure Information , Diagnosis Related Group (DRG) Information , Treatment Code Information , Other Procedure Information , Occurrence Information
-HL  Subscriber Hierarchical Level , Patient Hierarchical Level , Billing/Pay-To Provider Hierarchical Level
-HSD Health Care Services Delivery
-IEA Interchange Control Trailer
-ISA Interchange Control Header
-K3  File Information
-LIN Drug Identification
-LQ  Form Identification Code
-LX  Service Line , Line Counter , Service Line Number
-MEA Test Result
-MIA Medicare Inpatient Adjudication Information
-MOA Medicare Outpatient Adjudication Information
-N3  Other Subscriber Address , Destination Payer Address , Service Facility Address , Responsible Party Address , Ordering Provider Address , Pay-To Provider's Address , Pay-To Provider Address , Other Payer Address , Subscriber Address , Billing Provider Address , Service Facility Location Address , Patient Address , Payer Address
-N4  Payer City/State/ZIP Code , Patient City/State/ZIP Code , Billing Provider City/State/ZIP Code , Pay-To Provider City/State/ZIP , Pay-To Provider City/State/ZIP Code , Other Subscriber City/State/ZIP Code , Service Facility Location City/State/ZIP , Service Facility City/State/Zip Code , Responsible Party City/State/ZIP Code , Destination Payer City/State/ZIP Code , Ordering Provider City/State/ZIP Code , Other Payer City/State/ZIP Code , Subscriber City/State/ZIP Code
-NM1 Credit/Debit Card Holder Name , Submitter Name , Other Payer Service Facility Location , Ordering Provider Name , Other Subscriber Name , Operating Physician Name , Destination Payer Name , Other Payer Attending Provider , Other Payer Service Facility Provider , Attending Physician Name , Responsible Party Name , Receiver Name , Assistant Surgeon Name , Supervising Provider Name , Pay-To Provider's Name , Service Facility Location , Purchased Service Provider Name , Referring Provider Name , Service Facility Name , Patient Name , Other Payer Other Provider , Subscriber Name , Other Payer Rendering Provider , Other Payer Referring Provider , Other Payer Prior Authorization or Referral Number , Pay-To Provider Name , Other Payer Name , Rendering Provider Name , Billing Provider Name , Other Provider Name , Payer Name , Credit/Debit Card Account Holder Name , Other Payer Supervising Provider , Other Payer Operating Provider , Other Payer Purchased Service Provider , Other Payer Patient Information
-NTE Claim Note , Line Note , Billing Note
-OI  Other Insurance Coverage Information
-PAT Patient Information
-PER Ordering Provider Contact Information , Billing Provider Contact Information , Other Payer Contact Information , Submitter Contact Information , Submitter EDI Contact Information
-PRV Billing/Pay-To Provider Specialty Information , Service Facility Specialty Information , Referring Provider Specialty Information , Assistant Surgeon Specialty Information , Rendering Provider Specialty Information , Attending Physician Specialty Information , Other Provider Specialty Information , Operating Physician Specialty Information
-PS1 Purchased Service Information
-PWK Line Supplemental Information , DMERC CMN Indicator , Claim Supplemental Information
-QTY Anesthesia Quantity , Claim Quantity
-REF Repriced Claim Number , Pay-To Provider Secondary Identification Number , Rendering Provider Secondary Identification , Original Reference Number (ICN/DCN) , Service Facility Location Secondary Identification , Repriced Line Item Reference Number , Mammography Certification Number , Ordering Provider Secondary Identification , Assistant Surgeon Secondary Identification , Other Payer Supervising Provider Identification , Prescription Number , Claim Identification Number For Clearinghouses and Other Transmission Intermediaries , Other Provider Secondary Identification , Other Subscriber Secondary Identification , Payer Secondary Identification Number , Prior Authorization or Referral Number , Other Payer Referring Provider Identification , Investigational Device Exemption Number , Document Identification Code , Service Facility Secondary Identification , Immunization Batch Number , Line Item Control Number , Attending Physician Secondary Identification , Other Payer Patient Identification , Destination Payer Secondary Identification , Property and Casualty Claim Number , Purchased Service Provider Secondary Identification , Other Payer Service Facility Location Identification , Demonstration Project Identifier , Claim Identification Number for Clearing Houses and Other Transmission Intermediaries , Clinical Laboratory Improvement Amendment (CLIA) Identification , Medical Record Number , Billing Provider Secondary Identification Number , Pay-To Provider Secondary Identification , Transmission Type Identification , Other Payer Purchased Service Provider Identification , Referring Clinical Laboratory Improvement Amendment (CLIA) Facility Identification , Mandatory Medicare (Section 4081) Crossover Indicator , Other Payer Rendering Provider Secondary Identification , Adjusted Repriced Claim Number , Operating Physician Secondary Identification , Peer Review Organization (PRO) Approval Number , Supervising Provider Secondary Identification , Transaction Type Identification , Other Payer Operating Provider Identification , Other Payer Rendering Provider Identification , Other Payer Claim Adjustment Indicator , Subscriber Secondary Identification , Ambulatory Patient Group (APG) , Oxygen Flow Rate , Other Subscriber Secondary Information , Other Payer Secondary Identifier , Other Payer Prior Authorization or Referral Number , Other Payer Attending Provider Identification , Other Payer Service Facility Provider Identification , Universal Product Number (UPN) , Service Predetermination Identification , Billing Provider Secondary Identification , Other Payer Secondary Identification and Reference Number , Predetermination Identification , Adjusted Repriced Line Item Reference Number , Credit/Debit Card Billing Information , Referring Provider Secondary Identification , Payer Secondary Identification , Patient Secondary Identification , Claim Identification Number for Clearinghouses and Other Transmission Intermediaries , Other Payer Other Provider Identification , Claim Submitter Credit/Debit Card Information , Other Payer identification Number , Service Authorization Exception Code , Patient Secondary Identification Number , Credit/Debit Card Information , Clinical Laboratory Improvement Amendment (CLIA) Number
-SBR Subscriber Information , Other Subscriber Information
-SE  Transaction Set Trailer
-ST  Transaction Set Header
-SV1 Professional Service
-SV2 Institutional Service Line
-SV3 Dental Service
-SV5 Durable Medical Equipment Service
-SVD Line Adjudication Information , Service Line Adjudication Information
-TA1 Interchange Acknowledgement
-TOO Tooth Information
-=== ==================================================================================

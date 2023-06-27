@@ -16,7 +16,7 @@
     <script src="_static/doctools.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Architecture and Design" href="architecture.html" />
+    <link rel="next" title="Architecture: Containers and Components" href="architecture.html" />
     <link rel="prev" title="Using TigerShark" href="operation.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
@@ -41,7 +41,7 @@
 <p>This section defines the context by describing the <a class="reference internal" href="#actors">Actors</a>
 and their <a class="reference internal" href="#use-case-scenarios">Use Case Scenarios</a>.</p>
 <p>The <a class="reference internal" href="#data-model">Data Model</a> section provides an overview of some of the key data entities.</p>
-<p>For details on the Containers and Components, see <a class="reference internal" href="architecture.html#architecture"><span class="std std-ref">Architecture and Design</span></a>.</p>
+<p>For details on the Containers and Components, see <a class="reference internal" href="architecture.html#architecture"><span class="std std-ref">Architecture: Containers and Components</span></a>.</p>
 <p>Fore more about Code, see <a class="reference internal" href="design/index.html#design"><span class="std std-ref">Design Notes</span></a>.</p>
 <section id="actors">
 <h2>Actors<a class="headerlink" href="#actors" title="Permalink to this heading">¶</a></h2>
@@ -73,7 +73,7 @@ The application can use the message class definitions to serialize messages in E
 <p>Other use cases are combinations of these. For example,
 deserializing a message to change the date and serializing the resulting message.</p>
 <section id="define-an-x12-structure">
-<h3>Define An X12 Structure<a class="headerlink" href="#define-an-x12-structure" title="Permalink to this heading">¶</a></h3>
+<span id="schema"></span><h3>Define An X12 Structure<a class="headerlink" href="#define-an-x12-structure" title="Permalink to this heading">¶</a></h3>
 <p>Actor locates the IG (Implementation Guide) that describes a message.
 This has the loops, segments, composites, and data elements
 that comprise the message.
@@ -94,19 +94,23 @@ slightly different element names, based on the loop context.</p>
 </section>
 <section id="deserialize-a-message">
 <span id="unmarshall"></span><h3>Deserialize A Message<a class="headerlink" href="#deserialize-a-message" title="Permalink to this heading">¶</a></h3>
-<p>An application imports a module with message
-definition classes.</p>
-<p>The application uses the class definitions
+<p>An application should be able to import a module containing a message
+definition class.
+The application can then use the class definitions
 to parse a message, creating an instance
 of the class.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">x12</span> <span class="kn">import</span> <span class="n">msg_271_4010_X092_A1</span><span class="p">,</span> <span class="n">Source</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<p>The idea is</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">MessageClass</span>
+<span class="kn">from</span> <span class="nn">x12</span> <span class="kn">import</span> <span class="n">Source</span><span class="p">,</span> <span class="n">X12Parser</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">source_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;tests&quot;</span> <span class="o">/</span> <span class="s2">&quot;271-example.txt&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">source_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="n">msg_271_4010_X092_A1</span><span class="o">.</span><span class="n">MSG271</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+<span class="n">source</span> <span class="o">=</span> <span class="n">Source</span><span class="p">(</span><span class="n">some_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">())</span>
+<span class="n">parser</span> <span class="o">=</span> <span class="n">X12Parser</span><span class="p">(</span><span class="n">MessageClass</span><span class="p">)</span>
+<span class="n">msg</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>The source is a wrapper around the input text to provide a “look-ahead” capability.
+The parser walks through the <code class="xref py py-class docutils literal notranslate"><span class="pre">MessageClass</span></code> definition to locate the structure
+and map source text to the structure.</p>
 <p>The resulting <code class="docutils literal notranslate"><span class="pre">msg</span></code> object is an instance of a subclass of <code class="docutils literal notranslate"><span class="pre">Message</span></code>
 with attributes based on the loop/segment/composite/element structure of the specific message type.</p>
 </section>
@@ -114,64 +118,13 @@ with attributes based on the loop/segment/composite/element structure of the spe
 <span id="marshall"></span><h3>Serialize A Message<a class="headerlink" href="#serialize-a-message" title="Permalink to this heading">¶</a></h3>
 <p>An application imports the module with message
 definition classes.</p>
-<p>The application creates the message object.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">x12.msg_270_4010_X092_A1</span> <span class="kn">import</span> <span class="o">*</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="n">MSG270</span><span class="p">(</span>
-<span class="gp">... </span>   <span class="n">isa_loop</span><span class="o">=</span><span class="p">[</span>
-<span class="gp">... </span>        <span class="n">ISA_LOOP</span><span class="p">(</span>
-<span class="gp">... </span>            <span class="n">isa</span><span class="o">=</span><span class="n">ISA_LOOP_ISA</span><span class="p">(</span>
-<span class="gp">... </span>                <span class="n">isa01</span><span class="o">=</span><span class="n">ISA_LOOP_ISA01</span><span class="p">(</span><span class="s1">&#39;00&#39;</span><span class="p">),</span>
-<span class="gp">... </span>                <span class="c1"># etc. for this segment ...</span>
-<span class="gp">... </span>                <span class="n">isa16</span><span class="o">=</span><span class="n">ISA_LOOP_ISA16</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">),</span>
-<span class="gp">... </span>            <span class="p">),</span>
-<span class="gp">... </span>            <span class="n">gs_loop</span><span class="o">=</span><span class="p">[</span>
-<span class="gp">... </span>            <span class="c1"># etc. for this loop of segments...</span>
-<span class="gp">... </span>            <span class="p">],</span>
-<span class="gp">... </span>            <span class="n">st_loop</span><span class="o">=</span><span class="p">[</span>
-<span class="gp">... </span>                <span class="n">ST_LOOP</span><span class="p">(</span>
-<span class="gp">... </span>                    <span class="n">st</span><span class="o">=</span><span class="n">ST_LOOP_ST</span><span class="p">(</span>
-<span class="gp">... </span>                        <span class="n">st01</span><span class="o">=</span><span class="n">ST_LOOP_ST01</span><span class="p">(</span><span class="s2">&quot;271&quot;</span><span class="p">),</span> <span class="n">st02</span><span class="o">=</span><span class="n">ST_LOOP_ST02</span><span class="p">(</span><span class="s2">&quot;0001&quot;</span><span class="p">)</span>
-<span class="gp">... </span>                    <span class="p">),</span>
-<span class="gp">... </span>                    <span class="n">header</span><span class="o">=</span><span class="p">[</span>
-<span class="gp">... </span>                        <span class="n">HEADER</span><span class="p">(</span>
-<span class="gp">... </span>                            <span class="n">bht</span><span class="o">=</span><span class="n">HEADER_BHT</span><span class="p">(</span>
-<span class="gp">... </span>                                <span class="n">bht01</span><span class="o">=</span><span class="n">HEADER_BHT01</span><span class="p">(</span><span class="s2">&quot;0022&quot;</span><span class="p">),</span>
-<span class="gp">... </span>                                <span class="n">bht02</span><span class="o">=</span><span class="n">HEADER_BHT02</span><span class="p">(</span><span class="s2">&quot;11&quot;</span><span class="p">),</span>
-<span class="gp">... </span>                                <span class="n">bht03</span><span class="o">=</span><span class="n">HEADER_BHT03</span><span class="p">(</span><span class="s2">&quot;11111&quot;</span><span class="p">),</span>
-<span class="gp">... </span>                                <span class="n">bht04</span><span class="o">=</span><span class="n">HEADER_BHT04</span><span class="p">(</span><span class="s2">&quot;20120605&quot;</span><span class="p">),</span>
-<span class="gp">... </span>                                <span class="n">bht05</span><span class="o">=</span><span class="n">HEADER_BHT05</span><span class="p">(</span><span class="s2">&quot;232423&quot;</span><span class="p">),</span>
-<span class="gp">... </span>                            <span class="p">)</span>
-<span class="gp">... </span>                        <span class="p">)</span>
-<span class="gp">... </span>                    <span class="p">],</span>
-<span class="gp">... </span>                    <span class="c1"># etc.</span>
-<span class="gp">... </span>               <span class="p">)</span>
-<span class="gp">... </span>            <span class="p">],</span>
-<span class="gp">... </span>        <span class="p">)</span>
-<span class="gp">... </span>    <span class="p">]</span>
-<span class="gp">... </span><span class="p">)</span>
-</pre></div>
-</div>
+<p>The application creates a message object as a (long) Python statement.
+Or, an application converts some intermediate representation in JSON notation
+into a message object.</p>
 <p>When testing healthcare applications,
-EDI messages are oten tweaked to change the date of submission.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">isa_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">st_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">header</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">bht04</span> <span class="o">=</span> <span class="s2">&quot;20230223&quot;</span>
-</pre></div>
-</div>
-<p>The intent is to locate instances of the various nested loops, and
-then change element values of segments within a loop.
-Loops repeat and require indexing.</p>
-<p>The application can then dump the message in X12 (“exchange”) notation.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">source_path</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span> <span class="o">/</span> <span class="s2">&quot;changed_for_today.txt&quot;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">source_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">destination</span><span class="p">:</span>
-<span class="gp">... </span>    <span class="n">msg</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">destination</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The message can also be dumped in JSON notation.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
-</pre></div>
-</div>
-<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">json()</span></code> method is similar to the one
-offered by the <strong>pydantic</strong> class definitions.</p>
+EDI messages are oten tweaked to change an attribute, for example, the date of submission.</p>
+<p>The intent is to locate eacn instance of the various containing loops, and
+then change an element value of a named segment within a loop.</p>
 </section>
 </section>
 <section id="data-model">
@@ -251,10 +204,11 @@ in each loop, often with small but significant differences,
 based on the distinct context.</p>
 <p>This leads to the following data model consideration:</p>
 <blockquote>
-<div><p>A Loop is a namespace</p>
+<div><p>A Loop is a Namespace</p>
 </div></blockquote>
-<p>This then leads to questions on how best to implement
-this “loop-as-namespace”. This is the topic of the <a class="reference internal" href="design/loopmodel.html#design-loop-namespace"><span class="std std-ref">Loops as Namespaces</span></a> design note.</p>
+<p>This then leads to questions on how best to implement “loop-as-namespace”.
+This is the topic of the <a class="reference internal" href="design/loopmodel.html#design-loop-namespace"><span class="std std-ref">Loops as Namespace</span></a> design note.</p>
+<p>The short answer is we create long names like <code class="docutils literal notranslate"><span class="pre">LOOP_1_SEGMENT_X</span></code> and <cite>LOOP_2_SEGMENT_X`</cite> to distinguish the two names.</p>
 </section>
 </section>
 
@@ -286,10 +240,11 @@ this “loop-as-namespace”. This is the topic of the <a class="reference inter
 <li class="toctree-l2"><a class="reference internal" href="#data-model">Data Model</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture: Containers and Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design/index.html">Design Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="todo.html">The TODO List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendices/index.html">Appendices</a></li>
 </ul>
 
 <div class="relations">
@@ -297,7 +252,7 @@ this “loop-as-namespace”. This is the topic of the <a class="reference inter
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
       <li>Previous: <a href="operation.html" title="previous chapter">Using TigerShark</a></li>
-      <li>Next: <a href="architecture.html" title="next chapter">Architecture and Design</a></li>
+      <li>Next: <a href="architecture.html" title="next chapter">Architecture: Containers and Components</a></li>
   </ul></li>
 </ul>
 </div>

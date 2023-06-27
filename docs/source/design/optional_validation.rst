@@ -1,5 +1,5 @@
 #####################################
-How Validation Works
+Validation Configuration
 #####################################
 
 The validation happens in the :py:class:`Segment` and :py:class:`Composite`

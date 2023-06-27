@@ -35,13 +35,13 @@
             
   <section id="tiger-shark-x12-tools">
 <h1>Tiger Shark X12 Tools<a class="headerlink" href="#tiger-shark-x12-tools" title="Permalink to this heading">¶</a></h1>
-<p>TigerShark handles semantically rich storage and modification of X12 formatted
-data using Python objects.
-This can be used for various EDI purposes, including medical claims
-(837) and eligibility (270).</p>
-<p>This package helps to create Plain Old Python Objects (POPO) which contain
-X12 structures.  No intermediate XML or other notation is used.
-This can simplify X12 message parsing because the resulting structure is a Python object.</p>
+<p>TigerShark handles semantically rich storage and processing of X12 formatted
+data by converting wire format message text to Python objects.
+This can be used for various EDI purposes, including gathering
+data on medical claims (837) and eligibility (270).</p>
+<p>This package helps to create Plain Old Python Objects (POPO) from X12 messages.
+No intermediate XML or other notation is used.
+This can simplify X12 message processing.</p>
 <p>Additionally, JSON Schema definitions can be created
 to describe the X12 messages for processing outside EDI software.
 This can provide a handy representation for X12 data that can be processed by a wide variety of tools.</p>
@@ -49,8 +49,8 @@ This can provide a handy representation for X12 data that can be processed by a 
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="operation.html">Using TigerShark</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="operation.html#create-a-python-class">Create a Python class</a></li>
-<li class="toctree-l2"><a class="reference internal" href="operation.html#emit-a-json-schema">Emit a JSON Schema</a></li>
 <li class="toctree-l2"><a class="reference internal" href="operation.html#parse-x12-exchange-formatted-messages">Parse X12 Exchange-formatted messages</a></li>
+<li class="toctree-l2"><a class="reference internal" href="operation.html#emit-a-json-schema">Emit a JSON Schema</a></li>
 <li class="toctree-l2"><a class="reference internal" href="operation.html#emit-a-parsed-x12-message-a-variety-of-formats">Emit a parsed X12 message a variety of formats</a></li>
 </ul>
 </li>
@@ -60,13 +60,12 @@ This can provide a handy representation for X12 data that can be processed by a 
 <li class="toctree-l2"><a class="reference internal" href="usecase.html#data-model">Data Model</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture: Containers and Components</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="architecture.html#architecture-summary">Architecture Summary</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture.html#container-view">Container View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture.html#component-view">Component View</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture.html#processing-model">Processing Model</a></li>
 <li class="toctree-l2"><a class="reference internal" href="architecture.html#dependencies">Dependencies</a></li>
-<li class="toctree-l2"><a class="reference internal" href="architecture.html#appendix-segments">Appendix: Segments</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="design/index.html">Design Notes</a><ul>
@@ -92,6 +91,10 @@ This can provide a handy representation for X12 data that can be processed by a 
 <li class="toctree-l2"><a class="reference internal" href="todo.html#json-schema">JSON Schema</a></li>
 <li class="toctree-l2"><a class="reference internal" href="todo.html#from-the-documentation">From the Documentation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="todo.html#from-the-code">From the code</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="appendices/index.html">Appendices</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="appendices/segment_names.html">Segment Names</a></li>
 </ul>
 </li>
 </ul>
@@ -129,10 +132,11 @@ This can provide a handy representation for X12 data that can be processed by a 
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="operation.html">Using TigerShark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usecase.html">Context: Use Cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Architecture: Containers and Components</a></li>
 <li class="toctree-l1"><a class="reference internal" href="design/index.html">Design Notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="todo.html">The TODO List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="appendices/index.html">Appendices</a></li>
 </ul>
 
 <div class="relations">

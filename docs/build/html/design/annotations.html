@@ -16,7 +16,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Creating New Modules with Annotations" href="xml_extract.html" />
+    <link rel="next" title="Creating Annotations from XML" href="xml_extract.html" />
     <link rel="prev" title="Type Hints and JSON Schema" href="type_hints.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -38,9 +38,9 @@
 <span id="design-annotations"></span><h1>Element Types and Annotations<a class="headerlink" href="#element-types-and-annotations" title="Permalink to this heading">¶</a></h1>
 <p>We have the following considerations:</p>
 <ul class="simple">
-<li><p>Providing a complete JSON Schema definition for a Message (including the Loop, Segment, Composite classes) and the atomic Elements.</p></li>
-<li><p>Using the Annotation information to convert between serialized text and native Python values.</p></li>
-<li><p>A <code class="docutils literal notranslate"><span class="pre">tools/xml_extract.py</span></code> application that creates the message definitions.</p></li>
+<li><p>We want to provide a complete JSON Schema definition for a Message (including the Loop, Segment, Composite classes) and the atomic Elements.</p></li>
+<li><p>We want to use the <code class="docutils literal notranslate"><span class="pre">Annotated</span></code> type information to inform the conversion between serialized text and native Python values.</p></li>
+<li><p>A <code class="docutils literal notranslate"><span class="pre">tools/xml_extract.py</span></code> application will create the message definitions from XML sources.</p></li>
 </ul>
 <p>We’ll start by looking at the schema.</p>
 <section id="essential-schema-details">
@@ -49,22 +49,22 @@
 The XML files appear to be derived from the
 source .SEF files (which we don’t have.)</p>
 <p>The schema details in the XML source files describe the following structures:</p>
-<dl class="field-list">
-<dt class="field-odd">Text values without further specifications<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'AN'</span></code> or <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'ID'</span></code>.</p>
+<ul>
+<li><p><strong>Text values without further specifications</strong>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'AN'</span></code> or <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'ID'</span></code>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">str</span></code> type needs length information in addition to the base type.
 This should become <code class="docutils literal notranslate"><span class="pre">Annotated[str,</span> <span class="pre">MinLen(x),</span> <span class="pre">MaxLen(y)]</span></code>.</p>
 <p>The annotation becomes JSONSchema <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;minLength&quot;:</span> <span class="pre">x,</span> <span class="pre">&quot;maxLength&quot;:</span> <span class="pre">y}</span></code></p>
-</dd>
-<dt class="field-even">Text values with a list of permitted values<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'AN'</span></code> or <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'ID'</span></code>.</p>
+</li>
+<li><p><strong>Text values with a list of permitted values</strong>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'AN'</span></code> or <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'ID'</span></code>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">Literal[&quot;value&quot;,</span> <span class="pre">...]</span></code> type could be used for this; it has the advantage of being supported directly by <strong>mypy</strong>.
 An alternative is <code class="docutils literal notranslate"><span class="pre">Annotated[str,</span> <span class="pre">MinLen(2),</span> <span class="pre">MaxLen(2),</span> <span class="pre">Enumerated(&quot;value&quot;,</span> <span class="pre">&quot;value&quot;)]</span></code>;
 while somewhat more internally consistent, it bypasses <strong>mypy</strong>.</p>
 <p>The annotation becomes JSONSchema <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;minLength&quot;:</span> <span class="pre">x,</span> <span class="pre">&quot;maxLength&quot;:</span> <span class="pre">y,</span> <span class="pre">&quot;enum&quot;:</span> <span class="pre">[values,</span> <span class="pre">...]}</span></code></p>
-</dd>
-<dt class="field-odd">Text values with a format specification<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'DT'</span></code> or <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'TM'</span></code>.</p>
+</li>
+<li><p><strong>Text values with a format specification</strong>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'DT'</span></code> or <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'TM'</span></code>.</p>
 <p>The Python <code class="docutils literal notranslate"><span class="pre">str</span></code> type needs format information in addition to the base type.
 This could be <code class="docutils literal notranslate"><span class="pre">Annotated[str,</span> <span class="pre">MinLen(4),</span> <span class="pre">MaxLen(4),</span> <span class="pre">Format(r'\d\d\d\d')]</span></code>.
 The conversion to <code class="docutils literal notranslate"><span class="pre">datetime.date</span></code> or <code class="docutils literal notranslate"><span class="pre">datetime.time</span></code>, however, omitted when using a <code class="docutils literal notranslate"><span class="pre">str</span></code>-focused type annotation.</p>
@@ -74,31 +74,31 @@ In the exotic cases of permitting either 6- or 8-position dates, <code class="do
 is redundant, but possibly helpful. Consider <code class="docutils literal notranslate"><span class="pre">Annotated[datetime.time,</span> <span class="pre">MinLen(4),</span> <span class="pre">MaxLen(4),</span> <span class="pre">Format('%H%M')]</span></code>.</p>
 <p>The annotation becomes JSONSchema <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;minLength&quot;:</span> <span class="pre">x,</span> <span class="pre">&quot;maxLength&quot;:</span> <span class="pre">y,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;\d\d\d\d&quot;,</span> <span class="pre">&quot;conversion&quot;:</span> <span class="pre">&quot;date&quot;}</span></code>.
 An extension attribute, “conversion”, is required to clarify the need for a conversion when serializing or deserializing.</p>
-</dd>
-<dt class="field-even">Real number values<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'R'</span></code>.</p>
+</li>
+<li><p><strong>Real number values</strong>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'R'</span></code>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">float</span></code> type with additional sizing information to describe the source text.
 This is <code class="docutils literal notranslate"><span class="pre">Annotated[float,</span> <span class="pre">MinLen(4),</span> <span class="pre">MaxLen(4)]</span></code>.</p>
 <p>The annotation becomes JSONSchema <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;number&quot;,</span> <span class="pre">&quot;minLength&quot;:</span> <span class="pre">x,</span> <span class="pre">&quot;maxLength&quot;:</span> <span class="pre">y,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;\d\d\d\d&quot;,</span> <span class="pre">&quot;conversion&quot;:</span> <span class="pre">&quot;date&quot;}</span></code>.</p>
-</dd>
-<dt class="field-odd">Integer number values<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'N'</span></code>.</p>
+</li>
+<li><p><strong>Integer number values</strong>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'N'</span></code>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">int</span></code> type with additional sizing information to describe the source text.
 This is <code class="docutils literal notranslate"><span class="pre">Annotated[int,</span> <span class="pre">MinLen(4),</span> <span class="pre">MaxLen(4)]</span></code>.</p>
 <p>The annotation becomes JSONSchema <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;integer&quot;,</span> <span class="pre">&quot;minLength&quot;:</span> <span class="pre">x,</span> <span class="pre">&quot;maxLength&quot;:</span> <span class="pre">y,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;\d\d\d\d&quot;,</span> <span class="pre">&quot;conversion&quot;:</span> <span class="pre">&quot;date&quot;}</span></code>.
 This uses the common extension of “integer” instead of “number”.</p>
-</dd>
-<dt class="field-even">Decimal number values<span class="colon">:</span></dt>
-<dd class="field-even"><p>Any of the various <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'Nx'</span></code> options.</p>
+</li>
+<li><p><strong>Decimal number values</strong>.</p>
+<p>Any of the various <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'Nx'</span></code> options.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">Decimal</span></code> type with additional sizing information to describe the source text.
 Note that decimal points are <em>not</em> part of the source representation, and the <cite>scaleb()</cite> method
 must be used.
 A type of <code class="docutils literal notranslate"><span class="pre">'data_type_code':</span> <span class="pre">'N2'</span></code>, for example, this is <code class="docutils literal notranslate"><span class="pre">typing.Annotated[decimal.Decimal,</span> <span class="pre">MinLen(4),</span> <span class="pre">MaxLen(4),</span> <span class="pre">Scale(2)]</span></code>.</p>
 <p>The annotation becomes JSONSchema <code class="docutils literal notranslate"><span class="pre">{&quot;type&quot;:</span> <span class="pre">&quot;str&quot;,</span> <span class="pre">&quot;minLength&quot;:</span> <span class="pre">x,</span> <span class="pre">&quot;maxLength&quot;:</span> <span class="pre">y,</span> <span class="pre">&quot;format&quot;:</span> <span class="pre">&quot;\d\d\d\d&quot;,</span> <span class="pre">&quot;conversion&quot;:</span> <span class="pre">&quot;decimal&quot;,</span> <span class="pre">&quot;scale&quot;:</span> <span class="pre">2}</span></code>.
 An extension attributes, “conversion” and “scale”, are required to clarify the need for a conversion when serializing or deserializing.</p>
-</dd>
-</dl>
-<p>Using annotations almost eliminates the need for a separate class definition for each individual element.
+</li>
+</ul>
+<p>Using annotations eliminates any need for a separate class definition for each individual element.
 The nuanced details of the title for an element introduces a tiny complication.
 Adding <code class="docutils literal notranslate"><span class="pre">Title(&quot;Number</span> <span class="pre">of</span> <span class="pre">Included</span> <span class="pre">Functional</span> <span class="pre">Groups&quot;)</span></code> as part of the annotations provides a way
 to include this information in a JSON Schema document.</p>
@@ -130,11 +130,11 @@ then the list – as a whole – can be validated.</p>
 <p>The source data can be validated by these detailed annotations.</p>
 <p>There are two tiers to validation:</p>
 <ul class="simple">
-<li><p><strong>Structural</strong>. The <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> methods all gather source text and apply the overall
+<li><p><strong>Structural</strong>. A <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> methods all gather source text and apply the overall
 Message, Loop, Segment, or Composite class to build an instance.
 The structural type hints of <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">:</span> <span class="pre">SomeClass</span></code>, <code class="docutils literal notranslate"><span class="pre">y:</span> <span class="pre">list[SomeClass]</span></code>,
 are exploited to understand the structure of message and loop.</p></li>
-<li><p><strong>Elemental</strong>. For Composites and Elements, a <code class="xref py py-meth docutils literal notranslate"><span class="pre">build()</span></code> method is used to construct
+<li><p><strong>Elemental</strong>. For Composites, a <code class="xref py py-meth docutils literal notranslate"><span class="pre">build()</span></code> method is used to construct
 these foundational objects. At this level,
 <code class="docutils literal notranslate"><span class="pre">x:</span> <span class="pre">SomeTypeAlias</span></code> becomes important for converting the text source
 into a Python object.</p></li>
@@ -142,8 +142,9 @@ into a Python object.</p></li>
 <p>The <code class="docutils literal notranslate"><span class="pre">Segment</span></code> parsing is – consequently – the most complicated because it’s a
 mix of structural and elemental. Overall, the segment is structural: it’s a sequence of individual elements or composites.
 However, each element has elemental validation and conversion rules.</p>
-<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> methods for <code class="docutils literal notranslate"><span class="pre">Segment</span></code> and <code class="docutils literal notranslate"><span class="pre">Composite</span></code> contain
-the elemental validation. Each element value is touched by methods of
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">__init__()</span></code> methods for <code class="docutils literal notranslate"><span class="pre">Segment</span></code> and <code class="docutils literal notranslate"><span class="pre">Composite</span></code> perform
+the elemental validation of data values.
+Each element’s value is touched by methods of
 an <code class="docutils literal notranslate"><span class="pre">X12ElementHelper</span></code> object. The :py:meth`to_py` method does this conversion.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">X12ElementHelper</span></code> has both the <code class="xref py py-meth docutils literal notranslate"><span class="pre">to_py()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">to_str()</span></code> methods
 for each of the primitive types and structures.</p>
@@ -153,7 +154,9 @@ more than a stack of validators <code class="docutils literal notranslate"><span
 <p>Because of optional and repeated segments, this is (superficially) tricky
 to write as a functional composition that parses a message.
 See <a class="reference external" href="https://github.com/dabeaz/blog/blob/main/2023/three-problems.md">https://github.com/dabeaz/blog/blob/main/2023/three-problems.md</a> and this <a class="reference external" href="https://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf">https://www.cs.nott.ac.uk/~pszgmh/monparsing.pdf</a>.</p>
-<p>The approach is to have each validator return a Monad
+<aside class="sidebar">
+<p class="sidebar-title">Functional Approach</p>
+<p>An approach could be to have each validator return a Monad
 with a partial construct and a revised input stream,
 or a “Nothing” that indicates the construct cannot be parsed
 and something else needs to be tried. If a construct
@@ -161,34 +164,34 @@ can be parsed, the tokens are consumed. If a construct cannot
 be parsed, the return value is the original sequence of tokens.</p>
 <p>This (in turn) requires sequence and conditional construct parsers.
 These apply parser functions until the input is consumed.</p>
-<p>This is <strong>not</strong> the approach we’ve chosen. Instead, we have
-use the class-level <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> and <code class="xref py py-meth docutils literal notranslate"><span class="pre">build()</span></code> function that
-either returns an instance of the class or None.</p>
-<p>For Message, Loop, Segment
-the <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> method consumes zero or more complete segments
+<p>This is <strong>not</strong> the approach we’ve chosen.</p>
+</aside>
+<p>A separate <a class="reference internal" href="../implementation/x12_base.html#x12.base.X12Parser" title="x12.base.X12Parser"><code class="xref py py-mod docutils literal notranslate"><span class="pre">x12.base.X12Parser</span></code></a> class
+has a collection of <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code> methods.</p>
+<p>For Message, Loop, Segment there are <code class="xref py py-meth docutils literal notranslate"><span class="pre">parse()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">loop_parse()</span></code>, and <code class="xref py py-meth docutils literal notranslate"><span class="pre">segment_parse()</span></code>
+methods to consumes zero or more complete segments
 from the input.
-For Composite and Element parsing within a segment,
-a <code class="xref py py-meth docutils literal notranslate"><span class="pre">build()</span></code> method consumes fields from the segment to
-build Elements or Composites.</p>
+For Composite parsing within a Segment,
+a <code class="xref py py-meth docutils literal notranslate"><span class="pre">composite_build()</span></code> method consumes fields from the segment to
+build Composites.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>This means the validation is at the element level.</p>
+<p>Validation is at the element level.</p>
 </div>
-<p>The Segment and Composite implement <code class="docutils literal notranslate"><span class="pre">list[X]</span></code> and <code class="docutils literal notranslate"><span class="pre">Union[X,</span> <span class="pre">None]</span></code> validations
-separately from the <code class="docutils literal notranslate"><span class="pre">X12ElementHelper</span></code> class.</p>
-<p>A class-level <code class="xref py py-meth docutils literal notranslate"><span class="pre">annotated()</span></code> method builds
-type validations for <code class="docutils literal notranslate"><span class="pre">Annotated[X,</span> <span class="pre">...]</span></code> constructs.</p>
-<p>There are two special cases:</p>
+<p>The Segment and Composite don’t implement <code class="docutils literal notranslate"><span class="pre">list[X]</span></code> and <code class="docutils literal notranslate"><span class="pre">Union[X,</span> <span class="pre">None]</span></code> validations.</p>
+<section id="annotations-can-be-nested">
+<h3>Annotations can be nested<a class="headerlink" href="#annotations-can-be-nested" title="Permalink to this heading">¶</a></h3>
+<p>There are two common cases of nested annotations.</p>
 <ul class="simple">
-<li><p>An <code class="docutils literal notranslate"><span class="pre">Annotated[list[Annotated[X,</span> <span class="pre">etc.],</span> <span class="pre">MaxItems()]</span></code> gets
-a subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">X12ElementHelper</span></code> to validate lists assuming the primitives
-have already been validated.</p></li>
-<li><p>Similarly, an <code class="docutils literal notranslate"><span class="pre">Union[Annotated[X,</span> <span class="pre">etc.],</span> <span class="pre">None]</span></code> is tricky.
+<li><p><code class="docutils literal notranslate"><span class="pre">Annotated[list[Annotated[X,</span> <span class="pre">etc.],</span> <span class="pre">MaxItems()]</span></code>.
+This is often represented as a inner <code class="docutils literal notranslate"><span class="pre">TypeAlias</span></code> for <code class="docutils literal notranslate"><span class="pre">Annotated[X,</span> <span class="pre">etc.]</span></code>.
+The overall list requires a separate maximum items validation that’s not (currently) built into the class.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Union[Annotated[X,</span> <span class="pre">etc.],</span> <span class="pre">None]</span></code>.
 Most annotations reject invalid values, but this expands the domain of valid values,
-removing a rejection rule.
-The presence of this annotation implies an inverse <code class="docutils literal notranslate"><span class="pre">NotAUnion[Annotated[X,</span> <span class="pre">etc.]]</span></code> that will
-reject fields with a <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+removing a rejection rule.</p></li>
 </ul>
+<p>These are not currently implemented.</p>
+</section>
 </section>
 <section id="additional-schema-details">
 <h2>Additional Schema Details<a class="headerlink" href="#additional-schema-details" title="Permalink to this heading">¶</a></h2>
@@ -241,7 +244,7 @@ while relying on Annotations to carry element definitions.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../operation.html">Using TigerShark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usecase.html">Context: Use Cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture: Containers and Components</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="classmodel.html">Message Schema as Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loopmodel.html">Loops as Namespace</a></li>
@@ -254,6 +257,7 @@ while relying on Annotations to carry element definitions.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/index.html">Appendices</a></li>
 </ul>
 
 <div class="relations">
@@ -262,7 +266,7 @@ while relying on Annotations to carry element definitions.</p>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Design Notes</a><ul>
       <li>Previous: <a href="type_hints.html" title="previous chapter">Type Hints and JSON Schema</a></li>
-      <li>Next: <a href="xml_extract.html" title="next chapter">Creating New Modules with Annotations</a></li>
+      <li>Next: <a href="xml_extract.html" title="next chapter">Creating Annotations from XML</a></li>
   </ul></li>
   </ul></li>
 </ul>

@@ -4,7 +4,7 @@
 Design Notes
 =============
 
-The following design notes are details of the software design.
+The following design notes provide supporting details for TigerShark.
 
 ..  toctree::
     :maxdepth: 2

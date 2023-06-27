@@ -1,5 +1,5 @@
 #####################################
-Creating New Modules with Annotations
+Creating Annotations from XML
 #####################################
 
 There are two strategies for defining
@@ -16,27 +16,34 @@ and *seems* sensible because the :py:func:`str`
 for an ``Annotation`` is a source-code string.
 However, it doesn't work out well.
 
+We'd like to write Python like this:
+
 ::
 
+    # Parse something.
     this = Annotated[base_type]
+
+    # Parse some more parts.
     this = Annotated[this, SomeAnnotation()]
 
-This is elegant-looking code, but, has limitations
-around things like the following:
+This is elegant-looking code to build up a complicated annotation
+based on the XML.
+
+The following doesn't seem to work:
 
 ::
 
     this = Annotated[base_type]
     this = Union[this, None]
 
-In ordinary Python syntax, we'd write this:
+An alterantive in ordinary Python syntax, could be this:
 
 ::
 
     some_object: Annotated[some_type, SomeAnotation()] | None
 
-The underlying type definition is hard to build from primitive class definitions
-in the ``typing`` module. It's much easier to write as pure source text.
+The underlying type definition is hard to build using the class definitions
+in the ``typing`` module. It's much easier to write as pure source text and compile it.
 
 Building text seems indirect, and -- potentially --
 frought with problems. However, annotation objects

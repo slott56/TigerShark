@@ -5,9 +5,12 @@ The TODO List
 General Design
 ==============
 
-1.  Unify the various "Peel the Onion" algorithms.
+1.  Dump a message in wire format.
 
-2.  Cleanup type hints to the extent possible.
+2.  Unify the various "Peel the Onion" algorithms in the :py:mod:`base.X12Parse` class.
+    There may be an "annotation visitor" algorithm hiding in there.
+
+3.  Cleanup type hints to the extent possible.
     A large number of ``type: ignore[misc]`` comments are present.
 
 JSON Schema

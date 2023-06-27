@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>Parsing An Exchange-Format Message &#8212; TigerShark 3.0 documentation</title>
+    <title>Parsing Algorithm &#8212; TigerShark 3.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Type Hints and JSON Schema" href="type_hints.html" />
-    <link rel="prev" title="Loops as Namespaces" href="loopmodel.html" />
+    <link rel="prev" title="Loops as Namespace" href="loopmodel.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,10 +34,10 @@
 
           <div class="body" role="main">
             
-  <section id="parsing-an-exchange-format-message">
-<span id="design-parsing"></span><h1>Parsing An Exchange-Format Message<a class="headerlink" href="#parsing-an-exchange-format-message" title="Permalink to this heading">¶</a></h1>
+  <section id="parsing-algorithm">
+<span id="design-parsing"></span><h1>Parsing Algorithm<a class="headerlink" href="#parsing-algorithm" title="Permalink to this heading">¶</a></h1>
 <p>An exchange-format X12 EDI message is a sequence of segments.
-Each segment has an identifier of 2 or 3 characters, and a sequence of element values.
+Each segment has an identifier of 2 or 3 characters, followed by the element values.
 The elements are separated by an element separator,
 and the segments are separated by a segment separator.</p>
 <p>We can depict it as follows:</p>
@@ -64,10 +64,10 @@ SegmentText *--&gt; &quot;v&quot; Value"/>
 The first string value is the segment identifier.</p>
 <p>Alternatively, this segment can be viewed as an identifier and separator, “ST|”,
 followed by two string values, “271” and “0001”.</p>
-<p>We generally choose the former view, which permits simple use of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">string.split()</span></code> method
+<p>We generally choose the former view, which permits simple use of the <code class="code docutils literal notranslate"><span class="pre">fields</span> <span class="pre">=</span> <span class="pre">string.split()</span></code>
 to split the segment into fields.
-The first field is the identifier, used for parsing the structure of a message and the loops.
-The remaining values are assigned to elements and composites of the segment.</p>
+The first field (<code class="code docutils literal notranslate"><span class="pre">fields[0]</span></code>) is the identifier, used for parsing the structure of a message and the loops.
+The remaining values (<code class="code docutils literal notranslate"><span class="pre">fields[1:]</span></code>) are assigned to elements and composites of the segment.</p>
 <section id="general-parsing">
 <h2>General Parsing<a class="headerlink" href="#general-parsing" title="Permalink to this heading">¶</a></h2>
 <p>There’s a subtlety to the separators.</p>
@@ -101,19 +101,22 @@ Then we have two fallback strategies:</p>
 The element separator is position 3. The component separaror is the 16th element. (Yucky, but, sometimes necessary.)</p></li>
 </ul>
 </div></blockquote>
+<p>Often, the source of the message traffic will provide some hint as to what the format <em>really</em> is.
+An enterprise may adopt a convention of naming messages <code class="file docutils literal notranslate"><span class="pre">something.edi</span></code> to show that the ISA segment is uncompressed
+and the first line is helpful. A name like <code class="file docutils literal notranslate"><span class="pre">something.medi</span></code> might should that the ISA segment is
+compressed and separate metadata is required to identify the separators. Perhaps a <code class="file docutils literal notranslate"><span class="pre">something-meta.toml</span></code> file
+could be used to convey the necessary separator information.</p>
 </section>
 <section id="message-parsing">
 <h2>Message Parsing<a class="headerlink" href="#message-parsing" title="Permalink to this heading">¶</a></h2>
-<p>Pragmatically, message parsing is made complicated by two features:</p>
-<ol class="arabic simple">
-<li><p>Loops are not present in the text representation.
-A Loop contains one or more Segments, defining an expected sequence of Segments.</p></li>
-<li><p>Composites are not present in the text representation.
-A Composite contains a number of Elements; it’s a kind of sub-Segment.</p></li>
-</ol>
+<p>Pragmatically, message parsing is made complicated the following feature:</p>
+<blockquote>
+<div><p>Loops are not present in the text representation. There’s no identifier or punctuation for loops.
+A Loop contains one or more Segments, defining an expected sequence of Segments.</p>
+</div></blockquote>
 <p>This means we have the following relationships.</p>
 <p class="plantuml">
-<img src="../_images/plantuml-c03ce03d54950efd482f32ab56c8cbfc0a366771.png" alt="class Message
+<img src="../_images/plantuml-52cc0e5012d12361c6705b1e2654d26a2ab2c124.png" alt="class Message
 
 class MessageText
 
@@ -121,7 +124,7 @@ Message -- MessageText : Represented By &gt;
 
 class Loop
 
-Message *--&gt; &quot;n&quot; Loop
+Message *--&gt; &quot;n&quot; Loop : Defined By &gt;
 
 class Segment
 
@@ -177,8 +180,8 @@ This avoids having to escape the component separator when it occurs in a value.<
 component separator character based on the values present
 in those (few) fields that can have sub-components in them.</p>
 <p>The default seems to be “:”.</p>
-<p>But, if there’s a “:” value in a field,
-the separator might be “^” or “\”.</p>
+<p>But, if there’s a “:” character in a field’s value,
+the component separator might be “^” or “\”.</p>
 </section>
 </section>
 
@@ -205,7 +208,7 @@ the separator might be “^” or “\”.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../operation.html">Using TigerShark</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../usecase.html">Context: Use Cases</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture: Containers and Components</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="classmodel.html">Message Schema as Class</a></li>
 <li class="toctree-l2"><a class="reference internal" href="loopmodel.html">Loops as Namespace</a></li>
@@ -218,6 +221,7 @@ the separator might be “^” or “\”.</p>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/index.html">Appendices</a></li>
 </ul>
 
 <div class="relations">
@@ -225,7 +229,7 @@ the separator might be “^” or “\”.</p>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
   <li><a href="index.html">Design Notes</a><ul>
-      <li>Previous: <a href="loopmodel.html" title="previous chapter">Loops as Namespaces</a></li>
+      <li>Previous: <a href="loopmodel.html" title="previous chapter">Loops as Namespace</a></li>
       <li>Next: <a href="type_hints.html" title="next chapter">Type Hints and JSON Schema</a></li>
   </ul></li>
   </ul></li>

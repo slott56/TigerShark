@@ -1,11 +1,11 @@
 ..  _`design.parsing`:
 
 ##################################
-Parsing An Exchange-Format Message
+Parsing Algorithm
 ##################################
 
 An exchange-format X12 EDI message is a sequence of segments.
-Each segment has an identifier of 2 or 3 characters, and a sequence of element values.
+Each segment has an identifier of 2 or 3 characters, followed by the element values.
 The elements are separated by an element separator,
 and the segments are separated by a segment separator.
 
@@ -39,10 +39,10 @@ The first string value is the segment identifier.
 Alternatively, this segment can be viewed as an identifier and separator, "ST|",
 followed by two string values, "271" and "0001".
 
-We generally choose the former view, which permits simple use of the :meth:`string.split()` method
+We generally choose the former view, which permits simple use of the :code:`fields = string.split()`
 to split the segment into fields.
-The first field is the identifier, used for parsing the structure of a message and the loops.
-The remaining values are assigned to elements and composites of the segment.
+The first field (:code:`fields[0]`) is the identifier, used for parsing the structure of a message and the loops.
+The remaining values (:code:`fields[1:]`) are assigned to elements and composites of the segment.
 
 General Parsing
 ===============
@@ -79,17 +79,19 @@ Then we have two fallback strategies:
     -   Eyeball the data, figure out what the segment separator is, and provide this "manually."
         The element separator is position 3. The component separaror is the 16th element. (Yucky, but, sometimes necessary.)
 
+Often, the source of the message traffic will provide some hint as to what the format *really* is.
+An enterprise may adopt a convention of naming messages :file:`something.edi` to show that the ISA segment is uncompressed
+and the first line is helpful. A name like :file:`something.medi` might should that the ISA segment is
+compressed and separate metadata is required to identify the separators. Perhaps a :file:`something-meta.toml` file
+could be used to convey the necessary separator information.
 
 Message Parsing
 ===============
 
-Pragmatically, message parsing is made complicated by two features:
+Pragmatically, message parsing is made complicated the following feature:
 
-1.  Loops are not present in the text representation.
+    Loops are not present in the text representation. There's no identifier or punctuation for loops.
     A Loop contains one or more Segments, defining an expected sequence of Segments.
-
-2.  Composites are not present in the text representation.
-    A Composite contains a number of Elements; it's a kind of sub-Segment.
 
 This means we have the following relationships.
 
@@ -103,7 +105,7 @@ This means we have the following relationships.
 
     class Loop
 
-    Message *--> "n" Loop
+    Message *--> "n" Loop : Defined By >
 
     class Segment
 
@@ -168,5 +170,5 @@ in those (few) fields that can have sub-components in them.
 
 The default seems to be ":".
 
-But, if there's a ":" value in a field,
-the separator might be "^" or "\\".
+But, if there's a ":" character in a field's value,
+the component separator might be "^" or "\\".

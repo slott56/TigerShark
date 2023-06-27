@@ -6,14 +6,14 @@
 Tiger Shark X12 Tools
 =================================
 
-TigerShark handles semantically rich storage and modification of X12 formatted
-data using Python objects.
-This can be used for various EDI purposes, including medical claims
-(837) and eligibility (270).
+TigerShark handles semantically rich storage and processing of X12 formatted
+data by converting wire format message text to Python objects.
+This can be used for various EDI purposes, including gathering
+data on medical claims (837) and eligibility (270).
 
-This package helps to create Plain Old Python Objects (POPO) which contain
-X12 structures.  No intermediate XML or other notation is used.
-This can simplify X12 message parsing because the resulting structure is a Python object.
+This package helps to create Plain Old Python Objects (POPO) from X12 messages.
+No intermediate XML or other notation is used.
+This can simplify X12 message processing.
 
 Additionally, JSON Schema definitions can be created
 to describe the X12 messages for processing outside EDI software.
@@ -28,6 +28,7 @@ This can provide a handy representation for X12 data that can be processed by a 
     design/index
     implementation/index
     todo
+    appendices/index
     
 Indices and tables
 ==================

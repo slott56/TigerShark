@@ -27,8 +27,6 @@ to further facilitate analysis and processing.
 
 ..   note:: The JSON Schema is a work in progress
 
-    The JSON Schema output seems reasonable, but has not really been implemented fully.
-
 ..  important:: The IG compliance is indirect
 
     These definitions are based on the PyX12 project.
@@ -49,10 +47,16 @@ Here's an example of a Message definition.
 
 The message contains a type alias and single attribute.
 
+:ItemIsa_Loop:
+    A TypeAlias used to provide the essential item definition for a repeating list of items.
+    This provides the details for each item in a list.
+
 :isa_loop:
-    This is defined by the ``list[ItemIsa_Loop]`` type annotation to be a list of ``ItemIsa_Loop`` instances.
+    A list of ``ItemIsa_Loop`` instances.
     A parsed message will always have an ``isa_loop`` attribute, and it will be a list.
-    An application will use ``msg.isa_loop[0]`` to refer to the first ISA loop of a given message.
+    The annotations describe the list as a whole.
+
+An application will use ``msg.isa_loop[0]`` to refer to the first ISA loop of a given message.
 
 The type alias provides a number of XML (and presumably SEF) attribute details.
 These are annotations used to validate input values.
@@ -81,13 +85,13 @@ Here's an example of a Loop definition.
         iea: Annotated[ISA_LOOP_IEA, Title('Interchange Control Trailer'), Usage('R'), Position(30), Required(True)]
 
 
-This Loop has four attributes and a type alias:
+This Loop has four attributes:
 
 :isa:
     An instance of the ISA_LOOP's ``ISA`` segment.
 
 :gs_loop:
-    A sequence of ``ItemGs_Loop`` instances.
+    A sequence of ``ItemGs_Loop`` instances. A separate ``TypeAlias`` provides the definition for each item in the collection.
 
 :ta1:
     An optional instance of the  ISA_LOOP's ``TA1`` segment.
@@ -121,15 +125,19 @@ and a "hidden" attribute used for message loading.
 
 :iea01:
     An instance of the ISA_LOOP's ``IEA01`` element.
+    The common definitions provide the needed ``I16`` base type.
 
 :iea02:
     An instance of the ISA_LOOP's ``IEA02`` element
+    The common definitions provide the needed ``I12`` base type.
 
+The annotations here build in the common definitions of two reusable type definitions, ``I16`` and ``I12``.
+We'll look at these next.
 
 Elements
 =========
 
-Here's somes examples of an common element type alias.
+Here are somes examples of an common elements defined via ``TypeAlias``.
 
 ::
 
@@ -139,7 +147,7 @@ Here's somes examples of an common element type alias.
     I15: TypeAlias = Annotated[AN, MinLen(1), MaxLen(1)]
     I16: TypeAlias = Annotated[N0, MinLen(1), MaxLen(5)]
 
-These depend on other foundational X12 data types like N0, ID, and AN.
+These depend on other foundational X12 data types like ``N0``, ``ID``, and ``AN``.
 
 ::
 

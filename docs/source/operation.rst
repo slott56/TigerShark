@@ -2,41 +2,41 @@
 Using TigerShark
 ######################
 
-There are several things you can do.
+There are several things you can do with TigerShark.
 
 1.  `Create a Python class`_. This is a Python subclass of :py:class:`x12.base.Message` to parse exchange format messages or create JSON Schema.
-    The :py:mod:`tools.xml_extract` converts the XML versions of .SEF files to class definitions.
+    The :py:mod:`tools.xml_extract` tool can convert the XML versions of .SEF files to (somewhat simpler) Python class definitions.
 
-2.  `Emit a JSON Schema`_. The extracts JSON Schema from a subclass of :py:class:`x12.base.Message`.
+2.  `Parse X12 Exchange-formatted messages`_. This uses the subclass of :py:class:`x12.base.Message` to create Plain Old Python Objects from the message text.
 
-3.  `Parse X12 Exchange-formatted messages`_. This uses the subclass of :py:class:`x12.base.Message` to create Plain Old Python Objects from the message text.
+#.  `Emit a JSON Schema`_. The extracts JSON Schema from a subclass of :py:class:`x12.base.Message`.
 
-4.  `Emit a parsed X12 message a variety of formats`_. This includes "segments" format, JSON format, or even a Python expression to rebuild the message object.
+#.  `Emit a parsed X12 message a variety of formats`_. This includes "segments" format, JSON format, or even a Python expression to rebuild the message object.
 
 We'll look at each of these in some detail
 
 Create a Python class
 =====================
 
-The :mod:`tools.xml_extract` application parses an XML
+The :mod:`tools.xml_extract` tool parses an XML
 file and writes a Python module from the XML.
 This module will have a subclass of :py:class:`x12.base.Message`
 that can parse messages or emit a schema.
 
-..  important:: .SEF files have the authoritative definitions.
+..  important:: The ``.SEF`` files have the authoritative definitions.
 
-    This tool uses the PyX12 XML versions of the .SEF files.
-    Ideally, a version of this could work with the source .SEF
-    files.
+    This tool uses the `PyX12 <https://github.com/azoner/pyx12>`_
+    XML versions of the ``.SEF`` files.
 
 It works like this.
 
 1.  Git Checkout the `PyX12 <https://github.com/azoner/pyx12>`_ project.
 
-2.  Tweak the :py:mod:`tools.xml_extract` module to point to the checked-out files
-    and the target directory.
+2.  Tweak the :py:mod:`tools.xml_extract` module to point to your copy of the checked-out files
+    and a target directory into which to write the class definitions.
+    (These settings will be part of your development environment and will **rarely** change.)
 
-3.  Run the :py:mod:`tools.xml_extract` tool to build the x12 package.
+3.  Run the :py:mod:`tools.xml_extract` tool to build the x12 parsing package.
 
 ::
 
@@ -44,36 +44,17 @@ It works like this.
 
 This tool has assumptions about the output directory.
 
--   The directory tree the Git Clone of the TigerShark project.
+-   The target directory tree the Git Clone of the TigerShark project.
 
--   The Current Working Directory is the :file:`tigershark3/tools` directory.
+-   Your Current Working Directory is the :file:`tigershark3/tools` directory.
 
--   The message classes are written to the :file:`tigershark3/x12` directory.
+-   The message classes are to be written to the :file:`tigershark3/x12` directory, overwriting the message
+    definitions already in place.
 
-Emit a JSON Schema
-==================
-
-Each generated class has a :meth:`schema` method to emit
-a dictionary that can be converted to JSON
-notation.
-
-A script might look like this:
-
-::
-
-    from x12 import msg_270_4010_X092_A1
-    import json
-
-    schema = msg_270_4010_X092_A1.MSG270.schema()
-    print(json.dumps(schema, indent=2))
-
-This will emit a JSON Schema file that can be
-shared with non-Python applications.
-
-The :mod:`tools.xml_extract` application parses an XML
-file and **can** write a JSON Schema directly from the XML.
-It seems, however, better to work directly with the Python
-:py:class:`Message` subclass definitions, as shown above.
+The "overwrite previous definitions" really does seem to be the most common use case.
+If you want to preserve previous definitions, you'll want to change the output directory,
+and you'll need to manage having two copies of the modules that define the various kinds
+of messages.
 
 Parse X12 Exchange-formatted messages
 =====================================
@@ -107,6 +88,33 @@ the elements that could not be validated.
 
 It is possible to skip validation for a given element.
 
+Emit a JSON Schema
+==================
+
+Each generated class has a :meth:`schema` method to emit
+a dictionary that can be converted to JSON
+notation.
+
+A script might look like this:
+
+::
+
+    from x12 import msg_270_4010_X092_A1
+    import json
+
+    schema = msg_270_4010_X092_A1.MSG270.schema()
+    print(json.dumps(schema, indent=2))
+
+This will emit a JSON Schema file that can be
+shared with non-Python applications.
+
+The :mod:`tools.xml_extract` application parses an XML
+file and **can** write a JSON Schema directly from the XML.
+It seems, however, better to work directly with the Python
+:py:class:`Message` subclass definitions, as shown above.
+
+This feature has not been **thoroughly** tested, but seems to work.
+
 Emit a parsed X12 message a variety of formats
 ===============================================
 
@@ -125,6 +133,10 @@ it can be emitted in a number of formats:
     This is an expression that can rebuild the Plain-Old Python Object.
     The reconstruction requires a ``from msg... import *`` import to
     provide all the required names for loops, segments, composites, and elements.
+
+..  todo:: Wire Format output.
+
+This feature has not been **thoroughly** tested for all formats.
 
 Sequence of segments output
 ---------------------------
