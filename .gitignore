@@ -27,3 +27,4 @@ docs/build/doctrees/*/*.doctree
 docs/build/doctrees/*.doctree
 .nova/Configuration.json
 bundled.log
+tox_env.sh

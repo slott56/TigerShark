@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "TigerShark"
+description = "TigerShark: An X12/EDI file parser"
 version = "3.0"
 readme = "README.md"
 authors = [
   {name = "Steven Buss", email = "steven.buss@gmail.com"},
   {name = "Steven Lott", email = "slott56@email.com"},
 ]
-description = "TigerShark: An X12 file parser"
 requires-python = ">=3.11"
 classifiers = [
   "Development Status :: 3 - Alpha",
@@ -18,7 +18,12 @@ classifiers = [
   "Intended Audience :: Healthcare Industry",
   "License :: OSI Approved :: BSD License",
   "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
   "Topic :: Text Processing",
+  "Topic :: File Formats",
+  "Topic :: Office/Business",
+  "Typing :: Typed",
 ]
 
 [tool.setuptools]
