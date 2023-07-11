@@ -1,0 +1,276 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Parsing Algorithm &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Type Hints and JSON Schema" href="type_hints.html" />
+    <link rel="prev" title="Loops as Namespace" href="loopmodel.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="parsing-algorithm">
+<span id="design-parsing"></span><h1>Parsing Algorithm<a class="headerlink" href="#parsing-algorithm" title="Permalink to this heading">¶</a></h1>
+<p>An exchange-format X12 EDI message is a sequence of segments.
+Each segment has an identifier of 2 or 3 characters, followed by the element values.
+The elements are separated by an element separator,
+and the segments are separated by a segment separator.</p>
+<p>We can depict it as follows:</p>
+<p class="plantuml">
+<img src="../_images/plantuml-170d3e13e98e6fb611a5669b9f46e07d2c760b68.png" alt="class MessageText
+
+class SegmentText
+
+class Identifier
+
+class Value
+
+MessageText *--&gt; &quot;n&quot; SegmentText
+
+SegmentText *--&gt; &quot;1&quot; Identifier
+
+SegmentText *--&gt; &quot;v&quot; Value"/>
+</p>
+<p>For example, the following segment uses “|” as an element separator and “~” as a segment separator.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ST</span><span class="o">|</span><span class="mi">271</span><span class="o">|</span><span class="mi">0001</span><span class="o">~</span>
+</pre></div>
+</div>
+<p>This segment can be viewed as three string values, “ST”, “271”, and “0001”.
+The first string value is the segment identifier.</p>
+<p>Alternatively, this segment can be viewed as an identifier and separator, “ST|”,
+followed by two string values, “271” and “0001”.</p>
+<p>We generally choose the former view, which permits simple use of the <code class="code docutils literal notranslate"><span class="pre">fields</span> <span class="pre">=</span> <span class="pre">string.split()</span></code>
+to split the segment into fields.
+The first field (<code class="code docutils literal notranslate"><span class="pre">fields[0]</span></code>) is the identifier, used for parsing the structure of a message and the loops.
+The remaining values (<code class="code docutils literal notranslate"><span class="pre">fields[1:]</span></code>) are assigned to elements and composites of the segment.</p>
+<section id="general-parsing">
+<h2>General Parsing<a class="headerlink" href="#general-parsing" title="Permalink to this heading">¶</a></h2>
+<p>There’s a subtlety to the separators.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The separator characters are defined in the ISA segment.</p>
+</div>
+<p>This means we have to read the ISA segment to figure
+out what separators define the structure of the ISA segment.</p>
+<p>The are two relevant conventions that seem to break the circularity of parsing the ISA to find the punctuation required to parse the ISA segment.</p>
+<ol class="arabic simple">
+<li><p>The last three characters of the ISA segment will have the three punctuation marks.
+The final element of this segment is the component separator character.
+This will have an element separator in front of it and the segment separator after it.</p></li>
+<li><p>The ISA segment is generally uncompressed, and is 106 characters long.
+With an uncompressed ISA, the relevant values are here:</p>
+<ul class="simple">
+<li><p>Position 103: Element separator in front of the final element.</p></li>
+<li><p>Position 104: “Component” separator. This is one character of data. It is used when an element is really an array of values.
+It varies widely based on the text values actually present in the message.</p></li>
+<li><p>Position 105: Segment separator. Is the end of every segment.</p></li>
+</ul>
+</li>
+</ol>
+<p>If the ISA is compressed, then we don’t know where it ends and what the segment separator is.
+Then we have two fallback strategies:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Hope for line break whitespace, and consume the last 3 characters of a line that starts with <code class="docutils literal notranslate"><span class="pre">&quot;ISA&quot;</span></code>.</p></li>
+<li><p>Eyeball the data, figure out what the segment separator is, and provide this “manually.”
+The element separator is position 3. The component separaror is the 16th element. (Yucky, but, sometimes necessary.)</p></li>
+</ul>
+</div></blockquote>
+<p>Often, the source of the message traffic will provide some hint as to what the format <em>really</em> is.
+An enterprise may adopt a convention of naming messages <code class="file docutils literal notranslate"><span class="pre">something.edi</span></code> to show that the ISA segment is uncompressed
+and the first line is helpful. A name like <code class="file docutils literal notranslate"><span class="pre">something.medi</span></code> might should that the ISA segment is
+compressed and separate metadata is required to identify the separators. Perhaps a <code class="file docutils literal notranslate"><span class="pre">something-meta.toml</span></code> file
+could be used to convey the necessary separator information.</p>
+</section>
+<section id="message-parsing">
+<h2>Message Parsing<a class="headerlink" href="#message-parsing" title="Permalink to this heading">¶</a></h2>
+<p>Pragmatically, message parsing is made complicated the following feature:</p>
+<blockquote>
+<div><p>Loops are not present in the text representation. There’s no identifier or punctuation for loops.
+A Loop contains one or more Segments, defining an expected sequence of Segments.</p>
+</div></blockquote>
+<p>This means we have the following relationships.</p>
+<p class="plantuml">
+<img src="../_images/plantuml-52cc0e5012d12361c6705b1e2654d26a2ab2c124.png" alt="class Message
+
+class MessageText
+
+Message -- MessageText : Represented By &gt;
+
+class Loop
+
+Message *--&gt; &quot;n&quot; Loop : Defined By &gt;
+
+class Segment
+
+Loop *--&gt; &quot;n&quot; Segment
+Loop *--&gt; &quot;n&quot; Loop
+
+class SegmentText
+
+Segment -- SegmentText : Represented By &gt;
+
+MessageText *--&gt; &quot;n&quot; SegmentText
+
+class Composite
+class Element
+
+Segment *--&gt; Composite
+Segment *--&gt; Element
+Composite *--&gt; Element
+
+class Value
+
+SegmentText *--&gt; Value
+Element -- Value : Represented By &gt;"/>
+</p>
+<p>The essential algorithm works by consuming each segment based on the defined loops within a message.
+A source lexical scanner “peeks” at the heading of the next segment.
+The Loop parser then use the heading to decide if it should consume the next Segment or if it is finished consuming Segments.</p>
+<p>Consuming a Segment means locating the Elements and Composites (sequences of Elements) within the segment, and assigning text
+values to those elements and composites. This is slightly different from consuming segments because there are fewer choices
+to be made.</p>
+</section>
+<section id="segment-parsing">
+<h2>Segment Parsing<a class="headerlink" href="#segment-parsing" title="Permalink to this heading">¶</a></h2>
+<p>Conceptually, the Segment parsing algorithm uses approach similar to the following:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">identifier</span><span class="p">,</span> <span class="o">*</span><span class="n">fields</span> <span class="o">=</span> <span class="n">segment_text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">element_separator</span><span class="p">)</span>
+<span class="n">segment_class</span><span class="p">[</span><span class="n">identifier</span><span class="p">]</span><span class="o">.</span><span class="n">build_attrs</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Elements are not <em>actually</em> atomic.
+This means a value separated by element separators
+can contain component separator characters.
+It can be decomposed into a list of values.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fields</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">val</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">component_separator</span><span class="p">)</span> <span class="k">if</span> <span class="n">component_separator</span> <span class="ow">in</span> <span class="n">val</span> <span class="k">else</span> <span class="n">val</span>
+    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">fields</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>An important consequence is the Component Separator <strong>must</strong> be provided
+separately in the ISA16. Further, it can be unique for each message.
+This avoids having to escape the component separator when it occurs in a value.</p>
+<p>It appears that the software encoding a message must pick a
+component separator character based on the values present
+in those (few) fields that can have sub-components in them.</p>
+<p>The default seems to be “:”.</p>
+<p>But, if there’s a “:” character in a field’s value,
+the component separator might be “^” or “\”.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
+            </a></p>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../operation.html">Using TigerShark</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Context: Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture: Containers and Components</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="classmodel.html">Message Schema as Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="loopmodel.html">Loops as Namespace</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Parsing Algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="type_hints.html">Type Hints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annotations.html">Element Types and Annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="xml_extract.html">Generating Annotations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optional_validation.html">Validation Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../todo.html">The TODO List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../appendices/index.html">Appendices</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Design Notes</a><ul>
+      <li>Previous: <a href="loopmodel.html" title="previous chapter">Loops as Namespace</a></li>
+      <li>Next: <a href="type_hints.html" title="next chapter">Type Hints and JSON Schema</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/design/parsing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

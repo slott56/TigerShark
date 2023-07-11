@@ -1,0 +1,51 @@
+Results of doctest builder run on 2023-04-14 08:46:22
+=====================================================
+
+Document: usecase
+-----------------
+**********************************************************************
+File "usecase.rst", line 158, in default
+Failed example:
+    with source_path.open('w') as destination:
+        msg.dump(destination)
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/tigershark/lib/python3.11/doctest.py", line 1350, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[1]>", line 2, in <module>
+        msg.dump(destination)
+        ^^^^^^^^
+    AttributeError: 'MSG270' object has no attribute 'dump'
+**********************************************************************
+File "usecase.rst", line 165, in default
+Failed example:
+    print(msg.json())
+Exception raised:
+    Traceback (most recent call last):
+      File "/Users/slott/miniconda3/envs/tigershark/lib/python3.11/doctest.py", line 1350, in __run
+        exec(compile(example.source, filename, "single",
+      File "<doctest default[0]>", line 1, in <module>
+        print(msg.json())
+              ^^^^^^^^
+    AttributeError: 'MSG270' object has no attribute 'json'
+**********************************************************************
+1 items had failures:
+   2 of  11 in default
+11 tests in 1 items.
+9 passed and 2 failed.
+***Test Failed*** 2 failures.
+
+Document: implementation/x12
+----------------------------
+1 items passed all tests:
+   2 tests in default
+2 tests in 1 items.
+2 passed and 0 failed.
+Test passed.
+
+Doctest summary
+===============
+   13 tests
+    2 failures in tests
+    0 failures in setup code
+    0 failures in cleanup code

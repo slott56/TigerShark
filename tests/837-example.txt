@@ -15,7 +15,7 @@ HL*2*1*22*0~
 SBR*S*18*******MC~
 NM1*IL*1*Student*Some****MI*12345678~
 N3*109 Plum Street~
-N4*Somewherein*MN.*56123~
+N4*Somewherein*MN*56123~
 DMG*D8*19950505*M~
 NM1*PR*2*MN Department of Human Services*****PI*41-1674742~
 CLM*0777-0777-12345678*32.73***03::1*Y*A*Y*Y*C~

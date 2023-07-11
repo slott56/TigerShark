@@ -1,102 +1,83 @@
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 
-
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    
-    <title>Design Note: Recursive Structures in SQL &mdash; TigerShark 3.1 documentation</title>
-    
-    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '3.1',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
-      };
-    </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="TigerShark 3.1 documentation" href="../index.html" />
-    <link rel="up" title="Design Notes" href="index.html" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Design Note: Recursive Structures in SQL &#8212; TigerShark 3.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Design Note: Customization of Message Structures" href="customization.html" />
-    <link rel="prev" title="Design Note: Reconciling “Bare” Python Classes with Django" href="ORMPlanning.html" /> 
-  </head>
-  <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="customization.html" title="Design Note: Customization of Message Structures"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="ORMPlanning.html" title="Design Note: Reconciling “Bare” Python Classes with Django"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Design Notes</a> &raquo;</li> 
-      </ul>
-    </div>  
+    <link rel="prev" title="Design Note: Reconciling “Bare” Python Classes with Django" href="ORMPlanning.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
 
     <div class="document">
       <div class="documentwrapper">
         <div class="bodywrapper">
-          <div class="body">
+          
+
+          <div class="body" role="main">
             
-  <div class="section" id="design-note-recursive-structures-in-sql">
-<span id="recursive-structures"></span><h1>Design Note: Recursive Structures in SQL<a class="headerlink" href="#design-note-recursive-structures-in-sql" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference internal" href="../architecture.html#architecture"><em>Architecture and Design</em></a></p>
-<div class="section" id="problem">
-<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this headline">¶</a></h2>
+  <section id="design-note-recursive-structures-in-sql">
+<span id="recursive-structures"></span><h1>Design Note: Recursive Structures in SQL<a class="headerlink" href="#design-note-recursive-structures-in-sql" title="Permalink to this heading">¶</a></h1>
+<p><a class="reference internal" href="../architecture.html#architecture"><span class="std std-ref">Architecture and Design</span></a></p>
+<section id="problem">
+<h2>Problem<a class="headerlink" href="#problem" title="Permalink to this heading">¶</a></h2>
 <p>Recursive structures, as exemplified by the Loop definition, are a long-standing
-problem in SQL.  While pure SQL can &#8211; to an extent &#8211; cope, an ORM mapping of
+problem in SQL.  While pure SQL can – to an extent – cope, an ORM mapping of
 a class hierarchy makes this more difficult.</p>
-<p>Specifically, Django&#8217;s strongly-typed mapping to SQL is challenging because of the
+<p>Specifically, Django’s strongly-typed mapping to SQL is challenging because of the
 way it handles superclasses.  Any class with a Model attribute must become
-a distinct table.  A superclass must either be &#8220;abstract&#8221; in that it has no
-Model attributes, or &#8220;concrete&#8221; and allocated to a distinct table.</p>
-</div>
-<div class="section" id="forces">
-<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this headline">¶</a></h2>
+a distinct table.  A superclass must either be “abstract” in that it has no
+Model attributes, or “concrete” and allocated to a distinct table.</p>
+</section>
+<section id="forces">
+<h2>Forces<a class="headerlink" href="#forces" title="Permalink to this heading">¶</a></h2>
 <p>The standard technique for recursive structures involves a polymorphic design,
 as shown in <a class="reference internal" href="#figure-1">Figure 1</a>.</p>
-<div class="figure">
+<figure class="align-default" id="id1">
 <img alt="../_images/polymorphic.png" src="../_images/polymorphic.png" />
-<p class="caption"><span class="target" id="figure-1">Figure 1</span>.</p>
-</div>
+<figcaption>
+<p><span class="caption-text"><span class="target" id="figure-1">Figure 1</span>.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>This shows the standard object design for recursive structures.  The
 superclass (X12Structure) has a number of subclasses.  The X12Loop
 class can contain any mixture of X12Structures (X12Loop or X12Segment).</p>
-<p>This doesn&#8217;t work in Django because we don&#8217;t have polymorphism.
+<p>This doesn’t work in Django because we don’t have polymorphism.
 Django forces us to target a specific class, not a polymorphic union of classes.</p>
 <p>We have two principle choices.</p>
 <ul>
-<li><p class="first">A Loop contains two collections: Subloops and Segments.  A sequence
+<li><p>A Loop contains two collections: Subloops and Segments.  A sequence
 number can be used to order the union of Loops and Segments and
 reconstruct the original Loop with the Loops and Segments the correct order.</p>
-<p>In this case, the children method is a fairly complex Union query (which aren&#8217;t directly
+<p>In this case, the children method is a fairly complex Union query (which aren’t directly
 supported in Django).  We must do two queries, then merge the results
 into a Python list structure.</p>
 <p>When we add Loops or Segments to a Loop they go into their appropriate
 collection with a proper sequence number.</p>
 </li>
-<li><p class="first">A Loop can contain either a collection subLoops or a single Segment.
+<li><p>A Loop can contain either a collection subLoops or a single Segment.
 Some Loops are the degenerate case
 which contain exactly one Segment and no subLoops.  These degenerate
-SubLoops don&#8217;t even have names.  Other Loops have a name and subLoops (but no Segment.)</p>
-<p>In this case, we have a <tt class="docutils literal"><span class="pre">children</span></tt> method which does a <tt class="docutils literal"><span class="pre">subloop_set.all()</span></tt>
+SubLoops don’t even have names.  Other Loops have a name and subLoops (but no Segment.)</p>
+<p>In this case, we have a <code class="docutils literal notranslate"><span class="pre">children</span></code> method which does a <code class="docutils literal notranslate"><span class="pre">subloop_set.all()</span></code>
 query, then iterates through this result set, replacing degenerate Loops
 with their one-and-only child Segment to create a proper List that contains
 mixed Loops and Segments in their correct order.</p>
@@ -106,100 +87,114 @@ Loop.</p>
 <p>When we append a Loop to a Loop, we simply append the Loop.</p>
 </li>
 </ul>
-</div>
-<div class="section" id="solution">
-<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this headline">¶</a></h2>
+</section>
+<section id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Permalink to this heading">¶</a></h2>
 <p>The Django-friendly design is shown in <a class="reference internal" href="#figure-2">Figure 2</a>.</p>
-<div class="figure">
+<figure class="align-default" id="id2">
 <img alt="../_images/stronglytyped.png" src="../_images/stronglytyped.png" />
-<p class="caption"><span class="target" id="figure-2">Figure 2</span>.</p>
-</div>
+<figcaption>
+<p><span class="caption-text"><span class="target" id="figure-2">Figure 2</span>.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
 <p>This shows the basic Message - Loop - Segment structure.  It also shows the
 constraint imposed on Loops: they either contain subloops or a single Segment.
-While it seems appealing to have multiple segments, it isn&#8217;t practical to keep
+While it seems appealing to have multiple segments, it isn’t practical to keep
 the sequence numbering straight.</p>
-</div>
-<div class="section" id="consequence">
-<h2>Consequence<a class="headerlink" href="#consequence" title="Permalink to this headline">¶</a></h2>
-<p>We won&#8217;t have a simple polymorphic, recursive container.</p>
+</section>
+<section id="consequence">
+<h2>Consequence<a class="headerlink" href="#consequence" title="Permalink to this heading">¶</a></h2>
+<p>We won’t have a simple polymorphic, recursive container.</p>
 <p>Either solution requires that we provide navigation methods.
 The XPath standard provides guidance on what this navigation should look like.</p>
 <p>We need a unique keys for a message (and all loops and segments of that
-message) plus we need unique keys for the loops.  See <a class="reference internal" href="keygen.html#key-generation"><em>Design Note: Key Generation for X12Messages</em></a> for
+message) plus we need unique keys for the loops.  See <a class="reference internal" href="keygen.html#key-generation"><span class="std std-ref">Design Note: Key Generation for X12Messages</span></a> for
 more information on this issue.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
+          
         </div>
       </div>
-      <div class="sphinxsidebar">
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/Tiger_shark2.png" alt="Logo"/>
-            </a></p>
-  <h3><a href="../index.html">Table Of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Design Note: Recursive Structures in SQL</a><ul>
-<li><a class="reference internal" href="#problem">Problem</a></li>
-<li><a class="reference internal" href="#forces">Forces</a></li>
-<li><a class="reference internal" href="#solution">Solution</a></li>
-<li><a class="reference internal" href="#consequence">Consequence</a></li>
+<h1 class="logo"><a href="../index.html">TigerShark</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usecase.html">Use Cases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../architecture.html">Architecture and Design</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Design Notes</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="traversal.html">Traversing the complex hierarchical message definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ORMPlanning.html">Ways to map generic messages to a specific ORM</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Persistence of recursive structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="customization.html">Segment-type customization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="claimsmodel.html">The Facade-based design pattern for claims</a></li>
+<li class="toctree-l2"><a class="reference internal" href="batchScript.html">Considerations in writing batch programs and scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="webservice.html">Considerations for implementing web services</a></li>
+<li class="toctree-l2"><a class="reference internal" href="keygen.html">The design for keys for X12Messages, X12Loops and X12Segments</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../implementation/index.html">Implementation</a></li>
 </ul>
 
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="ORMPlanning.html"
-                        title="previous chapter">Design Note: Reconciling &#8220;Bare&#8221; Python Classes with Django</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="customization.html"
-                        title="next chapter">Design Note: Customization of Message Structures</a></p>
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/design/recursiveStructures.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Design Notes</a><ul>
+      <li>Previous: <a href="ORMPlanning.html" title="previous chapter">Design Note: Reconciling “Bare” Python Classes with Django</a></li>
+      <li>Next: <a href="customization.html" title="next chapter">Design Note: Customization of Message Structures</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
 </div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
         </div>
       </div>
       <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="customization.html" title="Design Note: Customization of Message Structures"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="ORMPlanning.html" title="Design Note: Reconciling “Bare” Python Classes with Django"
-             >previous</a> |</li>
-        <li><a href="../index.html">TigerShark 3.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Design Notes</a> &raquo;</li> 
-      </ul>
-    </div>
     <div class="footer">
-        &copy; Copyright 2011, S.Lott.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      &copy;2023, S.Lott.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.0.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/design/recursiveStructures.rst.txt"
+          rel="nofollow">Page source</a>
     </div>
+
+    
+
+    
   </body>
 </html>

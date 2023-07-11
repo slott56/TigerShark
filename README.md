@@ -4,7 +4,7 @@ a specific partner in the health care payment ecosystem.
 About Tiger Shark
 =================
 
-TigerShark is used to transform the X12 schema definitions into Plain old Python class definitions.
+TigerShark is used to transform X12 schema definitions into Plain old Python class definitions.
 The class definitions are used by an application to process an X12 data stream.
 
 TigerShark's generated code can parse X12 messages, providing Python objects that
@@ -12,11 +12,7 @@ can be used in a variety of ways. A web application can be built using any Pytho
 framework. A Juypter Lab notebook can be built to do analysis work on claim data.
 Python-based middleware can be written to process claim files.
 
-Because the code is built from X12 schema definitions, it depends on X12 "CF"
-files. See https://metacpan.org/dist/X12 for the files currently in use.
-
-This project vendors in the X12-0.08 code base to provide the CF files 
-that define the medical X12 messages for health insurance claim processing.
+The X12 message definitions from from the PyX12 project, see https://github.com/azoner/pyx12.
 
 About X12 EDI
 =============
@@ -31,15 +27,75 @@ The core idea is that a Segment is a group of related Data Elements. A segment
 has an identifier, making it possible to identify repeating loops 
 and any omitted segments.
 
-The segments are terminated with a `~` and data elements terminated with `*`.
+The segments are often terminated with a `~` and data elements terminated with `*` or `|`.
 A complete schema is required, including details of fields that are optional.
 
 See https://docs.informatica.com/data-integration/b2b-data-transformation/10-1/libraries-guide/descriptions-of-the-libraries/hipaa-library/hipaa-message-structure.html
 
+Dependencies
+============
+
+We rely on https://github.com/azoner/pyx12 for the definition of the message.
+
+(Ideally, we'd go to the source documents, including
+the X12 standard and Implementation Guides. We don't know where to find these.)
+
+Building the Message Classes
+============================
+
+1. Clone and check out  https://github.com/azoner/pyx12.
+2. `cd tigershark3/tools`.
+3. Put `tigershark` on the `PYTHONPATH` environment variable.
+4. Run the `xml_extract.py` application to build the message classes.
+   All of the parameters are in the `__name__ == "__main__"` block.
+
+```shell
+cd tigershar3/tools
+PYTHONPATH=.. python xml_extract.py
+```
+
+Testing
+=======
+
+Complete test:
+
+```shell
+tox
+```
+
+Run marked tests with detailed logging.
+Very handy for debugging.
+
+```shell
+PYTHONPATH=tigershark3 pytest -m x12parser --log-cli-level=DEBUG tests
+```
+
+Dependencies
+============
+
+This project uses [pip-tools](https://pypi.org/project/pip-tools/)
+to create a detailed `requirements-dev.txt` 
+from the `pyproject.toml`
+
+```shell
+pip-compile --extra=dev --extra=test -o requirements-dev.txt
+```
+
+
+
 State of the Project
 ====================
 
-TODO: Add type hints.
+Version 3.0
+-----------
+
+A foundational rewrite. This uses Python type annotations to define message structure.
+The ``tools/xml_extract.py`` tool converts PyX12 XML message definitions into
+pure Python classes simply and directly.
+
+It can emit a JSON Schema description of messages, also.
+This permits transforming raw data to JSON for analysis and processing.
+
 
 Version 0.2.5
 -------------

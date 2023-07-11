@@ -1,7 +1,0 @@
-=================
-``ws`` Package
-=================
-
-May Be Unnecessary.
-
-..  automodule:: ws
