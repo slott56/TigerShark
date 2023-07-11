@@ -3,8 +3,8 @@ requires = ["setuptools", "wheel"]  # PEP 508 specifications.
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "TigerShark"
-description = "TigerShark: An X12/EDI file parser"
+name = "TigerShark3"
+description = "TigerShark3: An X12/EDI file parser"
 version = "3.0"
 readme = "README.md"
 authors = [
