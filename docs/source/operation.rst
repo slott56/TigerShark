@@ -68,7 +68,24 @@ A script can look like the following:
 
     source = Path("/path") / "to" / "file.txt"
     document = Source(source.read_text())
-    msg = message_class.parse(document)
+    parser = X12Parser(msg_270_4010_X092_A1.MSG270)
+    msg = parser.parse(document)
+
+Or this::
+
+    from pathlib import Path
+
+    EXAMPLES = Path("/path") / "to"
+    example = EXAMPLES / "835-example.txt"
+    document = Source(example.read_text())
+    # Skip these validations.
+    errors_here = [
+        "*_N1:n101:Enumerated", "*_N1:n103:Enumerated", "*_REF:ref01:Enumerated",
+        "*_NM1:nm101:Enumerated", "*_NM1:nm102:Enumerated", "*_NM1:nm108:Enumerated"
+    ]
+    parser = X12Parser(msg_835_4010_X091_A1.MSG835, skip_validation=errors_here)
+    msg = parser.parse(document)
+
 
 The ``document`` object is a reader that scans the source
 file, looking for the text of segments with appropriate

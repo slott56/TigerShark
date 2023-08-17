@@ -285,31 +285,38 @@ Using a Parser
 --------------
 
 ```python
-from tigershark.parsers import M835_4010_X091_A1
-m = M835_4010_X091_A1.parsed_835
-with open('/Users/sbuss/remits/95567.63695.20120314.150150528.ERA.835.edi', 'r') as f:
-    parsed = m.unmarshall(f.read().strip())
+from x12 import msg_835_4010_X091_A1
+from x12.base import Source, X12Parser
+from pathlib import Path
+
+EXAMPLES = Path("/path") / "to" / "examples"
+example = EXAMPLES / "835-example.txt"
+document = Source(example.read_text())
+# Skip some validation rules
+errors_here = [
+  "*_N1:n101:Enumerated", "*_N1:n103:Enumerated", "*_REF:ref01:Enumerated",
+  "*_NM1:nm101:Enumerated", "*_NM1:nm102:Enumerated", "*_NM1:nm108:Enumerated"
+]
+parser = X12Parser(msg_835_4010_X091_A1.MSG835, skip_validation=errors_here)
+msg = parser.parse(document)
 ```
 
-Using a Facade
------------------
-
-Once you have parsed an X12 file, you can build a Facade around it:
+Now you can access the segments of the X12 file in a purely pythonic way.
 
 ```python
-from tigershark.facade.f835 import f835_4010
-f = F835_4010(parsed)
-```
+# Payee is in N1 in Loop 1000A. L1000A_N1 found in HEADER.ItemL1000A
+# The ISA/GS/ST loop structure is always similar. 
+# Nested for statements make sense instead of always getting the first instance.
+st = msg.isa_loop[0].gs_loop[0].st_loop[0]
 
-Now you can access the segments of the X12 file in an easy and pythonic way
+# A good practice is the get the segment, and then process fields of the segment.
+n1 = st.header[0].l1000a[0].n1
+n4 = st.header[0].l1000a[0].n4
+ts3 = st.detail[0].l2000[0].ts3
 
-```python
->>> print(f.payee.zip)
-94066
->>> print(f.payer.name)
-United Healthcare
->>> print(len(f.claims))
-150
+assert n1.n102 == "UNITED HEALTHCARE INSURANCE COMPANY"
+assert n4.n403 == "553430000"
+assert ts3.ts304 == 2.0
 ```
 
 Tests
