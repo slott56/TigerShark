@@ -663,6 +663,7 @@ class Composite:
                     helper.validate(source)
                 except ValueError as ex:
                     if not (name in self._skip_validation and len(ex.args) == 2):
+                        print(f"{name} not in skip validations: {list(self._skip_validation.keys())}")
                         raise ValueError(f"invalid {self.__class__.__name__}.{name}: {hint} {ex}") from ex
                     msg, annotation = ex.args
                     if annotation not in self._skip_validation[name]:
@@ -889,7 +890,7 @@ class Segment:
             ]
         except ValueError:  # pragma: no cover
             raise ValueError(f"invalid skip_validation rule in {skip_validation}")
-        cls.logger.debug("Skip Validation: %s", segment_rules)
+        cls.logger.debug("Skip Validation %s: %s", cls.__name__, segment_rules)
 
         cls._skip_validation = defaultdict(list)
 
@@ -1071,7 +1072,7 @@ class Message:
     @classmethod
     def configure(cls, skip_validation : list[str]) -> None:
         """
-        Provide the skip_validation configuration to the Segments of this Loop.
+        Provide the skip_validation configuration to the Loops of this Message.
         """
         for name, loop_type in class_fields(cls):
             # TODO: PEEL THE ONION.
